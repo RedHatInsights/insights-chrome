@@ -193,13 +193,17 @@ export class ChromeTopbar {
 
   /**
    * Selects a specific item from the settings menu
-   * @param itemName The text of the menu item to select
+   * @param itemName The text of the menu item to select (can be partial match)
    */
   async selectSettingsItem(itemName: string): Promise<void> {
     await this.openSettings();
 
-    // Click the menu item with matching text
-    const menuItem = this.settingsButton.locator('li', { hasText: itemName });
+    // Wait for menu items to be visible
+    const menuItems = this.settingsButton.locator('li');
+    await menuItems.first().waitFor({ state: 'visible', timeout: 5000 });
+
+    // Find and click the menu item - use hasText which does partial matching
+    const menuItem = menuItems.filter({ hasText: itemName }).first();
     await menuItem.click();
   }
 

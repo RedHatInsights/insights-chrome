@@ -74,13 +74,18 @@ test.describe('Settings Gear and Navigation', () => {
     const menuItems = await topbar.getSettingsMenuItems();
 
     // Determine which IAM item to select (matches IQE's choose_iam logic)
-    let iamItem: string;
-    if (menuItems.includes('User Access')) {
-      iamItem = 'User Access';
-    } else if (menuItems.includes('Identity & Access Management')) {
-      iamItem = 'Identity & Access Management';
+    // Use partial match since items may have badges/extra text
+    let iamItem: string | undefined;
+
+    const userAccessItem = menuItems.find(item => item.includes('User Access'));
+    const iamManagementItem = menuItems.find(item => item.includes('Identity & Access Management'));
+
+    if (userAccessItem) {
+      iamItem = userAccessItem;
+    } else if (iamManagementItem) {
+      iamItem = iamManagementItem;
     } else {
-      throw new Error('No IAM menu item found');
+      throw new Error(`No IAM menu item found. Available items: ${JSON.stringify(menuItems)}`);
     }
 
     // Select the IAM item
