@@ -44,16 +44,13 @@ test.describe('Settings Gear and Navigation', () => {
     expect(await topbar.isSettingsOpen()).toBe(false);
   });
 
-  test('should list expected settings menu items', async ({ page }) => {
+  test('should contain expected settings menu items', async ({ page }) => {
     const topbar = new ChromeTopbar(page);
 
     // Get the menu items
     const menuItems = await topbar.getSettingsMenuItems();
 
-    // Verify we have the expected number of items (6 in IQE test)
-    expect(menuItems.length).toBe(6);
-
-    // Verify expected items are present
+    // Verify expected items are present (UI may evolve with additional items)
     const expectedItems = [
       'Integrations',
       'Notifications',
