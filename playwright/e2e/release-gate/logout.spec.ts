@@ -57,13 +57,10 @@ test.describe('Logout Functionality', () => {
     // Verify user avatar is no longer visible (user is logged out)
     await expect(userAvatar).not.toBeVisible({ timeout: 10000 });
 
-    // Verify we're on a logged-out page
-    // The login button or "Log in" text should be visible
-    const loginButton = page.getByRole('button', { name: /Log in/i });
-    const loginLink = page.getByRole('link', { name: /Log in/i });
-
-    // At least one of these should be visible
-    await expect(loginButton.or(loginLink)).toBeVisible({ timeout: 10000 });
+    // Verify we're on a logged-out page by checking for Red Hat login form
+    // Look for the "Red Hat login" label which indicates the SSO login page
+    const redHatLoginLabel = page.getByLabel('Red Hat login');
+    await expect(redHatLoginLabel).toBeVisible({ timeout: 10000 });
   });
 
   test('should logout via dropdown menu', async ({ authenticatedPage: page }) => {
@@ -89,10 +86,8 @@ test.describe('Logout Functionality', () => {
     // Verify user avatar is no longer visible
     await expect(userAvatar).not.toBeVisible({ timeout: 10000 });
 
-    // Verify we're on a logged-out page
-    const loginButton = page.getByRole('button', { name: /Log in/i });
-    const loginLink = page.getByRole('link', { name: /Log in/i });
-
-    await expect(loginButton.or(loginLink)).toBeVisible({ timeout: 10000 });
+    // Verify we're on a logged-out page by checking for Red Hat login form
+    const redHatLoginLabel = page.getByLabel('Red Hat login');
+    await expect(redHatLoginLabel).toBeVisible({ timeout: 10000 });
   });
 });
