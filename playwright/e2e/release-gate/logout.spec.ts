@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
-import { login, disableCookiePrompt } from '@redhat-cloud-services/playwright-test-auth';
 import { ChromeTopbar } from '../pages/chrome-topbar';
+import { createAuthenticatedPage } from '../../helpers/isolated-auth';
 
 /**
  * Test: Logout functionality
@@ -23,42 +23,15 @@ import { ChromeTopbar } from '../pages/chrome-topbar';
 
 // Create a custom test that doesn't use shared auth state
 const test = base.extend<{ authenticatedPage: any }>({
-  authenticatedPage: async ({ browser }, use) => {
-    // Create a fresh browser context without shared storage state
-    const context = await browser.newContext({
-      ignoreHTTPSErrors: true,
-    });
-
-    const page = await context.newPage();
-
-    // Disable cookie prompts
-    await disableCookiePrompt(page);
-
-    // Navigate to the application
-    const baseURL = process.env.PLAYWRIGHT_BASE_URL || process.env.BASE || 'https://stage.foo.redhat.com:1337';
-    await page.goto(baseURL, { waitUntil: 'load', timeout: 60000 });
-
-    // Perform fresh login for this test
-    const user = process.env.E2E_USER;
-    const password = process.env.E2E_PASSWORD;
-
-    if (!user || !password) {
-      throw new Error('E2E_USER and E2E_PASSWORD environment variables must be set');
-    }
-
-    await login(page, user, password);
-
-    // Disable analytics (same as global setup)
-    await page.evaluate(() => {
-      localStorage.setItem('chrome:analytics:disable', 'true');
-      localStorage.setItem('chrome:segment:disable', 'true');
-    });
+  authenticatedPage: async ({ browser, baseURL }, use) => {
+    // Create an authenticated page in an isolated context
+    const page = await createAuthenticatedPage(browser, baseURL);
 
     // Provide the authenticated page to the test
     await use(page);
 
     // Cleanup
-    await context.close();
+    await page.context().close();
   },
 });
 
