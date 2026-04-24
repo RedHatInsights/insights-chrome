@@ -5,10 +5,7 @@ test.describe('App initialization', () => {
   test('should login and display the logged-in user', async ({ page }) => {
     await page.goto('/');
 
-    // Wait for page to be fully loaded before checking for elements
-    await page.waitForLoadState('networkidle');
-
-    // Wait for welcome message with extended timeout (page may take time to render)
+    // Wait for welcome message - Playwright auto-waits for visibility
     await expect(page.getByRole('heading', { name: 'Welcome to your Hybrid Cloud Console', level: 2 })).toBeVisible({ timeout: 30000 });
 
     const fullName = await getUserFullName(page);

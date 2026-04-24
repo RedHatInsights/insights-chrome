@@ -47,7 +47,7 @@ test.describe('Logout Functionality', () => {
     // Execute logout via Chrome JavaScript API
     await page.evaluate(() => {
       // @ts-ignore - insights.chrome is a global object
-      window.insights.chrome.auth.logout(true);
+      return window.insights.chrome.auth.logout(true);
     });
 
     // Wait for logout to complete and redirect

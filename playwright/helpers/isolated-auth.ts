@@ -18,8 +18,13 @@ export async function createAuthenticatedPage(browser: Browser, baseURL?: string
 
   const page = await context.newPage();
 
-  // Use the existing login helper which handles all the auth details
-  await login(page);
-
-  return page;
+  try {
+    // Use the existing login helper which handles all the auth details
+    await login(page);
+    return page;
+  } catch (error) {
+    // Clean up context on login failure to avoid leaking resources
+    await context.close();
+    throw error;
+  }
 }

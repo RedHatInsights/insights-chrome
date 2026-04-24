@@ -151,20 +151,20 @@ For tests that invalidate the auth session (like logout), we use **isolated brow
 
 ```typescript
 // Create custom test fixture with fresh auth
-const test = base.extend<{ authenticatedPage: any }>({
-  authenticatedPage: async ({ browser }, use) => {
-    const context = await browser.newContext({ ignoreHTTPSErrors: true });
-    const page = await context.newPage();
+import { createAuthenticatedPage } from '../../helpers/isolated-auth';
 
-    await disableCookiePrompt(page);
-    await page.goto(baseURL);
-    await login(page, user, password);
+const test = base.extend<{ authenticatedPage: any }>({
+  authenticatedPage: async ({ browser, baseURL }, use) => {
+    // Create an authenticated page in an isolated context
+    const page = await createAuthenticatedPage(browser, baseURL);
 
     await use(page);
-    await context.close(); // Cleanup
+    await page.context().close(); // Cleanup
   },
 });
 ```
+
+The `createAuthenticatedPage` helper creates a fresh browser context with `storageState: undefined` (no shared auth) and performs login using the standard `login()` helper from `helpers/auth.ts`.
 
 This ensures logout tests don't affect other tests' shared auth state.
 
@@ -215,7 +215,7 @@ The test will automatically run as part of the existing `ci:playwright-release-g
 ### RHCLOUD-44382
 The original IQE test was skipped due to this issue. Verify the issue is resolved before relying on these tests in CI/CD.
 
-**Mitigation:** The test includes proper waits and retries to handle timing issues.
+**Mitigation:** The test uses Playwright's auto-waiting mechanism with explicit timeouts for critical elements. Note that Playwright is configured with `retries: 0` (fail-fast approach) in `playwright.config.ts`, so tests must be reliable on first run.
 
 ---
 
