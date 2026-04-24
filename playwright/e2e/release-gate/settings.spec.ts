@@ -50,12 +50,13 @@ test.describe('Settings Gear and Navigation', () => {
     // Get the menu items
     const menuItems = await topbar.getSettingsMenuItems();
 
-    // Verify expected items are present (UI may evolve with additional items)
+    // Verify expected items are present (updated to match current UI)
     const expectedItems = [
       'Integrations',
       'Notifications',
-      'My User Access',
-      'Authentication Policy',
+      'User Access',
+      'Identity Provider Integration',
+      'Authentication Factors',
       'Service Accounts',
     ];
 
