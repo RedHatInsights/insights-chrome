@@ -12,6 +12,8 @@ import { Page, Locator } from '@playwright/test';
  * - Help, settings, and other topbar elements
  */
 export class ChromeTopbar {
+  private static readonly MENU_TIMEOUT = 5000;
+
   readonly page: Page;
   readonly overflowActionsButton: Locator;
   readonly orgIdElement: Locator;
@@ -61,7 +63,7 @@ export class ChromeTopbar {
     await this.openOverflowActions();
 
     // Wait for the org ID element to be visible
-    await this.orgIdElement.waitFor({ state: 'visible', timeout: 5000 });
+    await this.orgIdElement.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
     // Try to find a child element that contains just the ID value
     // This is more robust than parsing the full text
@@ -104,7 +106,7 @@ export class ChromeTopbar {
     await this.openOverflowActions();
 
     try {
-      await this.orgIdElement.waitFor({ state: 'visible', timeout: 5000 });
+      await this.orgIdElement.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
       return true;
     } catch {
       return false;
@@ -135,8 +137,15 @@ export class ChromeTopbar {
     if (!(await this.isSettingsOpen())) {
       const settingsGearButton = this.page.locator('#SettingsMenu');
       await settingsGearButton.click();
-      // Wait for menu to be visible
-      await this.settingsButton.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Wait for the menu to actually open by polling the state
+      await this.page.waitForFunction(
+        () => {
+          const button = document.querySelector('#SettingsMenu');
+          return button?.getAttribute('aria-expanded') === 'true';
+        },
+        { timeout: ChromeTopbar.MENU_TIMEOUT }
+      );
     }
   }
 
@@ -147,6 +156,15 @@ export class ChromeTopbar {
     if (await this.isSettingsOpen()) {
       const settingsGearButton = this.page.locator('#SettingsMenu');
       await settingsGearButton.click();
+
+      // Wait for the menu to actually close by polling the state
+      await this.page.waitForFunction(
+        () => {
+          const button = document.querySelector('#SettingsMenu');
+          return button?.getAttribute('aria-expanded') === 'false';
+        },
+        { timeout: ChromeTopbar.MENU_TIMEOUT }
+      );
     }
   }
 
@@ -159,7 +177,7 @@ export class ChromeTopbar {
 
     // Wait for menu items to render
     const menuItems = this.settingsButton.locator('li');
-    await menuItems.first().waitFor({ state: 'visible', timeout: 5000 });
+    await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
     const count = await menuItems.count();
 
@@ -200,11 +218,17 @@ export class ChromeTopbar {
 
     // Wait for menu items to be visible
     const menuItems = this.settingsButton.locator('li');
-    await menuItems.first().waitFor({ state: 'visible', timeout: 5000 });
+    await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
     // Find and click the menu item - use hasText which does partial matching
-    const menuItem = menuItems.filter({ hasText: itemName }).first();
-    await menuItem.click();
+    const matchingItems = menuItems.filter({ hasText: itemName });
+    const count = await matchingItems.count();
+
+    if (count === 0) {
+      throw new Error(`No settings menu item found matching "${itemName}"`);
+    }
+
+    await matchingItems.first().click();
   }
 
   /**
