@@ -157,9 +157,10 @@ export class ChromeTopbar {
   async getSettingsMenuItems(): Promise<string[]> {
     await this.openSettings();
 
-    // Get all menu items (li elements within the settings menu)
-    // Target only direct menu items, not nested submenus
-    const menuItems = this.settingsButton.locator('> ul > li');
+    // Wait for menu items to render
+    const menuItems = this.settingsButton.locator('li');
+    await menuItems.first().waitFor({ state: 'visible', timeout: 5000 });
+
     const count = await menuItems.count();
 
     const items: string[] = [];
