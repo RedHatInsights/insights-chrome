@@ -158,14 +158,32 @@ export class ChromeTopbar {
     await this.openSettings();
 
     // Get all menu items (li elements within the settings menu)
-    const menuItems = this.settingsButton.locator('li');
+    // Target only direct menu items, not nested submenus
+    const menuItems = this.settingsButton.locator('> ul > li');
     const count = await menuItems.count();
 
     const items: string[] = [];
     for (let i = 0; i < count; i++) {
-      const text = await menuItems.nth(i).textContent();
-      if (text) {
-        items.push(text.trim());
+      const menuItem = menuItems.nth(i);
+
+      // Try to get just the main text, not nested badges/descriptions
+      // First try to find a link or button within the item
+      const link = menuItem.locator('a, button').first();
+      const linkCount = await link.count();
+
+      if (linkCount > 0) {
+        const text = await link.innerText();
+        if (text) {
+          items.push(text.trim());
+        }
+      } else {
+        // Fallback to getting the text content
+        const text = await menuItem.textContent();
+        if (text) {
+          // Clean up text by taking only the first line or removing extra whitespace
+          const cleanText = text.trim().split('\n')[0].trim();
+          items.push(cleanText);
+        }
       }
     }
 

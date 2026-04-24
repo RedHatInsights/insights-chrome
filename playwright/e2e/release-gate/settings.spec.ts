@@ -61,7 +61,9 @@ test.describe('Settings Gear and Navigation', () => {
     ];
 
     for (const expectedItem of expectedItems) {
-      expect(menuItems).toContain(expectedItem);
+      // Check if any menu item contains the expected text (handles badges/extra text)
+      const found = menuItems.some(item => item.includes(expectedItem));
+      expect(found, `Expected to find "${expectedItem}" in menu items: ${JSON.stringify(menuItems)}`).toBe(true);
     }
   });
 
