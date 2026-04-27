@@ -129,7 +129,7 @@ test.describe('Navigation', () => {
     await page.waitForLoadState('load');
 
     // Verify fancy 404 page is displayed
-    await expect(page.locator('.land-c-page__404')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /We lost that page/i })).toBeVisible();
 
     // Click "Return to homepage" button
     await page.getByRole('link', { name: /Return to homepage/i }).click();
