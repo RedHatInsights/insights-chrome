@@ -7,13 +7,17 @@ import { useAtomValue } from 'jotai';
 import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
+import { captureMessage } from '@sentry/react';
 
-const AMPLITUDE_KEY_FALLBACK_DEV = 'dc3aabccff4063af0de96d7825422d8f';
-const AMPLITUDE_KEY_FALLBACK_PROD = '5c16029122229733b22f1d87567b437';
+// Keys are injected at build time via webpack DefinePlugin from environment variables
+// (populated from vault in CI/CD). Hardcoded fallbacks are the current public API keys
+// used when env vars are not set (local development, tests).
+const AMPLITUDE_KEY_FALLBACK_DEV = process.env.AMPLITUDE_KEY_DEV || 'dc3aabccff4063af0de96d7825422d8f';
+const AMPLITUDE_KEY_FALLBACK_PROD = process.env.AMPLITUDE_KEY_PROD || '5c16029122229733b22f1d87567b437';
 
 // Separate API keys for autocapture project
-const AMPLITUDE_AUTOCAPTURE_KEY_DEV = '61d45c06a92d1fe5cf57023568ae9053';
-const AMPLITUDE_AUTOCAPTURE_KEY_PROD = '56344678d3883c0a730f102f28f8beb4';
+const AMPLITUDE_AUTOCAPTURE_KEY_DEV = process.env.AMPLITUDE_AUTOCAPTURE_KEY_DEV || '61d45c06a92d1fe5cf57023568ae9053';
+const AMPLITUDE_AUTOCAPTURE_KEY_PROD = process.env.AMPLITUDE_AUTOCAPTURE_KEY_PROD || '56344678d3883c0a730f102f28f8beb4';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
@@ -52,7 +56,9 @@ function useAmplitude() {
 
     // Validate API key before initialization
     if (typeof autocaptureKeyToUse !== 'string' || autocaptureKeyToUse.length <= 0) {
-      console.error('Amplitude autocapture key is missing or malformed:', autocaptureKeyToUse);
+      const msg = 'Amplitude autocapture key is missing or malformed — guides/surveys will not load';
+      console.error(msg, autocaptureKeyToUse);
+      captureMessage(msg, 'error');
       return;
     }
 
@@ -133,7 +139,9 @@ function useAmplitude() {
       return;
     }
     if (typeof keyToUse !== 'string' || keyToUse.length <= 0) {
-      console.error('Amplitude key is missing or malformed:', keyToUse);
+      const msg = 'Amplitude engagement key is missing or malformed — guides/surveys will not load';
+      console.error(msg, keyToUse);
+      captureMessage(msg, 'error');
       return;
     }
     const amplitudeScript = document.createElement('script');
@@ -149,7 +157,9 @@ function useAmplitude() {
       }
     };
     amplitudeScript.onerror = () => {
-      console.error('Error loading Amplitude script', amplitudeScript.src);
+      const msg = `Amplitude script failed to load — key may be invalid or rotated: ${amplitudeScript.src}`;
+      console.error(msg);
+      captureMessage(msg, 'error');
     };
     if (!document.getElementById(amplitudeScript.id)) {
       document.body.appendChild(amplitudeScript);
