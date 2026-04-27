@@ -219,6 +219,37 @@ export class ChromeTopbar {
   }
 
   /**
+   * Selects a specific item from the settings menu by OUIA ID
+   * More stable than text-based selection
+   * @param ouiaId The OUIA component ID of the menu item
+   */
+  async selectSettingsItemByOuiaId(ouiaId: string): Promise<void> {
+    await this.openSettings();
+
+    const menuItem = this.settingsButton.locator(`[data-ouia-component-id="${ouiaId}"]`);
+    await menuItem.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+    await menuItem.click();
+  }
+
+  /**
+   * Checks if a settings menu item with the given OUIA ID exists and is visible
+   * @param ouiaId The OUIA component ID to check for
+   * @returns true if the item exists and is visible, false otherwise
+   */
+  async hasSettingsMenuItem(ouiaId: string): Promise<boolean> {
+    await this.openSettings();
+
+    const menuItem = this.settingsButton.locator(`[data-ouia-component-id="${ouiaId}"]`);
+
+    try {
+      await menuItem.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Opens the services menu
    */
   async openServices(): Promise<void> {

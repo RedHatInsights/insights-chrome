@@ -47,52 +47,31 @@ test.describe('Settings Gear and Navigation', () => {
   test('should contain expected settings menu items', async ({ page }) => {
     const topbar = new ChromeTopbar(page);
 
-    // Get the menu items
-    const menuItems = await topbar.getSettingsMenuItems();
-
-    // Verify expected items are present (updated to match current UI)
-    const expectedItems = [
-      'Integrations',
-      'Notifications',
-      'User Access',
-      'Identity Provider Integration',
-      'Authentication Factors',
-      'Service Accounts',
+    // Verify expected items are present by OUIA ID (more stable than text matching)
+    // These OUIA IDs are independent of text content, localization, and UI changes
+    const expectedOuiaIds = [
+      'settings-menu-integrations',
+      'settings-menu-notifications',
+      'UserAccess',
+      'settings-menu-identity-provider',
+      'settings-menu-auth-factors',
+      'settings-menu-service-accounts',
     ];
 
-    for (const expectedItem of expectedItems) {
-      // Check if any menu item contains the expected text (handles badges/extra text)
-      const found = menuItems.some(item => item.includes(expectedItem));
-      expect(found, `Expected to find "${expectedItem}" in menu items: ${JSON.stringify(menuItems)}`).toBe(true);
+    for (const ouiaId of expectedOuiaIds) {
+      const isVisible = await topbar.hasSettingsMenuItem(ouiaId);
+      expect(isVisible, `Expected settings menu item with OUIA ID "${ouiaId}" to be visible`).toBe(true);
     }
   });
 
   test('should select IAM menu item', async ({ page }) => {
     const topbar = new ChromeTopbar(page);
 
-    // Get menu items to determine which IAM option is available
-    const menuItems = await topbar.getSettingsMenuItems();
-
-    // Determine which IAM item to select (matches IQE's choose_iam logic)
-    // Use partial match since items may have badges/extra text
-    let iamItem: string | undefined;
-
-    const userAccessItem = menuItems.find(item => item.includes('User Access'));
-    const iamManagementItem = menuItems.find(item => item.includes('Identity & Access Management'));
-
-    if (userAccessItem) {
-      iamItem = userAccessItem;
-    } else if (iamManagementItem) {
-      iamItem = iamManagementItem;
-    } else {
-      throw new Error(`No IAM menu item found. Available items: ${JSON.stringify(menuItems)}`);
-    }
-
-    // Select the IAM item
-    await topbar.selectSettingsItem(iamItem);
+    // Select the User Access item by OUIA ID (more stable than text-based selection)
+    await topbar.selectSettingsItemByOuiaId('UserAccess');
 
     // Verify navigation occurred (URL should change)
-    // The exact URL depends on which option was selected
+    // The exact URL depends on user permissions and feature flags
     await page.waitForURL(/\/(iam|settings\/rbac|access-management)/, { timeout: 10000 });
   });
 });
