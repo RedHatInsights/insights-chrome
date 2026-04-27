@@ -1,5 +1,6 @@
 import { Browser, Page } from '@playwright/test';
 import { login } from './auth';
+import { AUTH_TIMEOUT } from '../setup/constants';
 
 /**
  * Creates an authenticated page in an isolated browser context.
@@ -17,6 +18,9 @@ export async function createAuthenticatedPage(browser: Browser, baseURL?: string
   });
 
   const page = await context.newPage();
+
+  // Set higher timeout for CI environments where network/SSO may be slower
+  page.setDefaultTimeout(AUTH_TIMEOUT);
 
   try {
     // Use the existing login helper which handles all the auth details
