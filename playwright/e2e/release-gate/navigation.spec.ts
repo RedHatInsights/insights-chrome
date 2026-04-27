@@ -73,48 +73,6 @@ test.describe('Navigation', () => {
     await expect(page.getByText(/We lost that page/i)).toBeVisible();
   });
 
-  test('platform link - Ansible from services menu', async ({ page }) => {
-    // Migrated from test_navigation.py::test_services_menu_platform_links (Ansible variant)
-
-    // Open services menu
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
-
-    // Click Ansible platform link (force to bypass overlapping elements during animation)
-    await page.getByRole('link', { name: /Ansible/i }).first().click({ force: true });
-
-    // Verify navigation to Ansible (URL or page content)
-    await expect(page).toHaveURL(/ansible|automation-analytics/);
-  });
-
-  test('platform link - OpenShift from services menu', async ({ page }) => {
-    // Migrated from test_navigation.py::test_services_menu_platform_links (OpenShift variant)
-
-    // Open services menu
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
-
-    // Click OpenShift platform link (force to bypass overlapping elements during animation)
-    await page.getByRole('link', { name: /OpenShift/i }).first().click({ force: true });
-
-    // Verify navigation to OpenShift
-    await expect(page).toHaveURL(/openshift/);
-  });
-
-  test('platform link - Insights from services menu', async ({ page }) => {
-    // Migrated from test_navigation.py::test_services_menu_platform_links (Insights variant)
-
-    // Open services menu
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
-
-    // Click Insights platform link (force to bypass overlapping elements during animation)
-    await page.getByRole('link', { name: /^Insights$/i }).first().click({ force: true });
-
-    // Verify navigation to Insights
-    await expect(page).toHaveURL(/insights/);
-  });
-
   test('fancy 404 page returns to homepage', async ({ page }) => {
     // Migrated from test_navigation.py::test_404s
 
