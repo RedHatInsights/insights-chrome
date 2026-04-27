@@ -22,6 +22,7 @@ interface MockDropdownItem {
   title: React.ReactNode;
   description?: React.ReactNode;
   isHidden?: boolean;
+  ouiaId?: string;
 }
 
 interface MockDropdownGroup {
@@ -41,7 +42,7 @@ jest.mock('./SettingsToggle', () => ({
             {group.items
               ?.filter((item) => !item.isHidden)
               .map((item, j: number) => (
-                <div key={j}>
+                <div key={j} data-ouia-component-id={item.ouiaId}>
                   {item.title}
                   {item.description && <p>{item.description}</p>}
                 </div>
@@ -165,6 +166,46 @@ describe('Tools - dark mode system feature flag', () => {
 
       expect(screen.getAllByText('Settings').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('Identity and Access Management')).toBeInTheDocument();
+    });
+  });
+
+  describe('settings menu OUIA IDs', () => {
+    it('should have OUIA ID on preview toggle', () => {
+      const { container } = renderTools();
+      expect(container.querySelector('[data-ouia-component-id="PreviewSwitcher"]')).toBeInTheDocument();
+    });
+
+    it('should have OUIA IDs on color scheme options when dark mode is enabled', () => {
+      const { container } = renderTools({
+        'platform.chrome.dark-mode': true,
+        'platform.chrome.dark-mode_system': true,
+      });
+
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-color-system"]')).toBeInTheDocument();
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-color-light"]')).toBeInTheDocument();
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-color-dark"]')).toBeInTheDocument();
+    });
+
+    it('should have OUIA IDs on Settings menu items', () => {
+      const { container } = renderTools();
+
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-integrations"]')).toBeInTheDocument();
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-notifications"]')).toBeInTheDocument();
+    });
+
+    it('should have OUIA IDs on IAM menu items', () => {
+      const { container } = renderTools();
+
+      expect(container.querySelector('[data-ouia-component-id="UserAccess"]')).toBeInTheDocument();
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-identity-provider"]')).toBeInTheDocument();
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-auth-factors"]')).toBeInTheDocument();
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-service-accounts"]')).toBeInTheDocument();
+    });
+
+    it('should not render integrations OUIA ID when ITLess is enabled', () => {
+      const { container } = renderTools({ 'platform.chrome.itless': true });
+
+      expect(container.querySelector('[data-ouia-component-id="settings-menu-integrations"]')).not.toBeInTheDocument();
     });
   });
 });
