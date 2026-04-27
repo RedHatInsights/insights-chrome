@@ -9,6 +9,9 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 import { captureMessage } from '@sentry/react';
 
+// Guard to prevent flooding Sentry with duplicate onerror reports from the same CDN incident
+let scriptErrorReported = false;
+
 // Keys are injected at build time via webpack DefinePlugin from environment variables
 // (populated from vault in CI/CD). Hardcoded fallbacks are the current public API keys
 // used when env vars are not set (local development, tests).
@@ -57,7 +60,7 @@ function useAmplitude() {
     // Validate API key before initialization
     if (typeof autocaptureKeyToUse !== 'string' || autocaptureKeyToUse.length <= 0) {
       const msg = 'Amplitude autocapture key is missing or malformed — guides/surveys will not load';
-      console.error(msg, autocaptureKeyToUse);
+      console.error(msg);
       captureMessage(msg, 'error');
       return;
     }
@@ -140,7 +143,7 @@ function useAmplitude() {
     }
     if (typeof keyToUse !== 'string' || keyToUse.length <= 0) {
       const msg = 'Amplitude engagement key is missing or malformed — guides/surveys will not load';
-      console.error(msg, keyToUse);
+      console.error(msg);
       captureMessage(msg, 'error');
       return;
     }
@@ -157,9 +160,12 @@ function useAmplitude() {
       }
     };
     amplitudeScript.onerror = () => {
-      const msg = `Amplitude script failed to load — key may be invalid or rotated: ${amplitudeScript.src}`;
-      console.error(msg);
-      captureMessage(msg, 'error');
+      const msg = 'Amplitude script failed to load — key may be invalid or rotated';
+      console.error(msg, amplitudeScript.src);
+      if (!scriptErrorReported) {
+        scriptErrorReported = true;
+        captureMessage(msg, 'error');
+      }
     };
     if (!document.getElementById(amplitudeScript.id)) {
       document.body.appendChild(amplitudeScript);
@@ -176,6 +182,11 @@ function useAmplitude() {
   useEffect(() => {
     initializeAmplitudeAutocapture();
   }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, autocaptureKeyToUse]);
+}
+
+/** Reset the onerror deduplication guard — exposed for unit tests only. */
+export function resetScriptErrorReported(): void {
+  scriptErrorReported = false;
 }
 
 export default useAmplitude;

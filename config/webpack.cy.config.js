@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
+const webpack = require('webpack');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
@@ -98,6 +99,13 @@ const JSConfig = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
+    }),
+    new webpack.DefinePlugin({
+      __SENTRY_DEBUG__: false,
+      'process.env.AMPLITUDE_KEY_DEV': JSON.stringify(process.env.AMPLITUDE_KEY_DEV || ''),
+      'process.env.AMPLITUDE_KEY_PROD': JSON.stringify(process.env.AMPLITUDE_KEY_PROD || ''),
+      'process.env.AMPLITUDE_AUTOCAPTURE_KEY_DEV': JSON.stringify(process.env.AMPLITUDE_AUTOCAPTURE_KEY_DEV || ''),
+      'process.env.AMPLITUDE_AUTOCAPTURE_KEY_PROD': JSON.stringify(process.env.AMPLITUDE_AUTOCAPTURE_KEY_PROD || ''),
     }),
     new ModuleFederationPlugin({
       name: 'chrome',

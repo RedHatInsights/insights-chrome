@@ -47,7 +47,7 @@ const analyticsMock = {
   off: jest.fn(),
 };
 
-import useAmplitude from './useAmplitude';
+import useAmplitude, { resetScriptErrorReported } from './useAmplitude';
 
 function TestComponent() {
   useAmplitude();
@@ -59,6 +59,7 @@ describe('useAmplitude', () => {
     delete window.engagement;
     document.getElementById('amplitude-script')?.remove();
     jest.clearAllMocks();
+    resetScriptErrorReported();
   });
 
   it('injects script with active module dev key and initializes on load', async () => {
