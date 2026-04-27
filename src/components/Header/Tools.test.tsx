@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, configure } from '@testing-library/react';
+import { configure, render, screen } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
