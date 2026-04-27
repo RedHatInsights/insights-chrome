@@ -60,9 +60,8 @@ test.describe('Navigation', () => {
     // Verify we're still on the dashboard page
     await expect(page).toHaveURL(/.*\/insights\/dashboard/);
 
-    // Verify navigation item is still selected
-    const selected = await navigation.getCurrentlySelected();
-    expect(selected.some((item) => item.includes('Dashboard'))).toBeTruthy();
+    // Verify navigation item is still selected (using retryable locator assertion)
+    await expect(navigation.sidebar.locator('[aria-current="page"]').filter({ hasText: /Dashboard/i })).toBeVisible();
   });
 
   test('generic 404 page content', async ({ page }) => {
