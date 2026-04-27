@@ -72,4 +72,63 @@ test.describe('Navigation', () => {
     // Verify 404 page content is displayed
     await expect(page.getByText(/We lost that page/i)).toBeVisible();
   });
+
+  test('platform link - Ansible from services menu', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (Ansible variant)
+
+    // Open services menu
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+
+    // Click Ansible platform link
+    await page.getByRole('link', { name: /Ansible/i }).first().click();
+
+    // Verify navigation to Ansible (URL or page content)
+    await expect(page).toHaveURL(/ansible|automation-analytics/);
+  });
+
+  test('platform link - OpenShift from services menu', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (OpenShift variant)
+
+    // Open services menu
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+
+    // Click OpenShift platform link
+    await page.getByRole('link', { name: /OpenShift/i }).first().click();
+
+    // Verify navigation to OpenShift
+    await expect(page).toHaveURL(/openshift/);
+  });
+
+  test('platform link - Insights from services menu', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (Insights variant)
+
+    // Open services menu
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+
+    // Click Insights platform link
+    await page.getByRole('link', { name: /^Insights$/i }).first().click();
+
+    // Verify navigation to Insights
+    await expect(page).toHaveURL(/insights/);
+  });
+
+  test('fancy 404 page returns to homepage', async ({ page }) => {
+    // Migrated from test_navigation.py::test_404s
+
+    // Navigate to 404 page
+    await page.goto('/404/404/404');
+    await page.waitForLoadState('load');
+
+    // Verify fancy 404 page is displayed
+    await expect(page.locator('.land-c-page__404')).toBeVisible();
+
+    // Click "Return to homepage" button
+    await page.getByRole('link', { name: /Return to homepage/i }).click();
+
+    // Verify navigation back to homepage
+    await expect(page).toHaveURL(/^\/$|^\/$/);
+  });
 });
