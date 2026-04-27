@@ -15,8 +15,8 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
 
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  /* No retries - fail fast */
+  retries: 0,
 
   /* Use single worker on CI to avoid flakiness, allow parallelism locally */
   workers: process.env.CI ? 1 : undefined,
@@ -38,8 +38,8 @@ export default defineConfig({
     /* Reuse authentication state from global setup */
     storageState: 'playwright/.auth/user.json',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    /* Collect trace on failure for debugging */
+    trace: 'retain-on-failure',
 
     /* Screenshot only on failure */
     screenshot: 'only-on-failure',
