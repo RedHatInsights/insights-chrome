@@ -175,17 +175,17 @@ export class ChromeTopbar {
   async getSettingsMenuItems(): Promise<string[]> {
     await this.openSettings();
 
-    // Target only actual menu item links/buttons, not all <li> elements
-    // This avoids nested structural elements
-    const menuItemLinks = this.settingsButton.locator('li > a, li > button');
-    await menuItemLinks.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+    // Target menu items by OUIA component ID for more reliable selection
+    // This is more stable than DOM structure selectors
+    const menuItems = this.settingsButton.locator('[data-ouia-component-id]');
+    await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
-    const count = await menuItemLinks.count();
+    const count = await menuItems.count();
 
     const items: string[] = [];
     for (let i = 0; i < count; i++) {
-      const link = menuItemLinks.nth(i);
-      const text = await link.innerText();
+      const item = menuItems.nth(i);
+      const text = await item.innerText();
       if (text) {
         // Extract just the first line to avoid badges/extra text
         const cleanText = text.trim().split('\n')[0].trim();
