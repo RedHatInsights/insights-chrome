@@ -176,8 +176,9 @@ export class ChromeTopbar {
     await this.openSettings();
 
     // Target menu items by OUIA component ID for more reliable selection
-    // This is more stable than DOM structure selectors
-    const menuItems = this.settingsButton.locator('[data-ouia-component-id]');
+    // Use :not(:has()) to exclude wrapper elements that contain nested OUIA elements
+    // This ensures we only match leaf nodes (one node per logical menu entry)
+    const menuItems = this.settingsButton.locator('[data-ouia-component-id]:not(:has([data-ouia-component-id]))');
     await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
     const count = await menuItems.count();
