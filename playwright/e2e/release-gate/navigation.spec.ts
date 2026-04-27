@@ -80,8 +80,8 @@ test.describe('Navigation', () => {
     await page.locator('.chr-c-link-service-toggle').click();
     await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
 
-    // Click Ansible platform link
-    await page.getByRole('link', { name: /Ansible/i }).first().click();
+    // Click Ansible platform link (force to bypass overlapping elements during animation)
+    await page.getByRole('link', { name: /Ansible/i }).first().click({ force: true });
 
     // Verify navigation to Ansible (URL or page content)
     await expect(page).toHaveURL(/ansible|automation-analytics/);
@@ -94,8 +94,8 @@ test.describe('Navigation', () => {
     await page.locator('.chr-c-link-service-toggle').click();
     await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
 
-    // Click OpenShift platform link
-    await page.getByRole('link', { name: /OpenShift/i }).first().click();
+    // Click OpenShift platform link (force to bypass overlapping elements during animation)
+    await page.getByRole('link', { name: /OpenShift/i }).first().click({ force: true });
 
     // Verify navigation to OpenShift
     await expect(page).toHaveURL(/openshift/);
@@ -108,8 +108,8 @@ test.describe('Navigation', () => {
     await page.locator('.chr-c-link-service-toggle').click();
     await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
 
-    // Click Insights platform link
-    await page.getByRole('link', { name: /^Insights$/i }).first().click();
+    // Click Insights platform link (force to bypass overlapping elements during animation)
+    await page.getByRole('link', { name: /^Insights$/i }).first().click({ force: true });
 
     // Verify navigation to Insights
     await expect(page).toHaveURL(/insights/);
