@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, configure } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
@@ -7,6 +7,10 @@ import Tools from './Tools';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { useFlag } from '@unleash/proxy-client-react';
+
+// Configure data-ouia-component-id as the test ID attribute
+// This allows using screen.getByTestId/queryByTestId for OUIA IDs
+configure({ testIdAttribute: 'data-ouia-component-id' });
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
@@ -171,41 +175,41 @@ describe('Tools - dark mode system feature flag', () => {
 
   describe('settings menu OUIA IDs', () => {
     it('should have OUIA ID on preview toggle', () => {
-      const { container } = renderTools();
-      expect(container.querySelector('[data-ouia-component-id="PreviewSwitcher"]')).toBeInTheDocument();
+      renderTools();
+      expect(screen.getByTestId('PreviewSwitcher')).toBeInTheDocument();
     });
 
     it('should have OUIA IDs on color scheme options when dark mode is enabled', () => {
-      const { container } = renderTools({
+      renderTools({
         'platform.chrome.dark-mode': true,
         'platform.chrome.dark-mode_system': true,
       });
 
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-color-system"]')).toBeInTheDocument();
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-color-light"]')).toBeInTheDocument();
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-color-dark"]')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-color-system')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-color-light')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-color-dark')).toBeInTheDocument();
     });
 
     it('should have OUIA IDs on Settings menu items', () => {
-      const { container } = renderTools();
+      renderTools();
 
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-integrations"]')).toBeInTheDocument();
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-notifications"]')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-integrations')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-notifications')).toBeInTheDocument();
     });
 
     it('should have OUIA IDs on IAM menu items', () => {
-      const { container } = renderTools();
+      renderTools();
 
-      expect(container.querySelector('[data-ouia-component-id="UserAccess"]')).toBeInTheDocument();
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-identity-provider"]')).toBeInTheDocument();
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-auth-factors"]')).toBeInTheDocument();
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-service-accounts"]')).toBeInTheDocument();
+      expect(screen.getByTestId('UserAccess')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-identity-provider')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-auth-factors')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-service-accounts')).toBeInTheDocument();
     });
 
     it('should not render integrations OUIA ID when ITLess is enabled', () => {
-      const { container } = renderTools({ 'platform.chrome.itless': true });
+      renderTools({ 'platform.chrome.itless': true });
 
-      expect(container.querySelector('[data-ouia-component-id="settings-menu-integrations"]')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('settings-menu-integrations')).not.toBeInTheDocument();
     });
   });
 });
