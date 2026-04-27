@@ -175,34 +175,21 @@ export class ChromeTopbar {
   async getSettingsMenuItems(): Promise<string[]> {
     await this.openSettings();
 
-    // Wait for menu items to render
-    const menuItems = this.settingsButton.locator('li');
-    await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+    // Target only actual menu item links/buttons, not all <li> elements
+    // This avoids nested structural elements
+    const menuItemLinks = this.settingsButton.locator('li > a, li > button');
+    await menuItemLinks.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
-    const count = await menuItems.count();
+    const count = await menuItemLinks.count();
 
     const items: string[] = [];
     for (let i = 0; i < count; i++) {
-      const menuItem = menuItems.nth(i);
-
-      // Try to get just the main text, not nested badges/descriptions
-      // First try to find a link or button within the item
-      const link = menuItem.locator('a, button').first();
-      const linkCount = await link.count();
-
-      if (linkCount > 0) {
-        const text = await link.innerText();
-        if (text) {
-          items.push(text.trim());
-        }
-      } else {
-        // Fallback to getting the text content
-        const text = await menuItem.textContent();
-        if (text) {
-          // Clean up text by taking only the first line or removing extra whitespace
-          const cleanText = text.trim().split('\n')[0].trim();
-          items.push(cleanText);
-        }
+      const link = menuItemLinks.nth(i);
+      const text = await link.innerText();
+      if (text) {
+        // Extract just the first line to avoid badges/extra text
+        const cleanText = text.trim().split('\n')[0].trim();
+        items.push(cleanText);
       }
     }
 
