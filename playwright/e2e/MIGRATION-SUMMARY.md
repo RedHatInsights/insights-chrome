@@ -8,7 +8,18 @@
 
 ### Tests Migrated
 
-#### 1. Fancy 404 Page
+#### 1. Platform Service Links
+**Test:** `test_services_menu_platform_links`
+**Playwright Implementation:** 3 test cases
+- ✅ Platform link - Ansible has correct internal route
+- ✅ Platform link - OpenShift has correct internal route
+- ✅ Platform link - Insights has correct internal route
+
+These tests validate chrome's navigation structure by verifying the platform links exist in the services menu and have the correct internal `href` values (`/ansible`, `/openshift/overview`, `/insights`). The tests do NOT click through to validate destinations (which may not be available in CI).
+
+**Testing Approach:** Validates link configuration and chrome navigation structure, not destination availability.
+
+#### 2. Fancy 404 Page
 **Test:** `test_404s`
 **Playwright Implementation:** 1 test case
 - ✅ Fancy 404 page returns to homepage
@@ -16,10 +27,6 @@
 Tests that the fancy 404 error page displays correctly and the "Return to homepage" button works.
 
 ### Tests NOT Migrated (Chrome-Specific Reasoning)
-
-#### ❌ test_services_menu_platform_links
-**Reason:** External marketing links, not chrome navigation
-**Details:** The "platform links" (Ansible, OpenShift, Insights) in the services menu are external marketing links to redhat.com (e.g., `https://redhat.com/en/technologies/management/ansible`), not internal console navigation. These links don't test chrome functionality - they're promotional content. Testing external marketing links is not a chrome responsibility.
 
 #### ❌ test_services_menu_destinations
 **Reason:** Tenant application responsibility
@@ -44,11 +51,14 @@ Tests that the fancy 404 error page displays correctly and the "Return to homepa
 
 ### Migration Statistics
 
-- **Tests Migrated:** 1 test function → 1 test case (test_404s)
-- **Tests Skipped:** 4
-  - 1 external marketing links (test_services_menu_platform_links)
-  - 3 tenant app responsibilities (test_services_menu_destinations, test_non_services_menu_destinations, test_broken_links)
-- **Test Coverage Philosophy:** Chrome tests chrome navigation; tenants test tenant apps; external links not tested
+- **Tests Migrated:** 2 test functions → 4 test cases
+  - test_services_menu_platform_links: 3 test cases validating chrome navigation structure
+  - test_404s: 1 test case for fancy 404 page
+- **Tests Skipped:** 3 (tenant app responsibilities)
+  - test_services_menu_destinations
+  - test_non_services_menu_destinations
+  - test_broken_links
+- **Test Coverage Philosophy:** Chrome tests chrome navigation structure; tenants test tenant apps and destinations
 
 ---
 
