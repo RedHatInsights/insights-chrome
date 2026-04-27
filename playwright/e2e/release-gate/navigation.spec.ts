@@ -134,7 +134,7 @@ test.describe('Navigation', () => {
     // Click "Return to homepage" button
     await page.getByRole('link', { name: /Return to homepage/i }).click();
 
-    // Verify navigation back to homepage
-    await expect(page).toHaveURL(/^\/$|^\/$/);
+    // Verify navigation back to homepage (string path automatically matches against baseURL)
+    await expect(page).toHaveURL('/');
   });
 });
