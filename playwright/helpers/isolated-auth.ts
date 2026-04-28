@@ -28,7 +28,12 @@ export async function createAuthenticatedPage(browser: Browser, baseURL?: string
     return page;
   } catch (error) {
     // Clean up context on login failure to avoid leaking resources
-    await context.close();
+    // Safely close context - it may already be closed if test timed out
+    try {
+      await context.close();
+    } catch (closeError) {
+      // Context already closed - this is fine, suppress the error
+    }
     throw error;
   }
 }
