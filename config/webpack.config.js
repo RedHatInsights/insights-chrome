@@ -328,5 +328,32 @@ module.exports = function (env) {
     config.devServer.server = 'https';
   }
 
+  // Ensure dev server exits cleanly on Ctrl+C / SIGTERM.
+  // WDS v5 setupExitSignals calls server.close(), but lingering
+  // WebSocket (HMR) and proxy connections can keep the process alive.
+  // Force-exit after a grace period so the port is released.
+  if (dev) {
+    config.devServer.setupExitSignals = true;
+    const originalOnListening = config.devServer.onListening;
+    config.devServer.onListening = (devServer) => {
+      if (originalOnListening) {
+        originalOnListening(devServer);
+      }
+
+      const cleanup = () => {
+        console.log('\nShutting down dev server...');
+        devServer.close();
+        // Force exit if graceful close doesn't complete within 3 seconds
+        setTimeout(() => {
+          console.log('Forcing exit — lingering connections detected.');
+          process.exit(0);
+        }, 3000);
+      };
+
+      process.on('SIGINT', cleanup);
+      process.on('SIGTERM', cleanup);
+    };
+  }
+
   return [pfConfig, config];
 };
