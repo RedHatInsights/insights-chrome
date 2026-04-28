@@ -17,6 +17,7 @@ const BetaInfoModal = ({ onAccept, isOpen, toggleOpen }: { toggleOpen: (isOpen: 
   );
   return (
     <Modal
+      aria-label="Preview information"
       isOpen={isOpen}
       onClose={() => toggleOpen(false)}
       variant={ModalVariant.small}
