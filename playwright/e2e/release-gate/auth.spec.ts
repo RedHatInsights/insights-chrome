@@ -5,6 +5,9 @@ test.describe('Authentication', () => {
   // Override storage state to start unauthenticated for login flow tests
   test.use({ storageState: { cookies: [], origins: [] } });
 
+  // Fresh SSO logins are slow in CI — allow extra time
+  test.setTimeout(60_000);
+
   test('should successfully login and verify authenticated state', async ({ page }) => {
     await login(page);
 

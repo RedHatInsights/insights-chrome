@@ -30,20 +30,17 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     const sidebar = page.locator('.pf-v6-c-sidebar__content');
     await expect(sidebar).toBeVisible();
 
-    // Occasionally the test finds two instances because the ID isn't unique; choose the first as a work-around
-    const favoriteItem = await page.locator(`${quickstartIdSelector}:visible`).all();
+    // Unfavorite all visible instances (ID can be duplicated on the page)
+    const favoriteItem = await sidebar.locator(`${quickstartIdSelector}:visible`).all();
     for (const item of favoriteItem) {
-      // unfavorite the item
-      // ugly logic because quickstart id is duplicated; can't track down unique element that has a button sub-element
-      const rightButton = await item.getByRole('button').isVisible();
-      if (rightButton) {
+      const hasButton = await item.getByRole('button').isVisible();
+      if (hasButton) {
         await item.getByRole('button').click();
       }
     }
 
-    // Assert that the service is no longer in the favorites dropdown
-    await page.waitForLoadState('load');
-    await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible();
+    // Wait for the item to disappear from the sidebar after the async unfavorite completes
+    await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible({ timeout: 10000 });
 
     // 7. Close the drop-down menu
     await page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' }).click();

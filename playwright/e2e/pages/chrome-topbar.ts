@@ -18,7 +18,6 @@ export class ChromeTopbar {
   readonly overflowActionsButton: Locator;
   readonly orgIdElement: Locator;
   readonly helpButton: Locator;
-  readonly settingsButton: Locator;
   readonly servicesButton: Locator;
   readonly notificationsBadge: Locator;
 
@@ -35,7 +34,6 @@ export class ChromeTopbar {
 
     // Other topbar elements
     this.helpButton = page.getByRole('button', { name: 'Help' });
-    this.settingsButton = page.locator('[data-ouia-component-id="chrome-settings"]');
     this.servicesButton = page.locator('.chr-c-link-service-toggle');
     this.notificationsBadge = page.locator('button.chr-c-notification-badge');
   }
@@ -170,37 +168,26 @@ export class ChromeTopbar {
 
   /**
    * Gets the list of items in the settings menu
-   * @returns Array of menu item text
+   * @returns Array of unique menu item text (first line only, badges stripped)
    */
   async getSettingsMenuItems(): Promise<string[]> {
     await this.openSettings();
 
-    // Wait for menu items to render
-    const menuItems = this.settingsButton.locator('li');
+    // Use PF6 menu list-item class, excluding dividers (role="separator")
+    const menuItems = this.page.locator('[data-ouia-component-id="chrome-settings"] li.pf-v6-c-menu__list-item:not([role="separator"])');
     await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
     const count = await menuItems.count();
 
+    const seen = new Set<string>();
     const items: string[] = [];
     for (let i = 0; i < count; i++) {
       const menuItem = menuItems.nth(i);
-
-      // Try to get just the main text, not nested badges/descriptions
-      // First try to find a link or button within the item
-      const link = menuItem.locator('a, button').first();
-      const linkCount = await link.count();
-
-      if (linkCount > 0) {
-        const text = await link.innerText();
-        if (text) {
-          items.push(text.trim());
-        }
-      } else {
-        // Fallback to getting the text content
-        const text = await menuItem.textContent();
-        if (text) {
-          // Clean up text by taking only the first line or removing extra whitespace
-          const cleanText = text.trim().split('\n')[0].trim();
+      const text = await menuItem.innerText();
+      if (text) {
+        const cleanText = text.trim().split('\n')[0].trim();
+        if (cleanText && !seen.has(cleanText)) {
+          seen.add(cleanText);
           items.push(cleanText);
         }
       }
@@ -211,16 +198,14 @@ export class ChromeTopbar {
 
   /**
    * Selects a specific item from the settings menu
-   * @param itemName The text of the menu item to select (can be partial match)
+   * @param itemName The text of the menu item to select (partial match supported)
    */
   async selectSettingsItem(itemName: string): Promise<void> {
     await this.openSettings();
 
-    // Wait for menu items to be visible
-    const menuItems = this.settingsButton.locator('li');
+    const menuItems = this.page.locator('[data-ouia-component-id="chrome-settings"] li.pf-v6-c-menu__list-item:not([role="separator"])');
     await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
-    // Find and click the menu item - use hasText which does partial matching
     const matchingItems = menuItems.filter({ hasText: itemName });
     const count = await matchingItems.count();
 
