@@ -58,4 +58,9 @@ cypress/downloads
 
 .mcp.json
 
+# Environment variables
+.env
+.env.local
+
+
 .hypothesis
