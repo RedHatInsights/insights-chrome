@@ -1,10 +1,13 @@
 import { expect, test } from '../../setup/test-setup';
+import { PAGE_RENDER_TIMEOUT } from '../constants';
 
 test.describe('Auth', () => {
   test('should force refresh token', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { name: 'Welcome to your Hybrid Cloud Console', level: 2 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Welcome to your Hybrid Cloud Console', level: 2 })).toBeVisible({
+      timeout: PAGE_RENDER_TIMEOUT,
+    });
 
     const tokenResponsePromise = page.waitForResponse((response) => {
       return response.url().includes('/auth/realms/redhat-external/protocol/openid-connect/token') && response.request().method() === 'POST';
