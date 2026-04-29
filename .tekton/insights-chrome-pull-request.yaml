@@ -333,7 +333,7 @@ spec:
             value: "true"
           script: |
             #!/usr/bin/env bash
-            set -ex
+            set -e
             npm i >/dev/null 2>&1
             echo "Starting dev server in background..."
             KONFLUX_RUN=$KONFLUX_RUN DISABLE_CLIENT_OVERLAY=true npm run dev:beta &
