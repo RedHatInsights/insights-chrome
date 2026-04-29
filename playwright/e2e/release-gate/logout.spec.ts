@@ -1,6 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 import { ChromeTopbar } from '../pages/chrome-topbar';
 import { createAuthenticatedPage } from '../../helpers/isolated-auth';
+import { AUTH_TIMEOUT } from '../../setup/constants';
 
 /**
  * Test: Logout functionality
@@ -23,16 +24,19 @@ import { createAuthenticatedPage } from '../../helpers/isolated-auth';
 
 // Create a custom test that doesn't use shared auth state
 const test = base.extend<{ authenticatedPage: any }>({
-  authenticatedPage: async ({ browser, baseURL }, use) => {
-    // Create an authenticated page in an isolated context
-    const page = await createAuthenticatedPage(browser, baseURL);
+  authenticatedPage: [
+    async ({ browser, baseURL }, use) => {
+      // Create an authenticated page in an isolated context
+      const page = await createAuthenticatedPage(browser, baseURL);
 
-    // Provide the authenticated page to the test
-    await use(page);
+      // Provide the authenticated page to the test
+      await use(page);
 
-    // Cleanup
-    await page.context().close();
-  },
+      // Cleanup
+      await page.context().close();
+    },
+    { timeout: AUTH_TIMEOUT },
+  ],
 });
 
 test.describe('Logout Functionality', () => {
