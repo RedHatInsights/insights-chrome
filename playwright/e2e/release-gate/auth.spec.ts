@@ -1,9 +1,13 @@
 import { expect, test } from '../../setup/test-setup';
 import { login } from '../../helpers/auth';
+import { AUTH_TIMEOUT } from '../../setup/constants';
 
 test.describe('Authentication', () => {
   // Override storage state to start unauthenticated for login flow tests
   test.use({ storageState: { cookies: [], origins: [] } });
+
+  // SSO authentication can be slow in CI - use AUTH_TIMEOUT for all tests
+  test.describe.configure({ timeout: AUTH_TIMEOUT });
 
   test('should successfully login and verify authenticated state', async ({ page }) => {
     await login(page);
