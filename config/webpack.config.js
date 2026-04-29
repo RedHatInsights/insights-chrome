@@ -346,5 +346,26 @@ module.exports = function (env) {
     }
   }
 
+  // Ensure dev server exits cleanly on Ctrl+C / SIGTERM.
+  // Lingering HMR/proxy connections can keep the process alive after
+  // WDS graceful shutdown — force-exit after a short grace period.
+  if (dev) {
+    config.devServer.setupExitSignals = true;
+    const originalOnListening = config.devServer.onListening;
+    config.devServer.onListening = (devServer) => {
+      if (originalOnListening) {
+        originalOnListening(devServer);
+      }
+
+      const cleanup = () => {
+        devServer.stopCallback(() => process.exit(0));
+        setTimeout(() => process.exit(0), 3000).unref();
+      };
+
+      process.once('SIGINT', cleanup);
+      process.once('SIGTERM', cleanup);
+    };
+  }
+
   return [pfConfig, config];
 };
