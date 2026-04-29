@@ -175,34 +175,22 @@ export class ChromeTopbar {
   async getSettingsMenuItems(): Promise<string[]> {
     await this.openSettings();
 
-    // Wait for menu items to render
-    const menuItems = this.settingsButton.locator('li');
+    // Target menu items by OUIA component ID for more reliable selection
+    // Use :not(:has()) to exclude wrapper elements that contain nested OUIA elements
+    // This ensures we only match leaf nodes (one node per logical menu entry)
+    const menuItems = this.settingsButton.locator('[data-ouia-component-id]:not(:has([data-ouia-component-id]))');
     await menuItems.first().waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
 
     const count = await menuItems.count();
 
     const items: string[] = [];
     for (let i = 0; i < count; i++) {
-      const menuItem = menuItems.nth(i);
-
-      // Try to get just the main text, not nested badges/descriptions
-      // First try to find a link or button within the item
-      const link = menuItem.locator('a, button').first();
-      const linkCount = await link.count();
-
-      if (linkCount > 0) {
-        const text = await link.innerText();
-        if (text) {
-          items.push(text.trim());
-        }
-      } else {
-        // Fallback to getting the text content
-        const text = await menuItem.textContent();
-        if (text) {
-          // Clean up text by taking only the first line or removing extra whitespace
-          const cleanText = text.trim().split('\n')[0].trim();
-          items.push(cleanText);
-        }
+      const item = menuItems.nth(i);
+      const text = await item.innerText();
+      if (text) {
+        // Extract just the first line to avoid badges/extra text
+        const cleanText = text.trim().split('\n')[0].trim();
+        items.push(cleanText);
       }
     }
 
@@ -229,6 +217,37 @@ export class ChromeTopbar {
     }
 
     await matchingItems.first().click();
+  }
+
+  /**
+   * Selects a specific item from the settings menu by OUIA ID
+   * More stable than text-based selection
+   * @param ouiaId The OUIA component ID of the menu item
+   */
+  async selectSettingsItemByOuiaId(ouiaId: string): Promise<void> {
+    await this.openSettings();
+
+    const menuItem = this.settingsButton.locator(`[data-ouia-component-id="${ouiaId}"]`);
+    await menuItem.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+    await menuItem.click();
+  }
+
+  /**
+   * Checks if a settings menu item with the given OUIA ID exists and is visible
+   * @param ouiaId The OUIA component ID to check for
+   * @returns true if the item exists and is visible, false otherwise
+   */
+  async hasSettingsMenuItem(ouiaId: string): Promise<boolean> {
+    await this.openSettings();
+
+    const menuItem = this.settingsButton.locator(`[data-ouia-component-id="${ouiaId}"]`);
+
+    try {
+      await menuItem.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**

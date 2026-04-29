@@ -500,6 +500,10 @@ npm run dev
 
 # Open browser
 # https://stage.foo.redhat.com:1337
+
+# Firefox recommended (no cert setup needed)
+# Chrome may show ERR_TOO_MANY_RETRIES with self-signed cert
+# Chrome fix: see README.md "Local Development SSL Setup" for mkcert instructions
 ```
 
 ### Working with Local Apps
