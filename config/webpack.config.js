@@ -340,20 +340,28 @@ module.exports = function (env) {
         originalOnListening(devServer);
       }
 
+      let shuttingDown = false;
       const cleanup = () => {
+        if (shuttingDown) {
+          return;
+        }
+        shuttingDown = true;
         console.log('\nShutting down dev server...');
-        devServer.stopCallback(() => {
-          console.log('Dev server stopped.');
-        });
         // Force exit if graceful close doesn't complete within 3 seconds
-        setTimeout(() => {
+        const forceExitTimer = setTimeout(() => {
           console.log('Forcing exit — lingering connections detected.');
           process.exit(0);
         }, 3000);
+        forceExitTimer.unref();
+        devServer.stopCallback(() => {
+          clearTimeout(forceExitTimer);
+          console.log('Dev server stopped.');
+          process.exit(0);
+        });
       };
 
-      process.on('SIGINT', cleanup);
-      process.on('SIGTERM', cleanup);
+      process.once('SIGINT', cleanup);
+      process.once('SIGTERM', cleanup);
     };
   }
 
