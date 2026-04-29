@@ -34,6 +34,7 @@ describe('BetaInfoModal', () => {
     const link = screen.getByRole('link', { name: /Learn more/i });
     expect(link).toHaveAttribute('href', 'https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle');
     expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noreferrer');
   });
 
   it('should render Turn on and Cancel buttons', () => {
