@@ -57,12 +57,6 @@ const publicPath = '/apps/chrome/js/';
 const konfluxDevServerSettings = {
   // This setting indirectly controls whether the server binds to IPv4 or IPv6.
   host: '127.0.0.1',
-  client: {
-      overlay: {                                                                                                                                                                                                                                     
-        errors: false,                                                                                                                                                                                                                               
-        warnings: false,                                                                                                                                                                                                                             
-      }, 
-  },
   proxy: [
     {
       secure: false,
@@ -233,12 +227,6 @@ const commonConfig = ({ dev }) => {
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
-      client: {
-        overlay: {                                                                                                                                                                                                                                     
-          errors: false,                                                                                                                                                                                                                               
-          warnings: false,                                                                                                                                                                                                                             
-        }, 
-      },
       allowedHosts: 'all',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -252,6 +240,13 @@ const commonConfig = ({ dev }) => {
       // HMR flag
       hot: true,
       ...contextualConfigSettings,
+      // Disable overlay in CI to prevent test interference (keeps it enabled locally for debugging)
+      // This must come AFTER contextualConfigSettings spread to ensure it's not overridden
+      ...(process.env.CI && {
+        client: {
+          overlay: false,
+        },
+      }),
     },
   };
 };
