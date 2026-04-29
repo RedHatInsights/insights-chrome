@@ -340,9 +340,13 @@ spec:
 
             echo "Running Playwright e2e tests"
             # All credentials from chrome-credentials-secret are automatically available as env vars via envFrom:
-            #   $username, $password - Default admin user
-            #   $E2E_NON_ADMIN_USER, $E2E_NON_ADMIN_PASSWORD - Non-admin user
-            # Playwright tests can access these directly via process.env.username, process.env.E2E_NON_ADMIN_USER, etc.
+            #   $username, $password - Default admin user (mapped to E2E_USER/E2E_PASSWORD below)
+            #   $E2E_NON_ADMIN_USER, $E2E_NON_ADMIN_PASSWORD - Non-admin user (used directly)
+
+            # Map secret keys to expected Playwright env vars
+            export E2E_USER="$username"
+            export E2E_PASSWORD="$password"
+            # E2E_NON_ADMIN_USER and E2E_NON_ADMIN_PASSWORD are already correctly named in the secret
 
             npx playwright test
             echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
