@@ -295,8 +295,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
 
   return (
     <div ref={containerRef} className="pf-v6-c-search-input pf-v6-u-w-100 pf-v6-u-align-content-center">
-      {!md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
-      {md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
+      <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />
     </div>
   );
 };
