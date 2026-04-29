@@ -247,7 +247,7 @@ const commonConfig = ({ dev }) => {
       historyApiFallback: {
         index: `${publicPath}index.html`,
       },
-      https: true,
+      server: 'https',
       port: 1337,
       // HMR flag
       hot: true,
@@ -325,8 +325,7 @@ module.exports = function (env) {
     delete config.devServer.onBeforeSetupMiddleware;
   }
 
-  if (config.devServer.https) {
-    config.devServer.server = 'https';
+  if (config.devServer.server) {
     const certFile = path.resolve(__dirname, '../stage.foo.redhat.com.pem');
     const keyFile = path.resolve(__dirname, '../stage.foo.redhat.com-key.pem');
     if (fs.existsSync(certFile) && fs.existsSync(keyFile)) {
