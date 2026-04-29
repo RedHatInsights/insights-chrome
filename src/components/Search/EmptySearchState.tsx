@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
 import { useLoadModule, useRemoteHook } from '@scalprum/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { EmptyState, EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
@@ -19,7 +20,7 @@ type VirtualAssistantState = {
   message?: string;
 };
 
-const EmptySearchState = () => {
+const EmptySearchVALink = () => {
   const { hookResult: useVirtualAssistant, loading } = useRemoteHook<[VirtualAssistantState, Dispatch<SetStateAction<VirtualAssistantState>>]>({
     scope: 'virtualAssistant',
     module: './state/globalState',
@@ -36,6 +37,33 @@ const EmptySearchState = () => {
 
   const Models = module as ModelsType;
   const [, setState] = useVirtualAssistant || [null, null];
+
+  return (
+    <Content component="p" className="pf-v6-u-text-color-subtle">
+      Try searching Hybrid Cloud help or start a conversation with our{' '}
+      <button
+        type="button"
+        onClick={() => {
+          if (setState) {
+            setState({
+              isOpen: true,
+              currentModel: Models.VA,
+              message: '',
+            });
+          }
+        }}
+        disabled={loading || !setState}
+        className="pf-v6-c-button pf-m-link pf-m-inline"
+      >
+        Virtual Assistant.
+      </button>
+    </Content>
+  );
+};
+
+const EmptySearchState = () => {
+  const isVAEnabled = useFlag('platform.va.environment.enabled');
+
   return (
     <EmptyState
       titleText={
@@ -52,24 +80,13 @@ const EmptySearchState = () => {
           <Content component="p" className="pf-v6-u-text-color-subtle pf-v6-u-mb-0">
             No results match your criteria.
           </Content>
-          <Content component="p" className="pf-v6-u-text-color-subtle">
-            Try searching Hybrid Cloud help or start a conversation with our{' '}
-            <a
-              role="button"
-              onClick={() => {
-                if (setState) {
-                  setState({
-                    isOpen: true,
-                    currentModel: Models.VA,
-                    message: '',
-                  });
-                }
-              }}
-              style={{ cursor: loading || !setState ? 'not-allowed' : 'pointer', opacity: loading || !setState ? 0.5 : 1 }}
-            >
-              Virtual Assistant.
-            </a>
-          </Content>
+          {isVAEnabled ? (
+            <EmptySearchVALink />
+          ) : (
+            <Content component="p" className="pf-v6-u-text-color-subtle">
+              Try searching Hybrid Cloud help for more information.
+            </Content>
+          )}
         </Content>
       </EmptyStateBody>
     </EmptyState>
