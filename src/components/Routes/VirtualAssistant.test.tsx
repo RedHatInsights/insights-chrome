@@ -110,6 +110,23 @@ describe('VirtualAssistant', () => {
     });
   });
 
+  describe('useEffect gating', () => {
+    it('should not set showAssistant atom when VA is disabled even on matching routes', () => {
+      useFlag.mockReturnValue(false);
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues} initialEntries={['/insights/dashboard']}>
+          <VirtualAssistant />
+        </TestWrapper>
+      );
+
+      // VA disabled → useEffect skips route matching → ScalprumComponent never renders
+      expect(mockScalprumComponent).not.toHaveBeenCalled();
+    });
+  });
+
   describe('showAssistant prop passing', () => {
     beforeEach(() => {
       // Enable VA for prop-passing tests

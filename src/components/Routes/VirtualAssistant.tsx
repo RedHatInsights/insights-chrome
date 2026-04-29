@@ -29,6 +29,10 @@ const VirtualAssistant = () => {
 
   const flags = useFlags();
   useEffect(() => {
+    if (!isVAEnabled) {
+      return;
+    }
+
     const enabledFlaggedRoutes = flags.filter((flag) => flaggedRoutes[flag.name] && flag.enabled).map((flag) => flaggedRoutes[flag.name]);
 
     const allViableRoutes = [...viableRoutes, ...enabledFlaggedRoutes];
@@ -43,7 +47,7 @@ const VirtualAssistant = () => {
     if (match != null) {
       setShowAssistant(true);
     }
-  }, [flags, pathname, viableRoutes, setShowAssistant]);
+  }, [flags, pathname, viableRoutes, setShowAssistant, isVAEnabled]);
 
   if (!isVAEnabled) {
     return null;
