@@ -256,10 +256,10 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
             <>
               {internalItems.length > 0 && (
                 <MenuGroup label={`Top ${internalItems.length} results`}>
-                  {internalItems.map((item, index) => (
+                  {internalItems.map((item) => (
                     <MenuItem
                       onKeyDown={onResultKeyDown}
-                      key={`internal-${index}`}
+                      key={item.id}
                       className="pf-v6-u-mb-xs"
                       component={(props) => <ChromeLink {...props} href={item.pathname} />}
                     >
@@ -271,10 +271,10 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
               )}
               {externalItems.length > 0 && (
                 <MenuGroup label="External resources">
-                  {externalItems.map((item, index) => (
+                  {externalItems.map((item) => (
                     <MenuItem
                       onKeyDown={onResultKeyDown}
-                      key={`external-${index}`}
+                      key={item.id}
                       className="pf-v6-u-mb-xs"
                       component={(props) => <ChromeLink {...props} href={item.pathname} isExternal />}
                     >
