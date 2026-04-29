@@ -1,5 +1,95 @@
 # IQE to Playwright Migration Summary
 
+## Migration Complete: test_search.py
+
+**Date:** April 28, 2026
+**Source:** `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_search.py`
+**Target:** `insights-chrome/playwright/e2e/release-gate/search.spec.ts`
+
+### Tests Migrated
+
+#### 1. Search by Keyword
+**Test:** `test_search_by_keyword`
+**Playwright Implementation:** 14 parametrized test cases
+
+Tests search functionality for two main categories:
+
+**Identity & Access Management (8 test cases):**
+- ✅ Authentication Factors → finds "Identity & Access Management"
+- ✅ Identity → finds "Identity & Access Management"
+- ✅ IAM → finds "Identity & Access Management"
+- ✅ User Access → finds "Identity & Access Management"
+- ✅ User Management → finds "Identity & Access Management"
+- ✅ access management → finds "Identity & Access Management"
+- ✅ rbac → finds "Identity & Access Management"
+- ✅ RBAC → finds "Identity & Access Management"
+
+**Tasks/CentOS Conversion (6 test cases):**
+- ✅ CentOS conversion → finds "Tasks"
+- ✅ C2R → finds "Tasks"
+- ✅ CentOS → finds "Tasks"
+- ✅ centos conversion → finds "Tasks"
+- ✅ Pre-Conversion analysis → finds "Tasks"
+- ✅ Convert to RHEL → finds "Tasks"
+
+Each test verifies:
+1. Search returns at least one result
+2. Expected page name appears in search results
+
+#### 2. Empty Search State
+**Test:** `test_search_no_results`
+**Playwright Implementation:** 1 test case
+- ✅ Shows empty state when searching for whitespace
+
+Verifies that searching for whitespace displays the empty state UI and returns no results.
+
+### Testing Approach
+
+**Chrome Search Architecture:**
+- Uses local Orama search index for fast client-side search
+- Debounced search (1 second delay for analytics tracking)
+- Results displayed in dropdown menu with titles and descriptions
+- Supports expandable search input on mobile
+
+**Playwright Page Object:**
+Created `ChromeSearch` page object (`playwright/e2e/pages/chrome-search.ts`) with methods:
+- `open()` - Opens search input
+- `search(query)` - Enters search text and waits for results
+- `clear()` - Clears search input
+- `getResults()` - Returns result locators
+- `getResultTitles()` - Returns array of result titles
+- `resultsContain(text)` - Checks if results contain specific text
+- `isEmpty()` - Checks if empty state is displayed
+- `getResultCount()` - Returns number of results
+- `waitForResults()` - Waits for results menu to appear
+- `clickResult(index)` - Clicks result by index
+- `clickResultByTitle(title)` - Clicks result by title text
+
+**Selector Strategy:**
+- `page.getByPlaceholder('Search for services')` - Search input
+- `.chr-c-search__menu` - Results menu
+- `.chr-c-empty-state` - Empty state UI
+- `li[class*="pf-v6-c-menu__list-item"]` - Individual results
+
+### Migration Statistics
+
+- **Tests Migrated:** 2 test functions → 15 test cases
+  - test_search_by_keyword: 14 parametrized tests (8 IAM + 6 Tasks)
+  - test_search_no_results: 1 test for empty state
+- **Tests Skipped:** 0
+- **Page Objects Created:** 1 (ChromeSearch)
+- **Lines of Code:** ~230 (tests + page object)
+
+### IQE Source
+
+Tests migrated from: `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_search.py`
+
+**IQE Metadata:**
+- Requirements: PLATFORM_UI-SEARCH-RESULTS
+- Importance: high
+
+---
+
 ## Migration Complete: test_navigation.py
 
 **Date:** April 27, 2026
