@@ -51,7 +51,7 @@ const TestWrapper = ({
   </MemoryRouter>
 );
 
-describe('VirtualAssistant showAssistant prop passing', () => {
+describe('VirtualAssistant', () => {
   const useFlag = unleashReact.useFlag as jest.MockedFunction<typeof unleashReact.useFlag>;
   const useFlags = unleashReact.useFlags as jest.MockedFunction<typeof unleashReact.useFlags>;
 
@@ -63,8 +63,9 @@ describe('VirtualAssistant showAssistant prop passing', () => {
     useFlags.mockReturnValue([]);
   });
 
-  describe('component rendering', () => {
-    it('should always render the component container', () => {
+  describe('feature flag gating', () => {
+    it('should return null when platform.va.environment.enabled flag is disabled', () => {
+      useFlag.mockReturnValue(false);
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       const { container } = render(
@@ -74,13 +75,47 @@ describe('VirtualAssistant showAssistant prop passing', () => {
         </TestWrapper>
       );
 
-      // Component should always render, never return null
+      expect(container.firstChild).toBeNull();
+      expect(screen.queryByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).not.toBeInTheDocument();
+      expect(mockScalprumComponent).not.toHaveBeenCalled();
+    });
+
+    it('should render the VA component when platform.va.environment.enabled flag is enabled', () => {
+      useFlag.mockReturnValue(true);
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      const { container } = render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues}>
+          <VirtualAssistant />
+        </TestWrapper>
+      );
+
       expect(container.firstChild).not.toBeNull();
       expect(screen.getByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).toBeInTheDocument();
+    });
+
+    it('should check the correct feature flag name', () => {
+      useFlag.mockReturnValue(true);
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues}>
+          <VirtualAssistant />
+        </TestWrapper>
+      );
+
+      expect(useFlag).toHaveBeenCalledWith('platform.va.environment.enabled');
     });
   });
 
   describe('showAssistant prop passing', () => {
+    beforeEach(() => {
+      // Enable VA for prop-passing tests
+      useFlag.mockReturnValue(true);
+    });
+
     it('should pass showAssistant=false to ScalprumComponent', () => {
       const atomValues = [
         [virtualAssistantShowAssistantAtom, false], // This should be passed as showAssistant prop

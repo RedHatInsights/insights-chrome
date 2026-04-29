@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
-import { useFlags } from '@unleash/proxy-client-react';
+import { useFlag, useFlags } from '@unleash/proxy-client-react';
 
 import { virtualAssistantShowAssistantAtom } from '../../state/atoms/virtualAssistantAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
@@ -16,6 +16,7 @@ const flaggedRoutes: { [flagName: string]: string } = {
 };
 
 const VirtualAssistant = () => {
+  const isVAEnabled = useFlag('platform.va.environment.enabled');
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
@@ -43,6 +44,10 @@ const VirtualAssistant = () => {
       setShowAssistant(true);
     }
   }, [flags, pathname, viableRoutes, setShowAssistant]);
+
+  if (!isVAEnabled) {
+    return null;
+  }
 
   type VirtualAssistantProps = {
     showAssistant: boolean;
