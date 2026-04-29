@@ -342,7 +342,9 @@ module.exports = function (env) {
 
       const cleanup = () => {
         console.log('\nShutting down dev server...');
-        devServer.close();
+        devServer.stopCallback(() => {
+          console.log('Dev server stopped.');
+        });
         // Force exit if graceful close doesn't complete within 3 seconds
         setTimeout(() => {
           console.log('Forcing exit — lingering connections detected.');
