@@ -22,8 +22,8 @@ export class ChromeSearch {
     this.searchInput = page.getByPlaceholder('Search for services');
     // Search results menu
     this.searchMenu = page.locator('.chr-c-search__menu');
-    // Empty state message
-    this.emptyState = page.locator('.chr-c-empty-state');
+    // Empty state message - "No results found" heading
+    this.emptyState = page.getByRole('heading', { name: /No results found/i });
   }
 
   /**
