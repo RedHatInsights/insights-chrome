@@ -73,6 +73,10 @@ CHROME_ACCOUNT=<username> CHROME_PASSWORD="<password>" npm run ci:cypress-e2e-te
 
 ## Running chrome locally
 
+**Prerequisites:**
+- **Red Hat VPN:** Required for proxy access to `console.stage.redhat.com`
+- **Staging account:** Authentication requires a staging environment user. Create one at [ethel.rhsm.redhat.com](https://ethel.rhsm.redhat.com/)
+
 1. Install all dependencies
 
 ```sh
@@ -86,6 +90,57 @@ npm run dev
 ```
 
 3. Open browser at [stage.foo.redhat.com:1337](https://stage.foo.redhat.com:1337).
+
+> **Note:** Firefox is recommended for local development. It handles the dev server's
+> self-signed certificate without issues. Chrome users may encounter `ERR_TOO_MANY_RETRIES`
+> errors — see [Local Development SSL Setup](#local-development-ssl-setup) below for a fix.
+
+### Local Development SSL Setup
+
+The dev server at `https://stage.foo.redhat.com:1337` uses a self-signed certificate by default.
+**Firefox** handles self-signed certificates gracefully and works without additional setup.
+
+**Chrome** users may encounter `ERR_TOO_MANY_RETRIES` errors when loading webpack chunks due to
+SSL handshake failures with self-signed certificates. To fix this, generate a locally-trusted
+certificate using [mkcert](https://github.com/FiloSottile/mkcert):
+
+1. Install mkcert following the [official installation guide](https://github.com/FiloSottile/mkcert#installation).
+
+2. Install the local CA (one-time setup):
+
+   ```sh
+   mkcert -install
+   ```
+
+3. Generate the certificate in the repo root:
+
+   ```sh
+   cd /path/to/insights-chrome
+   mkcert -cert-file stage.foo.redhat.com.pem -key-file stage.foo.redhat.com-key.pem stage.foo.redhat.com
+   ```
+
+**Security note:** mkcert creates a local Certificate Authority trusted by your browser.
+Keep your machine secure — if malware accesses the CA key (`~/.local/share/mkcert/`),
+it could intercept HTTPS traffic. Remove with `mkcert -uninstall` when not needed.
+
+The webpack config checks for these `.pem` files at startup. If you generate or renew them while the dev server is running, restart it to pick up the new certificates. The `.pem` files are gitignored.
+
+### Troubleshooting
+
+**`[HPM] Error occurred while proxying request ... [ENOTFOUND]`**
+
+This means you're not connected to the Red Hat VPN. The dev server proxies to `console.stage.redhat.com`,
+which is only accessible on the internal network. Connect to VPN and restart the dev server.
+
+**`ERR_CERT_DATE_INVALID` or certificate expired errors**
+
+The mkcert certificate has expired (valid for ~2 years from generation). Regenerate it:
+
+```sh
+mkcert -cert-file stage.foo.redhat.com.pem -key-file stage.foo.redhat.com-key.pem stage.foo.redhat.com
+```
+
+Then restart the dev server.
 
 ## Running chrome with other applications locally
 
