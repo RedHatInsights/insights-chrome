@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
@@ -53,6 +53,20 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const blockCloseEvent = useRef(false);
   const asyncLocalOramaData = useAtomValue(asyncLocalOrama);
 
+  const closeMenu = useCallback(() => {
+    setIsOpen(false);
+    onStateChange(false);
+  }, [onStateChange]);
+
+  const onResultKeyDown: React.KeyboardEventHandler = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        setTimeout(closeMenu);
+      }
+    },
+    [closeMenu]
+  );
+
   const debouncedTrack = useCallback(analytics ? debounce(analytics.track, 1000) : () => null, [analytics]);
 
   const isMounted = useRef(false);
@@ -62,6 +76,19 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const { md } = useWindowWidth();
 
   const resultCount = searchItems.length;
+
+  const { internalItems, externalItems } = useMemo(() => {
+    const internalItems: SearchItem[] = [];
+    const externalItems: SearchItem[] = [];
+    searchItems.forEach((item) => {
+      if (item.isExternal) {
+        externalItems.push(item);
+      } else {
+        internalItems.push(item);
+      }
+    });
+    return { internalItems, externalItems };
+  }, [searchItems]);
 
   useEffect(() => {
     if (currentFeedbackType) {
@@ -227,29 +254,36 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
             </Bullseye>
           ) : (
             <>
-              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined}>
-                {searchItems.map((item, index) => (
-                  <MenuItem
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        /**
-                         * Needs pushed to the end of the execution queue to not "swallow" the event
-                         * First the navigation event must execute and
-                         *  */
-                        setTimeout(() => {
-                          setIsOpen(false);
-                        });
-                      }
-                    }}
-                    key={index}
-                    className="pf-v6-u-mb-xs"
-                    component={(props) => <ChromeLink {...props} href={item.pathname} />}
-                  >
-                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v6-u-mb-xs" />
-                    <SearchDescription description={item.description} />
-                  </MenuItem>
-                ))}
-              </MenuGroup>
+              {internalItems.length > 0 && (
+                <MenuGroup label={`Top ${internalItems.length} results`}>
+                  {internalItems.map((item, index) => (
+                    <MenuItem
+                      onKeyDown={onResultKeyDown}
+                      key={`internal-${index}`}
+                      className="pf-v6-u-mb-xs"
+                      component={(props) => <ChromeLink {...props} href={item.pathname} />}
+                    >
+                      <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v6-u-mb-xs" />
+                      <SearchDescription description={item.description} />
+                    </MenuItem>
+                  ))}
+                </MenuGroup>
+              )}
+              {externalItems.length > 0 && (
+                <MenuGroup label="External resources">
+                  {externalItems.map((item, index) => (
+                    <MenuItem
+                      onKeyDown={onResultKeyDown}
+                      key={`external-${index}`}
+                      className="pf-v6-u-mb-xs"
+                      component={(props) => <ChromeLink {...props} href={item.pathname} isExternal />}
+                    >
+                      <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v6-u-mb-xs" isExternal />
+                      <SearchDescription description={item.description} />
+                    </MenuItem>
+                  ))}
+                </MenuGroup>
+              )}
             </>
           )}
           {searchItems.length === 0 && !isFetching && <EmptySearchState />}
