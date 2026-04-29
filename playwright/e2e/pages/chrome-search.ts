@@ -22,8 +22,8 @@ export class ChromeSearch {
     this.searchInput = page.getByPlaceholder('Search for services');
     // Search results menu
     this.searchMenu = page.locator('.chr-c-search__menu');
-    // Empty state message - "No results found" heading
-    this.emptyState = page.getByRole('heading', { name: /No results found/i });
+    // Empty state message - "No results found" heading within the search menu
+    this.emptyState = this.searchMenu.getByRole('heading', { name: /No results found/i }).first();
   }
 
   /**
@@ -58,10 +58,8 @@ export class ChromeSearch {
     // Use type() instead of fill() to trigger keydown events that open the menu
     await this.searchInput.type(query);
 
-    // Wait for either search menu (results) or empty state to appear
-    await this.searchMenu
-      .or(this.emptyState)
-      .waitFor({ state: 'visible', timeout: SEARCH_TIMEOUT });
+    // Wait for search menu to appear (contains either results or empty state)
+    await this.searchMenu.waitFor({ state: 'visible', timeout: SEARCH_TIMEOUT });
   }
 
   /**
