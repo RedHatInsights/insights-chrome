@@ -4,6 +4,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import * as unleashReact from '@unleash/proxy-client-react';
 import VirtualAssistant from './VirtualAssistant';
@@ -115,15 +116,26 @@ describe('VirtualAssistant', () => {
       useFlag.mockReturnValue(false);
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
+      // Observer component reads atom value for direct assertion
+      let observedAtomValue: boolean | undefined;
+      const AtomObserver = () => {
+        const value = useAtomValue(virtualAssistantShowAssistantAtom);
+        observedAtomValue = value;
+        return null;
+      };
+
       render(
         // @ts-ignore
         <TestWrapper initialValues={atomValues} initialEntries={['/insights/dashboard']}>
           <VirtualAssistant />
+          <AtomObserver />
         </TestWrapper>
       );
 
       // VA disabled → useEffect skips route matching → ScalprumComponent never renders
       expect(mockScalprumComponent).not.toHaveBeenCalled();
+      // Atom state remains false — VA did not mutate it
+      expect(observedAtomValue).toBe(false);
     });
   });
 

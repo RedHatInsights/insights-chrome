@@ -41,8 +41,8 @@ const EmptySearchVALink = () => {
   return (
     <Content component="p" className="pf-v6-u-text-color-subtle">
       Try searching Hybrid Cloud help or start a conversation with our{' '}
-      <a
-        role="button"
+      <button
+        type="button"
         onClick={() => {
           if (setState) {
             setState({
@@ -52,10 +52,11 @@ const EmptySearchVALink = () => {
             });
           }
         }}
-        style={{ cursor: loading || !setState ? 'not-allowed' : 'pointer', opacity: loading || !setState ? 0.5 : 1 }}
+        disabled={loading || !setState}
+        className="pf-v6-c-button pf-m-link pf-m-inline"
       >
         Virtual Assistant.
-      </a>
+      </button>
     </Content>
   );
 };
