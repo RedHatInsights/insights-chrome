@@ -347,9 +347,8 @@ module.exports = function (env) {
   }
 
   // Ensure dev server exits cleanly on Ctrl+C / SIGTERM.
-  // WDS v5 setupExitSignals calls server.close(), but lingering
-  // WebSocket (HMR) and proxy connections can keep the process alive.
-  // Force-exit after a grace period so the port is released.
+  // Lingering HMR/proxy connections can keep the process alive after
+  // WDS graceful shutdown — force-exit after a short grace period.
   if (dev) {
     config.devServer.setupExitSignals = true;
     const originalOnListening = config.devServer.onListening;
@@ -358,24 +357,9 @@ module.exports = function (env) {
         originalOnListening(devServer);
       }
 
-      let shuttingDown = false;
       const cleanup = () => {
-        if (shuttingDown) {
-          return;
-        }
-        shuttingDown = true;
-        console.log('\nShutting down dev server...');
-        // Force exit if graceful close doesn't complete within 3 seconds
-        const forceExitTimer = setTimeout(() => {
-          console.log('Forcing exit — lingering connections detected.');
-          process.exit(0);
-        }, 3000);
-        forceExitTimer.unref();
-        devServer.stopCallback(() => {
-          clearTimeout(forceExitTimer);
-          console.log('Dev server stopped.');
-          process.exit(0);
-        });
+        devServer.stopCallback(() => process.exit(0));
+        setTimeout(() => process.exit(0), 3000).unref();
       };
 
       process.once('SIGINT', cleanup);
