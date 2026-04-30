@@ -3,7 +3,11 @@ import { useAtomValue } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
+import { captureMessage } from '@sentry/react';
 
+jest.mock('@sentry/react', () => ({
+  captureMessage: jest.fn(),
+}));
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag: string) => {
     // Enable engagement SDK by default, disable autocapture
@@ -43,7 +47,7 @@ const analyticsMock = {
   off: jest.fn(),
 };
 
-import useAmplitude from './useAmplitude';
+import useAmplitude, { resetScriptErrorReported } from './useAmplitude';
 
 function TestComponent() {
   useAmplitude();
@@ -55,6 +59,7 @@ describe('useAmplitude', () => {
     delete window.engagement;
     document.getElementById('amplitude-script')?.remove();
     jest.clearAllMocks();
+    resetScriptErrorReported();
   });
 
   it('injects script with active module dev key and initializes on load', async () => {
@@ -115,15 +120,20 @@ describe('useAmplitude', () => {
     errorSpy.mockRestore();
   });
 
-  it('handles script onerror', async () => {
+  it('handles script onerror and reports to Sentry', async () => {
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     render(<TestComponent />);
     const script = document.getElementById('amplitude-script') as HTMLScriptElement;
     expect(script).toBeTruthy();
     if (script.onerror) {
       script.onerror(new Event('error'));
+      // Trigger a second error to verify dedupe guard — Sentry should only be notified once
+      script.onerror(new Event('error'));
     }
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
+    // Sentry should be notified when script fails to load (key may be invalid/rotated)
+    expect(captureMessage).toHaveBeenCalledWith(expect.stringContaining('Amplitude script failed to load'), 'error');
+    expect(captureMessage).toHaveBeenCalledTimes(1);
     errorSpy.mockRestore();
   });
 
@@ -185,7 +195,7 @@ describe('useAmplitude', () => {
     expect(typeof handlerArgs[0]).toBe('function');
   });
 
-  it('warns when amplitude key is malformed (non-string)', async () => {
+  it('warns when amplitude key is malformed (non-string) and reports to Sentry', async () => {
     // Make module provide a non-string key so it overrides fallback and triggers guard
     (useAtomValue as unknown as jest.Mock).mockReturnValueOnce({
       analytics: { amplitude: { APIKeyDev: {} } },
@@ -195,6 +205,8 @@ describe('useAmplitude', () => {
     await waitFor(() => expect(warnSpy).toHaveBeenCalled());
     // No script should be injected
     expect(document.getElementById('amplitude-script')).toBeFalsy();
+    // Sentry should be notified for monitoring/alerting
+    expect(captureMessage).toHaveBeenCalledWith(expect.stringContaining('Amplitude engagement key is missing or malformed'), 'error');
     warnSpy.mockRestore();
   });
 
