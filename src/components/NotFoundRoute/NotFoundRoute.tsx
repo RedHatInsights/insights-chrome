@@ -6,6 +6,7 @@ import { EmptyState, EmptyStateBody } from '@patternfly/react-core/dist/dynamic/
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 
 import { useLoadModule, useRemoteHook } from '@scalprum/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 import { virtualAssistantShowAssistantAtom } from '../../state/atoms/virtualAssistantAtom';
 
 export type ModelsType = {
@@ -18,7 +19,7 @@ type VirtualAssistantState = {
   message?: string;
 };
 
-const NotFoundRoute = () => {
+const NotFoundVAButton = () => {
   const setShowAssistant = useSetAtom(virtualAssistantShowAssistantAtom);
   const { hookResult: useVirtualAssistant, loading } = useRemoteHook<[VirtualAssistantState, Dispatch<SetStateAction<VirtualAssistantState>>]>({
     scope: 'virtualAssistant',
@@ -44,22 +45,30 @@ const NotFoundRoute = () => {
   }, [setShowAssistant]);
 
   return (
+    <Button
+      onClick={() => {
+        setState?.({
+          isOpen: true,
+          currentModel: Models.VA,
+          message: 'Contact my org admin.',
+        });
+      }}
+      className="pf-v6-c-button pf-m-link"
+      isDisabled={loading || !setState || !Models}
+    >
+      Contact your org admin with the Virtual Assistant.
+    </Button>
+  );
+};
+
+const NotFoundRoute = () => {
+  const isVAEnabled = useFlag('platform.va.environment.enabled');
+
+  return (
     <EmptyState id="not-found">
       <EmptyStateBody>
         <InvalidObject />
-        <Button
-          onClick={() => {
-            setState?.({
-              isOpen: true,
-              currentModel: Models.VA,
-              message: 'Contact my org admin.',
-            });
-          }}
-          className="pf-v6-c-button pf-m-link"
-          isDisabled={loading || !setState || !Models}
-        >
-          Contact your org admin with the Virtual Assistant.
-        </Button>
+        {isVAEnabled && <NotFoundVAButton />}
       </EmptyStateBody>
     </EmptyState>
   );
