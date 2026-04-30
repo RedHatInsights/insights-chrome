@@ -127,10 +127,13 @@ describe('useAmplitude', () => {
     expect(script).toBeTruthy();
     if (script.onerror) {
       script.onerror(new Event('error'));
+      // Trigger a second error to verify dedupe guard — Sentry should only be notified once
+      script.onerror(new Event('error'));
     }
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     // Sentry should be notified when script fails to load (key may be invalid/rotated)
     expect(captureMessage).toHaveBeenCalledWith(expect.stringContaining('Amplitude script failed to load'), 'error');
+    expect(captureMessage).toHaveBeenCalledTimes(1);
     errorSpy.mockRestore();
   });
 
