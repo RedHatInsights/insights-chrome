@@ -86,13 +86,17 @@ export class ChromeNavigation {
       const linkItem = this.sidebar.getByRole('link', { name: itemName, exact: true });
       const buttonItem = this.sidebar.getByRole('button', { name: itemName, exact: true });
 
-      // Check which one exists and click it
+      // Check which one exists and verify uniqueness before clicking
       const linkCount = await linkItem.count();
       const buttonCount = await buttonItem.count();
 
-      if (linkCount > 0) {
+      if (linkCount > 1) {
+        throw new Error(`Multiple link matches found for "${itemName}" (${linkCount} matches). Navigation is ambiguous.`);
+      } else if (linkCount === 1) {
         await linkItem.click();
-      } else if (buttonCount > 0) {
+      } else if (buttonCount > 1) {
+        throw new Error(`Multiple button matches found for "${itemName}" (${buttonCount} matches). Navigation is ambiguous.`);
+      } else if (buttonCount === 1) {
         await buttonItem.click();
       } else {
         throw new Error(`Navigation item "${itemName}" not found in sidebar`);

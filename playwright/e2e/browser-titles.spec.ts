@@ -20,7 +20,6 @@ test.describe('Browser Titles - Settings Navigation', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to Settings page before each test
     await page.goto('/settings');
-    await page.waitForLoadState('networkidle');
   });
 
   const settingsTestCases = [
@@ -57,10 +56,7 @@ test.describe('Browser Titles - Settings Navigation', () => {
       // Navigate through the menu items
       await navigation.navigateToPage(navItems);
 
-      // Wait for the page to fully load
-      await page.waitForLoadState('networkidle');
-
-      // Verify the browser title
+      // Verify the browser title (built-in retry handles timing)
       await expect(page).toHaveTitle(expectedTitle);
     });
   }
