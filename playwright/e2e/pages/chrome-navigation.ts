@@ -86,6 +86,9 @@ export class ChromeNavigation {
       const linkItem = this.sidebar.getByRole('link', { name: itemName, exact: true });
       const buttonItem = this.sidebar.getByRole('button', { name: itemName, exact: true });
 
+      // Wait for the navigation item to appear in the sidebar before attempting to click
+      await linkItem.or(buttonItem).first().waitFor({ state: 'visible', timeout: 10000 });
+
       // Check which one exists and verify uniqueness before clicking
       const linkCount = await linkItem.count();
       const buttonCount = await buttonItem.count();
