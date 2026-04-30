@@ -72,4 +72,69 @@ test.describe('Navigation', () => {
     // Verify 404 page content is displayed
     await expect(page.getByText(/We lost that page/i)).toBeVisible();
   });
+
+  test('platform link - Ansible has correct internal route', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (Ansible variant)
+    // Validates chrome navigation structure, not the destination routes themselves
+
+    // Open services menu
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+
+    // Find Ansible platform link within services menu using OUIA ID
+    const ansibleLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-Ansible"]');
+
+    // Verify link exists and has correct internal href
+    await expect(ansibleLink).toBeVisible();
+    await expect(ansibleLink).toHaveAttribute('href', /\/ansible$/);
+  });
+
+  test('platform link - OpenShift has correct internal route', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (OpenShift variant)
+    // Validates chrome navigation structure, not the destination routes themselves
+
+    // Open services menu
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+
+    // Find OpenShift platform link within services menu using OUIA ID
+    const openshiftLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-Openshift"]');
+
+    // Verify link exists and has correct internal href
+    await expect(openshiftLink).toBeVisible();
+    await expect(openshiftLink).toHaveAttribute('href', /\/openshift\/overview$/);
+  });
+
+  test('platform link - Insights has correct internal route', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (Insights variant)
+    // Validates chrome navigation structure, not the destination routes themselves
+
+    // Open services menu
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+
+    // Find RHEL/Insights platform link within services menu using OUIA ID
+    const insightsLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-RHEL"]');
+
+    // Verify link exists and has correct internal href
+    await expect(insightsLink).toBeVisible();
+    await expect(insightsLink).toHaveAttribute('href', /\/insights$/);
+  });
+
+  test('fancy 404 page returns to homepage', async ({ page }) => {
+    // Migrated from test_navigation.py::test_404s
+
+    // Navigate to 404 page
+    await page.goto('/404/404/404');
+    await page.waitForLoadState('load');
+
+    // Verify fancy 404 page is displayed
+    await expect(page.getByRole('heading', { name: /We lost that page/i })).toBeVisible();
+
+    // Click "Return to homepage" button
+    await page.getByRole('link', { name: /Return to homepage/i }).click();
+
+    // Verify navigation back to homepage (string path automatically matches against baseURL)
+    await expect(page).toHaveURL('/');
+  });
 });

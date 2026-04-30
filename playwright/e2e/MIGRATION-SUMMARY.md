@@ -1,5 +1,67 @@
 # IQE to Playwright Migration Summary
 
+## Migration Complete: test_navigation.py
+
+**Date:** April 27, 2026
+**Source:** `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_navigation.py`
+**Target:** `insights-chrome/playwright/e2e/release-gate/navigation.spec.ts`
+
+### Tests Migrated
+
+#### 1. Platform Service Links
+**Test:** `test_services_menu_platform_links`
+**Playwright Implementation:** 3 test cases
+- ✅ Platform link - Ansible has correct internal route
+- ✅ Platform link - OpenShift has correct internal route
+- ✅ Platform link - Insights has correct internal route
+
+These tests validate chrome's navigation structure by verifying the platform links exist in the services menu and have the correct internal `href` values (`/ansible`, `/openshift/overview`, `/insights`). The tests do NOT click through to validate destinations (which may not be available in CI).
+
+**Testing Approach:** Validates link configuration and chrome navigation structure, not destination availability.
+
+#### 2. Fancy 404 Page
+**Test:** `test_404s`
+**Playwright Implementation:** 1 test case
+- ✅ Fancy 404 page returns to homepage
+
+Tests that the fancy 404 error page displays correctly and the "Return to homepage" button works.
+
+### Tests NOT Migrated (Chrome-Specific Reasoning)
+
+#### ❌ test_services_menu_destinations
+**Reason:** Tenant application responsibility
+**Details:** This test uses dynamic test generation to navigate through all service destinations registered in the platform. These destinations represent individual tenant applications (e.g., Cost Management, Drift, Vulnerability, etc.). Testing navigation within tenant apps is the responsibility of those respective teams. Chrome should only test that the chrome navigation framework works (which is covered by the platform links tests).
+
+**Minimal Chrome Coverage:** The existing "visit services" and "Navigate to users" tests verify the services menu opens and basic navigation works. This is sufficient for chrome's responsibility.
+
+#### ❌ test_non_services_menu_destinations
+**Reason:** Tenant application responsibility
+**Details:** Similar to `test_services_menu_destinations`, this tests navigation to non-services-menu destinations which are primarily tenant application routes. The tenant teams should verify their own applications are accessible and functional.
+
+**Note:** If specific non-services destinations are determined to be chrome-critical (e.g., /allservices, /favoritedservices), individual tests can be added. Currently, /allservices is covered by the existing "Navigate to users" test.
+
+#### ❌ test_broken_links
+**Reason:** Too broad for chrome responsibility; tenant responsibility
+**Details:** This test crawls all links on a page and verifies they return HTTP 200. While valuable as a smoke test, this is:
+1. Extremely slow (makes HTTP requests for every link)
+2. Covers tenant application links which should be tested by tenant teams
+3. May produce false positives from external links, authentication boundaries, etc.
+
+**Alternative:** Tenant applications should implement broken link checks for their own pages. Chrome can add targeted link tests for chrome-specific pages (e.g., /allservices) if deemed necessary.
+
+### Migration Statistics
+
+- **Tests Migrated:** 2 test functions → 4 test cases
+  - test_services_menu_platform_links: 3 test cases validating chrome navigation structure
+  - test_404s: 1 test case for fancy 404 page
+- **Tests Skipped:** 3 (tenant app responsibilities)
+  - test_services_menu_destinations
+  - test_non_services_menu_destinations
+  - test_broken_links
+- **Test Coverage Philosophy:** Chrome tests chrome navigation structure; tenants test tenant apps and destinations
+
+---
+
 ## Migration Complete: test_login.py
 
 **Date:** April 22-24, 2026
