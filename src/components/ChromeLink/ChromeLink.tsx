@@ -71,7 +71,17 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(
        * Add reference to the DOM link element
        */
       domEvent.target = linkRef.current;
-      triggerNavListener({ navId: actionId, domEvent });
+      /**
+       * Only trigger nav listeners for intra-app navigation.
+       * For cross-app or context-less navigation (e.g. search results where
+       * appId is undefined), the current app's listeners should not fire.
+       * Firing them with a truncated navId (e.g. "assessments" instead of
+       * "migration-advisor/assessments") can cause consuming apps to push
+       * incorrect entries onto the browser history stack.
+       */
+      if (appId && currAppId === appId) {
+        triggerNavListener({ navId: actionId, domEvent });
+      }
     };
 
     // turns /settings/rbac/roles -> settings_rbac_roles
