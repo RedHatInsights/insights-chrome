@@ -18,6 +18,7 @@ describe('SearchFeedback', () => {
         bundleTitle: 'foobundle',
         description: 'Foo service',
         pathname: '/foo/bar',
+        id: 'foo-bar-1',
       },
     ];
     query = 'foo';

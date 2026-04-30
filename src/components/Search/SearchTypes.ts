@@ -3,4 +3,6 @@ export type SearchItem = {
   bundleTitle: string;
   description: string;
   pathname: string;
+  id: string;
+  isExternal?: boolean;
 };

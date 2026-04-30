@@ -17,7 +17,7 @@ const matchCache: {
 };
 
 const resultCache: {
-  [term: string]: ResultItem[];
+  [term: string]: SearchResultItem[];
 } = {};
 
 // merge overlapping marks into smaller sets
@@ -115,15 +115,17 @@ async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.S
   return result;
 }
 
+export type SearchResultItem = ResultItem & { isExternal?: boolean };
+
 export const localQuery = async (
   db: Orama<typeof entrySchema>,
   term: string,
   env: ReleaseEnv = ReleaseEnv.STABLE,
   mode: SearchDataType | string = 'services'
-) => {
+): Promise<SearchResultItem[]> => {
   try {
     const cacheKey = `${env}-${term}-${mode}`;
-    let results: ResultItem[] | undefined = resultCache[cacheKey];
+    let results: SearchResultItem[] | undefined = resultCache[cacheKey];
     if (results) {
       return results;
     }
@@ -144,7 +146,7 @@ export const localQuery = async (
       },
     });
 
-    const searches: ResultItem[] = [];
+    const searches: (ResultItem & { isExternal?: boolean })[] = [];
     for (const hit of r.hits) {
       if (searches.length === 10) {
         break;
@@ -158,18 +160,20 @@ export const localQuery = async (
         searches.push({
           ...hit.document,
           id: String(hit.document.id),
+          isExternal: Boolean(hit.document.isExternal),
         });
       }
     }
     const validResults = await Promise.all(searches);
     for (let i = 0; i < Math.min(10, validResults.length); i += 1) {
-      const { title, description, bundleTitle, pathname, id } = validResults[i];
+      const { title, description, bundleTitle, pathname, id, isExternal } = validResults[i];
       results.push({
         title: highlightText(term, title, 'title'),
         description: highlightText(term, description, 'description'),
         bundleTitle,
         pathname,
         id,
+        ...(isExternal ? { isExternal } : {}),
       });
     }
 
