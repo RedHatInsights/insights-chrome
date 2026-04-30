@@ -67,4 +67,39 @@ export class ChromeNavigation {
 
     return selectedItems;
   }
+
+  /**
+   * Navigates to a page by clicking through navigation items
+   * Handles both flat navigation (single item) and nested navigation (multiple items)
+   *
+   * @param navItems Array of navigation item names to click in sequence
+   * @example
+   * // Single level navigation
+   * await navigation.navigateToPage(['Integrations']);
+   *
+   * // Nested navigation
+   * await navigation.navigateToPage(['Notifications', 'Configure Events']);
+   */
+  async navigateToPage(navItems: string[]): Promise<void> {
+    for (const itemName of navItems) {
+      // Try to find the item as either a link or button
+      const linkItem = this.sidebar.getByRole('link', { name: itemName, exact: true });
+      const buttonItem = this.sidebar.getByRole('button', { name: itemName, exact: true });
+
+      // Check which one exists and click it
+      const linkCount = await linkItem.count();
+      const buttonCount = await buttonItem.count();
+
+      if (linkCount > 0) {
+        await linkItem.click();
+      } else if (buttonCount > 0) {
+        await buttonItem.click();
+      } else {
+        throw new Error(`Navigation item "${itemName}" not found in sidebar`);
+      }
+
+      // Wait for navigation to settle after each click
+      await this.page.waitForLoadState('domcontentloaded');
+    }
+  }
 }
