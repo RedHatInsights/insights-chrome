@@ -312,17 +312,10 @@ spec:
               memory: "8Gi"
           image: mcr.microsoft.com/playwright:v1.59.1-jammy
           name: e2e-tests
+          envFrom:
+          - secretRef:
+              name: chrome-credentials-secret
           env:
-          - name: CHROME_ACCOUNT
-            valueFrom:
-              secretKeyRef:
-                name: chrome-credentials-secret
-                key: username
-          - name: CHROME_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: chrome-credentials-secret
-                key: password
           - name: NODE_TLS_REJECT_UNAUTHORIZED
             value: "0"
           - name: CI
@@ -346,7 +339,16 @@ spec:
             echo "Dev server is ready! Running tests."
 
             echo "Running Playwright e2e tests"
-            E2E_USER="$CHROME_ACCOUNT" E2E_PASSWORD="$CHROME_PASSWORD" npx playwright test
+            # All credentials from chrome-credentials-secret are automatically available as env vars via envFrom:
+            #   $username, $password - Default admin user (mapped to E2E_USER/E2E_PASSWORD below)
+            #   $E2E_NON_ADMIN_USER, $E2E_NON_ADMIN_PASSWORD - Non-admin user (used directly)
+
+            # Map secret keys to expected Playwright env vars
+            export E2E_USER="$username"
+            export E2E_PASSWORD="$password"
+            # E2E_NON_ADMIN_USER and E2E_NON_ADMIN_PASSWORD are already correctly named in the secret
+
+            npx playwright test
             echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
             kill $DEV_SERVER_PID
           securityContext:
