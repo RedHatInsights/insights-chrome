@@ -81,9 +81,14 @@ const Tools = () => {
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
-  const helpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const helpPanelFlagEnabled = useFlag('platform.chrome.help-panel');
+  const isLearningResourcesEnabled = useFlag('platform.learning-resources.environment.enabled');
+  // Help panel requires the learning-resources module. In FedRAMP environments
+  // this module is not deployed, so attempting to load it causes Scalprum errors.
+  // Gate the help panel behind both flags to prevent loading a missing module.
+  const helpPanelEnabled = helpPanelFlagEnabled && isLearningResourcesEnabled;
   const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
-  const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
+  const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources') && isLearningResourcesEnabled;
   const isITLessEnv = useFlag('platform.chrome.itless');
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');

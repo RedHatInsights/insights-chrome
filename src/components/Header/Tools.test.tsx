@@ -89,6 +89,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.help-panel': false,
   'platform.chrome.ask-redhat-help': false,
   'platform.learning-resources.global-learning-resources': false,
+  'platform.learning-resources.environment.enabled': false,
   'platform.chrome.itless': false,
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
@@ -161,6 +162,46 @@ describe('Tools - dark mode system feature flag', () => {
       });
 
       expect(screen.queryByText('Follow system preference')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('help panel / learning resources feature flag gating', () => {
+    it('should not show help panel toggle when help-panel flag is disabled', () => {
+      renderTools({ 'platform.chrome.help-panel': false });
+      expect(screen.queryByRole('button', { name: 'Toggle help panel' })).not.toBeInTheDocument();
+    });
+
+    it('should not show help panel toggle when help-panel enabled but learning-resources disabled', () => {
+      renderTools({
+        'platform.chrome.help-panel': true,
+        'platform.learning-resources.environment.enabled': false,
+      });
+      // Help panel toggle should NOT render — learning resources module is unavailable
+      expect(screen.queryByRole('button', { name: 'Toggle help panel' })).not.toBeInTheDocument();
+    });
+
+    it('should show help panel toggle when both flags are enabled', () => {
+      renderTools({
+        'platform.chrome.help-panel': true,
+        'platform.learning-resources.environment.enabled': true,
+      });
+      expect(screen.getByRole('button', { name: 'Toggle help panel' })).toBeInTheDocument();
+    });
+
+    it('should not show global learning resources link when environment flag disabled', () => {
+      renderTools({
+        'platform.learning-resources.global-learning-resources': true,
+        'platform.learning-resources.environment.enabled': false,
+      });
+      expect(screen.queryByText('All learning resources')).not.toBeInTheDocument();
+    });
+
+    it('should show global learning resources link when both flags enabled', () => {
+      renderTools({
+        'platform.learning-resources.global-learning-resources': true,
+        'platform.learning-resources.environment.enabled': true,
+      });
+      expect(screen.getByText('All learning resources')).toBeInTheDocument();
     });
   });
 

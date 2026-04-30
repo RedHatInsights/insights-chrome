@@ -76,7 +76,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-  const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const isHelpPanelFlagEnabled = useFlag('platform.chrome.help-panel');
+  const isLearningResourcesEnabled = useFlag('platform.learning-resources.environment.enabled');
+  // Help panel relies on the learning-resources module. In FedRAMP the module
+  // is not deployed, so gate the drawer on both flags to avoid Scalprum errors.
+  const isHelpPanelEnabled = isHelpPanelFlagEnabled && isLearningResourcesEnabled;
   const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
