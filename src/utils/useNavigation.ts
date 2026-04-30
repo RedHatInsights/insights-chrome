@@ -124,6 +124,7 @@ const useNavigation = () => {
   }
 
   useEffect(() => {
+    let cancelled = false;
     /**
      * Use an object ref so the cleanup function can access the observer
      * assigned asynchronously inside handleNavigationResponse.
@@ -143,9 +144,12 @@ const useNavigation = () => {
           return handleNavigationResponse(bundle);
         })
         .then((obs) => {
-          if (obs) {
-            observerRef.current = obs;
+          if (!obs) return;
+          if (cancelled) {
+            obs.disconnect();
+            return;
           }
+          observerRef.current = obs;
         })
         .catch(() => {
           setNoNav(true);
@@ -161,15 +165,19 @@ const useNavigation = () => {
           return handleNavigationResponse(response.data);
         })
         .then((obs) => {
-          if (obs) {
-            observerRef.current = obs;
+          if (!obs) return;
+          if (cancelled) {
+            obs.disconnect();
+            return;
           }
+          observerRef.current = obs;
         })
         .catch(() => {
           setNoNav(true);
         });
     }
     return () => {
+      cancelled = true;
       if (observerRef.current && typeof observerRef.current.disconnect === 'function') {
         observerRef.current.disconnect();
       }
