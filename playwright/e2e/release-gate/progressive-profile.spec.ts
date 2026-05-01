@@ -13,17 +13,18 @@ import { test, expect } from '../../setup/test-setup';
  * - PLATFORM_UI-THIN
  * - PLATFORM_UI-THICK
  *
- * Note: These tests require a thin profile user account to be available.
- * Set THIN_USER and THIN_PASSWORD environment variables to enable these tests.
+ * Environment Variables Required:
+ * - THIN_USER: Username for thin profile test account
+ * - THIN_PASSWORD: Password for thin profile test account
  */
 
 test.describe('Progressive Profile', () => {
-  // Skip all tests if thin user credentials are not provided
   const thinUser = process.env.THIN_USER;
   const thinPassword = process.env.THIN_PASSWORD;
-  const skipThinUserTests = !thinUser || !thinPassword;
 
-  test.skip(skipThinUserTests, 'Thin user credentials not provided');
+  if (!thinUser || !thinPassword) {
+    throw new Error('THIN_USER and THIN_PASSWORD environment variables must be set');
+  }
 
   test('thin profile user can login', async ({ browser, baseURL }) => {
     // Create isolated context for thin user login
@@ -47,10 +48,10 @@ test.describe('Progressive Profile', () => {
       // Fill in thin user credentials
       const usernameInput = page.getByLabel('Red Hat login').first();
       await usernameInput.waitFor({ state: 'visible', timeout: 30000 });
-      await usernameInput.fill(thinUser!);
+      await usernameInput.fill(thinUser);
 
       const passwordInput = page.getByLabel('Password').first();
-      await passwordInput.fill(thinPassword!);
+      await passwordInput.fill(thinPassword);
 
       // Submit login form
       const loginButton = page.getByRole('button', { name: /log in|next/i });
@@ -88,10 +89,10 @@ test.describe('Progressive Profile', () => {
 
       const usernameInput = page.getByLabel('Red Hat login').first();
       await usernameInput.waitFor({ state: 'visible', timeout: 30000 });
-      await usernameInput.fill(thinUser!);
+      await usernameInput.fill(thinUser);
 
       const passwordInput = page.getByLabel('Password').first();
-      await passwordInput.fill(thinPassword!);
+      await passwordInput.fill(thinPassword);
 
       const loginButton = page.getByRole('button', { name: /log in|next/i });
       await loginButton.click();
