@@ -259,3 +259,66 @@ For questions about this migration:
 - **Test Cases Created:** 4 total (2 org ID + 2 logout variants)
 - **Page Objects Created:** 1 (ChromeTopbar)
 - **Lines of Code:** ~280 (tests + page object + documentation)
+
+---
+
+## Migration Complete: test_progressive_profile.py
+
+**Date:** May 1, 2026
+**Source:** `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_progressive_profile.py`
+**Target:** `insights-chrome/playwright/e2e/release-gate/progressive-profile.spec.ts`
+
+### Tests Migrated
+
+#### 1. Thin Profile User Login
+**Test:** `test_thin_profile_login`
+**Playwright Implementation:** `thin profile user can login`
+
+Tests that a user with a thin profile (minimal registration information) can successfully log into the console. Uses isolated browser context to avoid affecting shared authentication state.
+
+**Requirements:**
+- Environment variables: `THIN_USER` and `THIN_PASSWORD` must be set
+- Tests are automatically skipped if credentials are not provided
+
+#### 2. Thick Profile Prompt
+**Test:** `test_thick_profile_prompt_from_my_profile`
+**Playwright Implementation:** `thin profile user sees thick profile prompt from my profile`
+
+Verifies that when a thin profile user navigates to "My Profile", they are prompted to complete their profile (transition from thin to thick profile).
+
+**Behavior tested:**
+- Login with thin user credentials
+- Navigate to My Profile via user menu
+- Verify presence of profile completion form or prompt
+
+### Tests NOT Migrated
+
+#### ❌ test_thin_profile_creation
+**Reason:** Manual test
+**Details:** This test is marked as `@pytest.mark.manual` in IQE and requires manual user registration steps that cannot be automated. Creating thin profile users is a manual process that involves account registration.
+
+### Implementation Details
+
+**Authentication Handling:**
+- Uses isolated browser contexts for thin user authentication
+- Does not reuse shared authentication state
+- Each test performs fresh login with thin user credentials
+
+**Environment Configuration:**
+- Thin user credentials must be provided via environment variables
+- Tests are conditionally skipped if credentials are not available
+- No hardcoded test user credentials
+
+**Progressive Profile Concept:**
+- **Thin Profile:** Basic user account with minimal information
+- **Thick Profile:** Complete user account with full profile details
+- Users start with thin profiles and are prompted to upgrade to thick profiles
+
+### Migration Statistics
+
+- **Tests Migrated:** 2 (thin profile login, thick profile prompt)
+- **Tests Skipped:** 1 (thin profile creation - manual test)
+- **Test Cases Created:** 2
+- **Lines of Code:** ~140 (tests + documentation)
+
+---
