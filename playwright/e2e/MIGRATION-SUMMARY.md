@@ -268,6 +268,8 @@ For questions about this migration:
 **Source:** `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_progressive_profile.py`
 **Target:** `insights-chrome/playwright/e2e/release-gate/progressive-profile.spec.ts`
 
+**Status:** ⚠️ **Tests currently skipped pending rework (RHCLOUD-47458)**
+
 ### Tests Migrated
 
 #### 1. Thin Profile User Login
@@ -277,8 +279,8 @@ For questions about this migration:
 Tests that a user with a thin profile (minimal registration information) can successfully log into the console. Uses isolated browser context to avoid affecting shared authentication state.
 
 **Requirements:**
-- Environment variables: `THIN_USER` and `THIN_PASSWORD` must be set
-- Tests are automatically skipped if credentials are not provided
+- Environment variables: `THIN_USER` and `THIN_PASSWORD` (not currently required while tests are skipped)
+- Tests will be reworked when updated profile flow requirements are defined
 
 #### 2. Thick Profile Prompt
 **Test:** `test_thick_profile_prompt_from_my_profile`
@@ -305,8 +307,8 @@ Verifies that when a thin profile user navigates to "My Profile", they are promp
 - Each test performs fresh login with thin user credentials
 
 **Environment Configuration:**
-- Thin user credentials must be provided via environment variables
-- Tests are conditionally skipped if credentials are not available
+- Thin user credentials will be provided via environment variables (`THIN_USER`, `THIN_PASSWORD`)
+- Tests are currently disabled pending rework (RHCLOUD-47458)
 - No hardcoded test user credentials
 
 **Progressive Profile Concept:**

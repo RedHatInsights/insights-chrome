@@ -24,9 +24,11 @@ test.describe('Progressive Profile', () => {
 
   test.skip(true, 'Progressive profile tests are out-of-date and will be reworked in RHCLOUD-47458');
 
-  if (!thinUser || !thinPassword) {
-    throw new Error('THIN_USER and THIN_PASSWORD environment variables must be set');
-  }
+  // Environment variable check disabled while tests are skipped
+  // Re-enable when tests are reworked in RHCLOUD-47458
+  // if (!thinUser || !thinPassword) {
+  //   throw new Error('THIN_USER and THIN_PASSWORD environment variables must be set');
+  // }
 
   test('thin profile user can login', async ({ browser, baseURL }) => {
     // Create isolated context for thin user login
