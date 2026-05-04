@@ -88,6 +88,10 @@ const plugins = (dev = false, beta = false, restricted = false) => {
      */
     new webpack.DefinePlugin({
       __SENTRY_DEBUG__: false,
+      'process.env.AMPLITUDE_KEY_DEV': JSON.stringify(process.env.AMPLITUDE_KEY_DEV || ''),
+      'process.env.AMPLITUDE_KEY_PROD': JSON.stringify(process.env.AMPLITUDE_KEY_PROD || ''),
+      'process.env.AMPLITUDE_AUTOCAPTURE_KEY_DEV': JSON.stringify(process.env.AMPLITUDE_AUTOCAPTURE_KEY_DEV || ''),
+      'process.env.AMPLITUDE_AUTOCAPTURE_KEY_PROD': JSON.stringify(process.env.AMPLITUDE_AUTOCAPTURE_KEY_PROD || ''),
     }),
     ...(dev
       ? [
