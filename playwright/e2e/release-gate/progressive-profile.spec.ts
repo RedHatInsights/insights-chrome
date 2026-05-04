@@ -22,6 +22,8 @@ test.describe('Progressive Profile', () => {
   const thinUser = process.env.THIN_USER;
   const thinPassword = process.env.THIN_PASSWORD;
 
+  test.skip(true, 'Progressive profile tests are out-of-date and will be reworked in RHCLOUD-47458');
+
   if (!thinUser || !thinPassword) {
     throw new Error('THIN_USER and THIN_PASSWORD environment variables must be set');
   }
