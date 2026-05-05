@@ -10,7 +10,7 @@
 
 #### 1. Search by Keyword
 **Test:** `test_search_by_keyword`
-**Playwright Implementation:** 14 parametrized test cases
+**Playwright Implementation:** 14 parameterized test cases
 
 Tests search functionality for two main categories:
 
@@ -47,7 +47,7 @@ Verifies that searching for whitespace displays the empty state UI and returns n
 
 **Chrome Search Architecture:**
 - Uses local Orama search index for fast client-side search
-- Debounced search (1 second delay for analytics tracking)
+- Debounced search (1-second delay for analytics tracking)
 - Results displayed in dropdown menu with titles and descriptions
 - Supports expandable search input on mobile
 
@@ -74,7 +74,7 @@ Created `ChromeSearch` page object (`playwright/e2e/pages/chrome-search.ts`) wit
 ### Migration Statistics
 
 - **Tests Migrated:** 2 test functions → 15 test cases
-  - test_search_by_keyword: 14 parametrized tests (8 IAM + 6 Tasks)
+  - test_search_by_keyword: 14 parameterized tests (8 IAM + 6 Tasks)
   - test_search_no_results: 1 test for empty state
 - **Tests Skipped:** 0
 - **Page Objects Created:** 1 (ChromeSearch)
