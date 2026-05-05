@@ -55,6 +55,9 @@ export class ChromeSearch {
       return input && !input.hasAttribute('disabled');
     });
 
+    // Clear input to make method idempotent (type() appends, so clear first)
+    await this.searchInput.fill('');
+
     // Use type() instead of fill() to trigger keydown events that open the menu
     await this.searchInput.type(query);
 
