@@ -181,6 +181,8 @@ export type ChromeModule = {
   analytics?: {
     APIKey?: string;
     APIKeyDev?: string;
+    autocaptureAPIKey?: string;
+    autocaptureAPIKeyDev?: string;
     amplitude?: {
       APIKey?: string;
       APIKeyDev?: string;

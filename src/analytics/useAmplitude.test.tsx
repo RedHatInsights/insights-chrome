@@ -1,12 +1,21 @@
 import { render, waitFor } from '@testing-library/react';
-import { useAtomValue } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 
+const MOCK_CHROME_ANALYTICS = {
+  APIKey: 'feo-prod-engagement-key',
+  APIKeyDev: 'feo-dev-engagement-key',
+  autocaptureAPIKey: 'feo-prod-autocapture-key',
+  autocaptureAPIKeyDev: 'feo-dev-autocapture-key',
+};
+
+// Mutable mock state — tests mutate these before render
+let mockModuleDefinition: Record<string, unknown> | undefined = { analytics: { amplitude: { APIKeyDev: 'module-dev-key' } } };
+let mockChromeModules: Record<string, unknown> = { chrome: { analytics: MOCK_CHROME_ANALYTICS } };
+
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag: string) => {
-    // Enable engagement SDK by default, disable autocapture
     if (flag === 'platform.chrome.analytics.amplitude') return true;
     if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
     return true;
@@ -15,9 +24,18 @@ jest.mock('@unleash/proxy-client-react', () => ({
 jest.mock('react-router-dom', () => ({ useNavigate: () => jest.fn() }));
 jest.mock('../utils/common', () => ({ isProd: () => false }));
 jest.mock('../state/atoms/activeModuleAtom', () => ({
-  activeModuleDefinitionReadAtom: {},
+  activeModuleDefinitionReadAtom: '__ACTIVE_MODULE_ATOM__',
 }));
-jest.mock('jotai', () => ({ useAtomValue: jest.fn(() => ({ analytics: { amplitude: { APIKeyDev: 'DEVKEY' } } })) }));
+jest.mock('../state/atoms/chromeModuleAtom', () => ({
+  chromeModulesAtom: '__CHROME_MODULES_ATOM__',
+}));
+jest.mock('jotai', () => ({
+  useAtomValue: jest.fn((atom: unknown) => {
+    if (atom === '__ACTIVE_MODULE_ATOM__') return mockModuleDefinition;
+    if (atom === '__CHROME_MODULES_ATOM__') return mockChromeModules;
+    return undefined;
+  }),
+}));
 jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock, ready: true }) }));
 jest.mock('@amplitude/analytics-browser', () => ({
   add: jest.fn(),
@@ -55,16 +73,21 @@ describe('useAmplitude', () => {
     delete window.engagement;
     document.getElementById('amplitude-script')?.remove();
     jest.clearAllMocks();
+    // Reset mutable mock state to defaults
+    mockModuleDefinition = { analytics: { amplitude: { APIKeyDev: 'module-dev-key' } } };
+    mockChromeModules = { chrome: { analytics: MOCK_CHROME_ANALYTICS } };
+    // Clear handler registry
+    Object.keys(onHandlers).forEach((key) => delete onHandlers[key]);
   });
 
-  it('injects script with active module dev key and initializes on load', async () => {
+  it('injects script with module-specific dev key when available', async () => {
     render(<TestComponent />);
 
     const script = document.getElementById('amplitude-script') as HTMLScriptElement;
     expect(script).toBeTruthy();
-    expect(script.src).toContain('/DEVKEY.engagement.js');
+    // Module key takes priority over chrome FEO config
+    expect(script.src).toContain('/module-dev-key.engagement.js');
 
-    // Provide engagement before triggering onload
     window.engagement = {
       boot: jest.fn(),
       shutdown: jest.fn(),
@@ -72,21 +95,29 @@ describe('useAmplitude', () => {
       setRouter: jest.fn(),
     };
 
-    // Trigger load
     if (script.onload) {
       script.onload(new Event('load'));
     }
 
-    // boot should have been called once with expected shape
     await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
     const arg = (window.engagement.boot as jest.Mock).mock.calls[0][0];
     expect(arg).toHaveProperty('user.user_id', 'user-1');
     expect(arg).toHaveProperty('user.device_id', 'anon-1');
     expect(Array.isArray(arg.integrations)).toBe(true);
 
-    // ensure Segment event forwarding handlers registered
     expect(onHandlers['track']?.length).toBeGreaterThan(0);
     expect(onHandlers['page']?.length).toBeGreaterThan(0);
+  });
+
+  it('falls back to chrome FEO config key when module key is absent', async () => {
+    mockModuleDefinition = undefined;
+
+    render(<TestComponent />);
+
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    expect(script).toBeTruthy();
+    // Should use the FEO dev key
+    expect(script.src).toContain('/feo-dev-engagement-key.engagement.js');
   });
 
   it('does not inject script when feature flag is disabled', async () => {
@@ -106,7 +137,6 @@ describe('useAmplitude', () => {
     render(<TestComponent />);
     const script = document.getElementById('amplitude-script') as HTMLScriptElement;
     expect(script).toBeTruthy();
-    // Ensure engagement stays undefined and trigger load
     if (script.onload) {
       script.onload(new Event('load'));
     }
@@ -128,14 +158,12 @@ describe('useAmplitude', () => {
   });
 
   it('handles analytics.user rejection without calling boot', async () => {
-    // Provide engagement first
     window.engagement = {
       boot: jest.fn(),
       shutdown: jest.fn(),
       forwardEvent: jest.fn(),
       setRouter: jest.fn(),
     } as unknown as typeof window.engagement;
-    // Make user() reject
     const originalUser = analyticsMock.user;
     analyticsMock.user = () => Promise.reject(new Error('user failed'));
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -149,13 +177,11 @@ describe('useAmplitude', () => {
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     expect(window.engagement?.boot).not.toHaveBeenCalled();
 
-    // restore
     analyticsMock.user = originalUser;
     errorSpy.mockRestore();
   });
 
   it('detaches handlers on unmount', async () => {
-    // Prepare engagement
     window.engagement = {
       boot: jest.fn(),
       shutdown: jest.fn(),
@@ -170,11 +196,9 @@ describe('useAmplitude', () => {
     }
     await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalled());
 
-    // Ensure handlers registered
     expect(onHandlers['track']?.length).toBeGreaterThan(0);
     expect(onHandlers['page']?.length).toBeGreaterThan(0);
 
-    // Unmount and verify off called for both events with same handler ref
     unmount();
     await waitFor(() => expect(analyticsMock.off).toHaveBeenCalled());
     const calls = (analyticsMock.off as jest.Mock).mock.calls;
@@ -186,24 +210,20 @@ describe('useAmplitude', () => {
   });
 
   it('warns when amplitude key is malformed (non-string)', async () => {
-    // Make module provide a non-string key so it overrides fallback and triggers guard
-    (useAtomValue as unknown as jest.Mock).mockReturnValueOnce({
-      analytics: { amplitude: { APIKeyDev: {} } },
-    });
+    mockModuleDefinition = { analytics: { amplitude: { APIKeyDev: {} } } };
+    mockChromeModules = { chrome: { analytics: { ...MOCK_CHROME_ANALYTICS, APIKeyDev: undefined } } };
+
     const warnSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     render(<TestComponent />);
     await waitFor(() => expect(warnSpy).toHaveBeenCalled());
-    // No script should be injected
     expect(document.getElementById('amplitude-script')).toBeFalsy();
     warnSpy.mockRestore();
   });
 
-  it('initializes autocapture when flag is enabled', async () => {
-    // Verify imports are defined
+  it('initializes autocapture with FEO config key', async () => {
     expect(amplitude).toBeDefined();
     expect(autocapturePlugin).toBeDefined();
 
-    // Enable autocapture flag
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
       if (flag === 'platform.chrome.analytics.amplitude') return false;
       if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
@@ -216,7 +236,7 @@ describe('useAmplitude', () => {
 
     await waitFor(() => {
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
-      expect(amplitude.init).toHaveBeenCalledWith(expect.stringMatching('^[0-9a-f]{32}'), 'user-1', {
+      expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', 'user-1', {
         deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
@@ -229,7 +249,6 @@ describe('useAmplitude', () => {
 
     expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
 
-    // Restore mocks
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
       if (flag === 'platform.chrome.analytics.amplitude') return true;
       if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
@@ -239,7 +258,6 @@ describe('useAmplitude', () => {
   });
 
   it('initializes both guides and autocapture when both flags are enabled', async () => {
-    // Enable both flags
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
       if (flag === 'platform.chrome.analytics.amplitude') return true;
       if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
@@ -257,17 +275,14 @@ describe('useAmplitude', () => {
 
     render(<TestComponent />);
 
-    // Script for guides should be injected
     const script = document.getElementById('amplitude-script') as HTMLScriptElement;
     expect(script).toBeTruthy();
-    expect(script.src).toContain('/DEVKEY.engagement.js');
+    expect(script.src).toContain('/module-dev-key.engagement.js');
 
-    // Trigger script load
     if (script.onload) {
       script.onload(new Event('load'));
     }
 
-    // Both engagement SDK and autocapture should initialize
     await waitFor(() => {
       expect(window.engagement?.boot).toHaveBeenCalled();
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
@@ -276,12 +291,47 @@ describe('useAmplitude', () => {
 
     expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
 
-    // Restore mocks
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
       if (flag === 'platform.chrome.analytics.amplitude') return true;
       if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
       return true;
     });
     logSpy.mockRestore();
+  });
+
+  it('logs warning when FEO analytics section is missing', async () => {
+    mockModuleDefinition = undefined;
+    mockChromeModules = { chrome: { manifestLocation: '/apps/chrome/js/fed-mods.json' } };
+
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<TestComponent />);
+
+    await waitFor(() =>
+      expect(warnSpy).toHaveBeenCalledWith(
+        'Amplitude: analytics section not found in FEO config (fed-mods.json). Amplitude will not initialize until config is available.'
+      )
+    );
+
+    warnSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
+
+  it('does not inject script when no keys available (FEO config missing)', async () => {
+    mockModuleDefinition = undefined;
+    mockChromeModules = { chrome: { manifestLocation: '/apps/chrome/js/fed-mods.json' } };
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    render(<TestComponent />);
+
+    // No script injected — key is undefined
+    expect(document.getElementById('amplitude-script')).toBeFalsy();
+    await waitFor(() => expect(errorSpy).toHaveBeenCalledWith('Amplitude key is missing or malformed:', undefined));
+
+    errorSpy.mockRestore();
+    warnSpy.mockRestore();
   });
 });
