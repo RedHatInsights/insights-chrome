@@ -254,13 +254,7 @@ export class ChromeTopbar {
    * Checks if the services menu is open
    */
   async isServicesMenuOpen(): Promise<boolean> {
-    const sidebarContent = this.page.locator('.pf-v6-c-sidebar__content');
-    try {
-      await sidebarContent.waitFor({ state: 'visible', timeout: 500 });
-      return true;
-    } catch {
-      return false;
-    }
+    return await this.servicesButton.getAttribute('aria-expanded') === 'true';
   }
 
   /**
