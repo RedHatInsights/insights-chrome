@@ -1,30 +1,27 @@
-import { test, expect, Page } from '../../setup/test-setup';
+import { test, expect } from '../../setup/test-setup';
 import { ChromeNavigation } from '../pages/chrome-navigation';
+import { ChromeTopbar } from '../pages/chrome-topbar';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });
 
-  /**
-   * Helper to open the services menu and wait for it to be visible
-   */
-  async function openServicesMenu(page: Page) {
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
-  }
-
   test('visit services', async ({ page }) => {
-    // click on services button
-    await page.locator('.chr-c-link-service-toggle').click();
+    const topbar = new ChromeTopbar(page);
 
-    // Verify the services dropdown is visible
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+    // Open services menu
+    await topbar.openServices();
+
+    // Verify the services menu is visible
+    await expect(await topbar.isServicesMenuOpen()).toBe(true);
   });
 
   test('Navigate to users', async ({ page }) => {
-    // click on services button
-    await page.locator('.chr-c-link-service-toggle').click();
+    const topbar = new ChromeTopbar(page);
+
+    // Open services menu
+    await topbar.openServices();
 
     // click on all services
     await page.locator('[data-ouia-component-id="View all link"]').first().click();
@@ -84,12 +81,13 @@ test.describe('Navigation', () => {
   test('platform link - Ansible has correct internal route', async ({ page }) => {
     // Migrated from test_navigation.py::test_services_menu_platform_links (Ansible variant)
     // Validates chrome navigation structure, not the destination routes themselves
+    const topbar = new ChromeTopbar(page);
 
     // Open services menu
-    await openServicesMenu(page);
+    await topbar.openServices();
 
     // Find Ansible platform link within services menu using OUIA ID
-    const ansibleLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-Ansible"]');
+    const ansibleLink = topbar.getServiceLinkByPlatform('Ansible');
 
     // Verify link exists and has correct internal href
     await expect(ansibleLink).toBeVisible();
@@ -99,12 +97,13 @@ test.describe('Navigation', () => {
   test('platform link - OpenShift has correct internal route', async ({ page }) => {
     // Migrated from test_navigation.py::test_services_menu_platform_links (OpenShift variant)
     // Validates chrome navigation structure, not the destination routes themselves
+    const topbar = new ChromeTopbar(page);
 
     // Open services menu
-    await openServicesMenu(page);
+    await topbar.openServices();
 
     // Find OpenShift platform link within services menu using OUIA ID
-    const openshiftLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-Openshift"]');
+    const openshiftLink = topbar.getServiceLinkByPlatform('Openshift');
 
     // Verify link exists and has correct internal href
     await expect(openshiftLink).toBeVisible();
@@ -114,12 +113,13 @@ test.describe('Navigation', () => {
   test('platform link - Insights has correct internal route', async ({ page }) => {
     // Migrated from test_navigation.py::test_services_menu_platform_links (Insights variant)
     // Validates chrome navigation structure, not the destination routes themselves
+    const topbar = new ChromeTopbar(page);
 
     // Open services menu
-    await openServicesMenu(page);
+    await topbar.openServices();
 
     // Find RHEL/Insights platform link within services menu using OUIA ID
-    const insightsLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-RHEL"]');
+    const insightsLink = topbar.getServiceLinkByPlatform('RHEL');
 
     // Verify link exists and has correct internal href
     await expect(insightsLink).toBeVisible();

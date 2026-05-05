@@ -251,9 +251,78 @@ export class ChromeTopbar {
   }
 
   /**
-   * Opens the services menu
+   * Checks if the services menu is open
+   */
+  async isServicesMenuOpen(): Promise<boolean> {
+    const sidebarContent = this.page.locator('.pf-v6-c-sidebar__content');
+    try {
+      await sidebarContent.waitFor({ state: 'visible', timeout: 500 });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Opens the services menu (idempotent)
    */
   async openServices(): Promise<void> {
-    await this.servicesButton.click();
+    if (!(await this.isServicesMenuOpen())) {
+      await this.servicesButton.click();
+      await this.page.locator('.pf-v6-c-sidebar__content').waitFor({
+        state: 'visible',
+        timeout: ChromeTopbar.MENU_TIMEOUT
+      });
+    }
+  }
+
+  /**
+   * Closes the services menu (idempotent)
+   */
+  async closeServices(): Promise<void> {
+    if (await this.isServicesMenuOpen()) {
+      await this.servicesButton.click();
+      await this.page.locator('.pf-v6-c-sidebar__content').waitFor({
+        state: 'hidden',
+        timeout: ChromeTopbar.MENU_TIMEOUT
+      });
+    }
+  }
+
+  /**
+   * Gets a service link by its OUIA component ID
+   * @param ouiaId The OUIA component ID (e.g., "AllServices-Dropdown-Ansible")
+   * @returns Locator for the service link
+   */
+  getServiceLink(ouiaId: string): Locator {
+    return this.page.locator(`[data-ouia-component-id="${ouiaId}"]`);
+  }
+
+  /**
+   * Gets a service link by platform name
+   * @param platformName The platform name (e.g., "Ansible", "Openshift", "RHEL")
+   * @returns Locator for the service link
+   */
+  getServiceLinkByPlatform(platformName: string): Locator {
+    return this.getServiceLink(`AllServices-Dropdown-${platformName}`);
+  }
+
+  /**
+   * Clicks a service in the services menu by OUIA ID
+   * @param ouiaId The OUIA component ID of the service
+   */
+  async clickService(ouiaId: string): Promise<void> {
+    await this.openServices();
+    const serviceLink = this.getServiceLink(ouiaId);
+    await serviceLink.waitFor({ state: 'visible', timeout: ChromeTopbar.MENU_TIMEOUT });
+    await serviceLink.click();
+  }
+
+  /**
+   * Clicks a service in the services menu by platform name
+   * @param platformName The platform name (e.g., "Ansible", "Openshift", "RHEL")
+   */
+  async clickServiceByPlatform(platformName: string): Promise<void> {
+    await this.clickService(`AllServices-Dropdown-${platformName}`);
   }
 }
