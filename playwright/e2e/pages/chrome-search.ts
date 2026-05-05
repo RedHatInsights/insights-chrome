@@ -145,9 +145,9 @@ export class ChromeSearch {
 
   /**
    * Clicks on a search result by title text
-   * @param title - Title text to search for
+   * @param title - Title text to search for (case-insensitive substring match)
    */
   async clickResultByTitle(title: string) {
-    await this.searchMenu.getByRole('menuitem').filter({ hasText: new RegExp(title, 'i') }).click();
+    await this.searchMenu.getByRole('menuitem').filter({ hasText: title }).click();
   }
 }

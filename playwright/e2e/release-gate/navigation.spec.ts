@@ -1,10 +1,18 @@
-import { test, expect } from '../../setup/test-setup';
+import { test, expect, Page } from '../../setup/test-setup';
 import { ChromeNavigation } from '../pages/chrome-navigation';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });
+
+  /**
+   * Helper to open the services menu and wait for it to be visible
+   */
+  async function openServicesMenu(page: Page) {
+    await page.locator('.chr-c-link-service-toggle').click();
+    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+  }
 
   test('visit services', async ({ page }) => {
     // click on services button
@@ -78,8 +86,7 @@ test.describe('Navigation', () => {
     // Validates chrome navigation structure, not the destination routes themselves
 
     // Open services menu
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+    await openServicesMenu(page);
 
     // Find Ansible platform link within services menu using OUIA ID
     const ansibleLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-Ansible"]');
@@ -94,8 +101,7 @@ test.describe('Navigation', () => {
     // Validates chrome navigation structure, not the destination routes themselves
 
     // Open services menu
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+    await openServicesMenu(page);
 
     // Find OpenShift platform link within services menu using OUIA ID
     const openshiftLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-Openshift"]');
@@ -110,8 +116,7 @@ test.describe('Navigation', () => {
     // Validates chrome navigation structure, not the destination routes themselves
 
     // Open services menu
-    await page.locator('.chr-c-link-service-toggle').click();
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+    await openServicesMenu(page);
 
     // Find RHEL/Insights platform link within services menu using OUIA ID
     const insightsLink = page.locator('[data-ouia-component-id="AllServices-Dropdown-RHEL"]');
