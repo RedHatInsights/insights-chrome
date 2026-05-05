@@ -21,6 +21,11 @@ objects:
         manifestLocation: "/apps/chrome/js/fed-mods.json"
         config:
           ssoUrl: ${SSO_URL}
+        analytics:
+          APIKey: ${AMPLITUDE_API_KEY}
+          APIKeyDev: ${AMPLITUDE_API_KEY_DEV}
+          autocaptureAPIKey: ${AMPLITUDE_AUTOCAPTURE_API_KEY}
+          autocaptureAPIKeyDev: ${AMPLITUDE_AUTOCAPTURE_API_KEY_DEV}
         modules:
           - id: 'satellite-token'
             module: './SatelliteToken'
@@ -44,3 +49,11 @@ parameters:
     required: true
   - name: IMAGE
     value: quay.io/redhat-services-prod/hcc-platex-services-tenant/insights-chrome
+  - name: AMPLITUDE_API_KEY
+    value: "5c16029122229733b22f1d87567b437"
+  - name: AMPLITUDE_API_KEY_DEV
+    value: "dc3aabccff4063af0de96d7825422d8f"
+  - name: AMPLITUDE_AUTOCAPTURE_API_KEY
+    value: "56344678d3883c0a730f102f28f8beb4"
+  - name: AMPLITUDE_AUTOCAPTURE_API_KEY_DEV
+    value: "61d45c06a92d1fe5cf57023568ae9053"
