@@ -29,17 +29,17 @@ test.describe('URL Navigation', () => {
       // Navigate to the URL
       await page.goto(path);
 
-      // Verify URL contains the expected path
-      expect(page.url()).toContain(path);
+      // Verify URL contains the expected path (auto-retrying assertion)
+      await expect(page).toHaveURL(new RegExp(path));
 
       // Wait for chrome masthead to ensure page loaded
-      await page.getByRole('button', { name: /User Avatar/ }).waitFor({
+      await page.getByRole('button', { name: /User Avatar/i }).waitFor({
         state: 'visible',
         timeout: APP_INIT_TIMEOUT,
       });
 
       // Verify we're on the correct page by checking URL again after load
-      expect(page.url()).toContain(path);
+      await expect(page).toHaveURL(new RegExp(path));
     });
   });
 
@@ -52,18 +52,18 @@ test.describe('URL Navigation', () => {
         await page.goto(path, { timeout: APP_INIT_TIMEOUT });
 
         // Wait for chrome to be ready
-        await page.getByRole('button', { name: /User Avatar/ }).waitFor({
+        await page.getByRole('button', { name: /User Avatar/i }).waitFor({
           state: 'visible',
           timeout: APP_INIT_TIMEOUT,
         });
 
-        const currentUrl = page.url();
-        const success = currentUrl.includes(path);
+        // Use auto-retrying URL assertion
+        await expect(page).toHaveURL(new RegExp(path));
 
         results.push({
           path,
-          success,
-          url: currentUrl,
+          success: true,
+          url: page.url(),
         });
       } catch (error) {
         results.push({
