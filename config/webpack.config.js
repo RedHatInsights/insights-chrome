@@ -244,6 +244,7 @@ const commonConfig = ({ dev }) => {
       // This must come AFTER contextualConfigSettings spread to ensure it's not overridden
       ...(process.env.CI && {
         client: {
+          ...(contextualConfigSettings.client || {}),
           overlay: false,
         },
       }),
