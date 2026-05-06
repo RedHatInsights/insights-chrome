@@ -19,21 +19,22 @@ import AxeBuilder from '@axe-core/playwright';
 const APP_INIT_TIMEOUT = 30000;
 
 // Chrome pages to test for accessibility (not tenant applications)
-const ACCESSIBILITY_TEST_URLS = [
-  '/',
-  // '/settings', // SKIPPED: RHCLOUD-47549 - skeleton loaders lack accessible text
-  '/allservices',
-];
+const ACCESSIBILITY_TEST_TARGETS = [
+  { url: '/' },
+  { url: '/settings', skipReason: 'RHCLOUD-47549 - skeleton loaders lack accessible text' },
+  { url: '/allservices' },
+] as const;
 
 test.describe('Accessibility Compliance', () => {
-  ACCESSIBILITY_TEST_URLS.forEach((url) => {
+  ACCESSIBILITY_TEST_TARGETS.forEach(({ url, skipReason }) => {
     test(`should have no axe violations on ${url}`, async ({ page }) => {
+      test.skip(!!skipReason, skipReason);
       // Navigate to the URL
       await page.goto(url);
 
       // Wait for the page to be fully loaded
       // Use a visible element from the chrome masthead to ensure app is ready
-      await page.getByRole('button', { name: /User Avatar/ }).waitFor({
+      await page.getByRole('button', { name: /User Avatar/i }).waitFor({
         state: 'visible',
         timeout: APP_INIT_TIMEOUT,
       });
@@ -50,7 +51,7 @@ test.describe('Accessibility Compliance', () => {
       console.log(`  Incomplete: ${accessibilityScanResults.incomplete.length}`);
       console.log(`  Inapplicable: ${accessibilityScanResults.inapplicable.length}`);
 
-      // Log violation details if any exist
+      // Log violation details if any exist (sanitized - no raw HTML)
       if (accessibilityScanResults.violations.length > 0) {
         console.log('\nViolations:');
         accessibilityScanResults.violations.forEach((violation) => {
@@ -58,8 +59,9 @@ test.describe('Accessibility Compliance', () => {
           console.log(`    Impact: ${violation.impact}`);
           console.log(`    Affected nodes: ${violation.nodes.length}`);
           violation.nodes.forEach((node, index) => {
-            console.log(`      ${index + 1}. ${node.html}`);
-            console.log(`         Target: ${node.target.join(' ')}`);
+            const target = node.target.join(' ');
+            const truncatedTarget = target.length > 100 ? target.slice(0, 100) + '...' : target;
+            console.log(`      ${index + 1}. Target: ${truncatedTarget}`);
           });
         });
       }
@@ -78,11 +80,12 @@ test.describe('Accessibility Compliance', () => {
       violationDetails: { [key: string]: number };
     }[] = [];
 
-    for (const url of ACCESSIBILITY_TEST_URLS) {
+    for (const { url, skipReason } of ACCESSIBILITY_TEST_TARGETS) {
+      if (skipReason) continue; // Skip URLs with known issues
       await page.goto(url);
 
       // Wait for app to be ready
-      await page.getByRole('button', { name: /User Avatar/ }).waitFor({
+      await page.getByRole('button', { name: /User Avatar/i }).waitFor({
         state: 'visible',
         timeout: APP_INIT_TIMEOUT,
       });
