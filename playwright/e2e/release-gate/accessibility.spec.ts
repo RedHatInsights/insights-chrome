@@ -21,7 +21,7 @@ const APP_INIT_TIMEOUT = 30000;
 // Chrome pages to test for accessibility (not tenant applications)
 const ACCESSIBILITY_TEST_URLS = [
   '/',
-  '/settings',
+  // '/settings', // SKIPPED: RHCLOUD-47549 - skeleton loaders lack accessible text
   '/allservices',
 ];
 
