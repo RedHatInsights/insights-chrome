@@ -6,28 +6,23 @@ import AxeBuilder from '@axe-core/playwright';
  *
  * Migrated from: iqe-platform-ui-plugin/iqe_platform_ui/tests/test_accessibility.py
  *
- * Tests accessibility compliance using axe-core across multiple pages.
+ * Tests accessibility compliance using axe-core across chrome pages.
  * Scans pages for WCAG violations and generates detailed reports.
  *
  * Requirements:
  * - WCAG 2.1 Level A and AA compliance
  *
- * Note: This test scans a subset of critical pages from the original IQE test.
- * The original tested 50+ URLs. This version focuses on high-traffic pages.
+ * Note: This test focuses on chrome-owned pages. Tenant applications
+ * (insights, openshift apps, ansible apps) have their own accessibility tests.
  */
 
-// Critical pages to test for accessibility
+const APP_INIT_TIMEOUT = 30000;
+
+// Chrome pages to test for accessibility (not tenant applications)
 const ACCESSIBILITY_TEST_URLS = [
   '/',
   '/settings',
-  '/openshift',
-  '/openshift/overview',
-  '/insights/inventory',
-  '/insights/advisor/recommendations',
-  '/insights/vulnerability/cves',
-  '/insights/compliance/reports',
-  '/insights/patch/advisories',
-  '/ansible/automation-hub/',
+  '/allservices',
 ];
 
 test.describe('Accessibility Compliance', () => {
@@ -40,7 +35,7 @@ test.describe('Accessibility Compliance', () => {
       // Use a visible element from the chrome masthead to ensure app is ready
       await page.getByRole('button', { name: /User Avatar/ }).waitFor({
         state: 'visible',
-        timeout: 30000,
+        timeout: APP_INIT_TIMEOUT,
       });
 
       // Run axe accessibility scan
@@ -89,7 +84,7 @@ test.describe('Accessibility Compliance', () => {
       // Wait for app to be ready
       await page.getByRole('button', { name: /User Avatar/ }).waitFor({
         state: 'visible',
-        timeout: 30000,
+        timeout: APP_INIT_TIMEOUT,
       });
 
       const scanResults = await new AxeBuilder({ page })
