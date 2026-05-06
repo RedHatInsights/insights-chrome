@@ -58,6 +58,7 @@
   },
   "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@cypress/code-coverage": "^4.0.3",
     "@faker-js/faker": "^10.4.0",
     "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
