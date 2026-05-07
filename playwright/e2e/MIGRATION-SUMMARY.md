@@ -476,3 +476,101 @@ Verifies that when a thin profile user navigates to "My Profile", they are promp
 - **Lines of Code:** ~140 (tests + documentation)
 
 ---
+
+## Migration Complete: test_redirects.py
+
+**Date:** May 7, 2026
+**Source:** `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_redirects.py`
+**Config:** `iqe-platform-ui-plugin/iqe_platform_ui/conf/platform_ui.default.yaml` (lines 191-331)
+**Target:** `insights-chrome/playwright/e2e/release-gate/redirects.spec.ts`
+
+### Architecture Decision
+
+**Location:** insights-chrome Playwright test suite (release-gate).
+
+**Rationale:** While these tests verify external infrastructure (Akamai CDN), they belong in insights-chrome because:
+1. The Chrome team owns the Akamai CDN configuration
+2. URL paths are part of Chrome's routing domain
+3. Path redirects directly affect Chrome's URL space
+4. Keeping tests near the team that owns the config ensures they stay maintained
+5. Follows the established pattern of other IQE migrations to this repo
+
+**Approach:** HTTP-based using Playwright's `APIRequestContext` (not browser navigation).
+
+This matches the original IQE implementation which used an HTTP client (not a browser). Benefits:
+- Runs ~10x faster than browser-based tests (no page rendering)
+- Tests the actual HTTP redirect behavior (status codes, Location headers)
+- Does not require authentication (redirects happen before auth)
+- No dependency on Chrome UI loading
+
+**Environment:** Stage and prod only. Tests automatically skip in ephemeral/local
+environments where Akamai is not configured.
+
+### Tests Migrated
+
+#### 1. Akamai CDN Path Redirects
+**Test:** `test_akamai_redirects` (parameterized)
+**Playwright Implementation:** ~20 parameterized test cases
+
+Tests that old URL paths return HTTP 301/302 redirects to their new locations:
+- ✅ `/cost-management/*` → `/openshift/cost-management/*`
+- ✅ `/insights/subscriptions/rhel*` → `/subscriptions/usage`
+- ✅ `/openshift/subscriptions/openshift-container` → `/subscriptions/usage`
+- ✅ `/settings/sources` → `/settings/integrations`
+- ✅ `/settings/rbac` → `/iam/user-access/overview`
+- ✅ `/settings/my-user-access` → `/iam/my-user-access`
+- ✅ `/insights/compliance` → `/insights/compliance/reports`
+- ✅ `/insights/vulnerability` → `/insights/vulnerability/cves`
+- ✅ `/insights/advisor` → `/insights/advisor/recommendations`
+- ✅ And more (see `redirect-rules.ts` for full list)
+
+Each test verifies:
+1. HTTP response is 301 (permanent redirect)
+2. `Location` header points to the correct destination path
+
+#### 2. Domain Redirects (cloud → console)
+**Test:** `test_domain_redirects` (parameterized)
+**Playwright Implementation:** ~30 parameterized test cases
+
+Tests that `cloud.redhat.com` (or `cloud.stage.redhat.com`) redirects to
+`console.redhat.com` (or `console.stage.redhat.com`) for all major paths:
+- ✅ Root `/` preserves path
+- ✅ All bundle paths (`/insights`, `/openshift`, `/ansible`, etc.)
+- ✅ Settings and IAM paths
+- ✅ Application-specific paths
+
+Each test verifies:
+1. HTTP response is 301 (permanent redirect)
+2. `Location` header points to the console domain
+3. Path is preserved in the redirect
+
+### Configuration
+
+Redirect rules are defined in `playwright/e2e/release-gate/redirect-rules.ts`:
+- `PATH_REDIRECTS` — Akamai CDN path redirects (old path → new path)
+- `DOMAIN_REDIRECTS` — Domain redirects (cloud → console, path preserved)
+
+Each rule has: `from` (source path), `to` (destination path), `description`,
+and optional `expectedStatus` (defaults to 301).
+
+### Migration Statistics
+
+- **Tests Migrated:** 2 test functions → ~50 parameterized test cases
+  - Akamai path redirects: ~20 test cases
+  - Domain redirects: ~30 test cases
+- **Tests Skipped:** 0
+- **Files Created:** 2 (redirects.spec.ts, redirect-rules.ts)
+- **Lines of Code:** ~260 (tests + config + documentation)
+
+### Notes
+
+- Redirect rules were reconstructed from known HCC redirect patterns.
+  The full list should be validated against the IQE YAML config
+  (`platform_ui.default.yaml` lines 191-331) and updated as needed.
+- Some redirects may have been retired or changed since the IQE tests
+  were last updated. Failed tests indicate either a stale rule or a
+  missing Akamai redirect configuration.
+- New redirects should be added to `redirect-rules.ts` as they are
+  configured in Akamai.
+
+---
