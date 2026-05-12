@@ -16,7 +16,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v3
         with:
-          node-version: 22.19.0
+          node-version: 22.22.2
           cache: 'npm'
       # cache node modules for all jobs to use
       - uses: actions/cache@v3
@@ -38,7 +38,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v3
         with:
-          node-version: 22.19.0
+          node-version: 22.22.2
           cache: 'npm'
       - uses: actions/cache@v3
         id: node_modules-cache
@@ -60,7 +60,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v3
         with:
-          node-version: 22.19.0
+          node-version: 22.22.2
           cache: 'npm'
       - uses: actions/cache@v3
         id: node_modules-cache
@@ -79,7 +79,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v3
         with:
-          node-version: 22.19.0
+          node-version: 22.22.2
           cache: 'npm'      
       # consume installed modules and webpack cache
       - uses: actions/cache@v3
@@ -106,7 +106,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v3
         with:
-          node-version: 22.19.0
+          node-version: 22.22.2
           cache: 'npm'
       - uses: actions/cache@v3
         id: node_modules-cache
