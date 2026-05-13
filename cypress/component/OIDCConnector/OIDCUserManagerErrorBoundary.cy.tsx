@@ -11,12 +11,14 @@ const ThrowAbleComponent = ({ error }: { error: any }) => {
 describe('OIDCUserManagerErrorBoundary', () => {
   let basicFakeManager: UserManager;
 
-  beforeEach(() => {
-    // Suppress uncaught exceptions that may occur during test cleanup
+  // Register global exception handler before all tests to catch chunk loading errors
+  before(() => {
     cy.on('uncaught:exception', () => {
       return false;
     });
+  });
 
+  beforeEach(() => {
     basicFakeManager = new UserManager({
       authority: '',
       client_id: '',
