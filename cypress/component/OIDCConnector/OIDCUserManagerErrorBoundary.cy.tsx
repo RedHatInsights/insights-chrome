@@ -4,19 +4,17 @@ import { UserManager } from 'oidc-client-ts';
 import ErrorBoundary from '../../../src/components/ErrorComponents/ErrorBoundary';
 import { IntlProvider } from 'react-intl';
 
+// Register global exception handler at top level to catch chunk loading errors
+Cypress.on('uncaught:exception', () => {
+  return false;
+});
+
 const ThrowAbleComponent = ({ error }: { error: any }) => {
   throw error;
 };
 
 describe('OIDCUserManagerErrorBoundary', () => {
   let basicFakeManager: UserManager;
-
-  // Register global exception handler before all tests to catch chunk loading errors
-  before(() => {
-    cy.on('uncaught:exception', () => {
-      return false;
-    });
-  });
 
   beforeEach(() => {
     basicFakeManager = new UserManager({
