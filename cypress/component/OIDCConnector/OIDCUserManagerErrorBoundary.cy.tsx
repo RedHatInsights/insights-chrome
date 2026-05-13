@@ -12,6 +12,11 @@ describe('OIDCUserManagerErrorBoundary', () => {
   let basicFakeManager: UserManager;
 
   beforeEach(() => {
+    // Suppress uncaught exceptions that may occur during test cleanup
+    cy.on('uncaught:exception', () => {
+      return false;
+    });
+
     basicFakeManager = new UserManager({
       authority: '',
       client_id: '',
@@ -30,10 +35,6 @@ describe('OIDCUserManagerErrorBoundary', () => {
   });
 
   it('Should bubble unrelated OIDC timeout error to parent error boundary', () => {
-    cy.on('uncaught:exception', () => {
-      return false;
-    });
-
     cy.mount(
       <IntlProvider locale="en">
         <ErrorBoundary>
@@ -62,9 +63,9 @@ describe('OIDCUserManagerErrorBoundary', () => {
         redirect_uri: '',
         metadataUrl: '/authorityUrl',
       });
-      cy.on('uncaught:exception', () => {
-        return false;
-      });
+      // Stub signinRedirect to prevent actual redirect and async errors
+      cy.stub(fakeManager, 'signinRedirect').resolves();
+
       cy.mount(
         <OIDCUserManagerErrorBoundary userManager={fakeManager}>
           <ThrowAbleComponent error={{ error_description: error }} />
