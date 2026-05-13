@@ -14,6 +14,7 @@ const dummyQuickstart: QuickStart = {
 };
 
 describe('quickstartsAtom', () => {
+  // Test suite for quickstarts atom state management
   test('should add new quickstart to existing app', () => {
     const store = createStore();
     store.set(quickstartsAtom, { foo: [] });
