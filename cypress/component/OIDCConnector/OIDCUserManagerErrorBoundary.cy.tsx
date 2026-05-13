@@ -4,11 +4,6 @@ import { UserManager } from 'oidc-client-ts';
 import ErrorBoundary from '../../../src/components/ErrorComponents/ErrorBoundary';
 import { IntlProvider } from 'react-intl';
 
-// Register global exception handler at top level to catch chunk loading errors
-Cypress.on('uncaught:exception', () => {
-  return false;
-});
-
 const ThrowAbleComponent = ({ error }: { error: any }) => {
   throw error;
 };
@@ -22,6 +17,11 @@ describe('OIDCUserManagerErrorBoundary', () => {
       client_id: '',
       redirect_uri: '',
     });
+  });
+
+  afterEach(() => {
+    // Clean up UserManager to prevent memory leaks and state pollution
+    basicFakeManager?.clearStaleState?.();
   });
 
   it('should render children if no error is thrown', () => {
