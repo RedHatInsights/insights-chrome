@@ -52,21 +52,15 @@ describe('OIDCUserManagerErrorBoundary', () => {
 
   [SESSION_NOT_ACTIVE, ...TOKEN_NOT_ACTIVE.values()].forEach((error) => {
     it('should try redirect to signin page if error is thrown', () => {
-      cy.intercept('GET', '/authorityUrl', {
-        statusCode: 200,
-        body: {
-          success: true,
-          error,
-        },
-      }).as(error);
       const fakeManager = new UserManager({
         authority: '',
         client_id: '',
         redirect_uri: '',
         metadataUrl: '/authorityUrl',
       });
-      // Stub signinRedirect to prevent actual redirect and async errors
-      cy.stub(fakeManager, 'signinRedirect').resolves();
+
+      // Stub signinRedirect and track if it was called
+      const signinRedirectStub = cy.stub(fakeManager, 'signinRedirect').resolves();
 
       cy.mount(
         <OIDCUserManagerErrorBoundary userManager={fakeManager}>
@@ -74,7 +68,11 @@ describe('OIDCUserManagerErrorBoundary', () => {
         </OIDCUserManagerErrorBoundary>
       );
 
-      cy.wait(`@${error}`).its('response.body.error').should('eq', error);
+      // Verify signinRedirect was called instead of waiting for an HTTP request
+      cy.wrap(null).then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        expect(signinRedirectStub).to.have.been.calledOnce;
+      });
     });
   });
 });
