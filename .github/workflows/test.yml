@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.19.0
+          node-version: 24.15.0
           cache: 'npm'
       # cache node modules for all jobs to use
       - uses: actions/cache@v5
@@ -34,11 +34,11 @@ jobs:
     needs: [install]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.19.0
+          node-version: 24.15.0
           cache: 'npm'
       - uses: actions/cache@v5
         id: node_modules-cache
@@ -47,7 +47,7 @@ jobs:
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
       - run: npm i
       - run: npm run test -- --coverage
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v6
         with:
           files: ./coverage/clover.xml
   # lint
@@ -56,11 +56,11 @@ jobs:
     needs: [install]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.19.0
+          node-version: 24.15.0
           cache: 'npm'
       - uses: actions/cache@v5
         id: node_modules-cache
@@ -75,11 +75,11 @@ jobs:
     needs: [install]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.19.0
+          node-version: 24.15.0
           cache: 'npm'      
       # consume installed modules and webpack cache
       - uses: actions/cache@v5
@@ -102,11 +102,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Node setup
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.19.0
+          node-version: 24.15.0
           cache: 'npm'
       - uses: actions/cache@v5
         id: node_modules-cache
