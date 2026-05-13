@@ -1,4 +1,4 @@
-import { test, expect } from '../../setup/test-setup';
+import { expect, test } from '../../setup/test-setup';
 
 /**
  * URL Navigation Tests
@@ -41,62 +41,5 @@ test.describe('URL Navigation', () => {
       // Verify we're on the correct page by checking URL again after load
       await expect(page).toHaveURL(new RegExp(path));
     });
-  });
-
-  test('should handle all chrome URL navigations', async ({ page }) => {
-    // Summary test that validates all URLs in sequence
-    const results: { path: string; success: boolean; url: string }[] = [];
-
-    for (const { path } of CHROME_URLS) {
-      try {
-        await page.goto(path, { timeout: APP_INIT_TIMEOUT });
-
-        // Wait for chrome to be ready
-        await page.getByRole('button', { name: /User Avatar/i }).waitFor({
-          state: 'visible',
-          timeout: APP_INIT_TIMEOUT,
-        });
-
-        // Use auto-retrying URL assertion
-        await expect(page).toHaveURL(new RegExp(path));
-
-        results.push({
-          path,
-          success: true,
-          url: page.url(),
-        });
-      } catch (error) {
-        results.push({
-          path,
-          success: false,
-          url: `Error: ${error instanceof Error ? error.message : String(error)}`,
-        });
-      }
-    }
-
-    // Log results summary
-    console.log('\nURL Navigation Summary:');
-    console.log(`Total URLs tested: ${results.length}`);
-    console.log(`Successful: ${results.filter((r) => r.success).length}`);
-    console.log(`Failed: ${results.filter((r) => !r.success).length}`);
-
-    results.forEach((result) => {
-      const status = result.success ? '✓' : '✗';
-      console.log(`  ${status} ${result.path}`);
-      if (!result.success) {
-        console.log(`    URL: ${result.url}`);
-      }
-    });
-
-    // Assert all navigations succeeded
-    const failures = results.filter((r) => !r.success);
-    if (failures.length > 0) {
-      console.error('\nFailed URLs:');
-      failures.forEach((f) => {
-        console.error(`  - ${f.path}: ${f.url}`);
-      });
-    }
-
-    expect(failures).toHaveLength(0);
   });
 });
