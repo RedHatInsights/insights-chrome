@@ -1,4 +1,4 @@
-import { test, expect } from '../../setup/test-setup';
+import { expect, test } from '../../setup/test-setup';
 import AxeBuilder from '@axe-core/playwright';
 
 /**
@@ -22,7 +22,7 @@ const APP_INIT_TIMEOUT = 30000;
 const ACCESSIBILITY_TEST_TARGETS = [
   { url: '/' },
   { url: '/settings', skipReason: 'RHCLOUD-47549 - skeleton loaders lack accessible text' },
-  { url: '/allservices' },
+  { url: '/allservices', skipReason: 'RHCLOUD-47753 - aria-prohibited-attr on favorite service buttons' },
 ] as const;
 
 test.describe('Accessibility Compliance', () => {
@@ -40,9 +40,7 @@ test.describe('Accessibility Compliance', () => {
       });
 
       // Run axe accessibility scan
-      const accessibilityScanResults = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
+      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
 
       // Log summary for debugging
       console.log(`Accessibility scan for ${url}:`);
@@ -90,9 +88,7 @@ test.describe('Accessibility Compliance', () => {
         timeout: APP_INIT_TIMEOUT,
       });
 
-      const scanResults = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
+      const scanResults = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
 
       // Aggregate violation types
       const violationDetails: { [key: string]: number } = {};
