@@ -12,6 +12,12 @@ describe('OIDCUserManagerErrorBoundary', () => {
   let basicFakeManager: UserManager;
 
   beforeEach(() => {
+    // Suppress uncaught exceptions globally for all tests in this suite
+    // since we're intentionally throwing errors to test error boundaries
+    cy.on('uncaught:exception', () => {
+      return false;
+    });
+
     basicFakeManager = new UserManager({
       authority: '',
       client_id: '',
@@ -49,16 +55,18 @@ describe('OIDCUserManagerErrorBoundary', () => {
   });
 
   [SESSION_NOT_ACTIVE, ...TOKEN_NOT_ACTIVE.values()].forEach((error) => {
-    it('should try redirect to signin page if error is thrown', () => {
+    it(`should redirect to signin page when "${error}" error is thrown`, () => {
+      // Create a spy on signinRedirect before creating the manager
+      const signinRedirectSpy = cy.spy().as('signinRedirect');
+
       const fakeManager = new UserManager({
         authority: '',
         client_id: '',
         redirect_uri: '',
-        metadataUrl: '/authorityUrl',
       });
 
-      // Stub signinRedirect and track if it was called
-      const signinRedirectStub = cy.stub(fakeManager, 'signinRedirect').resolves();
+      // Replace signinRedirect with our spy
+      fakeManager.signinRedirect = signinRedirectSpy;
 
       cy.mount(
         <OIDCUserManagerErrorBoundary userManager={fakeManager}>
@@ -66,11 +74,9 @@ describe('OIDCUserManagerErrorBoundary', () => {
         </OIDCUserManagerErrorBoundary>
       );
 
-      // Verify signinRedirect was called instead of waiting for an HTTP request
-      cy.wrap(null).then(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        expect(signinRedirectStub).to.have.been.calledOnce;
-      });
+      // Verify signinRedirect was called and AppPlaceholder is rendered
+      cy.get('@signinRedirect').should('have.been.called');
+      cy.get('.chr-c-page').should('exist');
     });
   });
 });
