@@ -29,8 +29,8 @@ test.describe('URL Navigation', () => {
       // Navigate to the URL
       await page.goto(path);
 
-      // Verify URL contains the expected path (auto-retrying assertion)
-      await expect(page).toHaveURL(new RegExp(path));
+      // Verify URL matches the path exactly (not subpaths)
+      await expect(page).toHaveURL(new RegExp(path + '($|[?#])'));
 
       // Wait for chrome masthead to ensure page loaded
       await page.getByRole('button', { name: /User Avatar/i }).waitFor({
@@ -39,7 +39,7 @@ test.describe('URL Navigation', () => {
       });
 
       // Verify we're on the correct page by checking URL again after load
-      await expect(page).toHaveURL(new RegExp(path));
+      await expect(page).toHaveURL(new RegExp(path + '($|[?#])'));
     });
   });
 });
