@@ -5,6 +5,27 @@ import { isProd } from './common';
 
 let sentryInitialized = false;
 
+// Adobe Alloy error tracking (rolling 5-minute window)
+let adobeErrorTimestamps: number[] = [];
+const ADOBE_ERROR_THRESHOLD = 50; // Alert if 50+ errors in 5 minutes
+const ADOBE_ERROR_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+/**
+ * Records an Adobe Alloy error and returns how many occurred in the last 5 minutes.
+ * Exported for testing.
+ */
+export function recordAdobeAlloyError(now = Date.now()): number {
+  adobeErrorTimestamps.push(now);
+  const windowStart = now - ADOBE_ERROR_WINDOW;
+  adobeErrorTimestamps = adobeErrorTimestamps.filter((timestamp) => timestamp >= windowStart);
+  return adobeErrorTimestamps.length;
+}
+
+/** Resets burst-tracking state. Exported for testing. */
+export function resetAdobeAlloyErrorTracking(): void {
+  adobeErrorTimestamps = [];
+}
+
 //TODO: Manually add an appName for when url is just console.redhat.com
 export function getAppDetails() {
   const pathName = window.location.pathname.split('/');
@@ -35,6 +56,54 @@ const transport = SentryBrowser.makeMultiplexedTransport(SentryBrowser.makeFetch
   }
   return [];
 });
+
+/**
+ * Detects if an error is from Adobe Alloy analytics.
+ * These are non-user-facing analytics tracking failures that don't impact functionality.
+ * Exported for testing purposes.
+ */
+export function isAdobeAlloyError(event: Sentry.Event): boolean {
+  const errorMessage = event.message || event.exception?.values?.[0]?.value || '';
+
+  // Check error message patterns
+  const hasAdobeMessage = errorMessage.includes('[alloy]') || errorMessage.includes('[DataCollector]') || errorMessage.includes('smetrics.redhat.com');
+
+  // Check stack trace for Adobe's dpal.js script
+  const hasAdobeStackTrace =
+    event.exception?.values?.some((exception) => exception.stacktrace?.frames?.some((frame) => frame.filename?.includes('/ma/dpal.js'))) || false;
+
+  return hasAdobeMessage || hasAdobeStackTrace;
+}
+
+/**
+ * Filters Adobe Alloy analytics errors from Sentry beforeSend.
+ * Returns null to drop the event, or the original event to continue processing.
+ * Exported for testing.
+ */
+export function filterAdobeAlloySentryEvent(event: Sentry.Event): Sentry.Event | null {
+  if (!isAdobeAlloyError(event)) {
+    return event;
+  }
+
+  const currentCount = recordAdobeAlloyError();
+
+  console.debug(`Adobe Analytics error (count: ${currentCount}):`, event.message || event.exception?.values?.[0]?.value);
+
+  if (currentCount >= ADOBE_ERROR_THRESHOLD) {
+    Sentry.captureMessage('Adobe Analytics may be completely broken', {
+      level: 'warning',
+      extra: {
+        consecutiveErrors: currentCount,
+        timeWindow: '5 minutes',
+        originalError: event.message || event.exception?.values?.[0]?.value,
+        threshold: ADOBE_ERROR_THRESHOLD,
+      },
+    });
+    resetAdobeAlloyErrorTracking();
+  }
+
+  return null;
+}
 
 function initSentry() {
   if (sentryInitialized) {
@@ -162,6 +231,11 @@ function initSentry() {
     replaysSessionSampleRate: 0.3,
     transport,
     beforeSend: (event) => {
+      const adobeFilterResult = filterAdobeAlloySentryEvent(event);
+      if (adobeFilterResult === null) {
+        return null;
+      }
+
       if (event?.exception?.values?.[0]?.stacktrace?.frames) {
         const frames = event.exception.values[0].stacktrace.frames;
         // Find the last frame with module metadata containing a DSN
