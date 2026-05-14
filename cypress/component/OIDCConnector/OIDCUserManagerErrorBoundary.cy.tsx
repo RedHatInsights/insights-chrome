@@ -19,6 +19,11 @@ describe('OIDCUserManagerErrorBoundary', () => {
     });
   });
 
+  afterEach(() => {
+    // Clean up UserManager to prevent memory leaks and state pollution
+    basicFakeManager?.clearStaleState?.();
+  });
+
   it('should render children if no error is thrown', () => {
     cy.mount(
       <OIDCUserManagerErrorBoundary userManager={basicFakeManager}>
@@ -30,10 +35,6 @@ describe('OIDCUserManagerErrorBoundary', () => {
   });
 
   it('Should bubble unrelated OIDC timeout error to parent error boundary', () => {
-    cy.on('uncaught:exception', () => {
-      return false;
-    });
-
     cy.mount(
       <IntlProvider locale="en">
         <ErrorBoundary>
@@ -49,29 +50,27 @@ describe('OIDCUserManagerErrorBoundary', () => {
 
   [SESSION_NOT_ACTIVE, ...TOKEN_NOT_ACTIVE.values()].forEach((error) => {
     it('should try redirect to signin page if error is thrown', () => {
-      cy.intercept('GET', '/authorityUrl', {
-        statusCode: 200,
-        body: {
-          success: true,
-          error,
-        },
-      }).as(error);
       const fakeManager = new UserManager({
         authority: '',
         client_id: '',
         redirect_uri: '',
         metadataUrl: '/authorityUrl',
       });
-      cy.on('uncaught:exception', () => {
-        return false;
-      });
+
+      // Stub signinRedirect and track if it was called
+      const signinRedirectStub = cy.stub(fakeManager, 'signinRedirect').resolves();
+
       cy.mount(
         <OIDCUserManagerErrorBoundary userManager={fakeManager}>
           <ThrowAbleComponent error={{ error_description: error }} />
         </OIDCUserManagerErrorBoundary>
       );
 
-      cy.wait(`@${error}`).its('response.body.error').should('eq', error);
+      // Verify signinRedirect was called instead of waiting for an HTTP request
+      cy.wrap(null).then(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        expect(signinRedirectStub).to.have.been.calledOnce;
+      });
     });
   });
 });

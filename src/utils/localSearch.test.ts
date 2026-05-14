@@ -100,6 +100,102 @@ describe('localQuery()', () => {
     expect(hasHighlight).toBe(true);
   });
 
+  it('marks external URLs with isExternal flag', async () => {
+    const id = faker.string.uuid();
+    const term = 'pipelines';
+    SearchPermissions.set(id, []);
+    await insertEntry(db, {
+      id,
+      title: `${term} Documentation`,
+      uri: 'https://docs.openshift.com/pipelines/',
+      pathname: 'https://docs.openshift.com/pipelines/',
+      description: 'OpenShift Pipelines documentation',
+      bundleTitle: 'External',
+      type: serviceType,
+    });
+
+    const results = await localQuery(db, term, ReleaseEnv.STABLE, serviceType);
+    expect(results.length).toBeGreaterThan(0);
+    expect(results[0].isExternal).toBe(true);
+  });
+
+  it('does not set isExternal for internal paths', async () => {
+    const id = faker.string.uuid();
+    const term = 'advisor';
+    SearchPermissions.set(id, []);
+    await insertEntry(db, {
+      id,
+      title: `${term} Recommendations`,
+      uri: '/insights/advisor',
+      pathname: '/insights/advisor',
+      description: 'Advisor recommendations',
+      bundleTitle: 'Red Hat Insights',
+      type: serviceType,
+    });
+
+    const results = await localQuery(db, term, ReleaseEnv.STABLE, serviceType);
+    expect(results.length).toBeGreaterThan(0);
+    expect(results[0].isExternal).toBeFalsy();
+  });
+
+  it('skips entries with javascript: URL scheme', async () => {
+    const id = faker.string.uuid();
+    SearchPermissions.set(id, []);
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    await insertEntry(db, {
+      id,
+      title: 'Malicious Link',
+      uri: 'javascript:alert(1)',
+      pathname: 'javascript:alert(1)',
+      description: 'Should be skipped',
+      bundleTitle: 'External',
+      type: serviceType,
+    });
+
+    const results = await localQuery(db, 'Malicious', ReleaseEnv.STABLE, serviceType);
+    expect(results).toEqual([]);
+    expect(warnSpy).toHaveBeenCalledWith('Skipping non-http(s) search entry', id);
+    warnSpy.mockRestore();
+  });
+
+  it('skips entries with data: URL scheme', async () => {
+    const id = faker.string.uuid();
+    SearchPermissions.set(id, []);
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    await insertEntry(db, {
+      id,
+      title: 'Data URI Link',
+      uri: 'data:text/html,<script>alert(1)</script>',
+      pathname: 'data:text/html,<script>alert(1)</script>',
+      description: 'Should be skipped',
+      bundleTitle: 'External',
+      type: serviceType,
+    });
+
+    const results = await localQuery(db, 'Data URI', ReleaseEnv.STABLE, serviceType);
+    expect(results).toEqual([]);
+    expect(warnSpy).toHaveBeenCalledWith('Skipping non-http(s) search entry', id);
+    warnSpy.mockRestore();
+  });
+
+  it('allows entries with https: URL scheme', async () => {
+    const id = faker.string.uuid();
+    SearchPermissions.set(id, []);
+    await insertEntry(db, {
+      id,
+      title: 'Safe External Link',
+      uri: 'https://docs.openshift.com/safe',
+      pathname: 'https://docs.openshift.com/safe',
+      description: 'Should be allowed',
+      bundleTitle: 'External',
+      type: serviceType,
+    });
+
+    const results = await localQuery(db, 'Safe External', ReleaseEnv.STABLE, serviceType);
+    expect(results.length).toBeGreaterThan(0);
+    expect(results[0].isExternal).toBe(true);
+  });
+
   it('limits results to 10', async () => {
     const term = 'orama';
     for (let i = 0; i < 15; i++) {

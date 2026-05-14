@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ChromeLink from '../../components/ChromeLink';
 import { activeNavListenersAtom, addNavListenerAtom, deleteNavListenerAtom, triggerNavListenersAtom } from './activeAppAtom';
-import { Provider as ProviderJotai, useAtomValue, useSetAtom } from 'jotai';
+import { activeModuleAtom } from './activeModuleAtom';
+import { Provider as ProviderJotai, createStore, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { MemoryRouter } from 'react-router-dom';
 import { NavDOMEvent } from '@redhat-cloud-services/types';
@@ -30,7 +31,12 @@ test('addNavListenerAtom should add a listener', async () => {
 
     return (
       <MemoryRouter>
-        <ChromeLink href="/allservices" className="pf-v6-u-font-size-sm pf-v6-u-p-md" data-ouia-component-id="add-event-listener">
+        <ChromeLink
+          href="/bundle/testApp/allservices"
+          appId="testApp"
+          className="pf-v6-u-font-size-sm pf-v6-u-p-md"
+          data-ouia-component-id="add-event-listener"
+        >
           Add Event Listener
         </ChromeLink>
       </MemoryRouter>
@@ -38,7 +44,12 @@ test('addNavListenerAtom should add a listener', async () => {
   };
 
   const { getByText } = render(
-    <TestProvider initialValues={[[activeNavListenersAtom, {}]]}>
+    <TestProvider
+      initialValues={[
+        [activeNavListenersAtom, {}],
+        [activeModuleAtom, 'testApp'],
+      ]}
+    >
       <MockComponent />
     </TestProvider>
   );
@@ -53,6 +64,7 @@ test('addNavListenerAtom should add a listener', async () => {
 test('deleteNavListenerAtom should remove a listener by id', async () => {
   let listenerId: number;
   const mockNavListener = jest.fn();
+  const store = createStore();
 
   const MockComponent = () => {
     const addNavListener = useSetAtom(addNavListenerAtom);
@@ -72,13 +84,13 @@ test('deleteNavListenerAtom should remove a listener by id', async () => {
   };
 
   render(
-    <ProviderJotai>
+    <ProviderJotai store={store}>
       <MockComponent />
     </ProviderJotai>
   );
 
   await waitFor(() => {
-    const activeNavListeners = renderHook(() => useAtomValue(activeNavListenersAtom)).result.current;
+    const activeNavListeners = store.get(activeNavListenersAtom);
     expect(activeNavListeners[listenerId]).toBeUndefined();
   });
 });

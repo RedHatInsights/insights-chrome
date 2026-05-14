@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
-import { useFlags } from '@unleash/proxy-client-react';
+import { useFlag, useFlags } from '@unleash/proxy-client-react';
 
 import { virtualAssistantShowAssistantAtom } from '../../state/atoms/virtualAssistantAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
@@ -16,6 +16,7 @@ const flaggedRoutes: { [flagName: string]: string } = {
 };
 
 const VirtualAssistant = () => {
+  const isVAEnabled = useFlag('platform.va.environment.enabled');
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
@@ -28,6 +29,10 @@ const VirtualAssistant = () => {
 
   const flags = useFlags();
   useEffect(() => {
+    if (!isVAEnabled) {
+      return;
+    }
+
     const enabledFlaggedRoutes = flags.filter((flag) => flaggedRoutes[flag.name] && flag.enabled).map((flag) => flaggedRoutes[flag.name]);
 
     const allViableRoutes = [...viableRoutes, ...enabledFlaggedRoutes];
@@ -42,7 +47,11 @@ const VirtualAssistant = () => {
     if (match != null) {
       setShowAssistant(true);
     }
-  }, [flags, pathname, viableRoutes, setShowAssistant]);
+  }, [flags, pathname, viableRoutes, setShowAssistant, isVAEnabled]);
+
+  if (!isVAEnabled) {
+    return null;
+  }
 
   type VirtualAssistantProps = {
     showAssistant: boolean;

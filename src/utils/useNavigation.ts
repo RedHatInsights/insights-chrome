@@ -103,31 +103,33 @@ const useNavigation = () => {
     });
   };
 
-  async function handleNavigationResponse(data: BundleNavigation) {
-    let observer: MutationObserver | undefined;
-    if (observer && typeof observer.disconnect === 'function') {
-      observer.disconnect();
-    }
-
+  async function handleNavigationResponse(data: BundleNavigation): Promise<MutationObserver | undefined> {
     try {
       const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
       const schema: any = {
         ...data,
         navItems,
       };
-      observer = registerLocationObserver(pathname, schema);
+      const observer = registerLocationObserver(pathname, schema);
       observer.observe(document.querySelector('body')!, {
         childList: true,
         subtree: true,
       });
+      return observer;
     } catch (error) {
       // Hide nav if an error was encountered. Can happen for non-existing navigation files.
       setNoNav(true);
+      return undefined;
     }
   }
 
   useEffect(() => {
-    let observer: MutationObserver | undefined;
+    let cancelled = false;
+    /**
+     * Use an object ref so the cleanup function can access the observer
+     * assigned asynchronously inside handleNavigationResponse.
+     */
+    const observerRef: { current: MutationObserver | undefined } = { current: undefined };
     // reset no nav flag
     setNoNav(false);
     if (useFeoGenerated && currentNamespace && (flagsReady || flagsError)) {
@@ -140,6 +142,14 @@ const useNavigation = () => {
           }
 
           return handleNavigationResponse(bundle);
+        })
+        .then((obs) => {
+          if (!obs) return;
+          if (cancelled) {
+            obs.disconnect();
+            return;
+          }
+          observerRef.current = obs;
         })
         .catch(() => {
           setNoNav(true);
@@ -154,13 +164,22 @@ const useNavigation = () => {
         .then(async (response) => {
           return handleNavigationResponse(response.data);
         })
+        .then((obs) => {
+          if (!obs) return;
+          if (cancelled) {
+            obs.disconnect();
+            return;
+          }
+          observerRef.current = obs;
+        })
         .catch(() => {
           setNoNav(true);
         });
     }
     return () => {
-      if (observer && typeof observer.disconnect === 'function') {
-        observer.disconnect();
+      cancelled = true;
+      if (observerRef.current && typeof observerRef.current.disconnect === 'function') {
+        observerRef.current.disconnect();
       }
     };
   }, [currentNamespace, flagsReady, flagsError, useFeoGenerated]);

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, memo, useContext, useEffect, useMemo } from 'react';
+import React, { Suspense, memo, useContext, useEffect, useMemo } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -11,6 +11,7 @@ import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ITLess, chunkLoadErrorRefreshKey } from '../../utils/common';
+import { lazyWithRetry } from '../../utils/chunkLoadErrorUtils';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
@@ -21,8 +22,8 @@ import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
 import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
 import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
 
-const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
-const Debugger = lazy(() => import('../Debugger'));
+const NotEntitledModal = lazyWithRetry(() => import('../NotEntitledModal'));
+const Debugger = lazyWithRetry(() => import('../Debugger'));
 
 const RootApp = memo(({ accountId }: { accountId?: string }) => {
   const quickstartLinkStore = useQuickstartLinkStore();

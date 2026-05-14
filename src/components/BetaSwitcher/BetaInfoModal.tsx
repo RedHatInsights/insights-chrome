@@ -21,6 +21,7 @@ const BetaInfoModal = ({ onAccept, isOpen, toggleOpen }: { toggleOpen: (isOpen: 
       onClose={() => toggleOpen(false)}
       variant={ModalVariant.small}
       header={<Header />}
+      aria-label="Preview information"
       actions={[
         <Button key="enable-preview" variant="primary" type="button" onClick={onAccept}>
           Turn on

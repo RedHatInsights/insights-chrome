@@ -116,6 +116,7 @@ const Tools = () => {
         ...(isDarkModeSystemEnabled
           ? [
               {
+                ouiaId: 'settings-menu-color-system',
                 title: (
                   <>
                     <AdjustIcon /> System {themeMode === ThemeVariants.system && <CheckIcon />}
@@ -128,6 +129,7 @@ const Tools = () => {
             ]
           : []),
         {
+          ouiaId: 'settings-menu-color-light',
           title: (
             <>
               <OutlinedSunIcon /> Light {themeMode === ThemeVariants.light && <CheckIcon />}
@@ -138,6 +140,7 @@ const Tools = () => {
           url: '#',
         },
         {
+          ouiaId: 'settings-menu-color-dark',
           title: (
             <>
               <OutlinedMoonIcon /> Dark {themeMode === ThemeVariants.dark && <CheckIcon />}
@@ -153,11 +156,13 @@ const Tools = () => {
       title: 'Settings',
       items: [
         {
+          ouiaId: 'settings-menu-integrations',
           url: '/settings/integrations',
           title: 'Integrations',
           isHidden: isITLessEnv,
         },
         {
+          ouiaId: 'settings-menu-notifications',
           url: '/settings/notifications',
           title: 'Notifications',
         },
@@ -178,16 +183,19 @@ const Tools = () => {
             ) : null,
         },
         {
+          ouiaId: 'settings-menu-identity-provider',
           url: '/iam/authentication-policy/identity-provider-integration',
           title: 'Identity Provider Integration',
           isHidden: isITLessEnv,
         },
         {
+          ouiaId: 'settings-menu-auth-factors',
           url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Factors',
           isHidden: isITLessEnv,
         },
         {
+          ouiaId: 'settings-menu-service-accounts',
           url: '/iam/service-accounts',
           title: 'Service Accounts',
           isHidden: isITLessEnv,

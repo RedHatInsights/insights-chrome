@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 import type { FullConfig } from '@playwright/test';
 import { disableCookiePrompt, login } from '@redhat-cloud-services/playwright-test-auth';
+import { AUTH_TIMEOUT, NAVIGATION_TIMEOUT } from './constants';
 
 async function globalSetup(config: FullConfig) {
   const { storageState, baseURL } = config.projects[0].use;
@@ -16,12 +17,15 @@ async function globalSetup(config: FullConfig) {
   });
   const page = await context.newPage();
 
+  // Set higher timeout for CI environments where network/SSO may be slower
+  page.setDefaultTimeout(AUTH_TIMEOUT);
+
   try {
     // Disable cookie prompts before navigation
     await disableCookiePrompt(page);
 
     // Navigate to the application
-    await page.goto(baseURL || '/', { waitUntil: 'load', timeout: 60000 });
+    await page.goto(baseURL || '/', { waitUntil: 'load', timeout: NAVIGATION_TIMEOUT });
 
     const user = process.env.E2E_USER;
     const password = process.env.E2E_PASSWORD;

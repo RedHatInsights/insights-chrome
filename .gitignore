@@ -64,3 +64,6 @@ cypress/downloads
 
 
 .hypothesis
+
+# Local dev TLS certs (mkcert)
+*.pem

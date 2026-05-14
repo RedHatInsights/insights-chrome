@@ -5,35 +5,56 @@ import { useSegment } from './useSegment';
 import { isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
 import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
+import { chromeModulesAtom } from '../state/atoms/chromeModuleAtom';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
-
-const AMPLITUDE_KEY_FALLBACK_DEV = 'dc3aabccff4063af0de96d7825422d8f';
-const AMPLITUDE_KEY_FALLBACK_PROD = '5c16029122229733b22f1d87567b437';
-
-// Separate API keys for autocapture project
-const AMPLITUDE_AUTOCAPTURE_KEY_DEV = '61d45c06a92d1fe5cf57023568ae9053';
-const AMPLITUDE_AUTOCAPTURE_KEY_PROD = '56344678d3883c0a730f102f28f8beb4';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
   const amplitudeSdkInitialized = useRef(false);
+  const configWarningLogged = useRef(false);
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
   const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
   const { analytics, ready } = useSegment();
   const navigate = useNavigate();
   const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
+  const chromeModules = useAtomValue(chromeModulesAtom);
 
+  // Chrome-level analytics config from FEO (fed-mods.json analytics section)
+  const chromeAnalytics = chromeModules['chrome']?.analytics;
+
+  // Engagement keys: module-specific key takes priority, then chrome FEO config
   const moduleKeyProd = activeModuleDefinition?.analytics?.amplitude?.APIKey;
   const moduleKeyDev = activeModuleDefinition?.analytics?.amplitude?.APIKeyDev;
   const moduleKey = isProd() ? moduleKeyProd : moduleKeyDev;
-  const keyFallback = isProd() ? AMPLITUDE_KEY_FALLBACK_PROD : AMPLITUDE_KEY_FALLBACK_DEV;
-  const keyToUse = moduleKey || keyFallback;
+  const chromeEngagementKey = isProd() ? chromeAnalytics?.APIKey : chromeAnalytics?.APIKeyDev;
+  const keyToUse = moduleKey || chromeEngagementKey;
 
-  // Separate key for autocapture project
-  const autocaptureKeyFallback = isProd() ? AMPLITUDE_AUTOCAPTURE_KEY_PROD : AMPLITUDE_AUTOCAPTURE_KEY_DEV;
-  const autocaptureKeyToUse = autocaptureKeyFallback;
+  // Autocapture keys: chrome FEO config
+  const autocaptureKeyToUse = isProd() ? chromeAnalytics?.autocaptureAPIKey : chromeAnalytics?.autocaptureAPIKeyDev;
+
+  // Warn once if FEO analytics config is missing expected keys
+  useEffect(() => {
+    if (configWarningLogged.current) {
+      return;
+    }
+    // Only warn once chromeModules have been loaded (chrome entry exists)
+    if (!chromeModules['chrome']) {
+      return;
+    }
+    configWarningLogged.current = true;
+    if (!chromeAnalytics) {
+      console.warn('Amplitude: analytics section not found in FEO config (fed-mods.json). Amplitude will not initialize until config is available.');
+      return;
+    }
+    if (!chromeAnalytics.APIKey || !chromeAnalytics.APIKeyDev) {
+      console.warn('Amplitude: engagement API keys (APIKey/APIKeyDev) not found in FEO config (fed-mods.json analytics section).');
+    }
+    if (!chromeAnalytics.autocaptureAPIKey || !chromeAnalytics.autocaptureAPIKeyDev) {
+      console.warn('Amplitude: autocapture API keys (autocaptureAPIKey/autocaptureAPIKeyDev) not found in FEO config (fed-mods.json analytics section).');
+    }
+  }, [chromeModules, chromeAnalytics]);
 
   const detachAnalyticsHandlers = function () {
     if (typeof analytics?.off === 'function') {

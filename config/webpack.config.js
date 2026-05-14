@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
+const fs = require('fs');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -56,12 +57,6 @@ const publicPath = '/apps/chrome/js/';
 const konfluxDevServerSettings = {
   // This setting indirectly controls whether the server binds to IPv4 or IPv6.
   host: '127.0.0.1',
-  client: {
-      overlay: {                                                                                                                                                                                                                                     
-        errors: false,                                                                                                                                                                                                                               
-        warnings: false,                                                                                                                                                                                                                             
-      }, 
-  },
   proxy: [
     {
       secure: false,
@@ -118,6 +113,7 @@ const nonKonfluxDevServerConfiguration = () => {
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
   const contextualConfigSettings = process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration();
+
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
@@ -231,12 +227,6 @@ const commonConfig = ({ dev }) => {
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
-      client: {
-        overlay: {                                                                                                                                                                                                                                     
-          errors: false,                                                                                                                                                                                                                               
-          warnings: false,                                                                                                                                                                                                                             
-        }, 
-      },
       allowedHosts: 'all',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -245,11 +235,19 @@ const commonConfig = ({ dev }) => {
       historyApiFallback: {
         index: `${publicPath}index.html`,
       },
-      https: true,
+      server: 'https',
       port: 1337,
       // HMR flag
       hot: true,
       ...contextualConfigSettings,
+      // Disable overlay in CI to prevent test interference (keeps it enabled locally for debugging)
+      // This must come AFTER contextualConfigSettings spread to ensure it's not overridden
+      ...(process.env.CI && {
+        client: {
+          ...(contextualConfigSettings.client || {}),
+          overlay: false,
+        },
+      }),
     },
   };
 };
@@ -323,9 +321,46 @@ module.exports = function (env) {
     delete config.devServer.onBeforeSetupMiddleware;
   }
 
-  if (config.devServer.https) {
-    delete config.devServer.https;
-    config.devServer.server = 'https';
+  if (config.devServer.server) {
+    const certFile = path.resolve(__dirname, '../stage.foo.redhat.com.pem');
+    const keyFile = path.resolve(__dirname, '../stage.foo.redhat.com-key.pem');
+    if (fs.existsSync(certFile) && fs.existsSync(keyFile)) {
+      config.devServer.server = {
+        type: 'https',
+        options: {
+          cert: fs.readFileSync(certFile),
+          key: fs.readFileSync(keyFile),
+        },
+      };
+    } else {
+      console.warn(
+        '\x1b[33m%s\x1b[0m',
+        '\n[chrome] Using self-signed certificate for dev server.\n' +
+        'Firefox is recommended for local development (no cert setup needed).\n' +
+        'If using Chrome and seeing ERR_TOO_MANY_RETRIES, see README.md for mkcert setup.\n'
+      );
+    }
+  }
+
+  // Ensure dev server exits cleanly on Ctrl+C / SIGTERM.
+  // Lingering HMR/proxy connections can keep the process alive after
+  // WDS graceful shutdown — force-exit after a short grace period.
+  if (dev) {
+    config.devServer.setupExitSignals = true;
+    const originalOnListening = config.devServer.onListening;
+    config.devServer.onListening = (devServer) => {
+      if (originalOnListening) {
+        originalOnListening(devServer);
+      }
+
+      const cleanup = () => {
+        devServer.stopCallback(() => process.exit(0));
+        setTimeout(() => process.exit(0), 3000).unref();
+      };
+
+      process.once('SIGINT', cleanup);
+      process.once('SIGTERM', cleanup);
+    };
   }
 
   return [pfConfig, config];

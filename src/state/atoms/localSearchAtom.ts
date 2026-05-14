@@ -31,6 +31,19 @@ type GeneratedSearchIndexResponse = {
 export const SearchPermissions = new Map<string | number, NavItemPermission[]>();
 export const SearchPermissionsCache = new Map<string, boolean>();
 
+/**
+ * Parse a URL string and return the URL object only if its protocol is http: or https:.
+ * Returns undefined for non-http(s) schemes (e.g. javascript:, data:) or invalid URLs.
+ */
+const parseHttpUrl = (value: string): URL | undefined => {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const bundleCache = new Map<string, string>();
 export const getBundleTitle = (pathname: string): string => {
   const bundle = getUrl('bundle', pathname);
@@ -62,13 +75,16 @@ const asyncSearchIndexAtom = atom(async () => {
         return;
       }
 
-      if (!entry.href.startsWith('/')) {
-        console.warn('External ink found in the index. Ignoring: ', entry.href);
+      const isInternalPath = entry.href.startsWith('/');
+      const externalUrl = isInternalPath ? undefined : parseHttpUrl(entry.href);
+      if (!isInternalPath && !externalUrl) {
+        // Skip non-http(s) URLs (e.g. javascript:, data:) for security
+        console.warn('Skipping non-http(s) search entry', entry.id);
         return;
       }
       idSet.add(entry.id);
       SearchPermissions.set(entry.id, []);
-      const bundleTitle = getBundleTitle(entry.href);
+      const bundleTitle = isInternalPath ? getBundleTitle(entry.href) : externalUrl?.hostname || 'External';
       searchIndex.push({
         title: entry.title,
         uri: entry.href,
@@ -90,10 +106,6 @@ const asyncSearchIndexAtom = atom(async () => {
         return;
       }
 
-      if (!entry.relative_uri.startsWith('/')) {
-        console.warn('External ink found in the index. Ignoring: ', entry.relative_uri);
-        return;
-      }
       idSet.add(entry.id);
       SearchPermissions.set(entry.id, entry.permissions ?? []);
       searchIndex.push({
@@ -121,9 +133,18 @@ export const entrySchema = {
   bundleTitle: 'string',
   pathname: 'string',
   type: 'string',
+  isExternal: 'boolean',
 } as const;
 
 export function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
+  const isInternalPath = entry.pathname.startsWith('/');
+  const externalUrl = isInternalPath ? undefined : parseHttpUrl(entry.pathname);
+  if (!isInternalPath && !externalUrl) {
+    // Skip non-http(s) URLs for security
+    console.warn('Skipping non-http(s) search entry', entry.id);
+    return Promise.resolve(entry.id);
+  }
+  const isExternal = Boolean(externalUrl);
   return insert(db, {
     id: entry.id,
     title: entry.title,
@@ -133,6 +154,7 @@ export function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
     bundleTitle: entry.bundleTitle,
     pathname: entry.pathname,
     type: entry.type,
+    isExternal,
   });
 }
 

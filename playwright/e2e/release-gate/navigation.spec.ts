@@ -1,5 +1,6 @@
 import { test, expect } from '../../setup/test-setup';
 import { ChromeNavigation } from '../pages/chrome-navigation';
+import { ChromeTopbar } from '../pages/chrome-topbar';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,16 +8,20 @@ test.describe('Navigation', () => {
   });
 
   test('visit services', async ({ page }) => {
-    // click on services button
-    await page.locator('.chr-c-link-service-toggle').click();
+    const topbar = new ChromeTopbar(page);
 
-    // Verify the services dropdown is visible
-    await expect(page.locator('.pf-v6-c-sidebar__content')).toBeVisible();
+    // Open services menu
+    await topbar.openServices();
+
+    // Verify the services menu is visible
+    await expect(await topbar.isServicesMenuOpen()).toBe(true);
   });
 
   test('Navigate to users', async ({ page }) => {
-    // click on services button
-    await page.locator('.chr-c-link-service-toggle').click();
+    const topbar = new ChromeTopbar(page);
+
+    // Open services menu
+    await topbar.openServices();
 
     // click on all services
     await page.locator('[data-ouia-component-id="View all link"]').first().click();
@@ -71,5 +76,70 @@ test.describe('Navigation', () => {
 
     // Verify 404 page content is displayed
     await expect(page.getByText(/We lost that page/i)).toBeVisible();
+  });
+
+  test('platform link - Ansible has correct internal route', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (Ansible variant)
+    // Validates chrome navigation structure, not the destination routes themselves
+    const topbar = new ChromeTopbar(page);
+
+    // Open services menu
+    await topbar.openServices();
+
+    // Find Ansible platform link within services menu using OUIA ID
+    const ansibleLink = topbar.getServiceLinkByPlatform('Ansible');
+
+    // Verify link exists and has correct internal href
+    await expect(ansibleLink).toBeVisible();
+    await expect(ansibleLink).toHaveAttribute('href', /\/ansible$/);
+  });
+
+  test('platform link - OpenShift has correct internal route', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (OpenShift variant)
+    // Validates chrome navigation structure, not the destination routes themselves
+    const topbar = new ChromeTopbar(page);
+
+    // Open services menu
+    await topbar.openServices();
+
+    // Find OpenShift platform link within services menu using OUIA ID
+    const openshiftLink = topbar.getServiceLinkByPlatform('Openshift');
+
+    // Verify link exists and has correct internal href
+    await expect(openshiftLink).toBeVisible();
+    await expect(openshiftLink).toHaveAttribute('href', /\/openshift\/overview$/);
+  });
+
+  test('platform link - Insights has correct internal route', async ({ page }) => {
+    // Migrated from test_navigation.py::test_services_menu_platform_links (Insights variant)
+    // Validates chrome navigation structure, not the destination routes themselves
+    const topbar = new ChromeTopbar(page);
+
+    // Open services menu
+    await topbar.openServices();
+
+    // Find RHEL/Insights platform link within services menu using OUIA ID
+    const insightsLink = topbar.getServiceLinkByPlatform('RHEL');
+
+    // Verify link exists and has correct internal href
+    await expect(insightsLink).toBeVisible();
+    await expect(insightsLink).toHaveAttribute('href', /\/insights$/);
+  });
+
+  test('fancy 404 page returns to homepage', async ({ page }) => {
+    // Migrated from test_navigation.py::test_404s
+
+    // Navigate to 404 page
+    await page.goto('/404/404/404');
+    await page.waitForLoadState('load');
+
+    // Verify fancy 404 page is displayed
+    await expect(page.getByRole('heading', { name: /We lost that page/i })).toBeVisible();
+
+    // Click "Return to homepage" button
+    await page.getByRole('link', { name: /Return to homepage/i }).click();
+
+    // Verify navigation back to homepage (string path automatically matches against baseURL)
+    await expect(page).toHaveURL('/');
   });
 });

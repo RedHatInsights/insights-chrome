@@ -4,6 +4,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import * as unleashReact from '@unleash/proxy-client-react';
 import VirtualAssistant from './VirtualAssistant';
@@ -51,7 +52,7 @@ const TestWrapper = ({
   </MemoryRouter>
 );
 
-describe('VirtualAssistant showAssistant prop passing', () => {
+describe('VirtualAssistant', () => {
   const useFlag = unleashReact.useFlag as jest.MockedFunction<typeof unleashReact.useFlag>;
   const useFlags = unleashReact.useFlags as jest.MockedFunction<typeof unleashReact.useFlags>;
 
@@ -63,8 +64,9 @@ describe('VirtualAssistant showAssistant prop passing', () => {
     useFlags.mockReturnValue([]);
   });
 
-  describe('component rendering', () => {
-    it('should always render the component container', () => {
+  describe('feature flag gating', () => {
+    it('should return null when platform.va.environment.enabled flag is disabled', () => {
+      useFlag.mockReturnValue(false);
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       const { container } = render(
@@ -74,13 +76,75 @@ describe('VirtualAssistant showAssistant prop passing', () => {
         </TestWrapper>
       );
 
-      // Component should always render, never return null
+      expect(container.firstChild).toBeNull();
+      expect(screen.queryByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).not.toBeInTheDocument();
+      expect(mockScalprumComponent).not.toHaveBeenCalled();
+    });
+
+    it('should render the VA component when platform.va.environment.enabled flag is enabled', () => {
+      useFlag.mockReturnValue(true);
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      const { container } = render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues}>
+          <VirtualAssistant />
+        </TestWrapper>
+      );
+
       expect(container.firstChild).not.toBeNull();
       expect(screen.getByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).toBeInTheDocument();
+    });
+
+    it('should check the correct feature flag name', () => {
+      useFlag.mockReturnValue(true);
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues}>
+          <VirtualAssistant />
+        </TestWrapper>
+      );
+
+      expect(useFlag).toHaveBeenCalledWith('platform.va.environment.enabled');
+    });
+  });
+
+  describe('useEffect gating', () => {
+    it('should not set showAssistant atom when VA is disabled even on matching routes', () => {
+      useFlag.mockReturnValue(false);
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      // Observer component reads atom value for direct assertion
+      let observedAtomValue: boolean | undefined;
+      const AtomObserver = () => {
+        const value = useAtomValue(virtualAssistantShowAssistantAtom);
+        observedAtomValue = value;
+        return null;
+      };
+
+      render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues} initialEntries={['/insights/dashboard']}>
+          <VirtualAssistant />
+          <AtomObserver />
+        </TestWrapper>
+      );
+
+      // VA disabled → useEffect skips route matching → ScalprumComponent never renders
+      expect(mockScalprumComponent).not.toHaveBeenCalled();
+      // Atom state remains false — VA did not mutate it
+      expect(observedAtomValue).toBe(false);
     });
   });
 
   describe('showAssistant prop passing', () => {
+    beforeEach(() => {
+      // Enable VA for prop-passing tests
+      useFlag.mockReturnValue(true);
+    });
+
     it('should pass showAssistant=false to ScalprumComponent', () => {
       const atomValues = [
         [virtualAssistantShowAssistantAtom, false], // This should be passed as showAssistant prop
