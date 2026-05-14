@@ -128,27 +128,36 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         ]
       : []),
     // Put the Sentry Webpack plugins after all other plugins
-    // Upload Chrome source maps to ALL app projects so stack traces are readable
+    // Upload Chrome source maps to ALL app projects (single plugin + project[] — see plugin README "Multi-Project")
     ...(process.env.ENABLE_SENTRY
-      ? CHROME_SENTRY_PROJECTS.map((project) =>
+      ? [
           sentryWebpackPlugin({
-            authToken: process.env.SENTRY_AUTH_TOKEN,
+            ...(process.env.SENTRY_AUTH_TOKEN && {
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+            }),
             org: 'red-hat-it',
-            project,
-            release: process.env.SENTRY_RELEASE,
-            urlPrefix: '/apps/chrome/js',
-            include: 'dist/js',
-            rewrite: true,
-            inject: false, // Don't inject SDK - Chrome already has it
-            cleanArtifacts: true,
-            silent: false, // Log uploads for debugging
-            moduleMetadata: ({ release }) => ({
+            project: CHROME_SENTRY_PROJECTS,
+            silent: false,
+            // Avoid failing the webpack build on transient Sentry/network/auth issues; watch Konflux logs for warnings.
+            errorHandler: (err) => {
+              console.warn('[Sentry webpack plugin] Source map upload failed:', err);
+            },
+            release: {
+              name: process.env.SENTRY_RELEASE,
+              inject: false, // Don't inject SDK - Chrome already has it
+              uploadLegacySourcemaps: {
+                paths: ['dist/js'],
+                urlPrefix: '/apps/chrome/js',
+                rewrite: true,
+              },
+            },
+            moduleMetadata: ({ release, projects }) => ({
               org: 'red-hat-it',
-              project,
+              projects,
               release,
             }),
-          })
-        )
+          }),
+        ]
       : []),
   ];
 };

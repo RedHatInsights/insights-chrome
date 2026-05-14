@@ -146,30 +146,46 @@ To test in Konflux (where builds actually run):
 
 1. **Create PR** with the webpack.plugins.js changes
 2. **Check Konflux build logs** for source map uploads
-3. **Deploy to staging** environment
-4. **Trigger test errors** in staging apps
-5. **Verify Sentry** shows readable stack traces
+3. **Watch for `[Sentry webpack plugin] Source map upload failed`** — the build can still succeed while maps are missing; treat warnings as a release signal and investigate (auth, rate limits, network).
+4. **Deploy to staging** environment
+5. **Trigger test errors** in staging apps
+6. **Verify Sentry** shows readable stack traces
 
 ## Success Criteria
 
-- ✅ Source maps upload to all 17 projects during build
-- ✅ Build completes successfully (no upload failures)
+- ✅ Source maps upload to all projects in `CHROME_SENTRY_PROJECTS` during build
+- ✅ Build completes successfully; upload failures are logged (see `errorHandler` in `config/webpack.plugins.js`) and should be rare — investigate if you see warnings in CI
 - ✅ Stack traces readable in all app projects
 - ✅ Build time increase is acceptable (<1 minute)
-- ✅ No errors in Konflux CI builds
+- ✅ Konflux CI webpack/build steps complete; treat any `[Sentry webpack plugin] Source map upload failed` log line as a follow-up (maps may be missing even when the job is green)
 
 ## Rollback Plan
 
-If issues occur, revert to single-project upload:
+If issues occur, revert to single-project upload. This matches `@sentry/webpack-plugin` v4 option shapes (nested `release` + legacy upload paths), not the old flat `include` / top-level `release` string API:
 
 ```javascript
-// In config/webpack.plugins.js, replace the multi-project upload with:
+// In config/webpack.plugins.js, replace the multi-project block with:
 ...(process.env.ENABLE_SENTRY
   ? [
       sentryWebpackPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
+        ...(process.env.SENTRY_AUTH_TOKEN && {
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+        }),
         org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT, // Back to single project
+        project: process.env.SENTRY_PROJECT,
+        silent: false,
+        errorHandler: (err) => {
+          console.warn('[Sentry webpack plugin] Source map upload failed:', err);
+        },
+        release: {
+          name: process.env.SENTRY_RELEASE,
+          inject: false,
+          uploadLegacySourcemaps: {
+            paths: ['dist/js'],
+            urlPrefix: '/apps/chrome/js',
+            rewrite: true,
+          },
+        },
         moduleMetadata: ({ release }) => ({
           org: process.env.SENTRY_ORG,
           project: process.env.SENTRY_PROJECT,
@@ -179,6 +195,8 @@ If issues occur, revert to single-project upload:
     ]
   : []),
 ```
+
+Ensure `SENTRY_ORG`, `SENTRY_PROJECT`, and `SENTRY_RELEASE` are set in CI the same way as for the multi-project build (for Red Hat IT SaaS, org is typically `red-hat-it`).
 
 ## Questions?
 
