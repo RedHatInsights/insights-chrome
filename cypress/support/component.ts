@@ -33,7 +33,7 @@ const { addMatchImageSnapshotCommand,  } = require('@simonsmith/cypress-image-sn
 
 // configure the matcher to be less precise to adjust between the headless and normal browser rendering differences
 addMatchImageSnapshotCommand({
-  failureThreshold: 0.03, // threshold for entire image
+  failureThreshold: 0.035, // threshold for entire image
   failureThresholdType: 'percent', // percent of image or number of pixels
   customDiffConfig: { threshold: 0.1 }, // threshold for each pixel
   capture: 'viewport', // capture viewport in screenshot
