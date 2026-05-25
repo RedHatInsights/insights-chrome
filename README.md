@@ -315,6 +315,20 @@ Available function:
 - `forcePendo` - to force Pendo initialization
 - `appFilter` - to enable new application filter in any environment
 
+## Testing the Glass Theme
+
+PatternFly 6.5 introduces a glass theme that applies frosted/transparent backgrounds to Page components. To test it locally, run the following in the browser console:
+
+```js
+document.documentElement.classList.add('pf-v6-theme-glass');
+```
+
+To disable it:
+
+```js
+document.documentElement.classList.remove('pf-v6-theme-glass');
+```
+
 ## Further reading
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
