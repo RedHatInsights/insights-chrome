@@ -1,5 +1,4 @@
 import React, { Fragment, Suspense, memo, useContext, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useFlag } from '@unleash/proxy-client-react';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -7,11 +6,9 @@ import { MastheadBrand, MastheadContent, MastheadLogo, MastheadMain } from '@pat
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import ContextSwitcher from '../ContextSwitcher';
-import Feedback from '../Feedback';
 import Activation from '../Activation';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes } from 'react-router-dom';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
@@ -21,21 +18,6 @@ import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-
-const FeedbackRoute = () => {
-  // controls feedback tab visibility
-  const paths =
-    localStorage.getItem('chrome:experimental:feedback') === 'true'
-      ? ['*']
-      : ['/', 'insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'subscriptions/*', 'iam/*'];
-  return (
-    <Routes>
-      {paths.map((path) => (
-        <Route key={path} path={path} element={<Feedback />} />
-      ))}
-    </Routes>
-  );
-};
 
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
   return !!(user.orgId && user.username && user.accountNumber && user.email);
@@ -89,7 +71,6 @@ const MemoizedHeader = memo(
           </MastheadBrand>
         </MastheadMain>
         <MastheadContent className="pf-v6-u-mx-0">
-          {orgId && !isITLess && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
           {userReady && isActivationPath && (
             <Activation
               user={{
