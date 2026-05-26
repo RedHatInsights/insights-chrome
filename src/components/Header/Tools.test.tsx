@@ -74,6 +74,12 @@ jest.mock('../../hooks/useTheme', () => ({
   }),
   ThemeVariants: { light: 0, dark: 1, system: 2 },
 }));
+jest.mock('../../hooks/useGlassTheme', () => ({
+  useGlassTheme: () => ({
+    isGlassTheme: false,
+    toggleGlassTheme: jest.fn(),
+  }),
+}));
 jest.mock('../../hooks/useSupportCaseData', () => ({
   __esModule: true,
   default: () => ({}),
@@ -100,6 +106,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.itless': false,
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
+  'platform.chrome.glass-theme': false,
   'platform.chrome.notifications-drawer': false,
   'console.chrome-scheduler_drawer': false,
 };
@@ -242,6 +249,16 @@ describe('Tools - dark mode system feature flag', () => {
         scope: 'schedulerUi',
         module: './SchedulerPanelContent',
       });
+  describe('glass theme toggle', () => {
+    it('should render glass effect section when flag is enabled', () => {
+      renderTools({ 'platform.chrome.glass-theme': true });
+      expect(screen.getByText('Glass effect')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-glass-theme')).toBeInTheDocument();
+    });
+
+    it('should not render glass effect section when flag is disabled', () => {
+      renderTools({ 'platform.chrome.glass-theme': false });
+      expect(screen.queryByText('Glass effect')).not.toBeInTheDocument();
     });
   });
 });

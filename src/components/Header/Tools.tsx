@@ -2,6 +2,7 @@ import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
@@ -31,6 +32,7 @@ import OutlinedMoonIcon from '@patternfly/react-icons/dist/dynamic/icons/outline
 import OutlinedSunIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-sun-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { ThemeVariants, useTheme } from '../../hooks/useTheme';
+import { useGlassTheme } from '../../hooks/useGlassTheme';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -87,6 +89,7 @@ const Tools = () => {
   const isITLessEnv = useFlag('platform.chrome.itless');
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const { user, token } = useContext(ChromeAuthContext);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
@@ -101,6 +104,7 @@ const Tools = () => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
+  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -150,6 +154,18 @@ const Tools = () => {
           ),
           description: 'Always use dark mode',
           onClick: setDarkMode,
+        },
+      ],
+    },
+    {
+      title: 'Glass effect',
+      isHidden: !isGlassModeEnabled,
+      items: [
+        {
+          ouiaId: 'settings-menu-glass-theme',
+          title: <Switch id="glass-theme-switch" label="Frosted glass effect" isChecked={isGlassTheme} hasCheckIcon onChange={toggleGlassTheme} />,
+          onClick: (e: MouseEvent | React.MouseEvent | React.KeyboardEvent) => e.stopPropagation(),
+          url: '#',
         },
       ],
     },
