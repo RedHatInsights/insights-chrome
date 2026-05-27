@@ -83,6 +83,15 @@ jest.mock('../../hooks/useGlassTheme', () => ({
     toggleGlassTheme: jest.fn(),
   }),
 }));
+jest.mock('../../hooks/useHighContrast', () => ({
+  useHighContrast: () => ({
+    contrastMode: 0,
+    setDefaultContrast: jest.fn(),
+    setHighContrast: jest.fn(),
+    setSystemContrast: jest.fn(),
+  }),
+  HighContrastVariants: { default: 0, high: 1, system: 2 },
+}));
 jest.mock('../../hooks/useSupportCaseData', () => ({
   __esModule: true,
   default: () => ({}),
@@ -109,6 +118,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
   'platform.chrome.glass-theme': false,
+  'platform.chrome.high-contrast': false,
   'platform.chrome.notifications-drawer': false,
   'console.chrome-scheduler_drawer': false,
 };
@@ -264,6 +274,28 @@ describe('Tools - dark mode system feature flag', () => {
     it('should not render glass effect section when flag is disabled', () => {
       renderTools({ 'platform.chrome.glass-theme': false });
       expect(screen.queryByText('Glass effect')).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe('Tools - high contrast feature flag', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  describe('when high contrast is disabled', () => {
+    it('should not render contrast section', () => {
+      renderTools({ 'platform.chrome.high-contrast': false });
+      expect(screen.queryByText('Contrast')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when high contrast is enabled', () => {
+    it('should render contrast section with toggle group', () => {
+      renderTools({ 'platform.chrome.high-contrast': true });
+
+      expect(screen.getByText('Contrast')).toBeInTheDocument();
+      expect(screen.getByText('System')).toBeInTheDocument();
+      expect(screen.getByText('Default')).toBeInTheDocument();
+      expect(screen.getByText('High contrast')).toBeInTheDocument();
     });
   });
 });
