@@ -46,7 +46,7 @@ jobs:
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
       - run: npm i
       - run: npm run test -- --coverage
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v6
         with:
           files: ./coverage/clover.xml
   # lint
