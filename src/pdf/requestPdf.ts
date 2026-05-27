@@ -43,12 +43,17 @@ const pollStatus = async (statusID: string) => {
   });
 };
 
-const requestPdf = async (options: PDFRequestOptions) => {
+const requestPdf = async (options: PDFRequestOptions, getRefreshToken: () => Promise<string>) => {
   const { filename, payload } = options;
   try {
+    const refreshToken = await getRefreshToken();
     const {
       data: { statusID },
-    } = await axios.post<{ statusID: string }>(`/api/crc-pdf-generator/v2/create`, { payload });
+    } = await axios.post<{ statusID: string }>(
+      `/api/crc-pdf-generator/v2/create`,
+      { payload },
+      { headers: { 'x-rh-refresh-token': `Bearer ${refreshToken}` } }
+    );
     const { status } = await pollStatus(statusID);
     if (status === 'Generated') {
       return downloadPDF(`/api/crc-pdf-generator/v2/download/${statusID}`, filename);

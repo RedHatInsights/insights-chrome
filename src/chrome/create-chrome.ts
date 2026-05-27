@@ -253,7 +253,7 @@ export const createChromeContext = ({
       forceAuthRefresh: chromeAuth.forceRefresh,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
-    requestPdf,
+    requestPdf: (options) => requestPdf(options, chromeAuth.getRefreshToken),
     drawerActions,
     search: searchAPI,
   };
