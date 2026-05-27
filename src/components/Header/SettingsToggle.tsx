@@ -12,6 +12,7 @@ export type SettingsToggleDropdownGroup = {
   title?: string;
   items: SettingsToggleDropdownItem[];
   isHidden?: boolean;
+  customContent?: ReactNode;
 };
 
 export type SettingsToggleDropdownItem = {
@@ -41,37 +42,38 @@ const SettingsToggle = (props: SettingsToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isPreview = useAtomValue(isPreviewAtom);
 
-  const dropdownItems = props.dropdownItems
-    .filter((group) => !group.isHidden)
-    .map(({ title, items }, groupIndex) => (
-      <DropdownGroup key={`${groupIndex}-${title}`} label={title}>
-        {items.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
-          !isHidden ? (
-            <DropdownItem
-              onClick={onClick}
-              key={typeof title === 'string' ? title : itemIndex}
-              ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
-              isDisabled={isDisabled}
-              component={
-                onClick
-                  ? undefined
-                  : ({ className: itemClassName, children }) => (
-                      <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
-                        {children}
-                      </ChromeLink>
-                    )
-              }
-              description={description}
-            >
-              {title}
-            </DropdownItem>
-          ) : (
-            <React.Fragment key={`fragment-${itemIndex}`} />
-          )
-        )}
-        {groupIndex < props.dropdownItems.length - 1 && <Divider key="divider" />}
-      </DropdownGroup>
-    ));
+  const visibleGroups = props.dropdownItems.filter((group) => !group.isHidden);
+  const dropdownItems = visibleGroups.map(({ title, items, customContent }, groupIndex) => (
+    <DropdownGroup key={`${groupIndex}-${title}`} label={title}>
+      {customContent
+        ? customContent
+        : items?.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
+            !isHidden ? (
+              <DropdownItem
+                onClick={onClick}
+                key={typeof title === 'string' ? title : itemIndex}
+                ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
+                isDisabled={isDisabled}
+                component={
+                  onClick
+                    ? undefined
+                    : ({ className: itemClassName, children }) => (
+                        <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
+                          {children}
+                        </ChromeLink>
+                      )
+                }
+                description={description}
+              >
+                {title}
+              </DropdownItem>
+            ) : (
+              <React.Fragment key={`fragment-${itemIndex}`} />
+            )
+          )}
+      {groupIndex < visibleGroups.length - 1 && <Divider key="divider" />}
+    </DropdownGroup>
+  ));
 
   return (
     <Dropdown

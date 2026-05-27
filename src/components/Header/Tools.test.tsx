@@ -33,6 +33,7 @@ interface MockDropdownGroup {
   title?: string;
   isHidden?: boolean;
   items?: MockDropdownItem[];
+  customContent?: React.ReactNode;
 }
 
 jest.mock('./SettingsToggle', () => ({
@@ -43,14 +44,16 @@ jest.mock('./SettingsToggle', () => ({
         group.isHidden ? null : (
           <div key={i}>
             {group.title && <h3>{group.title}</h3>}
-            {group.items
-              ?.filter((item) => !item.isHidden)
-              .map((item, j: number) => (
-                <div key={j} data-ouia-component-id={item.ouiaId}>
-                  {item.title}
-                  {item.description && <p>{item.description}</p>}
-                </div>
-              ))}
+            {group.customContent
+              ? group.customContent
+              : group.items
+                  ?.filter((item) => !item.isHidden)
+                  .map((item, j: number) => (
+                    <div key={j} data-ouia-component-id={item.ouiaId}>
+                      {item.title}
+                      {item.description && <p>{item.description}</p>}
+                    </div>
+                  ))}
           </div>
         )
       )}
@@ -65,6 +68,15 @@ jest.mock('../../hooks/useTheme', () => ({
     setSystemMode: jest.fn(),
   }),
   ThemeVariants: { light: 0, dark: 1, system: 2 },
+}));
+jest.mock('../../hooks/useHighContrast', () => ({
+  useHighContrast: () => ({
+    contrastMode: 0,
+    setDefaultContrast: jest.fn(),
+    setHighContrast: jest.fn(),
+    setSystemContrast: jest.fn(),
+  }),
+  HighContrastVariants: { default: 0, high: 1, system: 2 },
 }));
 jest.mock('../../hooks/useSupportCaseData', () => ({
   __esModule: true,
@@ -92,6 +104,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.itless': false,
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
+  'platform.chrome.high-contrast': false,
   'platform.chrome.notifications-drawer': false,
 };
 
@@ -210,6 +223,28 @@ describe('Tools - dark mode system feature flag', () => {
       renderTools({ 'platform.chrome.itless': true });
 
       expect(screen.queryByTestId('settings-menu-integrations')).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe('Tools - high contrast feature flag', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  describe('when high contrast is disabled', () => {
+    it('should not render contrast section', () => {
+      renderTools({ 'platform.chrome.high-contrast': false });
+      expect(screen.queryByText('Contrast')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when high contrast is enabled', () => {
+    it('should render contrast section with toggle group', () => {
+      renderTools({ 'platform.chrome.high-contrast': true });
+
+      expect(screen.getByText('Contrast')).toBeInTheDocument();
+      expect(screen.getByText('System')).toBeInTheDocument();
+      expect(screen.getByText('Default')).toBeInTheDocument();
+      expect(screen.getByText('High contrast')).toBeInTheDocument();
     });
   });
 });
