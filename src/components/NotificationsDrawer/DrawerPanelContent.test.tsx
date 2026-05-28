@@ -105,6 +105,25 @@ describe('DrawerPanelContent', () => {
     expect(store.get(notificationDrawerExpandedAtom)).toBe(false);
   });
 
+  it('should reset error boundary when drawer content changes', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const store = createStore();
+    // First render a throwing module to trigger the error boundary
+    store.set(drawerPanelContentAtom, { scope: 'throwing-module', module: './Broken' });
+    const { getByTestId, rerender } = renderDrawerPanel(store);
+    expect(getByTestId('drawer-error-fallback')).toBeInTheDocument();
+
+    // Switch to a working module — key change should remount the boundary
+    store.set(drawerPanelContentAtom, { scope: 'notifications', module: './DrawerPanel' });
+    rerender(
+      <Provider store={store}>
+        <DrawerPanel toggleDrawer={toggleDrawer} />
+      </Provider>
+    );
+    expect(getByTestId('scalprum-content')).toBeInTheDocument();
+    consoleSpy.mockRestore();
+  });
+
   it('should render with correct CSS class from content scope', () => {
     const store = createStore();
     store.set(drawerPanelContentAtom, { scope: 'learningResources', module: './HelpPanel' });
