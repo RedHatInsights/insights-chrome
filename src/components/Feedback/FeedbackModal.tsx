@@ -9,11 +9,10 @@ import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/depreca
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
-import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-comments-icon';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
-import { isFeedbackModalOpenAtom, usePendoFeedbackAtom } from '../../state/atoms/feedbackModalAtom';
+import { isFeedbackModalOpenAtom } from '../../state/atoms/feedbackModalAtom';
 
 import feedbackIllo from '../../../static/images/feedback_illo.svg';
 import FeedbackForm from './FeedbackForm';
@@ -25,11 +24,8 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import { createSupportCase } from '../../utils/createCase';
 import './Feedback.scss';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useSegment } from '../../analytics/useSegment';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
-
-const FEEDBACK_OPEN_EVENT = 'chrome.feedback.open';
 
 export type FeedbackPages =
   | 'feedbackHome'
@@ -44,11 +40,9 @@ export type FeedbackPages =
 const FeedbackModal = memo(() => {
   const intl = useIntl();
   const [isModalOpen, setIsModalOpen] = useAtom(isFeedbackModalOpenAtom);
-  const usePendoFeedback = useAtomValue(usePendoFeedbackAtom);
   const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
   const { getEnvironment } = useContext(InternalChromeContext);
   const chromeAuth = useContext(ChromeAuthContext);
-  const { analytics } = useSegment();
   const user = chromeAuth.user as DeepRequired<ChromeUser>;
   const env = getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
@@ -192,32 +186,17 @@ const FeedbackModal = memo(() => {
   };
 
   return (
-    <React.Fragment>
-      <Button
-        icon={<OutlinedCommentsIcon />}
-        ouiaId="feedback-button"
-        className="chr-c-button-feedback"
-        onClick={() => {
-          if (!usePendoFeedback) {
-            analytics?.track(FEEDBACK_OPEN_EVENT);
-            setIsModalOpen(true);
-          }
-        }}
-      >
-        {intl.formatMessage(messages.feedback)}
-      </Button>
-      <Modal aria-label="Feedback modal" isOpen={isModalOpen} className="chr-c-feedback-modal" variant={ModalVariant.large} onClose={handleCloseModal}>
-        <Grid>
-          <GridItem span={8} rowSpan={12}>
-            <ModalDescription modalPage={modalPage} />
-          </GridItem>
-          <GridItem span={4} className="chr-c-feedback-image">
-            <img alt="feedback illustration" src={feedbackIllo} />
-          </GridItem>
-        </Grid>
-        {!isAvailable && <Label color="red"> {intl.formatMessage(messages.submitOnlyInStageProd)} </Label>}
-      </Modal>
-    </React.Fragment>
+    <Modal aria-label="Feedback modal" isOpen={isModalOpen} className="chr-c-feedback-modal" variant={ModalVariant.large} onClose={handleCloseModal}>
+      <Grid>
+        <GridItem span={8} rowSpan={12}>
+          <ModalDescription modalPage={modalPage} />
+        </GridItem>
+        <GridItem span={4} className="chr-c-feedback-image">
+          <img alt="feedback illustration" src={feedbackIllo} />
+        </GridItem>
+      </Grid>
+      {!isAvailable && <Label color="red"> {intl.formatMessage(messages.submitOnlyInStageProd)} </Label>}
+    </Modal>
   );
 });
 

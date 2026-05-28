@@ -12,8 +12,10 @@ module.exports = {
   },
   transformIgnorePatterns: [
     `<rootDir>/node_modules/(?!${[
+      '@patternfly/react-core/dist/esm',
       '@patternfly/react-tokens/dist/esm',
       '@patternfly/react-icons/dist/esm',
+      '@patternfly/react-component-groups',
       '@patternfly/(elements|pfe-core)/.*',
       '@rhds/elements/.*',
       '@rhds/icons/.*',
