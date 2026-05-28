@@ -5,8 +5,17 @@ import DrawerPanel from './DrawerPanelContent';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 
+const ThrowingComponent = () => {
+  throw new Error('Module runtime error');
+};
+
 jest.mock('@scalprum/react-core', () => ({
-  ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-content" data-scope={props.scope} />,
+  ScalprumComponent: (props: Record<string, unknown>) => {
+    if (props.scope === 'throwing-module') {
+      return <ThrowingComponent />;
+    }
+    return <div data-testid="scalprum-content" data-scope={props.scope} data-error-component={props.ErrorComponent ? 'present' : 'absent'} />;
+  },
 }));
 
 jest.mock('@redhat-cloud-services/frontend-components/Spinner', () => ({
@@ -40,6 +49,22 @@ describe('DrawerPanelContent', () => {
     const { getByTestId } = renderDrawerPanel(store);
     expect(getByTestId('scalprum-content')).toBeInTheDocument();
     expect(getByTestId('scalprum-content').getAttribute('data-scope')).toBe('notifications');
+  });
+
+  it('should pass ErrorComponent to ScalprumComponent', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'scheduler-ui', module: './GlobalScheduler' });
+    const { getByTestId } = renderDrawerPanel(store);
+    expect(getByTestId('scalprum-content').getAttribute('data-error-component')).toBe('present');
+  });
+
+  it('should catch runtime errors from remote modules and show fallback', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'throwing-module', module: './Broken' });
+    const { getByTestId } = renderDrawerPanel(store);
+    expect(getByTestId('drawer-error-fallback')).toBeInTheDocument();
+    consoleSpy.mockRestore();
   });
 
   it('should auto-close drawer when expanded but no content is set', async () => {
