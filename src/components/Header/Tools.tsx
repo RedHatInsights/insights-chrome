@@ -96,6 +96,11 @@ const Tools = () => {
     messages.betaRelease
   )}`;
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
+  const schedulerDrawerEnabled = useFlag('console.chrome-scheduler_drawer');
+
+  const {
+    drawerActions: { toggleDrawerContent },
+  } = useContext(InternalChromeContext);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -166,6 +171,17 @@ const Tools = () => {
           url: '/settings/notifications',
           title: 'Notifications',
         },
+        {
+          ouiaId: 'settings-menu-scheduler',
+          url: '#',
+          title: 'Scheduler',
+          isHidden: !schedulerDrawerEnabled,
+          onClick: () =>
+            toggleDrawerContent({
+              scope: 'scheduler-ui',
+              module: './GlobalScheduler',
+            }),
+        },
       ],
     },
     {
@@ -218,10 +234,6 @@ const Tools = () => {
   const supportOptionsUrl = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
   };
-
-  const {
-    drawerActions: { toggleDrawerContent },
-  } = useContext(InternalChromeContext);
 
   /* list out the items for the about menu */
   const aboutMenuItemsConfig = [
