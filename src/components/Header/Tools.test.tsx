@@ -7,6 +7,7 @@ import Tools from './Tools';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { useFlag } from '@unleash/proxy-client-react';
+import { preloadModule } from '@scalprum/core';
 
 // Configure data-ouia-component-id as the test ID attribute
 // This allows using screen.getByTestId/queryByTestId for OUIA IDs
@@ -17,6 +18,9 @@ jest.mock('@unleash/proxy-client-react', () => ({
 }));
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div />,
+}));
+jest.mock('@scalprum/core', () => ({
+  preloadModule: jest.fn(() => Promise.resolve()),
 }));
 jest.mock('./UserToggle', () => ({
   __esModule: true,
@@ -234,14 +238,25 @@ describe('Tools - dark mode system feature flag', () => {
       expect(screen.getByTestId('settings-menu-scheduler')).toBeInTheDocument();
     });
 
-    it('should call toggleDrawerContent with scheduler-ui scope when clicked', () => {
+    it('should call toggleDrawerContent with schedulerUi scope when clicked', () => {
       renderTools({ 'console.chrome-scheduler_drawer': true });
       const schedulerItem = screen.getByTestId('settings-menu-scheduler');
       fireEvent.click(schedulerItem);
       expect(mockInternalChromeContext.drawerActions.toggleDrawerContent).toHaveBeenCalledWith({
-        scope: 'scheduler-ui',
+        scope: 'schedulerUi',
         module: './GlobalScheduler',
       });
+    });
+
+    it('should preload schedulerUi module when flag is enabled', () => {
+      renderTools({ 'console.chrome-scheduler_drawer': true });
+      expect(preloadModule).toHaveBeenCalledWith('schedulerUi', './GlobalScheduler');
+    });
+
+    it('should not preload schedulerUi module when flag is disabled', () => {
+      (preloadModule as jest.Mock).mockClear();
+      renderTools({ 'console.chrome-scheduler_drawer': false });
+      expect(preloadModule).not.toHaveBeenCalled();
     });
   });
 });
