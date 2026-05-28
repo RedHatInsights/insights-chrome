@@ -243,6 +243,5 @@ describe('Tools - dark mode system feature flag', () => {
         module: './RootApp',
       });
     });
-
   });
 });
