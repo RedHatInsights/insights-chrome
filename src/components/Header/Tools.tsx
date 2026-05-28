@@ -106,7 +106,7 @@ const Tools = () => {
   // Pre-load the scheduler-ui remote entry so the drawer opens instantly
   useEffect(() => {
     if (schedulerDrawerEnabled) {
-      preloadModule('schedulerUi', './GlobalScheduler').catch(() => {
+      preloadModule('schedulerUi', './RootApp').catch(() => {
         // Best effort: module will load on demand when drawer opens
       });
     }
@@ -189,7 +189,7 @@ const Tools = () => {
           onClick: () =>
             toggleDrawerContent({
               scope: 'schedulerUi',
-              module: './GlobalScheduler',
+              module: './RootApp',
             }),
         },
       ],

@@ -244,13 +244,13 @@ describe('Tools - dark mode system feature flag', () => {
       fireEvent.click(schedulerItem);
       expect(mockInternalChromeContext.drawerActions.toggleDrawerContent).toHaveBeenCalledWith({
         scope: 'schedulerUi',
-        module: './GlobalScheduler',
+        module: './RootApp',
       });
     });
 
     it('should preload schedulerUi module when flag is enabled', () => {
       renderTools({ 'console.chrome-scheduler_drawer': true });
-      expect(preloadModule).toHaveBeenCalledWith('schedulerUi', './GlobalScheduler');
+      expect(preloadModule).toHaveBeenCalledWith('schedulerUi', './RootApp');
     });
 
     it('should not preload schedulerUi module when flag is disabled', () => {

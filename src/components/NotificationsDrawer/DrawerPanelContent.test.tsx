@@ -53,7 +53,7 @@ describe('DrawerPanelContent', () => {
 
   it('should pass ErrorComponent to ScalprumComponent', () => {
     const store = createStore();
-    store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './GlobalScheduler' });
+    store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './RootApp' });
     const { getByTestId } = renderDrawerPanel(store);
     expect(getByTestId('scalprum-content').getAttribute('data-error-component')).toBe('present');
   });
