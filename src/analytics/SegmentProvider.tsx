@@ -112,7 +112,19 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
   const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
-  const { pathname, search } = useLocation();
+
+  // Defensive check: useLocation might be called before Router context is initialized
+  let pathname = '/';
+  let search = '';
+  try {
+    const location = useLocation();
+    pathname = location.pathname;
+    search = location.search;
+  } catch (error) {
+    // Router context not ready yet, use defaults and skip analytics for this render
+    console.warn('Router context not initialized in SegmentProvider, using default location');
+  }
+
   usePageEvent(analytics);
 
   const fetchIntercomHash = async () => {

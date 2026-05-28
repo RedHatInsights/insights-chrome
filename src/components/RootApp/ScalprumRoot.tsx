@@ -40,6 +40,7 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
+import RouterContextGuard from './RouterContextGuard';
 
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 
@@ -58,37 +59,39 @@ const ScalprumRoot = memo(
     return (
       <ChromeProvider>
         <BetaSwitcher />
-        <Routes>
-          <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
-          <Route
-            path="/connect/products"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <ProductSelection />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/allservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<ChromeFooter />} />
-              </Suspense>
-            }
-          />
-          {!ITLess() && (
+        <RouterContextGuard>
+          <Routes>
+            <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
             <Route
-              path="/favoritedservices"
+              path="/connect/products"
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <FavoritedServices Footer={<ChromeFooter />} />
+                  <ProductSelection />
                 </Suspense>
               }
             />
-          )}
-          <Route path="/security" element={<DefaultLayout />} />
-          <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
-        </Routes>
+            <Route
+              path="/allservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <AllServices Footer={<ChromeFooter />} />
+                </Suspense>
+              }
+            />
+            {!ITLess() && (
+              <Route
+                path="/favoritedservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <FavoritedServices Footer={<ChromeFooter />} />
+                  </Suspense>
+                }
+              />
+            )}
+            <Route path="/security" element={<DefaultLayout />} />
+            <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
+          </Routes>
+        </RouterContextGuard>
       </ChromeProvider>
     );
     // no props, no need to ever render based on parent changes
