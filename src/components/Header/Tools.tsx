@@ -22,7 +22,6 @@ import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/rel
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
-import { preloadModule } from '@scalprum/core';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
@@ -102,15 +101,6 @@ const Tools = () => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
-
-  // Pre-load the scheduler-ui remote entry so the drawer opens instantly
-  useEffect(() => {
-    if (schedulerDrawerEnabled) {
-      preloadModule('schedulerUi', './RootApp').catch(() => {
-        // Best effort: module will load on demand when drawer opens
-      });
-    }
-  }, [schedulerDrawerEnabled]);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [

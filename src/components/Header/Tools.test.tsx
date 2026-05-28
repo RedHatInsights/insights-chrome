@@ -7,7 +7,6 @@ import Tools from './Tools';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { useFlag } from '@unleash/proxy-client-react';
-import { preloadModule } from '@scalprum/core';
 
 // Configure data-ouia-component-id as the test ID attribute
 // This allows using screen.getByTestId/queryByTestId for OUIA IDs
@@ -18,9 +17,6 @@ jest.mock('@unleash/proxy-client-react', () => ({
 }));
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div />,
-}));
-jest.mock('@scalprum/core', () => ({
-  preloadModule: jest.fn(() => Promise.resolve()),
 }));
 jest.mock('./UserToggle', () => ({
   __esModule: true,
@@ -248,15 +244,5 @@ describe('Tools - dark mode system feature flag', () => {
       });
     });
 
-    it('should preload schedulerUi module when flag is enabled', () => {
-      renderTools({ 'console.chrome-scheduler_drawer': true });
-      expect(preloadModule).toHaveBeenCalledWith('schedulerUi', './RootApp');
-    });
-
-    it('should not preload schedulerUi module when flag is disabled', () => {
-      (preloadModule as jest.Mock).mockClear();
-      renderTools({ 'console.chrome-scheduler_drawer': false });
-      expect(preloadModule).not.toHaveBeenCalled();
-    });
   });
 });
