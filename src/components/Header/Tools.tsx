@@ -324,7 +324,7 @@ const Tools = () => {
       });
     };
 
-    const AskRedHatIcon = () => <img src="/apps/frontend-assets/technology-icons/ai-chat-ask-redhat.svg" alt="Ask Red Hat" className="chr-c-ask-redhat-icon" />;
+    const AIExperienceIcon = () => <img src="/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience.svg" alt="AI Experience" className="chr-c-ai-experience-icon" />;
 
     return (
       <Tooltip
@@ -336,7 +336,7 @@ const Tools = () => {
       >
         <Button
           variant="control"
-          icon={isPreview ? <AskRedHatIcon /> : <QuestionCircleIcon />}
+          icon={isPreview ? <AIExperienceIcon /> : <QuestionCircleIcon />}
           id="HelpPanelToggle"
           ouiaId="chrome-help-panel"
           aria-label="Toggle help panel"
