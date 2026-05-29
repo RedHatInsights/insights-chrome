@@ -53,13 +53,13 @@ const SettingsToggle = (props: SettingsToggleProps) => {
               ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
               isDisabled={isDisabled}
               component={
-                onClick
-                  ? undefined
-                  : ({ className: itemClassName, children }) => (
+                !onClick && url
+                  ? ({ className: itemClassName, children }) => (
                       <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
                         {children}
                       </ChromeLink>
                     )
+                  : undefined
               }
               description={description}
             >
