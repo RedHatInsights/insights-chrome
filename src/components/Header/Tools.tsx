@@ -174,7 +174,7 @@ const Tools = () => {
           onClick: () =>
             toggleDrawerContent({
               scope: 'schedulerUi',
-              module: './RootApp',
+              module: './SchedulerPanelContent',
             }),
         },
       ],

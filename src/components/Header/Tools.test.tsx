@@ -240,7 +240,7 @@ describe('Tools - dark mode system feature flag', () => {
       fireEvent.click(schedulerItem);
       expect(mockInternalChromeContext.drawerActions.toggleDrawerContent).toHaveBeenCalledWith({
         scope: 'schedulerUi',
-        module: './RootApp',
+        module: './SchedulerPanelContent',
       });
     });
   });
