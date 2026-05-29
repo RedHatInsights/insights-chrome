@@ -68,13 +68,28 @@ const DrawerPanelBase = (props: DrawerPanelProps) => {
     return null;
   }
 
+  const isNotification = drawerContent.scope === 'notifications';
+  const content = (
+    <DrawerErrorBoundary key={`${drawerContent.scope}:${drawerContent.module}`}>
+      <ScalprumComponent {...drawerContent} {...props} fallback={<Spinner centered />} ErrorComponent={<DrawerErrorFallback />} />
+    </DrawerErrorBoundary>
+  );
+
+  // Only wrap notification content in NotificationDrawer — other drawer modules
+  // (e.g. scheduler) have different layout needs and should not inherit
+  // notification-specific PF styles (padding, max-width).
+  if (isNotification) {
+    return (
+      <NotificationDrawer className={classNames('pf-v5-c-notification-drawer', drawerContent.scope)} ref={props.panelRef}>
+        {content}
+      </NotificationDrawer>
+    );
+  }
+
   return (
-    // Need the v5 styles here in order for pf5 nested child drawer nodes to be properly styled until pf6 migration is finished
-    <NotificationDrawer className={classNames('pf-v5-c-notification-drawer', drawerContent.scope)} ref={props.panelRef}>
-      <DrawerErrorBoundary key={`${drawerContent.scope}:${drawerContent.module}`}>
-        <ScalprumComponent {...drawerContent} {...props} fallback={<Spinner centered />} ErrorComponent={<DrawerErrorFallback />} />
-      </DrawerErrorBoundary>
-    </NotificationDrawer>
+    <div className={drawerContent.scope} ref={props.panelRef as React.Ref<HTMLDivElement>}>
+      {content}
+    </div>
   );
 };
 

@@ -124,12 +124,32 @@ describe('DrawerPanelContent', () => {
     consoleSpy.mockRestore();
   });
 
-  it('should render with correct CSS class from content scope', () => {
+  it('should wrap notification content in NotificationDrawer with PF5 class', () => {
     const store = createStore();
-    store.set(drawerPanelContentAtom, { scope: 'learningResources', module: './HelpPanel' });
+    store.set(drawerPanelContentAtom, { scope: 'notifications', module: './DrawerPanel' });
     const { container } = renderDrawerPanel(store);
     const drawer = container.querySelector('.pf-v5-c-notification-drawer');
     expect(drawer).toBeInTheDocument();
-    expect(drawer?.classList.contains('learningResources')).toBe(true);
+    expect(drawer?.classList.contains('notifications')).toBe(true);
+  });
+
+  it('should wrap non-notification content in a plain div without NotificationDrawer styles', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'learningResources', module: './HelpPanel' });
+    const { container } = renderDrawerPanel(store);
+    expect(container.querySelector('.pf-v5-c-notification-drawer')).not.toBeInTheDocument();
+    const wrapper = container.querySelector('.learningResources');
+    expect(wrapper).toBeInTheDocument();
+    expect(wrapper?.tagName).toBe('DIV');
+  });
+
+  it('should wrap scheduler content in a plain div without NotificationDrawer styles', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './RootApp' });
+    const { container } = renderDrawerPanel(store);
+    expect(container.querySelector('.pf-v5-c-notification-drawer')).not.toBeInTheDocument();
+    const wrapper = container.querySelector('.schedulerUi');
+    expect(wrapper).toBeInTheDocument();
+    expect(wrapper?.tagName).toBe('DIV');
   });
 });

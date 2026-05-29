@@ -15,7 +15,7 @@ export type SettingsToggleDropdownGroup = {
 };
 
 export type SettingsToggleDropdownItem = {
-  url: string;
+  url?: string;
   title: ReactNode;
   description?: React.ReactNode;
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;

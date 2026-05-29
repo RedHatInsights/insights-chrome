@@ -109,7 +109,6 @@ const Tools = () => {
         {
           ouiaId: 'PreviewSwitcher',
           title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
-          url: '#',
           onClick: () => togglePreviewWithCheck(),
         },
       ],
@@ -129,7 +128,6 @@ const Tools = () => {
                 ),
                 description: 'Follow system preference',
                 onClick: setSystemMode,
-                url: '#',
               },
             ]
           : []),
@@ -142,7 +140,6 @@ const Tools = () => {
           ),
           description: 'Always use light mode',
           onClick: setLightMode,
-          url: '#',
         },
         {
           ouiaId: 'settings-menu-color-dark',
@@ -153,7 +150,6 @@ const Tools = () => {
           ),
           description: 'Always use dark mode',
           onClick: setDarkMode,
-          url: '#',
         },
       ],
     },
@@ -173,7 +169,6 @@ const Tools = () => {
         },
         {
           ouiaId: 'settings-menu-scheduler',
-          url: '#',
           title: 'Scheduler',
           isHidden: !schedulerDrawerEnabled,
           onClick: () =>
