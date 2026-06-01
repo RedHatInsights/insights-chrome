@@ -608,4 +608,24 @@ export default defineMessages({
     description: 'Frosted glass effect',
     defaultMessage: 'Frosted glass effect',
   },
+  contrast: {
+    id: 'contrast',
+    description: 'Contrast',
+    defaultMessage: 'Contrast',
+  },
+  contrastSystem: {
+    id: 'contrastSystem',
+    description: 'System',
+    defaultMessage: 'System',
+  },
+  contrastDefault: {
+    id: 'contrastDefault',
+    description: 'Default',
+    defaultMessage: 'Default',
+  },
+  contrastHigh: {
+    id: 'contrastHigh',
+    description: 'High contrast',
+    defaultMessage: 'High contrast',
+  },
 });

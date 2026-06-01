@@ -83,12 +83,15 @@ jest.mock('../../hooks/useGlassTheme', () => ({
     toggleGlassTheme: jest.fn(),
   }),
 }));
+const mockSetDefaultContrast = jest.fn();
+const mockSetHighContrast = jest.fn();
+const mockSetSystemContrast = jest.fn();
 jest.mock('../../hooks/useHighContrast', () => ({
   useHighContrast: () => ({
     contrastMode: 0,
-    setDefaultContrast: jest.fn(),
-    setHighContrast: jest.fn(),
-    setSystemContrast: jest.fn(),
+    setDefaultContrast: mockSetDefaultContrast,
+    setHighContrast: mockSetHighContrast,
+    setSystemContrast: mockSetSystemContrast,
   }),
   HighContrastVariants: { default: 0, high: 1, system: 2 },
 }));
@@ -296,6 +299,24 @@ describe('Tools - high contrast feature flag', () => {
       expect(screen.getByText('System')).toBeInTheDocument();
       expect(screen.getByText('Default')).toBeInTheDocument();
       expect(screen.getByText('High contrast')).toBeInTheDocument();
+    });
+
+    it('should call setSystemContrast when System is clicked', () => {
+      renderTools({ 'platform.chrome.high-contrast': true });
+      fireEvent.click(screen.getByText('System'));
+      expect(mockSetSystemContrast).toHaveBeenCalled();
+    });
+
+    it('should call setDefaultContrast when Default is clicked', () => {
+      renderTools({ 'platform.chrome.high-contrast': true });
+      fireEvent.click(screen.getByText('Default'));
+      expect(mockSetDefaultContrast).toHaveBeenCalled();
+    });
+
+    it('should call setHighContrast when High contrast is clicked', () => {
+      renderTools({ 'platform.chrome.high-contrast': true });
+      fireEvent.click(screen.getByText('High contrast'));
+      expect(mockSetHighContrast).toHaveBeenCalled();
     });
   });
 });

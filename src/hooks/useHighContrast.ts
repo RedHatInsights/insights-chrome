@@ -7,49 +7,46 @@ export enum HighContrastVariants {
   system,
 }
 
+const applyHighContrast = (isHigh: boolean) => {
+  if (isHigh) {
+    document.documentElement.classList.add('pf-v6-theme-high-contrast');
+  } else {
+    document.documentElement.classList.remove('pf-v6-theme-high-contrast');
+  }
+};
+
+const getInitialMode = (isHighContrastEnabled: boolean): HighContrastVariants => {
+  if (!isHighContrastEnabled) {
+    return HighContrastVariants.default;
+  }
+
+  const saved = localStorage.getItem('chrome:high-contrast');
+
+  if (saved === 'high') return HighContrastVariants.high;
+  if (saved === 'default') return HighContrastVariants.default;
+  return HighContrastVariants.system;
+};
+
+const applyContrastMode = (mode: HighContrastVariants) => {
+  if (mode === HighContrastVariants.high) {
+    applyHighContrast(true);
+  } else if (mode === HighContrastVariants.system) {
+    localStorage.setItem('chrome:high-contrast', 'system');
+    applyHighContrast(window.matchMedia('(prefers-contrast: more)').matches);
+  } else {
+    applyHighContrast(false);
+  }
+};
+
 export const useHighContrast = () => {
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
 
-  const applyHighContrast = (isHigh: boolean) => {
-    if (isHigh) {
-      document.documentElement.classList.add('pf-v6-theme-high-contrast');
-    } else {
-      document.documentElement.classList.remove('pf-v6-theme-high-contrast');
-    }
-  };
-
-  const getInitialMode = (): HighContrastVariants => {
-    if (!isHighContrastEnabled) {
-      applyHighContrast(false);
-      return HighContrastVariants.default;
-    }
-
-    const saved = localStorage.getItem('chrome:high-contrast');
-
-    if (saved === 'high') {
-      applyHighContrast(true);
-      return HighContrastVariants.high;
-    } else if (saved === 'default') {
-      applyHighContrast(false);
-      return HighContrastVariants.default;
-    } else if (saved === 'system') {
-      const prefersHighContrast = window.matchMedia('(prefers-contrast: more)').matches;
-      applyHighContrast(prefersHighContrast);
-      return HighContrastVariants.system;
-    }
-
-    // Default to system mode when no preference is saved
-    localStorage.setItem('chrome:high-contrast', 'system');
-    const prefersHighContrast = window.matchMedia('(prefers-contrast: more)').matches;
-    applyHighContrast(prefersHighContrast);
-    return HighContrastVariants.system;
-  };
-
-  const [contrastMode, setContrastMode] = useState<HighContrastVariants>(getInitialMode);
+  const [contrastMode, setContrastMode] = useState<HighContrastVariants>(() => getInitialMode(isHighContrastEnabled));
 
   useEffect(() => {
-    const newMode = getInitialMode();
-    setContrastMode(newMode);
+    const mode = getInitialMode(isHighContrastEnabled);
+    setContrastMode(mode);
+    applyContrastMode(mode);
   }, [isHighContrastEnabled]);
 
   const setDefaultContrast = () => {
