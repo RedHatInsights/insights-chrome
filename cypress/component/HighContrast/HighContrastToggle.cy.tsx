@@ -96,8 +96,8 @@ describe('HighContrastToggle Component', () => {
         });
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:high-contrast').should('equal', 'system');
         cy.get('html').should('have.class', 'pf-v6-theme-high-contrast');
+        cy.getLocalStorage('chrome:high-contrast').should('equal', 'system');
       });
 
       it('falls back to system with no contrast preference', () => {
@@ -111,8 +111,8 @@ describe('HighContrastToggle Component', () => {
         });
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:high-contrast').should('equal', 'system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-high-contrast');
+        cy.getLocalStorage('chrome:high-contrast').should('equal', 'system');
       });
     });
 
@@ -120,6 +120,7 @@ describe('HighContrastToggle Component', () => {
       it('toggles from default to high', () => {
         localStorage.setItem('chrome:high-contrast', 'default');
         cy.mount(<Wrapper />).get('html');
+        cy.wait('@featureFlags');
         cy.get('#high-button').click();
         cy.getLocalStorage('chrome:high-contrast').should('equal', 'high');
         cy.get('html').should('have.class', 'pf-v6-theme-high-contrast');
@@ -128,6 +129,7 @@ describe('HighContrastToggle Component', () => {
       it('toggles from high to default', () => {
         localStorage.setItem('chrome:high-contrast', 'high');
         cy.mount(<Wrapper />).get('html');
+        cy.wait('@featureFlags');
         cy.get('#default-button').click();
         cy.getLocalStorage('chrome:high-contrast').should('equal', 'default');
         cy.get('html').should('not.have.class', 'pf-v6-theme-high-contrast');
@@ -144,6 +146,7 @@ describe('HighContrastToggle Component', () => {
           });
         });
         cy.mount(<Wrapper />).get('html');
+        cy.wait('@featureFlags');
         cy.get('#system-button').click();
         cy.getLocalStorage('chrome:high-contrast').should('equal', 'system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-high-contrast');
@@ -179,6 +182,7 @@ describe('HighContrastToggle Component', () => {
           });
         });
         cy.mount(<Wrapper />).get('html');
+        cy.wait('@featureFlags');
         cy.get('#system-button').click();
         cy.getLocalStorage('chrome:high-contrast').should('equal', 'system');
         cy.get('html').should('have.class', 'pf-v6-theme-high-contrast');
@@ -186,6 +190,7 @@ describe('HighContrastToggle Component', () => {
 
       it('system button should be available', () => {
         cy.mount(<Wrapper />);
+        cy.wait('@featureFlags');
         cy.get('#system-button').should('exist').should('be.visible');
       });
     });

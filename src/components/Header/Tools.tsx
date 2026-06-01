@@ -158,31 +158,30 @@ const Tools = () => {
       ],
     },
     {
-      title: 'Contrast',
+      title: intl.formatMessage(messages.contrast),
       isHidden: !isHighContrastEnabled,
-      items: [],
       customContent: (
-        <ToggleGroup aria-label="Contrast mode" className="pf-v6-u-mx-md pf-v6-u-my-sm">
+        <ToggleGroup aria-label={intl.formatMessage(messages.contrast)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem
-            text="System"
+            text={intl.formatMessage(messages.contrastSystem)}
             buttonId="contrast-system"
             isSelected={contrastMode === HighContrastVariants.system}
             onChange={() => setSystemContrast()}
-            aria-label="System contrast"
+            aria-label={intl.formatMessage(messages.contrastSystem)}
           />
           <ToggleGroupItem
-            text="Default"
+            text={intl.formatMessage(messages.contrastDefault)}
             buttonId="contrast-default"
             isSelected={contrastMode === HighContrastVariants.default}
             onChange={() => setDefaultContrast()}
-            aria-label="Default contrast"
+            aria-label={intl.formatMessage(messages.contrastDefault)}
           />
           <ToggleGroupItem
-            text="High contrast"
+            text={intl.formatMessage(messages.contrastHigh)}
             buttonId="contrast-high"
             isSelected={contrastMode === HighContrastVariants.high}
             onChange={() => setHighContrast()}
-            aria-label="High contrast"
+            aria-label={intl.formatMessage(messages.contrastHigh)}
           />
         </ToggleGroup>
       ),

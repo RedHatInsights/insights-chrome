@@ -10,10 +10,8 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type SettingsToggleDropdownGroup = {
   title?: string;
-  items: SettingsToggleDropdownItem[];
   isHidden?: boolean;
-  customContent?: ReactNode;
-};
+} & ({ items: SettingsToggleDropdownItem[]; customContent?: never } | { customContent: ReactNode; items?: never });
 
 export type SettingsToggleDropdownItem = {
   url: string;
