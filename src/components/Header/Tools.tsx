@@ -158,16 +158,19 @@ const Tools = () => {
       ],
     },
     {
-      title: 'Glass effect',
+      title: intl.formatMessage(messages.glassEffect),
       isHidden: !isGlassModeEnabled,
-      items: [
-        {
-          ouiaId: 'settings-menu-glass-theme',
-          title: <Switch id="glass-theme-switch" label="Frosted glass effect" isChecked={isGlassTheme} hasCheckIcon onChange={toggleGlassTheme} />,
-          onClick: (e: MouseEvent | React.MouseEvent | React.KeyboardEvent) => e.stopPropagation(),
-          url: '#',
-        },
-      ],
+      customContent: (
+        <div className="pf-v6-u-mx-md pf-v6-u-my-sm">
+          <Switch
+            id="glass-theme-switch"
+            label={intl.formatMessage(messages.glassEffectDescription)}
+            isChecked={isGlassTheme}
+            hasCheckIcon
+            onChange={toggleGlassTheme}
+          />
+        </div>
+      ),
     },
     {
       title: 'Settings',

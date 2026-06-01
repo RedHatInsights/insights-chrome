@@ -19,11 +19,13 @@ jest.mock('../SettingsToggle', () => {
         <div>
           {props.dropdownItems.map((group, groupIndex) => (
             <div key={groupIndex}>
-              {group.items.map((item, itemIndex) => (
-                <a key={itemIndex} href={item.url} data-testid={item.ouiaId}>
-                  {item.title}
-                </a>
-              ))}
+              {group.customContent
+                ? group.customContent
+                : group.items?.map((item, itemIndex) => (
+                    <a key={itemIndex} href={item.url} data-testid={item.ouiaId}>
+                      {item.title}
+                    </a>
+                  ))}
             </div>
           ))}
         </div>
