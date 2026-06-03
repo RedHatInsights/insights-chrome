@@ -328,7 +328,7 @@ const Tools = () => {
       <img
         src="/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience.svg"
         alt="AI Experience"
-        className="pf-v6-c-icon pf-v6-c-icon--m-heading-2xl chr-c-ai-experience-icon"
+        className="pf-v6-c-icon pf-m-lg chr-c-ai-experience-icon"
       />
     );
 
@@ -348,7 +348,7 @@ const Tools = () => {
           aria-label="Toggle help panel"
           onClick={handleToggle}
           isClicked={isHelpPanelOpen}
-          className="tooltip-button-help-cy"
+          className="tooltip-button-help-cy chr-c-help-panel-toggle"
         >
           Help
         </Button>
