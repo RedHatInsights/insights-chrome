@@ -39,17 +39,17 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const [sentryId, setSentryId] = useState<string | undefined>();
 
   const activeModule = useAtomValue(activeModuleAtom);
-  const exceptionMessage = `Something Went Wrong: ${(props.error as Error)?.message || 'Unhandled UI runtime error'}`;
   useEffect(() => {
     const sentryId =
       props.error &&
-      Sentry.captureException(new Error(exceptionMessage), {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        bundle: getUrl('bundle'),
-        app: getUrl('app'),
-        error: (props.error instanceof Error && props.error?.message) || props.error,
-        trace: props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error,
+      Sentry.captureException(props.error, {
+        contexts: {
+          react: { componentStack: props.errorInfo?.componentStack },
+        },
+        extra: {
+          bundle: getUrl('bundle'),
+          app: getUrl('app'),
+        },
       });
     setSentryId(sentryId);
     // When a chunk error occurs, save it with sentry and reload the page.
@@ -77,7 +77,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
         chunkLoadErrorUtils.reloadPage();
       }
     }
-  }, [props.error, activeModule]);
+  }, [props.error, props.errorInfo, activeModule]);
 
   // second level of error capture if xhr/fetch interceptor fails
   const gatewayError = get3scaleError(props.error as any, props.auth);
