@@ -48,7 +48,9 @@ jest.mock('../utils/common', () => ({
 jest.unmock('../components/NotificationsDrawer/DrawerPanelContent');
 
 jest.mock('@scalprum/react-core', () => ({
-  ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-content" data-scope={props.scope} />,
+  ScalprumComponent: (props: Record<string, unknown>) => (
+    <div data-testid="scalprum-content" data-scope={props.scope} />
+  ),
 }));
 
 jest.mock('@redhat-cloud-services/frontend-components/Spinner', () => ({
@@ -65,7 +67,7 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import AllServices from './AllServices';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
