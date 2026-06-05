@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
@@ -29,6 +29,9 @@ import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/component
 import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
+import { useAtom } from 'jotai';
+import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
+import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
 
@@ -37,12 +40,39 @@ export type AllServicesProps = {
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
+  const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [bundles, setBundles] = useState<BundleNavigation[]>([]);
   const [originalBundles, setOriginalBundles] = useState<BundleNavigation[]>([]);
   const enableAllServicesRedesign = useFlag('platform.chrome.allservices.redesign');
   updateDocumentTitle('All Services', true);
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
+
+  const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+
+  const focusDrawer = () => {
+    if (drawerPanelRef.current === null) {
+      return;
+    }
+    const tabbableElement = drawerPanelRef.current?.querySelector('[aria-label="Close"], a, button') as HTMLAnchorElement | HTMLButtonElement;
+    if (tabbableElement) {
+      tabbableElement.focus();
+    }
+  };
+
+  const toggleDrawer = () => {
+    setIsNotificationsDrawerExpanded((prev) => !prev);
+  };
+
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
+
+  useEffect(() => {
+    if (drawerPanelRef.current !== null) {
+      focusDrawer();
+    }
+  }, []);
 
   if (error) {
     return <div>Error</div>;
@@ -98,6 +128,11 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             <Header breadcrumbsProps={{ hideNav: true }} />
           </Masthead>
         }
+        {...(isDrawerEnabled && {
+          onNotificationDrawerExpand: focusDrawer,
+          notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
+          isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
+        })}
       >
         <RedirectBanner />
         {!ready ? (
