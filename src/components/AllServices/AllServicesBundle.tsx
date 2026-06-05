@@ -7,6 +7,7 @@ import AllServicesLink from './AllServicesLink';
 import ChromeLink from '../ChromeLink';
 import ServiceIcon, { FavorableIcons } from '../FavoriteServices/ServiceIcon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
+import { titleToId } from '../../utils/common';
 
 type AllServicesBundleProps = BundleNavigation;
 
@@ -66,7 +67,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
                 <ChromeLink
                   className="chr-c-favorite-service__tile pf-v6-u-display-inline"
                   href={itemOverview.href ? itemOverview.href : ''}
-                  data-ouia-component-id={`${title}`}
+                  data-ouia-component-id={`${titleToId(id)}-${titleToId(itemOverview.title ?? '')}-Link`}
                 >
                   {itemOverview.title}
                 </ChromeLink>
@@ -74,7 +75,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
                 <ChromeLink
                   className="chr-c-favorite-service__tile pf-v6-u-display-inline"
                   href={itemDashboard.href ? itemDashboard.href : ''}
-                  data-ouia-component-id={`${title}`}
+                  data-ouia-component-id={`${titleToId(id)}-${titleToId(itemDashboard.title ?? '')}-Link`}
                 >
                   {itemDashboard.title}
                 </ChromeLink>
@@ -85,7 +86,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
                 <ChromeLink
                   className="chr-c-favorite-service__tile pf-v6-u-display-inline"
                   href={itemLearningResources.href ? itemLearningResources.href : ''}
-                  data-ouia-component-id={`${title}`}
+                  data-ouia-component-id={`${titleToId(id)}-${titleToId(itemLearningResources.title ?? '')}-Link`}
                 >
                   {itemLearningResources.title}
                 </ChromeLink>

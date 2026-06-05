@@ -352,7 +352,7 @@ spec:
             echo "Dev server is ready! Running tests."
 
             echo "Running Playwright e2e tests"
-            E2E_USER="$CHROME_ACCOUNT" E2E_PASSWORD="$CHROME_PASSWORD" npx playwright test
+            E2E_USER="$CHROME_ACCOUNT" E2E_PASSWORD="$CHROME_PASSWORD" npx playwright test 
             echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
             kill $DEV_SERVER_PID
           securityContext:
