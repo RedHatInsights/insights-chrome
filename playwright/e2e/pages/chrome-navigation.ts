@@ -15,6 +15,9 @@ export class ChromeNavigation {
   readonly navToggle: Locator;
   readonly sidebar: Locator;
 
+  // Timeout for waiting for navigation items to appear (increased for CI environments)
+  private static readonly NAV_ITEM_TIMEOUT = 30000;
+
   constructor(page: Page) {
     this.page = page;
 
@@ -87,7 +90,7 @@ export class ChromeNavigation {
       const buttonItem = this.sidebar.getByRole('button', { name: itemName, exact: true });
 
       // Wait for the navigation item to appear in the sidebar before attempting to click
-      await linkItem.or(buttonItem).first().waitFor({ state: 'visible', timeout: 10000 });
+      await linkItem.or(buttonItem).first().waitFor({ state: 'visible', timeout: ChromeNavigation.NAV_ITEM_TIMEOUT });
 
       // Check which one exists and verify uniqueness before clicking
       const linkCount = await linkItem.count();

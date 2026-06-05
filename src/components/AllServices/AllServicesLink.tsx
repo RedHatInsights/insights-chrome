@@ -23,11 +23,12 @@ interface AllServicesLinkProps {
   sectionTitle?: string;
   bundleTitle?: string;
   isExternal?: boolean;
+  id?: string;
   category?: string;
   group?: string;
 }
 
-const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = false, category, group }: AllServicesLinkProps) => {
+const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = false, id, category, group }: AllServicesLinkProps) => {
   const enableAllServicesRedesign = useFlag('platform.chrome.allservices.redesign');
 
   const moduleRoutes = useAtomValue(moduleRoutesAtom);
@@ -47,10 +48,28 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
 
+  // Generate OUIA component ID using available props
+  // Legacy path uses category/group, redesign path uses bundleTitle/sectionTitle/id
+  const ouiaId = useMemo(() => {
+    let parts: string[];
+
+    if (category || group) {
+      // Legacy path (AllServicesSection/AllServicesGroup)
+      parts = [category || '', group || '', titleToId(title ?? '')].filter(Boolean);
+    } else {
+      // Redesign path (AllServicesBundle)
+      parts = [bundleTitle ? titleToId(bundleTitle) : '', sectionTitle ? titleToId(sectionTitle) : '', id ? titleToId(id) : titleToId(title ?? '')].filter(
+        Boolean
+      );
+    }
+
+    return `${parts.join('-')}-Link`;
+  }, [bundleTitle, sectionTitle, id, title, category, group]);
+
   return enableAllServicesRedesign ? (
     <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXs' }}>
       <FlexItem>
-        <ChromeLink className="chr-c-favorite-service__tile" appId={appId} isExternal={isExternal} href={href ?? '#'} data-ouia-component-id={`${title}`}>
+        <ChromeLink className="chr-c-favorite-service__tile" appId={appId} isExternal={isExternal} href={href ?? '#'} data-ouia-component-id={ouiaId}>
           {title}
           {isExternal && (
             <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link" isInline>
@@ -74,7 +93,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
       >
         {!isExternal && (
           <Icon
-            data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title ?? '')}-FavoriteToggle`}
+            data-ouia-component-id={ouiaId.replace('-Link', '-FavoriteToggle')}
             onClick={() => handleFavouriteToggle(href ?? '#', isFavorite)}
             aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
             className="pf-v6-u-ml-xs"
@@ -92,12 +111,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
         'chr-c-icon-favorited': isFavorite,
       })}
     >
-      <ChromeLink
-        appId={appId}
-        isExternal={isExternal}
-        href={href ?? '#'}
-        data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title ?? '')}-Link`}
-      >
+      <ChromeLink appId={appId} isExternal={isExternal} href={href ?? '#'} data-ouia-component-id={ouiaId}>
         {title}
         {isExternal && (
           <Icon className="chr-c-icon-external-link" size="sm" isInline>
@@ -107,7 +121,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
       </ChromeLink>
       {!isExternal && (
         <Icon
-          data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title ?? '')}-FavoriteToggle`}
+          data-ouia-component-id={ouiaId.replace('-Link', '-FavoriteToggle')}
           onClick={() => handleFavouriteToggle(href ?? '#', isFavorite)}
           aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
           isInline
