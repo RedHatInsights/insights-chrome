@@ -37,6 +37,7 @@ jest.mock('../hooks/useAllServices', () => ({
 }));
 
 jest.mock('../hooks/useAllLinks', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fetchBundles: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
 }));
 
@@ -47,9 +48,7 @@ jest.mock('../utils/common', () => ({
 jest.unmock('../components/NotificationsDrawer/DrawerPanelContent');
 
 jest.mock('@scalprum/react-core', () => ({
-  ScalprumComponent: (props: Record<string, unknown>) => (
-    <div data-testid="scalprum-content" data-scope={props.scope} />
-  ),
+  ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-content" data-scope={props.scope} />,
 }));
 
 jest.mock('@redhat-cloud-services/frontend-components/Spinner', () => ({
@@ -62,12 +61,11 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: (flagName: string) => mockUseFlag(flagName),
 }));
 
-import React from 'react';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import AllServices from './AllServices';
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
@@ -120,7 +118,9 @@ const renderAllServices = (flagOverrides: Record<string, boolean> = {}) => {
     store,
     ...render(
       <MemoryRouter>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <InternalChromeContext.Provider value={mockInternalChromeContextValue as any}>
             <Provider store={store}>
               <AllServices />
@@ -219,5 +219,4 @@ describe('AllServices - Drawer Wiring', () => {
       expect(store.get(drawerPanelContentAtom)).toBeUndefined();
     });
   });
-
 });
