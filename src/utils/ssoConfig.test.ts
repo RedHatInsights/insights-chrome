@@ -83,7 +83,7 @@ describe('resolveSSOUrl', () => {
     expect(result).toBe('https://sso.redhat.com/auth/');
   });
 
-  it('should use first matching pattern when multiple patterns match', () => {
+  it('should prefer more specific pattern when multiple patterns match', () => {
     jsdomReconfigure({ url: 'https://qa.cloud.redhat.com' });
     const config: SSOConfig = {
       ssoUrl: 'https://sso.redhat.com/auth',
@@ -94,6 +94,32 @@ describe('resolveSSOUrl', () => {
     };
     const result = resolveSSOUrl(config);
     expect(result).toBe('https://sso.qa.redhat.com/auth/');
+  });
+
+  it('should prefer more specific pattern regardless of insertion order', () => {
+    jsdomReconfigure({ url: 'https://qa.cloud.redhat.com' });
+    const config: SSOConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': 'https://sso.redhat.com/auth',
+        'qa.cloud.redhat.com': 'https://sso.qa.redhat.com/auth',
+      },
+    };
+    const result = resolveSSOUrl(config);
+    expect(result).toBe('https://sso.qa.redhat.com/auth/');
+  });
+
+  it('should prefer exact hostname match over partial pattern match', () => {
+    jsdomReconfigure({ url: 'https://cloud.redhat.com' });
+    const config: SSOConfig = {
+      ssoUrl: 'https://sso.default.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': 'https://sso.redhat.com/auth',
+        'redhat.com': 'https://sso.other.com/auth',
+      },
+    };
+    const result = resolveSSOUrl(config);
+    expect(result).toBe('https://sso.redhat.com/auth/');
   });
 });
 

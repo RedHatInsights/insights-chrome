@@ -357,7 +357,17 @@ export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
 
   // Check if current hostname has a specific mapping
   if (ssoConfig.ssoMapping && typeof ssoConfig.ssoMapping === 'object') {
-    for (const [pattern, ssoUrl] of Object.entries(ssoConfig.ssoMapping)) {
+    // Try exact match first
+    const directMatch = ssoConfig.ssoMapping[currentHostname];
+    if (directMatch) {
+      return sanitizeSsoUrl(directMatch);
+    }
+
+    // Fall back to partial matching, sorted by pattern length descending
+    // so more specific patterns (e.g. "qa.cloud.redhat.com") match before
+    // broader ones (e.g. "cloud.redhat.com")
+    const sortedEntries = Object.entries(ssoConfig.ssoMapping).sort(([a], [b]) => b.length - a.length);
+    for (const [pattern, ssoUrl] of sortedEntries) {
       if (currentHostname.includes(pattern)) {
         return sanitizeSsoUrl(ssoUrl);
       }
