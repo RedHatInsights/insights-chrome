@@ -16,14 +16,14 @@ import * as chunkLoadErrorUtils from '../../utils/chunkLoadErrorUtils';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import './ErrorComponent.scss';
-import { get3scaleError } from '../../utils/responseInterceptors';
+import { ThreeScaleError, get3scaleError } from '../../utils/responseInterceptors';
 import GatewayErrorComponent from './GatewayErrorComponent';
 import { getUrl } from '../../hooks/useBundle';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 export type DefaultErrorComponentProps = {
-  error?: any | Error;
+  error?: unknown;
   errorInfo?: {
     componentStack?: string;
   };
@@ -34,6 +34,19 @@ export type DefaultErrorComponentProps = {
   onReset?: () => void;
 };
 
+const getErrorMessage = (error: unknown): string => {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    return String((error as { message: unknown }).message);
+  }
+  return 'Unhandled UI runtime error';
+};
+
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const intl = useIntl();
   const [sentryId, setSentryId] = useState<string | undefined>();
@@ -41,16 +54,17 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const activeModule = useAtomValue(activeModuleAtom);
   useEffect(() => {
     const sentryId =
-      props.error &&
-      Sentry.captureException(props.error, {
-        contexts: {
-          react: { componentStack: props.errorInfo?.componentStack },
-        },
-        extra: {
-          bundle: getUrl('bundle'),
-          app: getUrl('app'),
-        },
-      });
+      props.error != null
+        ? Sentry.captureException(props.error instanceof Error ? props.error : new Error(`Something went wrong: ${getErrorMessage(props.error)}`), {
+            contexts: {
+              react: { componentStack: props.errorInfo?.componentStack },
+            },
+            extra: {
+              bundle: getUrl('bundle'),
+              app: getUrl('app'),
+            },
+          })
+        : undefined;
     setSentryId(sentryId);
     // When a chunk error occurs, save it with sentry and reload the page.
     // After ten seconds, the key will be removed from localStorage
@@ -58,12 +72,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
     if (activeModule && chunkLoadErrorUtils.isChunkLoadError(props.error)) {
       const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
       // explicitly track chunk loading errors
-      const errorMessage =
-        typeof props.error === 'string'
-          ? props.error
-          : typeof props.error === 'object' && props.error !== null && 'message' in props.error
-            ? String((props.error as { message: unknown }).message)
-            : undefined;
+      const errorMessage = getErrorMessage(props.error);
       window?.segment?.track('chunk-loading-error', {
         bundle: getUrl('bundle'),
         app: getUrl(),
@@ -80,7 +89,12 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   }, [props.error, props.errorInfo, activeModule]);
 
   // second level of error capture if xhr/fetch interceptor fails
-  const gatewayError = get3scaleError(props.error as any, props.auth);
+  const gatewayError =
+    typeof props.error === 'string'
+      ? get3scaleError(props.error, props.auth)
+      : typeof props.error === 'object' && props.error !== null && 'errors' in props.error
+        ? get3scaleError(props.error as { errors: ThreeScaleError[] }, props.auth)
+        : undefined;
   if (gatewayError) {
     return <GatewayErrorComponent error={gatewayError} />;
   }
@@ -118,7 +132,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
                       {props.error}
                     </Content>
                   )}
-                  {typeof props?.error === 'object' && typeof props?.error?.message === 'string' && (
+                  {typeof props.error === 'object' && props.error !== null && 'message' in props.error && typeof props.error.message === 'string' && (
                     <Content component="p" className="error-text">
                       {props.error.message}
                     </Content>

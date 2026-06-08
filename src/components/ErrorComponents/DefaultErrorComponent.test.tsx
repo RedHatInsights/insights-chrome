@@ -89,21 +89,26 @@ describe('DefaultErrorComponent', () => {
       });
     });
 
-    it('reports string errors to Sentry without wrapping in a new Error', async () => {
+    it('reports string errors to Sentry with a Something went wrong prefix', async () => {
       const error = 'Cannot destructure property future of useContext as it is null';
 
       renderWithProviders(<DefaultErrorComponent error={error} />);
 
       await waitFor(() => {
-        expect(Sentry.captureException).toHaveBeenCalledWith(error, {
-          contexts: {
-            react: { componentStack: undefined },
-          },
-          extra: {
-            bundle: 'insights',
-            app: 'insights',
-          },
-        });
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'Something went wrong: Cannot destructure property future of useContext as it is null',
+          }),
+          {
+            contexts: {
+              react: { componentStack: undefined },
+            },
+            extra: {
+              bundle: 'insights',
+              app: 'insights',
+            },
+          }
+        );
       });
     });
 
