@@ -3,6 +3,22 @@ import React, { useEffect, useState } from 'react';
 const GLASS_THEME_KEY = 'chrome:glass-theme';
 const GLASS_THEME_CLASS = 'pf-v6-theme-glass';
 
+const readGlassThemePreference = (): boolean => {
+  try {
+    return localStorage.getItem(GLASS_THEME_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const writeGlassThemePreference = (checked: boolean): void => {
+  try {
+    localStorage.setItem(GLASS_THEME_KEY, String(checked));
+  } catch {
+    // no-op: persistence unavailable
+  }
+};
+
 const applyGlassTheme = (enabled: boolean) => {
   if (enabled) {
     document.documentElement.classList.add(GLASS_THEME_CLASS);
@@ -16,8 +32,7 @@ const getInitialGlassTheme = (isEnabled: boolean): boolean => {
     applyGlassTheme(false);
     return false;
   }
-  const saved = localStorage.getItem(GLASS_THEME_KEY);
-  const enabled = saved === 'true';
+  const enabled = readGlassThemePreference();
   applyGlassTheme(enabled);
   return enabled;
 };
@@ -30,7 +45,7 @@ export const useGlassTheme = (isEnabled: boolean) => {
       setIsGlassTheme(false);
       applyGlassTheme(false);
     } else {
-      const saved = localStorage.getItem(GLASS_THEME_KEY) === 'true';
+      const saved = readGlassThemePreference();
       setIsGlassTheme(saved);
       applyGlassTheme(saved);
     }
@@ -39,7 +54,7 @@ export const useGlassTheme = (isEnabled: boolean) => {
   const toggleGlassTheme = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
     setIsGlassTheme(checked);
     applyGlassTheme(checked);
-    localStorage.setItem(GLASS_THEME_KEY, String(checked));
+    writeGlassThemePreference(checked);
   };
 
   return { isGlassTheme, toggleGlassTheme };
