@@ -69,10 +69,10 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
 
   useEffect(() => {
-    if (drawerPanelRef.current !== null) {
+    if (isNotificationsDrawerExpanded && drawerPanelRef.current !== null) {
       focusDrawer();
     }
-  }, []);
+  }, [isNotificationsDrawerExpanded]);
 
   if (error) {
     return <div>Error</div>;
