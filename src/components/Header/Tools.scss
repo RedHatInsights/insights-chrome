@@ -1,9 +1,10 @@
-.chr-c-ask-redhat-icon {
-  width: 1.25em;
-  height: 1.25em;
-  vertical-align: middle;
-}
-
 .chr-c-ai-experience-icon {
   vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+.chr-c-help-panel-toggle {
+  --pf-v6-c-button--m-primary--m-display-lg--Gap: 0.25rem;
+  --pf-v6-c-button--Gap: 0.25rem;
 }
