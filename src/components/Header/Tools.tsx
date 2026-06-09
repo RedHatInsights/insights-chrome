@@ -2,6 +2,7 @@ import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
@@ -31,6 +32,7 @@ import OutlinedMoonIcon from '@patternfly/react-icons/dist/dynamic/icons/outline
 import OutlinedSunIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-sun-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { ThemeVariants, useTheme } from '../../hooks/useTheme';
+import { useGlassTheme } from '../../hooks/useGlassTheme';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -87,6 +89,7 @@ const Tools = () => {
   const isITLessEnv = useFlag('platform.chrome.itless');
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const { user, token } = useContext(ChromeAuthContext);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
@@ -96,6 +99,7 @@ const Tools = () => {
     messages.betaRelease
   )}`;
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
+  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -151,6 +155,21 @@ const Tools = () => {
           url: '#',
         },
       ],
+    },
+    {
+      title: intl.formatMessage(messages.glassEffect),
+      isHidden: !isGlassModeEnabled,
+      customContent: (
+        <div className="pf-v6-u-mx-md pf-v6-u-my-sm">
+          <Switch
+            id="glass-theme-switch"
+            label={intl.formatMessage(messages.glassEffectDescription)}
+            isChecked={isGlassTheme}
+            hasCheckIcon
+            onChange={toggleGlassTheme}
+          />
+        </div>
+      ),
     },
     {
       title: 'Settings',

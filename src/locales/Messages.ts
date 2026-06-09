@@ -598,4 +598,14 @@ export default defineMessages({
     description: 'Ask Red Hat',
     defaultMessage: 'Ask Red Hat',
   },
+  glassEffect: {
+    id: 'glassEffect',
+    description: 'Glass effect',
+    defaultMessage: 'Glass effect',
+  },
+  glassEffectDescription: {
+    id: 'glassEffectDescription',
+    description: 'Frosted glass effect',
+    defaultMessage: 'Frosted glass effect',
+  },
 });
