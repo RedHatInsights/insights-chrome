@@ -2,6 +2,7 @@ import { Access } from '@redhat-cloud-services/rbac-client/types';
 import createRbacAPI from './rbac';
 import logger from './logger';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 const log = logger('fetchPermissions.ts');
 
@@ -9,6 +10,10 @@ const perPage = 1000;
 const rbacApi = createRbacAPI();
 
 const fetchPermissions = async (_userToken: string, app = '') => {
+  if (unleashClientExists() && getUnleashClient().isEnabled('platform.rbac.workspaces')) {
+    return [];
+  }
+
   try {
     const resp = await rbacApi.getPrincipalAccess({
       limit: perPage,
