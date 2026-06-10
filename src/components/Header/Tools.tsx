@@ -5,6 +5,8 @@ import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider'
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import { ToggleGroup } from '@patternfly/react-core/dist/dynamic/components/ToggleGroup';
+import { ToggleGroupItem } from '@patternfly/react-core/dist/dynamic/components/ToggleGroup';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
@@ -31,6 +33,7 @@ import OutlinedMoonIcon from '@patternfly/react-icons/dist/dynamic/icons/outline
 import OutlinedSunIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-sun-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { ThemeVariants, useTheme } from '../../hooks/useTheme';
+import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -87,6 +90,7 @@ const Tools = () => {
   const isITLessEnv = useFlag('platform.chrome.itless');
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
   const { user, token } = useContext(ChromeAuthContext);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
@@ -96,6 +100,7 @@ const Tools = () => {
     messages.betaRelease
   )}`;
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
+  const { contrastMode, setDefaultContrast, setHighContrast, setSystemContrast } = useHighContrast();
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -151,6 +156,35 @@ const Tools = () => {
           url: '#',
         },
       ],
+    },
+    {
+      title: intl.formatMessage(messages.contrast),
+      isHidden: !isHighContrastEnabled,
+      customContent: (
+        <ToggleGroup aria-label={intl.formatMessage(messages.contrast)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.contrastSystem)}
+            buttonId="contrast-system"
+            isSelected={contrastMode === HighContrastVariants.system}
+            onChange={() => setSystemContrast()}
+            aria-label={intl.formatMessage(messages.contrastSystem)}
+          />
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.contrastDefault)}
+            buttonId="contrast-default"
+            isSelected={contrastMode === HighContrastVariants.default}
+            onChange={() => setDefaultContrast()}
+            aria-label={intl.formatMessage(messages.contrastDefault)}
+          />
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.contrastHigh)}
+            buttonId="contrast-high"
+            isSelected={contrastMode === HighContrastVariants.high}
+            onChange={() => setHighContrast()}
+            aria-label={intl.formatMessage(messages.contrastHigh)}
+          />
+        </ToggleGroup>
+      ),
     },
     {
       title: 'Settings',

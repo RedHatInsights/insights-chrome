@@ -598,4 +598,24 @@ export default defineMessages({
     description: 'Ask Red Hat',
     defaultMessage: 'Ask Red Hat',
   },
+  contrast: {
+    id: 'contrast',
+    description: 'Contrast',
+    defaultMessage: 'Contrast',
+  },
+  contrastSystem: {
+    id: 'contrastSystem',
+    description: 'System',
+    defaultMessage: 'System',
+  },
+  contrastDefault: {
+    id: 'contrastDefault',
+    description: 'Default',
+    defaultMessage: 'Default',
+  },
+  contrastHigh: {
+    id: 'contrastHigh',
+    description: 'High contrast',
+    defaultMessage: 'High contrast',
+  },
 });
