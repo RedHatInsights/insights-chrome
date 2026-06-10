@@ -96,6 +96,11 @@ const Tools = () => {
     messages.betaRelease
   )}`;
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
+  const schedulerDrawerEnabled = useFlag('console.chrome-scheduler_drawer');
+
+  const {
+    drawerActions: { toggleDrawerContent },
+  } = useContext(InternalChromeContext);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -104,7 +109,6 @@ const Tools = () => {
         {
           ouiaId: 'PreviewSwitcher',
           title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
-          url: '#',
           onClick: () => togglePreviewWithCheck(),
         },
       ],
@@ -124,7 +128,6 @@ const Tools = () => {
                 ),
                 description: 'Follow system preference',
                 onClick: setSystemMode,
-                url: '#',
               },
             ]
           : []),
@@ -137,7 +140,6 @@ const Tools = () => {
           ),
           description: 'Always use light mode',
           onClick: setLightMode,
-          url: '#',
         },
         {
           ouiaId: 'settings-menu-color-dark',
@@ -148,7 +150,6 @@ const Tools = () => {
           ),
           description: 'Always use dark mode',
           onClick: setDarkMode,
-          url: '#',
         },
       ],
     },
@@ -165,6 +166,16 @@ const Tools = () => {
           ouiaId: 'settings-menu-notifications',
           url: '/settings/notifications',
           title: 'Notifications',
+        },
+        {
+          ouiaId: 'settings-menu-scheduler',
+          title: 'Scheduler',
+          isHidden: !schedulerDrawerEnabled,
+          onClick: () =>
+            toggleDrawerContent({
+              scope: 'schedulerUi',
+              module: './SchedulerPanelContent',
+            }),
         },
       ],
     },
@@ -218,10 +229,6 @@ const Tools = () => {
   const supportOptionsUrl = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
   };
-
-  const {
-    drawerActions: { toggleDrawerContent },
-  } = useContext(InternalChromeContext);
 
   /* list out the items for the about menu */
   const aboutMenuItemsConfig = [
