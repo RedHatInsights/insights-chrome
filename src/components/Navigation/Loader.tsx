@@ -11,7 +11,7 @@ const NavLoader = () => (
       <NavList>
         {[...new Array(4)].map((_i, key) => (
           <NavItem key={key} preventDefault>
-            <a href="#">
+            <a href="#" aria-label="Loading..." aria-busy="true">
               <Skeleton isDark={Array.from(document?.documentElement?.classList).includes('pf-v6-theme-dark')} size={SkeletonSize.lg} />
             </a>
           </NavItem>
