@@ -1,5 +1,10 @@
 import mockedRbac from '../../testdata/rbacAccess.json';
 
+jest.mock('../components/FeatureFlags/unleashClient', () => ({
+  unleashClientExists: jest.fn(() => false),
+  getUnleashClient: jest.fn(() => ({ isEnabled: jest.fn(() => false) })),
+}));
+
 jest.mock('./rbac', () => () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockedRbac = require('../../testdata/rbacAccess.json');
@@ -12,6 +17,7 @@ jest.mock('./rbac', () => () => {
 });
 
 import { createFetchPermissionsWatcher } from './fetchPermissions';
+import { getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 describe('fetchPermissions', () => {
   let fetchPermissions;
@@ -74,5 +80,17 @@ describe('fetchPermissions', () => {
     await fetchPermissions('uSeRtOkEn', 'sources', bypasCache);
 
     expect(global.rbacApiCalled).toEqual(2);
+  });
+
+  it('should skip v1 RBAC call when platform.rbac.workspaces flag is enabled', async () => {
+    unleashClientExists.mockReturnValue(true);
+    getUnleashClient.mockReturnValue({ isEnabled: jest.fn(() => true) });
+
+    const result = await fetchPermissions('uSeRtOkEn', 'sources', true);
+
+    expect(result).toEqual([]);
+    expect(global.rbacApiCalled).toEqual(0);
+
+    unleashClientExists.mockReturnValue(false);
   });
 });
