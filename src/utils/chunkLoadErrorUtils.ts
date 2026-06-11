@@ -1,15 +1,5 @@
 import React from 'react';
-
-/**
- * Extracts a message string from an unknown error value.
- */
-function getErrorMessage(error: unknown): string {
-  if (typeof error === 'string') return error;
-  if (typeof error === 'object' && error !== null && 'message' in error) {
-    return String((error as { message: unknown }).message);
-  }
-  return '';
-}
+import { getErrorMessage } from './common';
 
 /**
  * Detects whether an error is a chunk/module loading failure.
@@ -30,7 +20,7 @@ function getErrorMessage(error: unknown): string {
 export function isChunkLoadError(error: unknown): boolean {
   if (!error) return false;
 
-  const message = getErrorMessage(error);
+  const message = getErrorMessage(error, '');
 
   // Standard webpack 5 chunk load errors
   // e.g. "Loading chunk 123 failed.\n(error: https://cdn.example.com/chunk.123.js)"

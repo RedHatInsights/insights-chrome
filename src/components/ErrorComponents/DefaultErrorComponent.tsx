@@ -9,7 +9,7 @@ import { Content } from '@patternfly/react-core/dist/dynamic/components/Content'
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
-import { chunkLoadErrorRefreshKey } from '../../utils/common';
+import { chunkLoadErrorRefreshKey, getErrorMessage } from '../../utils/common';
 // Import as namespace to access isChunkLoadError and reloadPage.
 // reloadPage routes through _testHooks.reload() for Cypress stubbability.
 import * as chunkLoadErrorUtils from '../../utils/chunkLoadErrorUtils';
@@ -32,19 +32,6 @@ export type DefaultErrorComponentProps = {
     loginRedirect: () => Promise<void>;
   };
   onReset?: () => void;
-};
-
-const getErrorMessage = (error: unknown): string => {
-  if (typeof error === 'string') {
-    return error;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if (typeof error === 'object' && error !== null && 'message' in error) {
-    return String((error as { message: unknown }).message);
-  }
-  return 'Unhandled UI runtime error';
 };
 
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {

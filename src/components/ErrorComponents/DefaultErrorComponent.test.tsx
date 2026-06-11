@@ -112,6 +112,34 @@ describe('DefaultErrorComponent', () => {
       });
     });
 
+    it('reports plain object errors with message property', async () => {
+      const error = { message: 'cross-frame error' };
+
+      renderWithProviders(<DefaultErrorComponent error={error} />);
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'Something went wrong: cross-frame error',
+          }),
+          expect.any(Object)
+        );
+      });
+    });
+
+    it('reports non-standard error types with fallback message', async () => {
+      renderWithProviders(<DefaultErrorComponent error={42} />);
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'Something went wrong: Unhandled UI runtime error',
+          }),
+          expect.any(Object)
+        );
+      });
+    });
+
     it('does not report to Sentry when no error is provided', async () => {
       renderWithProviders(<DefaultErrorComponent />);
 
