@@ -25,7 +25,7 @@ describe('resolveSSOUrl', () => {
 
   it('should return default SSO URL when config has no ssoUrl', () => {
     const result = resolveSSOUrl({} as SSOConfig);
-    expect(result).toBe('https://sso.redhat.com/auth/');
+    expect(result).toBe('https://sso.stage.redhat.com/auth/');
   });
 
   it('should return ssoUrl from config when no mapping matches', () => {
@@ -212,7 +212,7 @@ describe('loadSSOConfig', () => {
     const { loadSSOConfig: loadFn } = await import('./common');
     const result = await loadFn();
 
-    expect(result.ssoUrl).toBe('https://sso.redhat.com/auth/');
+    expect(result.ssoUrl).toBe('https://sso.stage.redhat.com/auth/');
   });
 });
 

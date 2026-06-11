@@ -20,23 +20,18 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const ssoConfig = await loadSSOConfig();
     const ssoUrl = resolveSSOUrl(ssoConfig);
 
-    try {
-      const {
-        // ignore $schema from the data as it is an spec ref
-        data: { $schema: ignore, ...data },
-      } = await loadFedModules();
+    // Fetch fed-modules outside try/catch — if it fails, state stays undefined
+    // and AppPlaceholder is shown, matching original behavior where data was
+    // always available in both success and error paths.
+    const {
+      // ignore $schema from the data as it is an spec ref
+      data: { $schema: ignore, ...data },
+    } = await loadFedModules();
 
-      setState({
-        ssoUrl,
-        microFrontendConfig: data,
-      });
-    } catch (error) {
-      console.error('Error loading fed-modules configuration:', error);
-      setState({
-        ssoUrl,
-        microFrontendConfig: {},
-      });
-    }
+    setState({
+      ssoUrl,
+      microFrontendConfig: data,
+    });
   }
   useEffect(() => {
     // required for offline token generation

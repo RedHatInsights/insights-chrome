@@ -350,7 +350,9 @@ export interface SSOConfig {
 // Resolve SSO URL based on current hostname and operator config
 export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
   if (!ssoConfig?.ssoUrl) {
-    return 'https://sso.redhat.com/auth/';
+    // Default to stage SSO — safer than production for unrecognized environments
+    // (e.g. local dev on non-standard hosts)
+    return 'https://sso.stage.redhat.com/auth/';
   }
 
   const currentHostname = location.hostname;
@@ -402,7 +404,7 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
     });
 
     return {
-      ssoUrl: currentEnvDetails?.sso || 'https://sso.redhat.com/auth/',
+      ssoUrl: currentEnvDetails?.sso || 'https://sso.stage.redhat.com/auth/',
       ssoMapping,
     };
   }
