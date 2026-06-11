@@ -2,6 +2,7 @@ import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
 import { Required } from 'utility-types';
+import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
 
 export const DEFAULT_SSO_ROUTES = {
@@ -323,6 +324,90 @@ const fedModulesheaders = {
   'Cache-Control': 'no-cache',
   Pragma: 'no-cache',
   Expires: '0',
+};
+
+let ssoConfigAxiosInstance: ReturnType<typeof setupCache> | undefined;
+function getSSOConfigAxios() {
+  if (!ssoConfigAxiosInstance) {
+    ssoConfigAxiosInstance = setupCache(axios.create(), {
+      ttl: 5 * 60 * 1000, // 5 minutes TTL
+      interpretHeader: false, // Ignore server cache headers for consistent client-side caching
+    });
+  }
+  return ssoConfigAxiosInstance;
+}
+
+// Add trailing slash if missing
+function sanitizeSsoUrl(url: string) {
+  return `${url.replace(/\/$/, '')}/`;
+}
+
+export interface SSOConfig {
+  ssoUrl: string;
+  ssoMapping: Record<string, string>;
+}
+
+// Resolve SSO URL based on current hostname and operator config
+export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
+  if (!ssoConfig?.ssoUrl) {
+    // Default to stage SSO — safer than production for unrecognized environments
+    // (e.g. local dev on non-standard hosts)
+    return 'https://sso.stage.redhat.com/auth/';
+  }
+
+  const currentHostname = location.hostname;
+
+  // Check if current hostname has a specific mapping
+  if (ssoConfig.ssoMapping && typeof ssoConfig.ssoMapping === 'object') {
+    // Try exact match first
+    const directMatch = ssoConfig.ssoMapping[currentHostname];
+    if (directMatch) {
+      return sanitizeSsoUrl(directMatch);
+    }
+
+    // Fall back to partial matching, sorted by pattern length descending
+    // so more specific patterns (e.g. "qa.cloud.redhat.com") match before
+    // broader ones (e.g. "cloud.redhat.com")
+    const sortedEntries = Object.entries(ssoConfig.ssoMapping).sort(([a], [b]) => b.length - a.length);
+    for (const [pattern, ssoUrl] of sortedEntries) {
+      if (currentHostname.includes(pattern)) {
+        return sanitizeSsoUrl(ssoUrl);
+      }
+    }
+  }
+
+  // Return default SSO URL
+  return sanitizeSsoUrl(ssoConfig.ssoUrl);
+};
+
+// Load SSO configuration from operator-generated config with automatic caching
+export const loadSSOConfig = async (): Promise<SSOConfig> => {
+  const ssoConfigPath = '/api/chrome-service/v1/static/sso-config-generated.json';
+  try {
+    const response = await getSSOConfigAxios().get<SSOConfig>(ssoConfigPath, {
+      headers: fedModulesheaders,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.warn('Unable to load SSO config from operator, using default fallback', error);
+
+    // Create fallback SSO config from DEFAULT_SSO_ROUTES
+    const currentEnvDetails = getEnvDetails();
+
+    // Build ssoMapping from all environments in DEFAULT_SSO_ROUTES
+    const ssoMapping: Record<string, string> = {};
+    Object.entries(DEFAULT_SSO_ROUTES).forEach(([, config]) => {
+      config.url.forEach((hostname) => {
+        ssoMapping[hostname] = config.sso;
+      });
+    });
+
+    return {
+      ssoUrl: currentEnvDetails?.sso || 'https://sso.stage.redhat.com/auth/',
+      ssoMapping,
+    };
+  }
 };
 
 // FIXME: Remove once qaprodauth is dealt with
