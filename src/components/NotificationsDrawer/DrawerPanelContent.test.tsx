@@ -5,8 +5,17 @@ import DrawerPanel from './DrawerPanelContent';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 
+const ThrowingComponent = () => {
+  throw new Error('Module runtime error');
+};
+
 jest.mock('@scalprum/react-core', () => ({
-  ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-content" data-scope={props.scope} />,
+  ScalprumComponent: (props: Record<string, unknown>) => {
+    if (props.scope === 'throwing-module') {
+      return <ThrowingComponent />;
+    }
+    return <div data-testid="scalprum-content" data-scope={props.scope} data-error-component={props.ErrorComponent ? 'present' : 'absent'} />;
+  },
 }));
 
 jest.mock('@redhat-cloud-services/frontend-components/Spinner', () => ({
@@ -40,6 +49,22 @@ describe('DrawerPanelContent', () => {
     const { getByTestId } = renderDrawerPanel(store);
     expect(getByTestId('scalprum-content')).toBeInTheDocument();
     expect(getByTestId('scalprum-content').getAttribute('data-scope')).toBe('notifications');
+  });
+
+  it('should pass ErrorComponent to ScalprumComponent', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './RootApp' });
+    const { getByTestId } = renderDrawerPanel(store);
+    expect(getByTestId('scalprum-content').getAttribute('data-error-component')).toBe('present');
+  });
+
+  it('should catch runtime errors from remote modules and show fallback', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'throwing-module', module: './Broken' });
+    const { getByTestId } = renderDrawerPanel(store);
+    expect(getByTestId('drawer-error-fallback')).toBeInTheDocument();
+    consoleSpy.mockRestore();
   });
 
   it('should auto-close drawer when expanded but no content is set', async () => {
@@ -80,12 +105,51 @@ describe('DrawerPanelContent', () => {
     expect(store.get(notificationDrawerExpandedAtom)).toBe(false);
   });
 
-  it('should render with correct CSS class from content scope', () => {
+  it('should reset error boundary when drawer content changes', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const store = createStore();
-    store.set(drawerPanelContentAtom, { scope: 'learningResources', module: './HelpPanel' });
+    // First render a throwing module to trigger the error boundary
+    store.set(drawerPanelContentAtom, { scope: 'throwing-module', module: './Broken' });
+    const { getByTestId, rerender } = renderDrawerPanel(store);
+    expect(getByTestId('drawer-error-fallback')).toBeInTheDocument();
+
+    // Switch to a working module — key change should remount the boundary
+    store.set(drawerPanelContentAtom, { scope: 'notifications', module: './DrawerPanel' });
+    rerender(
+      <Provider store={store}>
+        <DrawerPanel toggleDrawer={toggleDrawer} />
+      </Provider>
+    );
+    expect(getByTestId('scalprum-content')).toBeInTheDocument();
+    consoleSpy.mockRestore();
+  });
+
+  it('should wrap notification content in NotificationDrawer with PF5 class', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'notifications', module: './DrawerPanel' });
     const { container } = renderDrawerPanel(store);
     const drawer = container.querySelector('.pf-v5-c-notification-drawer');
     expect(drawer).toBeInTheDocument();
-    expect(drawer?.classList.contains('learningResources')).toBe(true);
+    expect(drawer?.classList.contains('notifications')).toBe(true);
+  });
+
+  it('should wrap non-notification content in a plain div without NotificationDrawer styles', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'learningResources', module: './HelpPanel' });
+    const { container } = renderDrawerPanel(store);
+    expect(container.querySelector('.pf-v5-c-notification-drawer')).not.toBeInTheDocument();
+    const wrapper = container.querySelector('.learningResources');
+    expect(wrapper).toBeInTheDocument();
+    expect(wrapper?.tagName).toBe('DIV');
+  });
+
+  it('should wrap scheduler content in a plain div without NotificationDrawer styles', () => {
+    const store = createStore();
+    store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './RootApp' });
+    const { container } = renderDrawerPanel(store);
+    expect(container.querySelector('.pf-v5-c-notification-drawer')).not.toBeInTheDocument();
+    const wrapper = container.querySelector('.schedulerUi');
+    expect(wrapper).toBeInTheDocument();
+    expect(wrapper?.tagName).toBe('DIV');
   });
 });

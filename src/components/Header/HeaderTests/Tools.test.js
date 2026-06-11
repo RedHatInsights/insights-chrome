@@ -38,6 +38,9 @@ jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div>ScalprumComponent</div>,
   ScalprumProvider: ({ children }) => children,
 }));
+jest.mock('@scalprum/core', () => ({
+  preloadModule: jest.fn(() => Promise.resolve()),
+}));
 jest.mock('../../../state/atoms/releaseAtom', () => {
   const util = jest.requireActual('../../../state/atoms/utils');
   return {
