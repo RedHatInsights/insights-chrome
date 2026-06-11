@@ -15,7 +15,7 @@ export type SettingsToggleDropdownGroup = {
 };
 
 export type SettingsToggleDropdownItem = {
-  url: string;
+  url?: string;
   title: ReactNode;
   description?: React.ReactNode;
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;
@@ -53,13 +53,13 @@ const SettingsToggle = (props: SettingsToggleProps) => {
               ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
               isDisabled={isDisabled}
               component={
-                onClick
-                  ? undefined
-                  : ({ className: itemClassName, children }) => (
+                !onClick && url
+                  ? ({ className: itemClassName, children }) => (
                       <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
                         {children}
                       </ChromeLink>
                     )
+                  : undefined
               }
               description={description}
             >

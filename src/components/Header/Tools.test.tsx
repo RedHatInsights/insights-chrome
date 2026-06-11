@@ -1,5 +1,5 @@
 import React from 'react';
-import { configure, render, screen } from '@testing-library/react';
+import { configure, fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
@@ -35,9 +35,17 @@ interface MockDropdownGroup {
   items?: MockDropdownItem[];
 }
 
+interface MockDropdownItemWithClick extends MockDropdownItem {
+  onClick?: () => void;
+}
+
+interface MockDropdownGroupWithClick extends Omit<MockDropdownGroup, 'items'> {
+  items?: MockDropdownItemWithClick[];
+}
+
 jest.mock('./SettingsToggle', () => ({
   __esModule: true,
-  default: ({ dropdownItems }: { dropdownItems: MockDropdownGroup[] }) => (
+  default: ({ dropdownItems }: { dropdownItems: MockDropdownGroupWithClick[] }) => (
     <div>
       {dropdownItems.map((group, i: number) =>
         group.isHidden ? null : (
@@ -46,7 +54,7 @@ jest.mock('./SettingsToggle', () => ({
             {group.items
               ?.filter((item) => !item.isHidden)
               .map((item, j: number) => (
-                <div key={j} data-ouia-component-id={item.ouiaId}>
+                <div key={j} data-ouia-component-id={item.ouiaId} onClick={item.onClick} role={item.onClick ? 'button' : undefined}>
                   {item.title}
                   {item.description && <p>{item.description}</p>}
                 </div>
@@ -93,6 +101,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
   'platform.chrome.notifications-drawer': false,
+  'console.chrome-scheduler_drawer': false,
 };
 
 const mockInternalChromeContext = {
@@ -210,6 +219,29 @@ describe('Tools - dark mode system feature flag', () => {
       renderTools({ 'platform.chrome.itless': true });
 
       expect(screen.queryByTestId('settings-menu-integrations')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('scheduler drawer feature flag', () => {
+    it('should not render Scheduler item when flag is disabled', () => {
+      renderTools({ 'console.chrome-scheduler_drawer': false });
+      expect(screen.queryByText('Scheduler')).not.toBeInTheDocument();
+    });
+
+    it('should render Scheduler item when flag is enabled', () => {
+      renderTools({ 'console.chrome-scheduler_drawer': true });
+      expect(screen.getByText('Scheduler')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-menu-scheduler')).toBeInTheDocument();
+    });
+
+    it('should call toggleDrawerContent with schedulerUi scope when clicked', () => {
+      renderTools({ 'console.chrome-scheduler_drawer': true });
+      const schedulerItem = screen.getByTestId('settings-menu-scheduler');
+      fireEvent.click(schedulerItem);
+      expect(mockInternalChromeContext.drawerActions.toggleDrawerContent).toHaveBeenCalledWith({
+        scope: 'schedulerUi',
+        module: './SchedulerPanelContent',
+      });
     });
   });
 });
