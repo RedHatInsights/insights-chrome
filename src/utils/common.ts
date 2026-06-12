@@ -67,6 +67,25 @@ export const LOGIN_SCOPES_STORAGE_KEY = '@chrome/login-scopes';
 export const chunkLoadErrorRefreshKey = 'ChunkLoadErrorRefreshed';
 export const BLOCK_CLEAR_GATEWAY_ERROR = 'BLOCK_CLEAR_GATEWAY_ERROR';
 
+/**
+ * Extracts a message string from an unknown error value.
+ * @param error - The error value to extract a message from
+ * @param fallback - Optional fallback message (default: 'Unhandled UI runtime error')
+ * @returns A human-readable error message string
+ */
+export function getErrorMessage(error: unknown, fallback = 'Unhandled UI runtime error'): string {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = (error as { message: unknown }).message;
+    if (typeof message === 'string') {
+      return message;
+    }
+  }
+  return fallback;
+}
+
 export function getWindow() {
   return window;
 }

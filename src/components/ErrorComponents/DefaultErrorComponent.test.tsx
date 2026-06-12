@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { Provider, createStore } from 'jotai';
+import * as Sentry from '@sentry/react';
 import DefaultErrorComponent from './DefaultErrorComponent';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
@@ -66,6 +67,87 @@ describe('DefaultErrorComponent', () => {
     _testHooks.reload = originalReload;
     jest.clearAllMocks();
     localStorage.clear();
+  });
+
+  describe('Sentry error reporting', () => {
+    it('reports the original error to Sentry with react componentStack and extra context', async () => {
+      const error = new Error('router context is null');
+      const componentStack = '\n    in NavLink\n    in SegmentProvider\n    in ScalprumRoot';
+
+      renderWithProviders(<DefaultErrorComponent error={error} errorInfo={{ componentStack }} />);
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+          contexts: {
+            react: { componentStack },
+          },
+          extra: {
+            bundle: 'insights',
+            app: 'insights',
+          },
+        });
+      });
+    });
+
+    it('reports string errors to Sentry with a Something went wrong prefix', async () => {
+      const error = 'Cannot destructure property future of useContext as it is null';
+
+      renderWithProviders(<DefaultErrorComponent error={error} />);
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'Something went wrong: Cannot destructure property future of useContext as it is null',
+          }),
+          {
+            contexts: {
+              react: { componentStack: undefined },
+            },
+            extra: {
+              bundle: 'insights',
+              app: 'insights',
+            },
+          }
+        );
+      });
+    });
+
+    it('reports plain object errors with message property', async () => {
+      const error = { message: 'cross-frame error' };
+
+      renderWithProviders(<DefaultErrorComponent error={error} />);
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'Something went wrong: cross-frame error',
+          }),
+          expect.any(Object)
+        );
+      });
+    });
+
+    it('reports non-standard error types with fallback message', async () => {
+      renderWithProviders(<DefaultErrorComponent error={42} />);
+
+      await waitFor(() => {
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'Something went wrong: Unhandled UI runtime error',
+          }),
+          expect.any(Object)
+        );
+      });
+    });
+
+    it('does not report to Sentry when no error is provided', async () => {
+      renderWithProviders(<DefaultErrorComponent />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Something went wrong', { exact: false })).toBeInTheDocument();
+      });
+      expect(Sentry.captureException).not.toHaveBeenCalled();
+    });
   });
 
   describe('renders error page', () => {
