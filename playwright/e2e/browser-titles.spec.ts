@@ -1,5 +1,5 @@
 import { expect, test } from '../setup/test-setup';
-import { ChromeNavigation } from './pages/chrome-navigation';
+import { ChromeNavigation } from '@redhat-cloud-services/hcc-page-objects';
 
 /**
  * Browser Title Validation Tests
