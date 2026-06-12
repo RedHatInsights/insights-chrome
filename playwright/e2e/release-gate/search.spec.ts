@@ -1,5 +1,5 @@
 import { test, expect } from '../../setup/test-setup';
-import { ChromeSearch } from '../pages/chrome-search';
+import { ChromeSearch } from '@redhat-cloud-services/hcc-page-objects';
 
 /**
  * Test: Platform Search Functionality
