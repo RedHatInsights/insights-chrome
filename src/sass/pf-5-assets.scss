@@ -1,5 +1,9 @@
 $pf-global--enable-reset: 'true';
 
+// NOTE: Sass @import is deprecated in Dart Sass 3.0.0 in favor of @use
+// However, PatternFly 5 styles require @import for proper variable scoping
+// Webpack overlay configured to suppress these warnings (see webpack.config.js)
+// These imports will be removed when PF5 is fully migrated to PF6
 @import '~pf-5-styles/patternfly.scss';
 @import '~pf-5-styles/patternfly-addons.scss';
 @import '~pf-5-styles/utilities/Accessibility/accessibility.scss';

@@ -41,6 +41,8 @@ async function globalSetup(config: FullConfig) {
     await page.evaluate(() => {
       localStorage.setItem('chrome:analytics:disable', 'true');
       localStorage.setItem('chrome:segment:disable', 'true');
+      // Disable error overlays for testing
+      localStorage.setItem('chrome:disable-error-overlay', 'true');
     });
 
     // Save the authenticated state (including analytics flags)

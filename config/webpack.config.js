@@ -240,14 +240,19 @@ const commonConfig = ({ dev }) => {
       // HMR flag
       hot: true,
       ...contextualConfigSettings,
-      // Disable overlay in CI to prevent test interference (keeps it enabled locally for debugging)
+      // Configure overlay behavior
+      // - CI: Disable completely to prevent test interference
+      // - Local: Show errors only (suppress warnings like Sass @import deprecation)
       // This must come AFTER contextualConfigSettings spread to ensure it's not overridden
-      ...(process.env.CI && {
-        client: {
-          ...(contextualConfigSettings.client || {}),
-          overlay: false,
-        },
-      }),
+      client: {
+        ...(contextualConfigSettings.client || {}),
+        overlay: process.env.CI
+          ? false // Completely disable in CI
+          : {
+              errors: true, // Show actual errors
+              warnings: false, // Hide warnings (e.g., Sass deprecation warnings)
+            },
+      },
     },
   };
 };
