@@ -50,6 +50,12 @@ test.describe('Help Panel on All Services Page', () => {
     // Wait for React hydration by checking for services to be rendered
     // This indicates the page is interactive and event handlers are attached
     await expect(page.locator('.pf-v6-l-gallery, .pf-v5-l-gallery').first()).toBeVisible({ timeout: APP_INIT_TIMEOUT });
+
+    // Dismiss webpack error overlay if present (appears due to Sass deprecation warnings)
+    await page.evaluate(() => {
+      const overlay = document.querySelector('iframe[id*="webpack"]');
+      if (overlay) overlay.remove();
+    });
   });
 
   test('should display help panel and allow interaction', async ({ page }) => {
@@ -82,18 +88,21 @@ test.describe('Help Panel on All Services Page', () => {
     // Wait briefly for tooltip to disappear
     await page.waitForTimeout(TOOLTIP_DISMISS_DELAY);
 
-    // Wait for notification drawer to be visible
+    // Wait for help drawer to open - use semantic selectors instead of CSS classes
     // Note: The drawer loads a federated module (ScalprumComponent) which takes time
-    const notificationDrawer = page.locator('.pf-v6-c-notification-drawer, .pf-v5-c-notification-drawer');
-    await expect(notificationDrawer).toBeVisible({ timeout: DRAWER_OPEN_TIMEOUT });
+    const helpDrawerHeading = page.getByRole('heading', { name: 'Help', level: 2 });
+    await expect(helpDrawerHeading).toBeVisible({ timeout: DRAWER_OPEN_TIMEOUT });
 
-    // Verify the drawer contains interactive elements (links, buttons, etc.)
-    // This ensures the ScalprumComponent loaded successfully
-    const drawerContent = notificationDrawer.locator('a, button, input');
-    await expect(drawerContent.first()).toBeVisible({ timeout: DRAWER_OPEN_TIMEOUT });
+    // Verify the close button is present (confirms drawer is interactive)
+    const closeDrawerButton = page.getByRole('button', { name: 'Close drawer panel' });
+    await expect(closeDrawerButton).toBeVisible({ timeout: DRAWER_OPEN_TIMEOUT });
+
+    // Verify tabs are present (confirms content loaded)
+    const searchTab = page.getByRole('tab', { name: 'Search' });
+    await expect(searchTab).toBeVisible({ timeout: DRAWER_OPEN_TIMEOUT });
 
     // Verify element is focusable (can be interacted with)
-    const interactiveElement = notificationDrawer.locator('a, button').first();
+    const interactiveElement = page.getByRole('textbox', { name: 'Search input' }).first();
     await interactiveElement.focus();
     await expect(interactiveElement).toBeFocused({ timeout: FOCUS_TIMEOUT });
 
@@ -112,7 +121,7 @@ test.describe('Help Panel on All Services Page', () => {
     // Wait briefly for tooltip to disappear
     await page.waitForTimeout(TOOLTIP_DISMISS_DELAY);
 
-    // Verify drawer is no longer visible
-    await expect(notificationDrawer).not.toBeVisible();
+    // Verify drawer is closed - heading should not be visible
+    await expect(helpDrawerHeading).not.toBeVisible();
   });
 });
