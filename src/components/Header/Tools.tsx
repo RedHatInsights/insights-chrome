@@ -82,7 +82,6 @@ const Tools = () => {
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
-  const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
   const helpPanelEnabled = useFlag('platform.chrome.help-panel');
   const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
@@ -205,12 +204,11 @@ const Tools = () => {
           ouiaId: 'UserAccess',
           url: identityAndAccessManagmentPath,
           title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
-          description:
-            workspacesEnabled || workspacesListEnabled ? (
-              <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
-                Workspaces model available
-              </Label>
-            ) : null,
+          description: workspacesEnabled ? (
+            <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
+              Workspaces model available
+            </Label>
+          ) : null,
         },
         {
           ouiaId: 'settings-menu-identity-provider',
