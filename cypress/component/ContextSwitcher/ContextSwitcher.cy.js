@@ -40,7 +40,7 @@ describe('<ContextSwithcer />', () => {
     const elem = cy
       .mount(
         <Wrapper>
-          <ContextSwitcher accountNumber={testUser.identity.account_number} isInternal={testUser.identity.user.is_internal} />
+          <ContextSwitcher accountNumber={testUser.identity.account_number} orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
       .get('html');
@@ -63,11 +63,81 @@ describe('<ContextSwithcer />', () => {
     const elem = cy
       .mount(
         <Wrapper>
-          <ContextSwitcher accountNumber={testUser.identity.account_number} isInternal={testUser.identity.user.is_internal} />
+          <ContextSwitcher accountNumber={testUser.identity.account_number} orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
       .get('html');
     cy.wait('@crossAccountRequests');
     elem.get('body').matchImageSnapshot();
+  });
+
+  it('should render cross-account entries when API response has no target_account field (RHCLOUD-48475)', () => {
+    cy.viewport(1280, 720);
+    cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
+      data: [
+        {
+          request_id: 'req-aaa',
+          target_org: '17940001',
+          start_date: '29 Sep 2025',
+          end_date: '28 Sep 2026',
+          created: '25 Sep 2025, 13:34 UTC',
+          status: 'approved',
+          user_id: 'testuser',
+          email: 'jdoe@redhat.com',
+          first_name: 'Jane',
+          last_name: 'Doe',
+        },
+        {
+          request_id: 'req-bbb',
+          target_org: '17940002',
+          start_date: '11 Aug 2025',
+          end_date: '10 Aug 2026',
+          created: '08 Aug 2025, 16:52 UTC',
+          status: 'approved',
+          user_id: 'testuser',
+          email: 'jsmith@redhat.com',
+          first_name: 'John',
+          last_name: 'Smith',
+        },
+        {
+          request_id: 'req-ccc',
+          target_org: '17940003',
+          start_date: '11 Aug 2025',
+          end_date: '10 Aug 2026',
+          created: '08 Aug 2025, 16:50 UTC',
+          status: 'approved',
+          user_id: 'testuser',
+          email: 'bob@redhat.com',
+          first_name: 'Bob',
+          last_name: 'Jones',
+        },
+      ],
+    }).as('crossAccountRequests');
+
+    testUser.identity.user.is_internal = true;
+    cy.mount(
+      <Wrapper>
+        <ContextSwitcher accountNumber={testUser.identity.account_number} orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
+      </Wrapper>
+    );
+    cy.wait('@crossAccountRequests');
+
+    // Component should render
+    cy.contains('Account:').should('exist');
+    cy.contains('Account:').click();
+
+    // Personal account should show
+    cy.contains('123456').should('exist');
+    cy.contains('Personal account').should('exist');
+
+    // All 3 cross-account entries should render with org IDs displayed
+    cy.get('.account-label').contains('17940001').should('exist');
+    cy.get('.account-label').contains('17940002').should('exist');
+    cy.get('.account-label').contains('17940003').should('exist');
+
+    // All 3 names should display
+    cy.contains('Jane Doe').should('exist');
+    cy.contains('John Smith').should('exist');
+    cy.contains('Bob Jones').should('exist');
   });
 });
