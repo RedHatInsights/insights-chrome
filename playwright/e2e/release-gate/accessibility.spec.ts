@@ -21,7 +21,7 @@ const APP_INIT_TIMEOUT = 30000;
 // Chrome pages to test for accessibility (not tenant applications)
 const ACCESSIBILITY_TEST_TARGETS = [
   { url: '/' },
-  { url: '/settings', skipReason: 'RHCLOUD-47549 - skeleton loaders lack accessible text' },
+  { url: '/settings'},
   { url: '/allservices', skipReason: 'RHCLOUD-47753 - aria-prohibited-attr on favorite service buttons' },
 ] as const;
 
