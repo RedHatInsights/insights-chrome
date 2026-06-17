@@ -222,7 +222,7 @@ Start the dev server.
 npm run dev
 ```
 
-Use browser to visit [/staging/starter](https://stage.foo.redhat.com:1337/staging/starter) in chrome to access the `frontend-starter-app`.
+Use a browser to visit [/staging/starter](https://stage.foo.redhat.com:1337/staging/starter) in chrome to access the `frontend-starter-app`.
 
 Note: The `proxy` function is defined in [frontend-components/packages/config-utils/src/proxy.ts](https://github.com/RedHatInsights/frontend-components/blob/master/packages/config-utils/src/proxy.ts).
 
