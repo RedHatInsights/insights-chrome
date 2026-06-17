@@ -331,9 +331,13 @@ spec:
         value: $(params.image-expires-after)
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
+      - name: ADDITIONAL_SECRET
+        value: build-container-additional-secret
       - name: BUILD_ARGS
         value:
         - $(params.build-args[*])
+        - ENABLE_SENTRY=true
+        - SENTRY_RELEASE={{revision}}
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: BUILDAH_FORMAT
