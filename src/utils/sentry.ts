@@ -47,6 +47,17 @@ export function getAppDetails() {
 
   return appDetails;
 }
+
+export type ConfiguredApp = {
+  appName: string;
+  dsn: string;
+  project: string;
+};
+
+export type ConfiguredApps = {
+  [key: string]: ConfiguredApp[];
+};
+
 const EXTRA_KEY = 'ROUTE_TO';
 
 const transport = SentryBrowser.makeMultiplexedTransport(SentryBrowser.makeFetchTransport, (args) => {
@@ -80,7 +91,7 @@ export function isAdobeAlloyError(event: Sentry.Event): boolean {
  * Returns null to drop the event, or the original event to continue processing.
  * Exported for testing.
  */
-export function filterAdobeAlloySentryEvent(event: Sentry.Event): Sentry.Event | null {
+export function filterAdobeAlloySentryEvent<T extends Sentry.Event>(event: T): T | null {
   if (!isAdobeAlloyError(event)) {
     return event;
   }
@@ -105,19 +116,42 @@ export function filterAdobeAlloySentryEvent(event: Sentry.Event): Sentry.Event |
   return null;
 }
 
+/**
+ * Applies module-metadata or configured-app routing to a Sentry event.
+ * Exported for testing.
+ */
+export function applySentryEventRouting<T extends Sentry.Event>(event: T, appDetails: ReturnType<typeof getAppDetails>, configuredApps: ConfiguredApps): T {
+  const frames = event?.exception?.values?.[0]?.stacktrace?.frames;
+  const routeTo = frames
+    ? frames
+        .filter((frame) => frame.module_metadata && frame.module_metadata.dsn)
+        .map((v) => v.module_metadata)
+        .slice(-1) // using top frame only
+    : [];
+  const configuredApp =
+    appDetails.app.group && configuredApps[appDetails.app.group]
+      ? configuredApps[appDetails.app.group].filter((app) => app.appName === event.tags?.app_name)
+      : [];
+
+  if (routeTo.length) {
+    event.extra = {
+      ...event.extra,
+      [EXTRA_KEY]: routeTo,
+    };
+  } else if (configuredApp.length > 0) {
+    event.extra = {
+      ...event.extra,
+      [EXTRA_KEY]: [{ ...configuredApp[0], org: 'red-hat-it', configuredApp: true }],
+    };
+  }
+
+  return event;
+}
+
 function initSentry() {
   if (sentryInitialized) {
     return;
   }
-  type ConfiguredApp = {
-    appName: string;
-    dsn: string;
-    project: string;
-  };
-
-  type ConfiguredApps = {
-    [key: string]: ConfiguredApp[];
-  };
   sentryInitialized = true;
   const appDetails = getAppDetails();
   const configuredApps: ConfiguredApps = {
@@ -236,29 +270,7 @@ function initSentry() {
         return null;
       }
 
-      if (event?.exception?.values?.[0]?.stacktrace?.frames) {
-        const frames = event.exception.values[0].stacktrace.frames;
-        // Find the last frame with module metadata containing a DSN
-        const routeTo = frames
-          .filter((frame) => frame.module_metadata && frame.module_metadata.dsn)
-          .map((v) => v.module_metadata)
-          .slice(-1); // using top frame only
-        const configuredApp = configuredApps[appDetails.app.group].filter((app) => app.appName === event.tags?.app_name);
-
-        if (routeTo.length) {
-          event.extra = {
-            ...event.extra,
-            [EXTRA_KEY]: routeTo,
-          };
-        } else if (configuredApp) {
-          event.extra = {
-            ...event.extra,
-            [EXTRA_KEY]: [{ ...configuredApp[0], org: 'red-hat-it', configuredApp: true }],
-          };
-        }
-      }
-
-      return event;
+      return applySentryEventRouting(event, appDetails, configuredApps);
     },
   });
 }
