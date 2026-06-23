@@ -3,8 +3,8 @@ import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
 
 import { removeScalprum } from '@scalprum/core';
-import type { AuthContextProps } from 'react-oidc-context';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import type { IqeAuthRef } from '../../src/utils/iqeEnablement';
 import { Provider as JotaiProvider, createStore, useAtomValue } from 'jotai';
 import { AxiosError, AxiosResponse } from 'axios';
 
@@ -35,7 +35,7 @@ function createEnv(code: string, childNode: React.ReactNode) {
   chromeStore.set(activeModuleAtom, undefined);
   chromeStore.set(gatewayErrorAtom, undefined);
   // initializes request interceptors
-  qe.init(chromeStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
+  qe.init(chromeStore, { current: { user: { access_token: 'foo' } } as unknown as IqeAuthRef });
 
   const Component = () => {
     const [mounted, setMounted] = useState(false);

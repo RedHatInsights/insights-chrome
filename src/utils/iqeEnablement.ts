@@ -3,9 +3,13 @@
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
 import { createStore } from 'jotai';
-// eslint-disable-next-line no-restricted-imports
-import type { AuthContextProps } from 'react-oidc-context';
 import { gatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
+
+export interface IqeAuthRef {
+  user?: { access_token?: string } | null;
+  signinRedirect: (...args: never[]) => Promise<void>;
+  signinSilent: (...args: never[]) => Promise<unknown>;
+}
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
@@ -83,7 +87,7 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
-export function init(chromeStore: ReturnType<typeof createStore>, authRef: React.MutableRefObject<AuthContextProps>) {
+export function init(chromeStore: ReturnType<typeof createStore>, authRef: React.MutableRefObject<IqeAuthRef>) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
