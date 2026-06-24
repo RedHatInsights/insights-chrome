@@ -40,7 +40,7 @@ describe('<ContextSwithcer />', () => {
     const elem = cy
       .mount(
         <Wrapper>
-          <ContextSwitcher accountNumber={testUser.identity.account_number} orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
+          <ContextSwitcher orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
       .get('html');
@@ -52,10 +52,14 @@ describe('<ContextSwithcer />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [
         {
-          target_account: '111',
           request_id: '111',
-          end_date: '2022',
           target_org: '222',
+          start_date: '01 Jan 2025',
+          end_date: '31 Dec 2025',
+          created: '01 Jan 2025, 00:00 UTC',
+          status: 'approved',
+          user_id: 'testuser',
+          user_available: false,
         },
       ],
     }).as('crossAccountRequests');
@@ -63,7 +67,7 @@ describe('<ContextSwithcer />', () => {
     const elem = cy
       .mount(
         <Wrapper>
-          <ContextSwitcher accountNumber={testUser.identity.account_number} orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
+          <ContextSwitcher orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
       .get('html');
@@ -71,8 +75,9 @@ describe('<ContextSwithcer />', () => {
     elem.get('body').matchImageSnapshot();
   });
 
-  it('should render cross-account entries when API response has no target_account field (RHCLOUD-48475)', () => {
+  it('should render cross-account entries with org_id only (RHCLOUD-48475)', () => {
     cy.viewport(1280, 720);
+    // query_by=user_id returns TAM's outgoing requests - NO first_name/last_name/email fields
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [
         {
@@ -83,9 +88,7 @@ describe('<ContextSwithcer />', () => {
           created: '25 Sep 2025, 13:34 UTC',
           status: 'approved',
           user_id: 'testuser',
-          email: 'jdoe@redhat.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
+          user_available: false,
         },
         {
           request_id: 'req-bbb',
@@ -95,9 +98,7 @@ describe('<ContextSwithcer />', () => {
           created: '08 Aug 2025, 16:52 UTC',
           status: 'approved',
           user_id: 'testuser',
-          email: 'jsmith@redhat.com',
-          first_name: 'John',
-          last_name: 'Smith',
+          user_available: false,
         },
         {
           request_id: 'req-ccc',
@@ -107,9 +108,7 @@ describe('<ContextSwithcer />', () => {
           created: '08 Aug 2025, 16:50 UTC',
           status: 'approved',
           user_id: 'testuser',
-          email: 'bob@redhat.com',
-          first_name: 'Bob',
-          last_name: 'Jones',
+          user_available: false,
         },
       ],
     }).as('crossAccountRequests');
@@ -117,27 +116,22 @@ describe('<ContextSwithcer />', () => {
     testUser.identity.user.is_internal = true;
     cy.mount(
       <Wrapper>
-        <ContextSwitcher accountNumber={testUser.identity.account_number} orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
+        <ContextSwitcher orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
       </Wrapper>
     );
     cy.wait('@crossAccountRequests');
 
     // Component should render
-    cy.contains('Account:').should('exist');
-    cy.contains('Account:').click();
+    cy.contains('Organization:').should('exist');
+    cy.contains('Organization:').click();
 
-    // Personal account should show
-    cy.contains('123456').should('exist');
+    // Personal org should show
+    cy.contains('7890').should('exist');
     cy.contains('Personal account').should('exist');
 
     // All 3 cross-account entries should render with org IDs displayed
     cy.get('.account-label').contains('17940001').should('exist');
     cy.get('.account-label').contains('17940002').should('exist');
     cy.get('.account-label').contains('17940003').should('exist');
-
-    // All 3 names should display
-    cy.contains('Jane Doe').should('exist');
-    cy.contains('John Smith').should('exist');
-    cy.contains('Bob Jones').should('exist');
   });
 });

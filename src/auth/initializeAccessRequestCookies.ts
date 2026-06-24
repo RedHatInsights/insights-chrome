@@ -1,10 +1,10 @@
 import Cookies from 'js-cookie';
-import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
+import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 import crossAccountBouncer from './crossAccountBouncer';
 
 export default function initializeAccessRequestCookies() {
   const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
-  if (Cookies.get(CROSS_ACCESS_ACCOUNT_NUMBER) && initialAccount) {
+  if (Cookies.get(CROSS_ACCESS_ORG_ID) && initialAccount) {
     try {
       const { end_date } = JSON.parse(initialAccount);
       /**
@@ -15,7 +15,7 @@ export default function initializeAccessRequestCookies() {
       }
     } catch {
       console.log('Unable to parse initial account. Using default account');
-      Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
+      Cookies.remove(CROSS_ACCESS_ORG_ID);
     }
   }
 }
