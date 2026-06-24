@@ -79,7 +79,9 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
   const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
   const { pathname } = useLocation();
-  const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
+  const isDashboardHubRoute = /^\/dashboard-hub(?:\/|$)/.test(pathname);
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname) && !isDashboardHubRoute;
+
   return (
     <Page
       className={
