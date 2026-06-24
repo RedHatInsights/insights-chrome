@@ -2,9 +2,19 @@
   vertical-align: middle;
   position: relative;
   top: -1px;
+}
 
-  .pf-v6-theme-dark & {
-    filter: brightness(0) invert(1);
+.chr-c-ai-experience-icon-dark {
+  display: none;
+}
+
+.pf-v6-theme-dark {
+  .chr-c-ai-experience-icon-light {
+    display: none;
+  }
+
+  .chr-c-ai-experience-icon-dark {
+    display: inline;
   }
 }
 

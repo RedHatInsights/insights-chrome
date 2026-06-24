@@ -332,11 +332,18 @@ const Tools = () => {
     };
 
     const AIExperienceIcon = () => (
-      <img
-        src="/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience.svg"
-        alt="AI Experience"
-        className="pf-v6-c-icon pf-m-lg chr-c-ai-experience-icon"
-      />
+      <>
+        <img
+          src="/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience.svg"
+          alt="AI Experience"
+          className="pf-v6-c-icon pf-m-lg chr-c-ai-experience-icon chr-c-ai-experience-icon-light"
+        />
+        <img
+          src="/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience-dark.svg"
+          alt="AI Experience"
+          className="pf-v6-c-icon pf-m-lg chr-c-ai-experience-icon chr-c-ai-experience-icon-dark"
+        />
+      </>
     );
 
     return (
