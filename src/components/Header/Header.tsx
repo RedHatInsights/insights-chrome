@@ -86,7 +86,7 @@ const MemoizedHeader = memo(
               <ToolbarGroup variant="filter-group">
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
-                    <ContextSwitcher accountNumber={accountNumber} orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
+                    <ContextSwitcher orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
