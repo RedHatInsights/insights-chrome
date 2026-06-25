@@ -1,5 +1,5 @@
-import { renderHook, act } from '@testing-library/react';
-import { getDarkModeStore, useDarkModeStore, _resetDarkModeStore } from './darkModeStore';
+import { act, renderHook } from '@testing-library/react';
+import { _resetDarkModeStore, getDarkModeStore, useDarkModeStore } from './darkModeStore';
 
 describe('darkModeStore', () => {
   beforeEach(() => {

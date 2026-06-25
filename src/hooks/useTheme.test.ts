@@ -13,13 +13,11 @@ jest.mock('../state/stores/darkModeStore', () => {
     getDarkModeStore: jest.fn(() => ({
       updateState: mockUpdateState,
     })),
-    __mockUpdateState: mockUpdateState,
   };
 });
 
 const mockedUseFlag = useFlag as unknown as jest.Mock;
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
-const { __mockUpdateState: mockUpdateState } = require('../state/stores/darkModeStore') as any;
+const mockUpdateState = getDarkModeStore().updateState as jest.Mock;
 
 describe('useTheme hook', () => {
   let originalMatchMedia: typeof window.matchMedia;
