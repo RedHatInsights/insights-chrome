@@ -1,12 +1,25 @@
 import { act, renderHook } from '@testing-library/react';
 import { ThemeVariants, useTheme } from './useTheme';
 import { useFlag } from '@unleash/proxy-client-react';
+import { getDarkModeStore } from '../state/stores/darkModeStore';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
 }));
 
+jest.mock('../state/stores/darkModeStore', () => {
+  const mockUpdateState = jest.fn();
+  return {
+    getDarkModeStore: jest.fn(() => ({
+      updateState: mockUpdateState,
+    })),
+    __mockUpdateState: mockUpdateState,
+  };
+});
+
 const mockedUseFlag = useFlag as unknown as jest.Mock;
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
+const { __mockUpdateState: mockUpdateState } = require('../state/stores/darkModeStore') as any;
 
 describe('useTheme hook', () => {
   let originalMatchMedia: typeof window.matchMedia;
@@ -203,6 +216,35 @@ describe('useTheme hook', () => {
       expect(result.current.themeMode).toBe(ThemeVariants.dark);
       expect(localStorage.getItem('chrome:theme')).toBe('dark');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
+    });
+  });
+
+  describe('shared store sync', () => {
+    it('should update shared store with SET_DARK when dark mode applied', () => {
+      setFlags(true, false);
+      localStorage.setItem('chrome:theme', 'dark');
+      renderHook(() => useTheme());
+      expect(mockUpdateState).toHaveBeenCalledWith('SET_DARK');
+    });
+
+    it('should update shared store with SET_LIGHT when light mode applied', () => {
+      setFlags(true, false);
+      localStorage.setItem('chrome:theme', 'light');
+      renderHook(() => useTheme());
+      expect(mockUpdateState).toHaveBeenCalledWith('SET_LIGHT');
+    });
+
+    it('should update shared store when switching themes', () => {
+      setFlags(true, false);
+      const { result } = renderHook(() => useTheme());
+      mockUpdateState.mockClear();
+
+      act(() => result.current.setDarkMode());
+      expect(mockUpdateState).toHaveBeenCalledWith('SET_DARK');
+
+      mockUpdateState.mockClear();
+      act(() => result.current.setLightMode());
+      expect(mockUpdateState).toHaveBeenCalledWith('SET_LIGHT');
     });
   });
 });
