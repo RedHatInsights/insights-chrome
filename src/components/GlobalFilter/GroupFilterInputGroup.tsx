@@ -80,7 +80,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
             <div>
               {intl.formatMessage(messages.filterByTagsPopoverContent1)}{' '}
               <a
-                href="https://docs.redhat.com/en/documentation/subscription_central/1-latest/html/getting_started_with_the_subscriptions_service/proc-installing-satellite-inventory-upload-plugin_assembly-setting-up-subscriptionwatch-ctxt"
+                href="https://docs.redhat.com/en/documentation/subscription_central/1-latest/html-single/getting_started_with_the_subscriptions_service/index#proc-installing-satellite-inventory-upload-plugin_assembly-about-subscriptionwatch"
                 target="_blank"
                 rel="noreferrer"
               >
