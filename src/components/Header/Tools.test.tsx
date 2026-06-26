@@ -1,5 +1,5 @@
 import React from 'react';
-import { configure, fireEvent, render, screen } from '@testing-library/react';
+import { act, configure, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
@@ -66,13 +66,13 @@ jest.mock('./SettingsToggle', () => ({
     </div>
   ),
 }));
+const mockSetLightMode = jest.fn();
+const mockSetDarkMode = jest.fn();
+const mockSetSystemMode = jest.fn();
+const mockUseTheme = jest.fn();
+
 jest.mock('../../hooks/useTheme', () => ({
-  useTheme: () => ({
-    themeMode: 0,
-    setLightMode: jest.fn(),
-    setDarkMode: jest.fn(),
-    setSystemMode: jest.fn(),
-  }),
+  useTheme: () => mockUseTheme(),
   ThemeVariants: { light: 0, dark: 1, system: 2 },
 }));
 jest.mock('../../hooks/useSupportCaseData', () => ({
@@ -109,9 +109,17 @@ const mockInternalChromeContext = {
   drawerActions: { toggleDrawerContent: jest.fn() },
 };
 
-const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, isPreview = false) => {
+const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, isPreview = false, themeMode = 0) => {
   const flags = { ...defaultFlags, ...flagOverrides };
   mockedUseFlag.mockImplementation((name: string) => flags[name] ?? false);
+
+  // Set up theme mock
+  mockUseTheme.mockReturnValue({
+    themeMode,
+    setLightMode: mockSetLightMode,
+    setDarkMode: mockSetDarkMode,
+    setSystemMode: mockSetSystemMode,
+  });
 
   const store = createStore();
   store.set(isPreviewAtom, isPreview);
@@ -250,12 +258,25 @@ describe('Tools - dark mode system feature flag', () => {
   });
 
   describe('help panel icon switching', () => {
+    let matchMediaMock: jest.Mock;
+
     beforeEach(() => {
+      jest.clearAllMocks();
       // Clean up any theme classes before each test
       document.documentElement.classList.remove('pf-v6-theme-dark');
+
+      // Mock matchMedia
+      matchMediaMock = jest.fn();
+      window.matchMedia = matchMediaMock;
     });
 
     it('should render light mode AI icon when help panel is enabled, preview mode is on, and theme is light', () => {
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      });
+
       renderTools({ 'platform.chrome.help-panel': true }, true);
 
       const iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
@@ -265,6 +286,12 @@ describe('Tools - dark mode system feature flag', () => {
     });
 
     it('should render dark mode AI icon when help panel is enabled, preview mode is on, and dark theme is active', () => {
+      matchMediaMock.mockReturnValue({
+        matches: true,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      });
+
       // Simulate dark mode by adding the class
       document.documentElement.classList.add('pf-v6-theme-dark');
 
@@ -276,12 +303,24 @@ describe('Tools - dark mode system feature flag', () => {
     });
 
     it('should not render AI icon when help panel is enabled but preview mode is off', () => {
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      });
+
       renderTools({ 'platform.chrome.help-panel': true }, false);
 
       expect(screen.queryByAltText('AI Experience')).not.toBeInTheDocument();
     });
 
     it('should render help panel toggle button when feature flag is enabled', () => {
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      });
+
       renderTools({ 'platform.chrome.help-panel': true }, true);
 
       const helpButton = screen.getByTestId('chrome-help-panel');
@@ -290,6 +329,12 @@ describe('Tools - dark mode system feature flag', () => {
     });
 
     it('should call toggleDrawerContent when help panel toggle is clicked', () => {
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      });
+
       renderTools({ 'platform.chrome.help-panel': true }, true);
 
       const helpButton = screen.getByTestId('chrome-help-panel');
@@ -299,6 +344,114 @@ describe('Tools - dark mode system feature flag', () => {
         scope: 'learningResources',
         module: './HelpPanel',
       });
+    });
+
+    it('should listen to system preference changes when in system mode', () => {
+      const addEventListenerMock = jest.fn();
+      const removeEventListenerMock = jest.fn();
+
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: addEventListenerMock,
+        removeEventListener: removeEventListenerMock,
+      });
+
+      // Set theme mode to system
+      const { unmount } = renderTools({ 'platform.chrome.help-panel': true }, true, 2); // ThemeVariants.system
+
+      // Verify event listener was added
+      expect(addEventListenerMock).toHaveBeenCalledWith('change', expect.any(Function));
+
+      // Cleanup and verify event listener was removed
+      unmount();
+      expect(removeEventListenerMock).toHaveBeenCalledWith('change', expect.any(Function));
+    });
+
+    it('should update icon when system preference changes in system mode', async () => {
+      let changeHandler: ((event: MediaQueryListEvent) => void) | undefined;
+      const addEventListenerMock = jest.fn((event, handler) => {
+        if (event === 'change') {
+          changeHandler = handler;
+        }
+      });
+
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: addEventListenerMock,
+        removeEventListener: jest.fn(),
+      });
+
+      // Set theme mode to system
+      renderTools({ 'platform.chrome.help-panel': true }, true, 2); // ThemeVariants.system
+
+      // Initially light
+      let iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+      expect(iconImg.src).toContain('rh-ui-icon-ai-experience.svg');
+
+      // Simulate system changing to dark
+      document.documentElement.classList.add('pf-v6-theme-dark');
+      await act(async () => {
+        if (changeHandler) {
+          changeHandler({ matches: true } as MediaQueryListEvent);
+        }
+      });
+
+      // Wait for icon to update
+      await waitFor(() => {
+        iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+        expect(iconImg.src).toContain('rh-ui-icon-ai-experience-dark.svg');
+      });
+    });
+
+    it('should not update icon on system preference change when not in system mode', async () => {
+      let changeHandler: ((event: MediaQueryListEvent) => void) | undefined;
+      const addEventListenerMock = jest.fn((event, handler) => {
+        if (event === 'change') {
+          changeHandler = handler;
+        }
+      });
+
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: addEventListenerMock,
+        removeEventListener: jest.fn(),
+      });
+
+      // Set theme mode to light (not system)
+      renderTools({ 'platform.chrome.help-panel': true }, true, 0); // ThemeVariants.light
+
+      // Initially light
+      let iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+      expect(iconImg.src).toContain('rh-ui-icon-ai-experience.svg');
+
+      // Simulate system preference changing (but theme is not in system mode)
+      await act(async () => {
+        if (changeHandler) {
+          changeHandler({ matches: true } as MediaQueryListEvent);
+        }
+      });
+
+      // Icon should remain light because we're not in system mode
+      // The handler should not trigger checkDarkMode when not in system mode
+      iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+      expect(iconImg.src).toContain('rh-ui-icon-ai-experience.svg');
+    });
+
+    it('should update dark theme state when component mounts with dark theme active', () => {
+      matchMediaMock.mockReturnValue({
+        matches: false,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      });
+
+      // Set dark theme before rendering
+      document.documentElement.classList.add('pf-v6-theme-dark');
+
+      renderTools({ 'platform.chrome.help-panel': true }, true, 1); // ThemeVariants.dark
+
+      // Should detect dark theme on mount
+      const iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+      expect(iconImg.src).toContain('rh-ui-icon-ai-experience-dark.svg');
     });
   });
 });
