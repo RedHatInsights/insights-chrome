@@ -1,12 +1,13 @@
 import React from 'react';
 import { configure, fireEvent, render, screen } from '@testing-library/react';
-import { Provider } from 'jotai';
+import { Provider, createStore } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
 import Tools from './Tools';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { useFlag } from '@unleash/proxy-client-react';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 // Configure data-ouia-component-id as the test ID attribute
 // This allows using screen.getByTestId/queryByTestId for OUIA IDs
@@ -108,16 +109,19 @@ const mockInternalChromeContext = {
   drawerActions: { toggleDrawerContent: jest.fn() },
 };
 
-const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}) => {
+const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, isPreview = false) => {
   const flags = { ...defaultFlags, ...flagOverrides };
   mockedUseFlag.mockImplementation((name: string) => flags[name] ?? false);
+
+  const store = createStore();
+  store.set(isPreviewAtom, isPreview);
 
   return render(
     <MemoryRouter>
       <IntlProvider locale="en">
         <ChromeAuthContext.Provider value={{ user: mockUser, token: 'test-token' } as any}>
           <InternalChromeContext.Provider value={mockInternalChromeContext as any}>
-            <Provider>
+            <Provider store={store}>
               <Tools />
             </Provider>
           </InternalChromeContext.Provider>
@@ -241,6 +245,59 @@ describe('Tools - dark mode system feature flag', () => {
       expect(mockInternalChromeContext.drawerActions.toggleDrawerContent).toHaveBeenCalledWith({
         scope: 'schedulerUi',
         module: './SchedulerPanelContent',
+      });
+    });
+  });
+
+  describe('help panel icon switching', () => {
+    beforeEach(() => {
+      // Clean up any theme classes before each test
+      document.documentElement.classList.remove('pf-v6-theme-dark');
+    });
+
+    it('should render light mode AI icon when help panel is enabled, preview mode is on, and theme is light', () => {
+      renderTools({ 'platform.chrome.help-panel': true }, true);
+
+      const iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+      expect(iconImg).toBeInTheDocument();
+      expect(iconImg.src).toContain('rh-ui-icon-ai-experience.svg');
+      expect(iconImg.src).not.toContain('rh-ui-icon-ai-experience-dark.svg');
+    });
+
+    it('should render dark mode AI icon when help panel is enabled, preview mode is on, and dark theme is active', () => {
+      // Simulate dark mode by adding the class
+      document.documentElement.classList.add('pf-v6-theme-dark');
+
+      renderTools({ 'platform.chrome.help-panel': true }, true);
+
+      const iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
+      expect(iconImg).toBeInTheDocument();
+      expect(iconImg.src).toContain('rh-ui-icon-ai-experience-dark.svg');
+    });
+
+    it('should not render AI icon when help panel is enabled but preview mode is off', () => {
+      renderTools({ 'platform.chrome.help-panel': true }, false);
+
+      expect(screen.queryByAltText('AI Experience')).not.toBeInTheDocument();
+    });
+
+    it('should render help panel toggle button when feature flag is enabled', () => {
+      renderTools({ 'platform.chrome.help-panel': true }, true);
+
+      const helpButton = screen.getByTestId('chrome-help-panel');
+      expect(helpButton).toBeInTheDocument();
+      expect(helpButton).toHaveAttribute('aria-label', 'Toggle help panel');
+    });
+
+    it('should call toggleDrawerContent when help panel toggle is clicked', () => {
+      renderTools({ 'platform.chrome.help-panel': true }, true);
+
+      const helpButton = screen.getByTestId('chrome-help-panel');
+      fireEvent.click(helpButton);
+
+      expect(mockInternalChromeContext.drawerActions.toggleDrawerContent).toHaveBeenCalledWith({
+        scope: 'learningResources',
+        module: './HelpPanel',
       });
     });
   });

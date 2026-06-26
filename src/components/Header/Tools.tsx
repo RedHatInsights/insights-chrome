@@ -323,6 +323,31 @@ const Tools = () => {
   /* Help Panel Toggle Button */
   const HelpPanelToggleButton = () => {
     const isHelpPanelOpen = drawerContent?.scope === 'learningResources' && isNotificationDrawerExpanded;
+    const [isDarkThemeActive, setIsDarkThemeActive] = useState(false);
+
+    // Update dark theme state when theme changes or on mount
+    useEffect(() => {
+      const checkDarkMode = () => {
+        setIsDarkThemeActive(document.documentElement.classList.contains('pf-v6-theme-dark'));
+      };
+
+      // Initial check
+      checkDarkMode();
+
+      // For system mode: listen to system preference changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleSystemThemeChange = () => {
+        if (themeMode === ThemeVariants.system) {
+          checkDarkMode();
+        }
+      };
+
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+      return () => {
+        mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      };
+    }, [themeMode]);
 
     const handleToggle = () => {
       toggleDrawerContent({
@@ -331,13 +356,13 @@ const Tools = () => {
       });
     };
 
-    const AIExperienceIcon = () => (
-      <img
-        src="/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience.svg"
-        alt="AI Experience"
-        className="pf-v6-c-icon pf-m-lg chr-c-ai-experience-icon"
-      />
-    );
+    const AIExperienceIcon = () => {
+      const iconSrc = isDarkThemeActive
+        ? '/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience-dark.svg'
+        : '/apps/frontend-assets/technology-icons/rh-ui-icon-ai-experience.svg';
+
+      return <img src={iconSrc} alt="AI Experience" className="pf-v6-c-icon pf-m-lg chr-c-ai-experience-icon" />;
+    };
 
     return (
       <Tooltip
