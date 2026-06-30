@@ -34,6 +34,7 @@ interface MockDropdownGroup {
   title?: string;
   isHidden?: boolean;
   items?: MockDropdownItem[];
+  customContent?: React.ReactNode;
 }
 
 interface MockDropdownItemWithClick extends MockDropdownItem {
@@ -52,14 +53,16 @@ jest.mock('./SettingsToggle', () => ({
         group.isHidden ? null : (
           <div key={i}>
             {group.title && <h3>{group.title}</h3>}
-            {group.items
-              ?.filter((item) => !item.isHidden)
-              .map((item, j: number) => (
-                <div key={j} data-ouia-component-id={item.ouiaId} onClick={item.onClick} role={item.onClick ? 'button' : undefined}>
-                  {item.title}
-                  {item.description && <p>{item.description}</p>}
-                </div>
-              ))}
+            {group.customContent
+              ? group.customContent
+              : group.items
+                  ?.filter((item) => !item.isHidden)
+                  .map((item, j: number) => (
+                    <div key={j} data-ouia-component-id={item.ouiaId} onClick={item.onClick} role={item.onClick ? 'button' : undefined}>
+                      {item.title}
+                      {item.description && <p>{item.description}</p>}
+                    </div>
+                  ))}
           </div>
         )
       )}
@@ -74,6 +77,12 @@ const mockUseTheme = jest.fn();
 jest.mock('../../hooks/useTheme', () => ({
   useTheme: () => mockUseTheme(),
   ThemeVariants: { light: 0, dark: 1, system: 2 },
+}));
+jest.mock('../../hooks/useGlassTheme', () => ({
+  useGlassTheme: () => ({
+    isGlassTheme: false,
+    toggleGlassTheme: jest.fn(),
+  }),
 }));
 jest.mock('../../hooks/useSupportCaseData', () => ({
   __esModule: true,
@@ -101,6 +110,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.itless': false,
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
+  'platform.chrome.glass-theme': false,
   'platform.chrome.notifications-drawer': false,
   'console.chrome-scheduler_drawer': false,
 };
@@ -452,6 +462,19 @@ describe('Tools - dark mode system feature flag', () => {
       // Should detect dark theme on mount
       const iconImg = screen.getByAltText('AI Experience') as HTMLImageElement;
       expect(iconImg.src).toContain('rh-ui-icon-ai-experience-dark.svg');
+    });
+  });
+
+  describe('glass theme toggle', () => {
+    it('should render glass effect section when flag is enabled', () => {
+      renderTools({ 'platform.chrome.glass-theme': true });
+      expect(screen.getByText('Glass effect')).toBeInTheDocument();
+      expect(document.getElementById('glass-theme-switch')).toBeInTheDocument();
+    });
+
+    it('should not render glass effect section when flag is disabled', () => {
+      renderTools({ 'platform.chrome.glass-theme': false });
+      expect(screen.queryByText('Glass effect')).not.toBeInTheDocument();
     });
   });
 });
