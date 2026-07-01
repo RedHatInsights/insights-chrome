@@ -182,3 +182,108 @@ npm run verify    # Runs: lint + build + test
 ```
 
 This catches TypeScript errors, lint violations, and test failures that CI would reject.
+
+---
+
+## All Services Page - Test Coverage Status
+
+> **Last Updated:** 2026-06-16
+
+### Current Coverage
+
+**E2E Tests (Playwright):**
+- ✅ **all-services.spec.ts** (12 tests): Page rendering, filter/search, empty states, navigation, favorites, scroll behavior
+- ✅ **help-panel.spec.ts** (1 test): Help panel drawer functionality
+- ✅ **favorite-services.spec.ts** (1 test): Cross-page favoriting workflow
+- ✅ **navigation.spec.ts** (1 test): UI-driven navigation to /allservices
+- ✅ **url-navigation.spec.ts** (1 test): Direct URL navigation
+- ⚠️ **accessibility.spec.ts** (1 test - SKIPPED): Blocked by RHCLOUD-47753
+
+**Component Tests (Cypress):**
+- ✅ **AllServicesPage.cy.tsx** (2 tests): Component-level filtering and empty state
+
+**Unit Tests (Jest):**
+- ✅ **AllServices.test.tsx** (8 tests): Drawer wiring and feature flag combinations
+
+### Known Coverage Gaps
+
+These items represent future testing opportunities:
+
+#### 1. Keyboard Navigation & Accessibility
+**Priority:** Medium | **Complexity:** Low
+
+- Tab navigation through service links and focus states
+- Keyboard-only filter clearing (ESC key)
+- Screen reader announcements for filter results
+- Currently partially blocked by RHCLOUD-47753 (aria-prohibited-attr)
+
+#### 2. Responsive Design & Viewport Testing
+**Priority:** Medium | **Complexity:** Low
+
+- Mobile viewports (320px, 375px, 414px)
+- Tablet viewports (768px, 1024px)
+- Touch interactions on mobile devices
+- Service card grid behavior at different widths
+
+#### 3. Service Count & Data Validation
+**Priority:** Low | **Complexity:** Medium
+
+- Exact service count validation against navigation data
+- Verification that all expected services appear based on RBAC/entitlements
+- Service metadata correctness (titles, descriptions, links)
+- Bundle/category grouping validation
+
+#### 4. External Link Handling
+**Priority:** Low | **Complexity:** Low
+
+- Services that open in new tab/window (target="_blank")
+- External link icon display
+- rel="noopener noreferrer" security attributes
+- New tab/window behavior
+
+#### 5. Performance & Large Dataset Handling
+**Priority:** Low | **Complexity:** High
+
+- Performance with 200+ services
+- Filter responsiveness with large datasets
+- Initial render time measurement
+- Memory usage during filtering
+
+#### 6. Error States & Resilience
+**Priority:** Medium | **Complexity:** Medium
+
+- Failed RBAC API calls
+- Failed entitlements API calls
+- Failed navigation/services API calls
+- Network timeout handling
+- Partial data loading scenarios
+- Retry behavior on API failures
+
+#### 7. Feature Flag Combinations
+**Priority:** Low | **Complexity:** Low
+
+- Legacy UI with redesign flag disabled
+- Help panel + notifications drawer flag interactions
+- Drawer conflict resolution
+
+#### 8. Search/Filter Edge Cases
+**Priority:** Low | **Complexity:** Low
+
+- Special regex characters in search (`.*+?^${}()|[]\\`)
+- Unicode/emoji in search terms
+- Very long search terms (> 100 chars)
+- Search with only whitespace
+- Rapid successive filtering (debounce behavior)
+
+### Notes
+
+- Once RHCLOUD-47753 is resolved, re-enable accessibility testing for `/allservices`
+- Consider adding performance budgets as service count grows
+- Coordinate with UX team on expected mobile behavior before adding mobile tests
+
+### Contributing
+
+When adding new tests for All Services page:
+1. Update this section to reflect new coverage
+2. Move items from "Coverage Gaps" to "Current Coverage"
+3. Update "Last Updated" date

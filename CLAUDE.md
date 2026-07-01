@@ -338,6 +338,106 @@ test('should navigate to application', async ({ page }) => {
 });
 ```
 
+**CRITICAL: Playwright Conventions**
+
+**1. Always use `type()` instead of `fill()` for text inputs** to ensure client-side filtering and React event handlers trigger correctly:
+
+```typescript
+// ❌ BAD - fill() sets value directly, bypassing keyboard events
+await input.fill('search term');
+
+// ✅ GOOD - type() simulates real user typing, triggers all events
+await input.clear();
+await input.type('search term');
+```
+
+**Why `type()` over `fill()`:**
+- `fill()` triggers the `input` event and React `onChange` handlers work correctly
+- However, `fill()` does NOT trigger keyboard events (`keydown`, `keypress`, `keyup`)
+- Client-side filtering logic (like in AllServices page) listens for keyboard events for character-by-character filtering
+- Use `type()` or `pressSequentially()` when the application requires keyboard event simulation
+- Past experience in this repo has shown `fill()` causes test flakiness for filtered inputs
+
+**Exception:** Use `fill()` for non-interactive form fields where keyboard event handling doesn't matter (e.g., hidden fields, programmatic form submission).
+
+**2. Avoid PatternFly version-specific CSS selectors** because PF versions change during upgrades:
+
+```typescript
+// ❌ BAD - Uses PatternFly version-specific class names
+const gallery = page.locator('.pf-v6-l-gallery');
+const items = page.locator('.pf-v6-c-card');
+
+// ✅ GOOD - Use semantic selectors or OUIA component IDs
+const serviceLinks = page.locator('main a[href^="/"]');
+const filterInput = page.locator('[data-ouia-component-id="app-filter-search"] input');
+const heading = page.getByRole('heading', { name: 'All Services' });
+```
+
+**Why avoid PF class selectors:**
+- PatternFly versions change periodically (v5 → v6 → v7, etc.)
+- Class names include version numbers (`pf-v6-c-card` becomes `pf-v7-c-card`)
+- Tests break on every PF upgrade even though functionality is unchanged
+- Semantic selectors (roles, OUIA IDs, semantic HTML) are stable across versions
+
+**Preferred selector strategies (in order of preference):**
+1. **OUIA component IDs**: `[data-ouia-component-id="my-component"]` (most stable)
+2. **ARIA roles**: `getByRole('button', { name: 'Submit' })`
+3. **Semantic HTML**: `main a[href^="/"]`, `nav`, `header`, `footer`
+4. **Data test IDs**: `[data-testid="my-element"]` (if added)
+5. **Stable functional selectors**: `a[href^="/insights"]` (targets behavior, not layout)
+
+**Avoid:**
+- ❌ PatternFly class names (`.pf-v6-*`, `.pf-v5-*`)
+- ❌ Generic class names (`.card`, `.button`)
+- ❌ Deep CSS selectors (`.container > .row > .col > div > span`)
+
+**3. Always use symbolic constants for timeout values** - never hard-code timeout numbers:
+
+```typescript
+// ❌ BAD - Magic numbers scattered throughout code
+await page.waitForTimeout(300);
+await element.waitFor({ state: 'visible', timeout: 5000 });
+await page.waitForFunction(() => true, { timeout: 2000 });
+
+// ✅ GOOD - Define constants with semantic names
+class MyPage {
+  private static readonly PAGE_READY_TIMEOUT = 30000;
+  private static readonly UI_STABILIZATION_DELAY = 100;
+  private static readonly FILTER_UPDATE_TIMEOUT = 2000;
+
+  async searchFor(term: string): Promise<void> {
+    await this.input.type(term);
+    await this.page.waitForTimeout(MyPage.UI_STABILIZATION_DELAY);
+    await this.results.waitFor({
+      state: 'visible',
+      timeout: MyPage.FILTER_UPDATE_TIMEOUT
+    });
+  }
+}
+
+// For test files
+const SCROLL_TEST_POSITION = 500;
+const SCROLL_THRESHOLD = 100;
+const APP_INIT_TIMEOUT = 30000;
+```
+
+**Why use constants:**
+- **Maintainability** - Change timeout in one place, not dozens of locations
+- **Readability** - `UI_STABILIZATION_DELAY` is more meaningful than `100`
+- **Consistency** - Same timeout values used across similar operations
+- **Documentation** - Constant names explain WHY the timeout exists
+- **Easier debugging** - Can globally adjust timeouts during investigation
+
+**Naming conventions for timeout constants:**
+- `*_TIMEOUT` - Maximum wait time for an operation (e.g., `PAGE_READY_TIMEOUT`)
+- `*_DELAY` - Intentional pause for UI/network stabilization (e.g., `UI_STABILIZATION_DELAY`)
+- `*_POSITION` / `*_THRESHOLD` - Test values that happen to be numbers (e.g., `SCROLL_TEST_POSITION`)
+
+**Where to define constants:**
+- **Page Objects**: Define as `private static readonly` class properties
+- **Test files**: Define as top-level `const` before test suite
+- **Shared constants**: Consider creating a test constants file if reused across many tests
+
 **Run Playwright tests:**
 ```bash
 npm run playwright          # Run all e2e tests

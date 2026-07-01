@@ -8,8 +8,7 @@ import { test as base } from '@playwright/test';
 import { disableCookiePrompt } from '@redhat-cloud-services/playwright-test-auth';
 
 /**
- * Extend Playwright's base test to automatically block TrustArc cookie prompts
- * on every page instance.
+ * Extend Playwright's base test to automatically block TrustArc cookie prompts.
  */
 export const test = base.extend({
   page: async ({ page }, use) => {

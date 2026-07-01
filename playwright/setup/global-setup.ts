@@ -41,6 +41,48 @@ async function globalSetup(config: FullConfig) {
     await page.evaluate(() => {
       localStorage.setItem('chrome:analytics:disable', 'true');
       localStorage.setItem('chrome:segment:disable', 'true');
+      // Disable error overlays for testing
+      localStorage.setItem('chrome:disable-error-overlay', 'true');
+
+      // Enable allservices redesign flag for testing
+      // Unleash proxy-client stores feature toggles directly as an array
+      const unleashKey = 'unleash:repository:repo';
+      const existingData = localStorage.getItem(unleashKey);
+
+      // Parse and validate Unleash data structure
+      // The Unleash client expects the repository to be an array of toggles
+      let toggles: unknown[] = [];
+      if (existingData) {
+        try {
+          const parsed = JSON.parse(existingData);
+          // Validate that parsed data is an array (Unleash stores toggles as array)
+          if (Array.isArray(parsed)) {
+            toggles = parsed;
+          }
+        } catch {
+          // Invalid JSON - use default empty array
+        }
+      }
+
+      // Add or update the redesign flag
+      const redesignFlagIndex = toggles.findIndex(
+        (t: unknown) => typeof t === 'object' && t !== null && (t as { name?: string }).name === 'platform.chrome.allservices.redesign'
+      );
+
+      const redesignFlag = {
+        name: 'platform.chrome.allservices.redesign',
+        enabled: true,
+        variant: { name: 'disabled', enabled: false },
+        impressionData: false
+      };
+
+      if (redesignFlagIndex >= 0) {
+        toggles[redesignFlagIndex] = redesignFlag;
+      } else {
+        toggles.push(redesignFlag);
+      }
+
+      localStorage.setItem(unleashKey, JSON.stringify(toggles));
     });
 
     // Save the authenticated state (including analytics flags)
