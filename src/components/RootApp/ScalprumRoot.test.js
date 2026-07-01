@@ -299,6 +299,30 @@ describe('ScalprumRoot', () => {
     jsdomReset();
   });
 
+  it('should render /lightwell route without PageSidebar', async () => {
+    const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
+    useLocationSpy.mockReturnValue({ pathname: '/lightwell', search: undefined, hash: undefined });
+
+    const { container } = await render(
+      <JotaiTestProvider initialValues={defaultAtomValues}>
+        <ChromeAuthContext.Provider value={chromeContextMockValue}>
+          <MemoryRouter initialEntries={['/lightwell']}>
+            <ScalprumRoot config={config} {...initialProps} />
+          </MemoryRouter>
+        </ChromeAuthContext.Provider>
+      </JotaiTestProvider>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
+      expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
+      expect(container.querySelector('.chr-render')).toBeTruthy();
+      expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
+    });
+
+    useLocationSpy.mockRestore();
+  });
+
   it('should not render GlobalFilter', async () => {
     const fetchSpy = jest.spyOn(window, 'fetch').mockImplementationOnce(() => Promise.resolve({ ok: true, json: () => ({}) }));
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');

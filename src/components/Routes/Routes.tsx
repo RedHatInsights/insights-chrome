@@ -93,6 +93,8 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
         }
         return <Route key={path} path={path} element={<Navigate replace to={to} />} />;
       })}
+      {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
+      <Route path="/lightwell" element={<ChromeRoute scope="contentSources" module="./LightwellApp" path="/lightwell" {...routesProps} />} />
       {moduleRoutes.map((app) => (
         <Route key={app.path} path={app.absolute ? app.path : `${app.path}/*`} element={<ChromeRoute {...routesProps} {...app} />} />
       ))}
