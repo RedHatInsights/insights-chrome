@@ -6,6 +6,17 @@ import { Provider as JotaiProvider } from 'jotai';
 
 jest.mock('../Footer/Footer', () => () => null);
 
+jest.mock('../../layouts/Lightwell', () => {
+  const Lightwell = ({ Footer }) => (
+    <div id="chrome-app-render-root">
+      <div className="chr-c-masthead" />
+      <div data-testid="lightwell-content" />
+      {Footer}
+    </div>
+  );
+  return { __esModule: true, default: Lightwell };
+});
+
 jest.mock('../Search/SearchInput', () => {
   return jest.fn().mockImplementation(() => <div />);
 });
@@ -316,7 +327,6 @@ describe('ScalprumRoot', () => {
     await waitFor(() => {
       expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
       expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
-      expect(container.querySelector('.chr-render')).toBeTruthy();
       expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
     });
 

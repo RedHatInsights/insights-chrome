@@ -42,6 +42,8 @@ import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
 
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
+// TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
+const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
@@ -88,7 +90,14 @@ const ScalprumRoot = memo(
           )}
           <Route path="/security" element={<DefaultLayout />} />
           {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
-          <Route path="/lightwell" element={<DefaultLayout />} />
+          <Route
+            path="/lightwell"
+            element={
+              <Suspense fallback={LoadingFallback}>
+                <Lightwell Footer={<ChromeFooter />} />
+              </Suspense>
+            }
+          />
           <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
         </Routes>
       </ChromeProvider>
