@@ -6,6 +6,17 @@ import { Provider as JotaiProvider } from 'jotai';
 
 jest.mock('../Footer/Footer', () => () => null);
 
+jest.mock('../../layouts/Lightwell', () => {
+  const Lightwell = ({ Footer }) => (
+    <div id="chrome-app-render-root">
+      <div className="chr-c-masthead" />
+      <div data-testid="lightwell-content" />
+      {Footer}
+    </div>
+  );
+  return { __esModule: true, default: Lightwell };
+});
+
 jest.mock('../Search/SearchInput', () => {
   return jest.fn().mockImplementation(() => <div />);
 });
@@ -297,6 +308,29 @@ describe('ScalprumRoot', () => {
     useLocationSpy.mockRestore();
     fetchSpy.mockRestore();
     jsdomReset();
+  });
+
+  it('should render /lightwell route without PageSidebar', async () => {
+    const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
+    useLocationSpy.mockReturnValue({ pathname: '/lightwell', search: undefined, hash: undefined });
+
+    const { container } = await render(
+      <JotaiTestProvider initialValues={defaultAtomValues}>
+        <ChromeAuthContext.Provider value={chromeContextMockValue}>
+          <MemoryRouter initialEntries={['/lightwell']}>
+            <ScalprumRoot config={config} {...initialProps} />
+          </MemoryRouter>
+        </ChromeAuthContext.Provider>
+      </JotaiTestProvider>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
+      expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
+      expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
+    });
+
+    useLocationSpy.mockRestore();
   });
 
   it('should not render GlobalFilter', async () => {
