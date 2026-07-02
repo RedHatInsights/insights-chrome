@@ -130,7 +130,9 @@ const mockInternalChromeContext = {
   drawerActions: { toggleDrawerContent: jest.fn() },
 };
 
-const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}) => {
+import type { ToolbarConfig } from './Header';
+
+const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig) => {
   const flags = { ...defaultFlags, ...flagOverrides };
   mockedUseFlag.mockImplementation((name: string) => flags[name] ?? false);
 
@@ -140,7 +142,7 @@ const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}) => {
         <ChromeAuthContext.Provider value={{ user: mockUser, token: 'test-token' } as any}>
           <InternalChromeContext.Provider value={mockInternalChromeContext as any}>
             <Provider>
-              <Tools />
+              <Tools toolbarConfig={toolbarConfig} />
             </Provider>
           </InternalChromeContext.Provider>
         </ChromeAuthContext.Provider>
@@ -278,6 +280,35 @@ describe('Tools - dark mode system feature flag', () => {
       renderTools({ 'platform.chrome.glass-theme': false });
       expect(screen.queryByText('Glass effect')).not.toBeInTheDocument();
     });
+  });
+});
+
+describe('Tools - toolbarConfig visibility', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('should render help button by default', () => {
+    renderTools();
+    expect(screen.getByLabelText('Help menu')).toBeInTheDocument();
+  });
+
+  it('should hide help button when toolbarConfig.hideHelp is true', () => {
+    renderTools({}, { hideHelp: true });
+    expect(screen.queryByLabelText('Help menu')).not.toBeInTheDocument();
+  });
+
+  it('should still render settings when help is hidden', () => {
+    renderTools({}, { hideHelp: true });
+    expect(screen.getAllByText('Settings').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should render help panel toggle when help-panel flag is enabled', () => {
+    renderTools({ 'platform.chrome.help-panel': true });
+    expect(screen.getByLabelText('Toggle help panel')).toBeInTheDocument();
+  });
+
+  it('should hide help panel toggle when toolbarConfig.hideHelp is true', () => {
+    renderTools({ 'platform.chrome.help-panel': true }, { hideHelp: true });
+    expect(screen.queryByLabelText('Toggle help panel')).not.toBeInTheDocument();
   });
 });
 

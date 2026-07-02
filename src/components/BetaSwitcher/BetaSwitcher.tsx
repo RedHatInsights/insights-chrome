@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import classNames from 'classnames';
+import { useLocation } from 'react-router-dom';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
@@ -13,6 +14,7 @@ import BetaSwitcherDropdown from './BetaSwitcherDropdown';
 import './BetaSwitcher.scss';
 
 const BetaSwitcher = () => {
+  const { pathname } = useLocation();
   const bannerRef = useRef<HTMLDivElement>(null);
   const [hideBanner, setHideBanner] = useAtom(hidePreviewBannerAtom);
   const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
@@ -43,7 +45,7 @@ const BetaSwitcher = () => {
     setUserPreviewSeen();
   };
 
-  if (hideBanner) {
+  if (hideBanner || pathname.startsWith('/lightwell')) {
     return null;
   }
 

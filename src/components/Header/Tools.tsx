@@ -36,6 +36,7 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
+import { ToolbarConfig } from './Header';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -75,7 +76,7 @@ type NotificationBellProps = {
   toggleDrawer: () => void;
 };
 
-const Tools = () => {
+const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
     isInternal: true,
     isRhosakEntitled: false,
@@ -453,7 +454,7 @@ const Tools = () => {
 
   return (
     <>
-      {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
+      {isNotificationsEnabled && !toolbarConfig?.hideNotifications && <ScalprumComponent {...drawerBellProps} />}
       {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
@@ -464,9 +465,11 @@ const Tools = () => {
       <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
       </ToolbarItem>
-      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        {helpPanelEnabled ? <HelpPanelToggleButton /> : <AboutButton />}
-      </ToolbarItem>
+      {!toolbarConfig?.hideHelp && (
+        <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+          {helpPanelEnabled ? <HelpPanelToggleButton /> : <AboutButton />}
+        </ToolbarItem>
+      )}
       <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
