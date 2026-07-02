@@ -56,6 +56,13 @@ export const hidePreviewBannerAtom = atomWithToggle(initialHidePreviewBanner, as
   }
 });
 
+/**
+ * Atom for layouts to signal that the preview banner should be hidden.
+ * Used by the Lightwell layout to hide the BetaSwitcher directly,
+ * instead of checking the URL path.
+ */
+export const layoutBannerHiddenAtom = atom(false);
+
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {
     const userConfig = await axios.post<ChromeUserConfig>('/api/chrome-service/v1/user/mark-preview-seen');

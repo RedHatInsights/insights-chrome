@@ -1,12 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { hidePreviewBannerAtom, isPreviewAtom, previewModalOpenAtom, setPreviewSeenAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
+import {
+  hidePreviewBannerAtom,
+  isPreviewAtom,
+  layoutBannerHiddenAtom,
+  previewModalOpenAtom,
+  setPreviewSeenAtom,
+  togglePreviewWithCheckAtom,
+} from '../../state/atoms/releaseAtom';
 import BetaInfoModal from './BetaInfoModal';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 import BetaSwitcherDropdown from './BetaSwitcherDropdown';
@@ -14,9 +20,9 @@ import BetaSwitcherDropdown from './BetaSwitcherDropdown';
 import './BetaSwitcher.scss';
 
 const BetaSwitcher = () => {
-  const { pathname } = useLocation();
   const bannerRef = useRef<HTMLDivElement>(null);
   const [hideBanner, setHideBanner] = useAtom(hidePreviewBannerAtom);
+  const layoutHidden = useAtomValue(layoutBannerHiddenAtom);
   const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const setUserPreviewSeen = useSetAtom(setPreviewSeenAtom);
@@ -45,7 +51,7 @@ const BetaSwitcher = () => {
     setUserPreviewSeen();
   };
 
-  if (hideBanner || pathname === '/lightwell' || pathname.startsWith('/lightwell/')) {
+  if (hideBanner || layoutHidden) {
     return null;
   }
 

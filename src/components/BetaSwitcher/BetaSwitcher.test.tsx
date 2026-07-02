@@ -13,13 +13,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import BetaSwitcher from './BetaSwitcher';
 import { describe, expect, it } from '@jest/globals';
-import { hidePreviewBannerAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { hidePreviewBannerAtom, isPreviewAtom, layoutBannerHiddenAtom } from '../../state/atoms/releaseAtom';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 
-const renderBetaSwitcher = (route = '/', previewHidden = false) => {
+const renderBetaSwitcher = (route = '/', previewHidden = false, layoutHidden = false) => {
   const store = createStore();
   store.set(hidePreviewBannerAtom, previewHidden);
   store.set(isPreviewAtom, false);
+  store.set(layoutBannerHiddenAtom, layoutHidden);
   store.set(userConfigAtom, { data: { uiPreviewSeen: true }, ready: true } as any);
 
   return render(
@@ -32,32 +33,17 @@ const renderBetaSwitcher = (route = '/', previewHidden = false) => {
 };
 
 describe('BetaSwitcher', () => {
-  it('should render on non-lightwell routes', () => {
+  it('should render when no hide flags are set', () => {
     const { container } = renderBetaSwitcher('/');
     expect(container.querySelector('.chr-c-beta-switcher')).toBeTruthy();
   });
 
-  it('should not render on /lightwell route', () => {
-    const { container } = renderBetaSwitcher('/lightwell');
+  it('should not render when layoutBannerHiddenAtom is true', () => {
+    const { container } = renderBetaSwitcher('/', false, true);
     expect(container.querySelector('.chr-c-beta-switcher')).toBeFalsy();
   });
 
-  it('should not render on /lightwell sub-routes', () => {
-    const { container } = renderBetaSwitcher('/lightwell/some-page');
-    expect(container.querySelector('.chr-c-beta-switcher')).toBeFalsy();
-  });
-
-  it('should render on routes that start with /light but not /lightwell', () => {
-    const { container } = renderBetaSwitcher('/lighthouse');
-    expect(container.querySelector('.chr-c-beta-switcher')).toBeTruthy();
-  });
-
-  it('should render on routes that start with /lightwell but have no segment boundary', () => {
-    const { container } = renderBetaSwitcher('/lightwellsomethingelse');
-    expect(container.querySelector('.chr-c-beta-switcher')).toBeTruthy();
-  });
-
-  it('should not render when banner is hidden', () => {
+  it('should not render when banner is hidden by user', () => {
     const { container } = renderBetaSwitcher('/', true);
     expect(container.querySelector('.chr-c-beta-switcher')).toBeFalsy();
   });
