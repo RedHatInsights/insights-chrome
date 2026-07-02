@@ -1,4 +1,5 @@
 import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -92,6 +93,8 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const isITLessEnv = useFlag('platform.chrome.itless');
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const { pathname } = useLocation();
+  const isOnLightwell = pathname === '/lightwell' || pathname.startsWith('/lightwell/');
   const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
   const { user, token } = useContext(ChromeAuthContext);
@@ -109,7 +112,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
-  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled);
+  const { isGlassTheme, toggleGlassTheme, isForced: isGlassForced } = useGlassTheme(isGlassModeEnabled, isOnLightwell);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -173,6 +176,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
             isChecked={isGlassTheme}
             hasCheckIcon
             onChange={toggleGlassTheme}
+            isDisabled={isGlassForced}
           />
         </div>
       ),

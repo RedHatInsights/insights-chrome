@@ -27,35 +27,45 @@ const applyGlassTheme = (enabled: boolean) => {
   }
 };
 
-const getInitialGlassTheme = (isEnabled: boolean): boolean => {
+const getInitialGlassTheme = (isEnabled: boolean, forceEnabled: boolean): boolean => {
   if (!isEnabled) {
     applyGlassTheme(false);
     return false;
+  }
+  if (forceEnabled) {
+    applyGlassTheme(true);
+    return true;
   }
   const enabled = readGlassThemePreference();
   applyGlassTheme(enabled);
   return enabled;
 };
 
-export const useGlassTheme = (isEnabled: boolean) => {
-  const [isGlassTheme, setIsGlassTheme] = useState<boolean>(() => getInitialGlassTheme(isEnabled));
+export const useGlassTheme = (isEnabled: boolean, forceEnabled = false) => {
+  const [isGlassTheme, setIsGlassTheme] = useState<boolean>(() => getInitialGlassTheme(isEnabled, forceEnabled));
 
   useEffect(() => {
     if (!isEnabled) {
       setIsGlassTheme(false);
       applyGlassTheme(false);
+    } else if (forceEnabled) {
+      setIsGlassTheme(true);
+      applyGlassTheme(true);
     } else {
       const saved = readGlassThemePreference();
       setIsGlassTheme(saved);
       applyGlassTheme(saved);
     }
-  }, [isEnabled]);
+  }, [isEnabled, forceEnabled]);
 
   const toggleGlassTheme = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    if (forceEnabled) {
+      return;
+    }
     setIsGlassTheme(checked);
     applyGlassTheme(checked);
     writeGlassThemePreference(checked);
   };
 
-  return { isGlassTheme, toggleGlassTheme };
+  return { isGlassTheme, toggleGlassTheme, isForced: isEnabled && forceEnabled };
 };
