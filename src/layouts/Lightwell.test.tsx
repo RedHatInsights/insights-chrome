@@ -108,6 +108,10 @@ describe('Lightwell', () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    document.documentElement.classList.remove('pf-v6-theme-felt');
+  });
+
   it('should render the layout shell', () => {
     const { container } = renderLightwell();
     expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
@@ -133,5 +137,29 @@ describe('Lightwell', () => {
       'platform.chrome.help-panel': true,
     });
     expect(store.get(notificationDrawerExpandedAtom)).toBe(false);
+  });
+
+  it('should add pf-v6-theme-felt class to document root on mount', () => {
+    renderLightwell();
+    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
+  });
+
+  it('should remove pf-v6-theme-felt class from document root on unmount', () => {
+    const { unmount } = render(
+      <MemoryRouter>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <InternalChromeContext.Provider value={mockInternalChromeContextValue as any}>
+            <Provider store={createStore()}>
+              <Lightwell Footer={<div data-testid="mock-footer" />} />
+            </Provider>
+          </InternalChromeContext.Provider>
+        </ChromeAuthContext.Provider>
+      </MemoryRouter>
+    );
+    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
+    unmount();
+    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(false);
   });
 });
