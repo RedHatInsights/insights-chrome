@@ -29,22 +29,20 @@ export const getDarkModeStore = () => {
   return store;
 };
 
+/** @internal Reset the store singleton. For testing only. */
+export const _resetDarkModeStore = () => {
+  store = null;
+};
+
 /**
  * Hook for remote modules to read the current dark mode state.
  * Exposed via Module Federation as `./theme/useDarkModeStore`.
  *
  * Usage in remote modules:
  * ```ts
- * import { useDarkModeStore } from '@scalprum/react-core';
- * // or via remote hook:
  * const { isDark } = useDarkModeStore();
  * ```
  */
-/** @internal Reset the store singleton. For testing only. */
-export const _resetDarkModeStore = () => {
-  store = null;
-};
-
 export const useDarkModeStore = () => {
   const darkModeStore = getDarkModeStore();
   const state = useGetState(darkModeStore);

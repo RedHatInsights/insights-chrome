@@ -32,6 +32,16 @@ describe('darkModeStore', () => {
       expect(store.getState()).toEqual({ isDark: false });
     });
 
+    it('should not mutate state on unsupported event', () => {
+      const store = getDarkModeStore();
+      store.updateState('SET_DARK');
+      expect(store.getState()).toEqual({ isDark: true });
+
+      // Send an unsupported event — state should remain unchanged
+      store.updateState('UNKNOWN_EVENT' as never);
+      expect(store.getState()).toEqual({ isDark: true });
+    });
+
     it('should toggle between dark and light states', () => {
       const store = getDarkModeStore();
       expect(store.getState().isDark).toBe(false);
