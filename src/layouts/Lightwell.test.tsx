@@ -158,5 +158,4 @@ describe('Lightwell', () => {
     unmount();
     expect(store.get(layoutBannerHiddenAtom)).toBe(false);
   });
-
 });
