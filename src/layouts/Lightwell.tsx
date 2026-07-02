@@ -9,7 +9,7 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useFeltTheme from '../hooks/useFeltTheme';
 
@@ -23,13 +23,18 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
+  const setLayoutForceGlassTheme = useSetAtom(layoutForceGlassThemeAtom);
 
   // Hide the BetaSwitcher banner directly from this layout
   // useLayoutEffect prevents a brief flash of the banner before the atom updates
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
-    return () => setLayoutBannerHidden(false);
-  }, []);
+    setLayoutForceGlassTheme(true);
+    return () => {
+      setLayoutBannerHidden(false);
+      setLayoutForceGlassTheme(false);
+    };
+  }, [setLayoutBannerHidden, setLayoutForceGlassTheme]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');

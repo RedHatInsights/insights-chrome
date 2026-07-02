@@ -44,11 +44,13 @@ jest.mock('@scalprum/core', () => ({
   preloadModule: jest.fn(() => Promise.resolve()),
 }));
 jest.mock('../../../state/atoms/releaseAtom', () => {
+  const { atom } = jest.requireActual('jotai');
   const util = jest.requireActual('../../../state/atoms/utils');
   return {
     __esModule: true,
     isPreviewAtom: util.atomWithToggle(false),
     togglePreviewWithCheckAtom: util.atomWithToggle(false),
+    layoutForceGlassThemeAtom: atom(false),
   };
 });
 

@@ -63,6 +63,12 @@ export const hidePreviewBannerAtom = atomWithToggle(initialHidePreviewBanner, as
  */
 export const layoutBannerHiddenAtom = atom(false);
 
+/**
+ * Atom for layouts to signal that the glass theme should be force-enabled.
+ * Used by the Lightwell layout to auto-enable glass theme without hardcoding URL checks.
+ */
+export const layoutForceGlassThemeAtom = atom(false);
+
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {
     const userConfig = await axios.post<ChromeUserConfig>('/api/chrome-service/v1/user/mark-preview-seen');
