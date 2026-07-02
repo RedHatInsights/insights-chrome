@@ -91,10 +91,10 @@ const ScalprumRoot = memo(
           <Route path="/security" element={<DefaultLayout />} />
           {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
           <Route
-            path="/lightwell"
+            path="/lightwell/*"
             element={
               <Suspense fallback={LoadingFallback}>
-                <Lightwell Footer={<ChromeFooter />} />
+                <Lightwell />
               </Suspense>
             }
           />
