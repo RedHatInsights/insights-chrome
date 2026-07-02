@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
+import { getDarkModeStore } from '../state/stores/darkModeStore';
 
 export enum ThemeVariants {
   light,
@@ -17,6 +18,9 @@ export const useTheme = () => {
     } else {
       document.documentElement.classList.remove('pf-v6-theme-dark');
     }
+    // Sync dark mode state to scalprum shared store for remote modules
+    const darkModeStore = getDarkModeStore();
+    darkModeStore.updateState(isDark ? 'SET_DARK' : 'SET_LIGHT');
   };
 
   const getInitialTheme = (): ThemeVariants => {
