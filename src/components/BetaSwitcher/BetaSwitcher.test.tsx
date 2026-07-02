@@ -52,6 +52,11 @@ describe('BetaSwitcher', () => {
     expect(container.querySelector('.chr-c-beta-switcher')).toBeTruthy();
   });
 
+  it('should render on routes that start with /lightwell but have no segment boundary', () => {
+    const { container } = renderBetaSwitcher('/lightwellsomethingelse');
+    expect(container.querySelector('.chr-c-beta-switcher')).toBeTruthy();
+  });
+
   it('should not render when banner is hidden', () => {
     const { container } = renderBetaSwitcher('/', true);
     expect(container.querySelector('.chr-c-beta-switcher')).toBeFalsy();

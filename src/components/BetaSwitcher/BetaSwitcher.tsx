@@ -45,7 +45,7 @@ const BetaSwitcher = () => {
     setUserPreviewSeen();
   };
 
-  if (hideBanner || pathname.startsWith('/lightwell')) {
+  if (hideBanner || pathname === '/lightwell' || pathname.startsWith('/lightwell/')) {
     return null;
   }
 

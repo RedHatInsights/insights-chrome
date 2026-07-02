@@ -36,7 +36,7 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
-import { ToolbarConfig } from './Header';
+import type { ToolbarConfig } from './Header';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -369,7 +369,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       onClick: () => togglePreviewWithCheck(),
     },
     { title: 'separator' },
-    ...(helpPanelEnabled ? [] : aboutMenuDropdownItems),
+    ...(helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems),
   ];
 
   /* Help Panel Toggle Button */

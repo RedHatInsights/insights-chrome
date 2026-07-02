@@ -310,6 +310,20 @@ describe('Tools - toolbarConfig visibility', () => {
     renderTools({ 'platform.chrome.help-panel': true }, { hideHelp: true });
     expect(screen.queryByLabelText('Toggle help panel')).not.toBeInTheDocument();
   });
+
+  it('should not render help items in mobile dropdown when hideHelp is true', () => {
+    renderTools({}, { hideHelp: true });
+    // Mobile dropdown should exclude aboutMenuDropdownItems when hideHelp is set
+    expect(screen.queryByText('Support options')).not.toBeInTheDocument();
+    expect(screen.queryByText('Status page')).not.toBeInTheDocument();
+  });
+
+  it('should render help items in mobile dropdown by default', () => {
+    renderTools();
+    // Mobile dropdown includes aboutMenuDropdownItems when hideHelp is not set
+    expect(screen.getByText('Support options')).toBeInTheDocument();
+    expect(screen.getByText('Status page')).toBeInTheDocument();
+  });
 });
 
 describe('Tools - high contrast feature flag', () => {
