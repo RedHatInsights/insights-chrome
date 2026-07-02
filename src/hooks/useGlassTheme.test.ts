@@ -95,7 +95,7 @@ describe('useGlassTheme hook', () => {
       expect(localStorage.getItem('chrome:glass-theme')).toBe('false');
     });
 
-    it('should restore user preference when forceEnabled changes to false', () => {
+    it('should restore false user preference when forceEnabled changes to false', () => {
       localStorage.setItem('chrome:glass-theme', 'false');
       const { result, rerender } = renderHook(({ enabled, forced }) => useGlassTheme(enabled, forced), {
         initialProps: { enabled: true, forced: true },
@@ -106,6 +106,19 @@ describe('useGlassTheme hook', () => {
       rerender({ enabled: true, forced: false });
       expect(result.current.isGlassTheme).toBe(false);
       expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(false);
+    });
+
+    it('should restore true user preference when forceEnabled changes to false', () => {
+      localStorage.setItem('chrome:glass-theme', 'true');
+      const { result, rerender } = renderHook(({ enabled, forced }) => useGlassTheme(enabled, forced), {
+        initialProps: { enabled: true, forced: true },
+      });
+      expect(result.current.isGlassTheme).toBe(true);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
+
+      rerender({ enabled: true, forced: false });
+      expect(result.current.isGlassTheme).toBe(true);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
     });
 
     it('should not force glass on when feature flag is disabled', () => {

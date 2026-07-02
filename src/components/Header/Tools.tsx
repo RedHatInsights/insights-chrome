@@ -16,7 +16,7 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
-import { ITLess, getSection } from '../../utils/common';
+import { ITLess, LIGHTWELL_PATH, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -94,7 +94,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
   const { pathname } = useLocation();
-  const isOnLightwell = pathname === '/lightwell' || pathname.startsWith('/lightwell/');
+  const isOnLightwell = pathname === LIGHTWELL_PATH || pathname.startsWith(`${LIGHTWELL_PATH}/`);
   const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
   const { user, token } = useContext(ChromeAuthContext);
