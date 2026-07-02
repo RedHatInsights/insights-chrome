@@ -2,7 +2,7 @@
 import initializeAccessRequestCookies from './initializeAccessRequestCookies';
 import * as crossAccountBouncer from './crossAccountBouncer';
 import Cookies from 'js-cookie';
-import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
+import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 
 jest.mock('./crossAccountBouncer', () => {
   return {
@@ -54,7 +54,7 @@ describe('initializeAccessRequestCookies', () => {
     mockCookiesGet.mockReturnValueOnce('some-cookie');
     localStorage.setItem(ACTIVE_REMOTE_REQUEST, 'some-local-storage');
     initializeAccessRequestCookies();
-    expect(mockCookiesRemove).toHaveBeenCalledWith(CROSS_ACCESS_ACCOUNT_NUMBER);
+    expect(mockCookiesRemove).toHaveBeenCalledWith(CROSS_ACCESS_ORG_ID);
   });
 
   it('calls crossAccountBouncer if the initial account is expired', () => {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
