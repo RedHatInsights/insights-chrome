@@ -145,19 +145,7 @@ describe('Lightwell', () => {
   });
 
   it('should remove pf-v6-theme-felt class from document root on unmount', () => {
-    const { unmount } = render(
-      <MemoryRouter>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <InternalChromeContext.Provider value={mockInternalChromeContextValue as any}>
-            <Provider store={createStore()}>
-              <Lightwell Footer={<div data-testid="mock-footer" />} />
-            </Provider>
-          </InternalChromeContext.Provider>
-        </ChromeAuthContext.Provider>
-      </MemoryRouter>
-    );
+    const { unmount } = renderLightwell();
     expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
     unmount();
     expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(false);
