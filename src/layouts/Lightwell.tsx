@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
@@ -25,7 +25,8 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
 
   // Hide the BetaSwitcher banner directly from this layout
-  useEffect(() => {
+  // useLayoutEffect prevents a brief flash of the banner before the atom updates
+  useLayoutEffect(() => {
     setLayoutBannerHidden(true);
     return () => setLayoutBannerHidden(false);
   }, []);

@@ -33,17 +33,17 @@ const BetaSwitcher = () => {
   useEffect(() => {
     const chromeRenderElement = document.getElementById('chrome-app-render-root');
     // adjust the height of the chrome render element to fit the banner and not show extra scrollbar
-    if (!hideBanner && bannerRef.current && chromeRenderElement) {
+    if (!hideBanner && !layoutHidden && bannerRef.current && chromeRenderElement) {
       const { height } = bannerRef.current.getBoundingClientRect();
       chromeRenderElement.style.height = `calc(100vh - ${height}px)`;
-    } else if (hideBanner && chromeRenderElement) {
+    } else if ((hideBanner || layoutHidden) && chromeRenderElement) {
       chromeRenderElement.style.removeProperty('height');
     }
     if (isPreview) {
       // preview should always reset the banner visibility
       setHideBanner(false);
     }
-  }, [isPreview, hideBanner]);
+  }, [isPreview, hideBanner, layoutHidden]);
 
   const handleBetaAccept = () => {
     setIsBetaModalOpen(false);
