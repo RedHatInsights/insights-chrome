@@ -14,14 +14,14 @@ export const getDarkModeStore = () => {
     store = createSharedStore({
       initialState: { isDark: false } as DarkModeState,
       events: EVENTS,
-      onEventChange: (_state, event): DarkModeState => {
+      onEventChange: (state, event): DarkModeState => {
         switch (event) {
           case 'SET_DARK':
-            return { isDark: true };
+            return state.isDark ? state : { isDark: true };
           case 'SET_LIGHT':
-            return { isDark: false };
+            return state.isDark ? { isDark: false } : state;
           default:
-            return _state;
+            return state;
         }
       },
     });

@@ -42,6 +42,24 @@ describe('darkModeStore', () => {
       expect(store.getState()).toEqual({ isDark: true });
     });
 
+    it('should return the same state reference when value is unchanged', () => {
+      const store = getDarkModeStore();
+
+      // SET_LIGHT when already light — should return same reference
+      const lightState = store.getState();
+      store.updateState('SET_LIGHT');
+      expect(store.getState()).toBe(lightState);
+
+      // SET_DARK changes value — new reference
+      store.updateState('SET_DARK');
+      const darkState = store.getState();
+      expect(darkState).not.toBe(lightState);
+
+      // SET_DARK when already dark — should return same reference
+      store.updateState('SET_DARK');
+      expect(store.getState()).toBe(darkState);
+    });
+
     it('should toggle between dark and light states', () => {
       const store = getDarkModeStore();
       expect(store.getState().isDark).toBe(false);
