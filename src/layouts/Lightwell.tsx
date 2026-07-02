@@ -10,6 +10,7 @@ import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
+import useFeltTheme from '../hooks/useFeltTheme';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
@@ -17,6 +18,7 @@ export type LightwellProps = {
 
 // TODO: Temporary layout for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
 const Lightwell = ({ Footer }: LightwellProps) => {
+  useFeltTheme();
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
 
