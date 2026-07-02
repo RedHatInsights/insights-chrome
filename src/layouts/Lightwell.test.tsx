@@ -108,6 +108,10 @@ describe('Lightwell', () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    document.documentElement.classList.remove('pf-v6-theme-felt');
+  });
+
   it('should render the layout shell', () => {
     const { container } = renderLightwell();
     expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
@@ -133,5 +137,17 @@ describe('Lightwell', () => {
       'platform.chrome.help-panel': true,
     });
     expect(store.get(notificationDrawerExpandedAtom)).toBe(false);
+  });
+
+  it('should add pf-v6-theme-felt class to document root on mount', () => {
+    renderLightwell();
+    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
+  });
+
+  it('should remove pf-v6-theme-felt class from document root on unmount', () => {
+    const { unmount } = renderLightwell();
+    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
+    unmount();
+    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(false);
   });
 });
