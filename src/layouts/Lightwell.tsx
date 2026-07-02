@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
+import { layoutBannerHiddenAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useFeltTheme from '../hooks/useFeltTheme';
 
@@ -21,6 +22,14 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   useFeltTheme();
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+  const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
+
+  // Hide the BetaSwitcher banner directly from this layout
+  // useLayoutEffect prevents a brief flash of the banner before the atom updates
+  useLayoutEffect(() => {
+    setLayoutBannerHidden(true);
+    return () => setLayoutBannerHidden(false);
+  }, []);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -52,7 +61,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         onPageResize={null}
         masthead={
           <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
-            <Header breadcrumbsProps={{ hideNav: true }} />
+            <Header breadcrumbsProps={{ hideNav: true }} toolbarConfig={{ hideNotifications: true, hideHelp: true }} />
           </Masthead>
         }
         {...(isDrawerEnabled && {

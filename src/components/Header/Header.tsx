@@ -19,6 +19,11 @@ import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 
+export type ToolbarConfig = {
+  hideNotifications?: boolean;
+  hideHelp?: boolean;
+};
+
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
   return !!(user.orgId && user.username && user.accountNumber && user.email);
 }
@@ -26,6 +31,7 @@ function hasUser(user: { orgId?: string; username?: string; accountNumber?: stri
 const MemoizedHeader = memo(
   ({
     breadcrumbsProps,
+    toolbarConfig,
     orgId,
     username,
     accountNumber,
@@ -33,6 +39,7 @@ const MemoizedHeader = memo(
     isInternal = false,
   }: {
     breadcrumbsProps?: Breadcrumbsprops;
+    toolbarConfig?: ToolbarConfig;
     orgId: string;
     username: string;
     accountNumber: string;
@@ -97,7 +104,7 @@ const MemoizedHeader = memo(
                   </Suspense>
                 </ToolbarGroup>
                 <ToolbarGroup className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0" widget-type="InsightsToolbar" gap={{ default: 'gapSm' }}>
-                  <HeaderTools />
+                  <HeaderTools toolbarConfig={toolbarConfig} />
                 </ToolbarGroup>
               </ToolbarGroup>
             </ToolbarContent>
@@ -110,7 +117,7 @@ const MemoizedHeader = memo(
 
 MemoizedHeader.displayName = 'MemoizedHeader';
 
-export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
+export const Header = ({ breadcrumbsProps, toolbarConfig }: { breadcrumbsProps?: Breadcrumbsprops; toolbarConfig?: ToolbarConfig }) => {
   // extract valid data from the context
   // we don't want to use the context directly to prevent unnecessary re-renders
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
@@ -122,14 +129,15 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
       orgId={user.identity.org_id}
       isInternal={user.identity.user.is_internal}
       breadcrumbsProps={breadcrumbsProps}
+      toolbarConfig={toolbarConfig}
     />
   );
 };
 
-export const HeaderTools = () => {
+export const HeaderTools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { ready } = useContext(ChromeAuthContext);
   if (!ready) {
     return <UnAuthtedHeader />;
   }
-  return <Tools />;
+  return <Tools toolbarConfig={toolbarConfig} />;
 };

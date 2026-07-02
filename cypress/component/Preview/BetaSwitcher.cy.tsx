@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import BetaSwitcher from '../../../src/components/BetaSwitcher';
@@ -12,9 +13,11 @@ const HydrateAtoms = ({ initialValues, children }: PropsWithChildren<{ initialVa
 };
 
 const TestProvider = ({ initialValues, children }: PropsWithChildren<{ initialValues: any }>) => (
-  <Provider>
-    <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-  </Provider>
+  <MemoryRouter>
+    <Provider>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+  </MemoryRouter>
 );
 
 const Wrapper = () => {
