@@ -71,7 +71,6 @@ describe('useGlassTheme hook', () => {
     it('should force glass on when forceEnabled is true', () => {
       const { result } = renderHook(() => useGlassTheme(true, true));
       expect(result.current.isGlassTheme).toBe(true);
-      expect(result.current.isForced).toBe(true);
       expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
     });
 
@@ -88,11 +87,12 @@ describe('useGlassTheme hook', () => {
       expect(localStorage.getItem('chrome:glass-theme')).toBe('false');
     });
 
-    it('should prevent toggle when forceEnabled', () => {
+    it('should allow toggle even when forceEnabled', () => {
       const { result } = renderHook(() => useGlassTheme(true, true));
       act(() => result.current.toggleGlassTheme(mockEvent, false));
-      expect(result.current.isGlassTheme).toBe(true);
-      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
+      expect(result.current.isGlassTheme).toBe(false);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(false);
+      expect(localStorage.getItem('chrome:glass-theme')).toBe('false');
     });
 
     it('should restore user preference when forceEnabled changes to false', () => {
@@ -105,20 +105,13 @@ describe('useGlassTheme hook', () => {
 
       rerender({ enabled: true, forced: false });
       expect(result.current.isGlassTheme).toBe(false);
-      expect(result.current.isForced).toBe(false);
       expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(false);
     });
 
     it('should not force glass on when feature flag is disabled', () => {
       const { result } = renderHook(() => useGlassTheme(false, true));
       expect(result.current.isGlassTheme).toBe(false);
-      expect(result.current.isForced).toBe(false);
       expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(false);
-    });
-
-    it('should return isForced false when forceEnabled is not passed', () => {
-      const { result } = renderHook(() => useGlassTheme(true));
-      expect(result.current.isForced).toBe(false);
     });
   });
 });

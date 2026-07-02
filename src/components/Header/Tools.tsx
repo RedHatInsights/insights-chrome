@@ -112,7 +112,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
-  const { isGlassTheme, toggleGlassTheme, isForced: isGlassForced } = useGlassTheme(isGlassModeEnabled, isOnLightwell);
+  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled, isOnLightwell);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -176,7 +176,6 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
             isChecked={isGlassTheme}
             hasCheckIcon
             onChange={toggleGlassTheme}
-            isDisabled={isGlassForced}
           />
         </div>
       ),

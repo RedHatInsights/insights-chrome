@@ -81,7 +81,6 @@ jest.mock('../../hooks/useGlassTheme', () => ({
   useGlassTheme: () => ({
     isGlassTheme: false,
     toggleGlassTheme: jest.fn(),
-    isForced: false,
   }),
 }));
 const mockSetDefaultContrast = jest.fn();

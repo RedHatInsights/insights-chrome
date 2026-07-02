@@ -59,13 +59,10 @@ export const useGlassTheme = (isEnabled: boolean, forceEnabled = false) => {
   }, [isEnabled, forceEnabled]);
 
   const toggleGlassTheme = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
-    if (forceEnabled) {
-      return;
-    }
     setIsGlassTheme(checked);
     applyGlassTheme(checked);
     writeGlassThemePreference(checked);
   };
 
-  return { isGlassTheme, toggleGlassTheme, isForced: isEnabled && forceEnabled };
+  return { isGlassTheme, toggleGlassTheme };
 };
