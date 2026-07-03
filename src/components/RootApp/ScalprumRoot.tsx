@@ -20,7 +20,7 @@ import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess } from '../../utils/common';
+import { ITLess, LIGHTWELL_PATH } from '../../utils/common';
 import { lazyWithRetry } from '../../utils/chunkLoadErrorUtils';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
@@ -91,7 +91,7 @@ const ScalprumRoot = memo(
           <Route path="/security" element={<DefaultLayout />} />
           {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
           <Route
-            path="/lightwell/*"
+            path={`${LIGHTWELL_PATH}/*`}
             element={
               <Suspense fallback={LoadingFallback}>
                 <Lightwell />

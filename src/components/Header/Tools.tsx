@@ -21,7 +21,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
+import { isPreviewAtom, layoutForceGlassThemeAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
@@ -92,6 +92,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const isITLessEnv = useFlag('platform.chrome.itless');
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isGlassForced = useAtomValue(layoutForceGlassThemeAtom);
   const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
   const { user, token } = useContext(ChromeAuthContext);
@@ -109,7 +110,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
-  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled);
+  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled, isGlassForced);
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
