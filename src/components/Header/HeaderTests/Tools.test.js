@@ -39,9 +39,15 @@ jest.mock('@scalprum/react-core', () => ({
   __esModule: true,
   ScalprumComponent: () => <div>ScalprumComponent</div>,
   ScalprumProvider: ({ children }) => children,
+  useGetState: jest.fn(() => ({ isDark: false })),
 }));
 jest.mock('@scalprum/core', () => ({
   preloadModule: jest.fn(() => Promise.resolve()),
+  createSharedStore: jest.fn(() => ({
+    getState: jest.fn(() => ({ isDark: false })),
+    updateState: jest.fn(),
+    subscribe: jest.fn(() => jest.fn()),
+  })),
 }));
 jest.mock('../../../state/atoms/releaseAtom', () => {
   const { atom } = jest.requireActual('jotai');
