@@ -9,7 +9,7 @@ import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import ContextSwitcher from '../ContextSwitcher';
 import Activation from '../Activation';
 import Logo from './Logo';
-import ChromeLink from '../ChromeLink';
+import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
@@ -73,7 +73,7 @@ const MemoizedHeader = memo(
             <MastheadLogo
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
-              {...(!isLightwellHeader && { component: (props: React.HTMLAttributes<HTMLAnchorElement>) => <ChromeLink {...props} appId="landing" href="/" /> })}
+              {...(!isLightwellHeader && { component: (props: LinkWrapperProps) => <ChromeLink {...props} appId="landing" href="/" /> })}
             >
               <Logo theme={theme} />
             </MastheadLogo>
