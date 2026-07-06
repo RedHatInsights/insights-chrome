@@ -73,7 +73,7 @@ const MemoizedHeader = memo(
             <MastheadLogo
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
-              component={(props) => <ChromeLink {...props} appId="landing" href="/" />}
+              {...(!isLightwellHeader && { component: (props: React.HTMLAttributes<HTMLAnchorElement>) => <ChromeLink {...props} appId="landing" href="/" /> })}
             >
               <Logo theme={theme} />
             </MastheadLogo>
@@ -106,7 +106,7 @@ const MemoizedHeader = memo(
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
                 {!isLightwellHeader && (
-                  <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group">
+                  <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group" data-testid="search-toolbar-group">
                     <Suspense fallback={null}>
                       <SearchInput onStateChange={hideAllServices} />
                     </Suspense>

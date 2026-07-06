@@ -1,14 +1,14 @@
-jest.mock('../../../hooks/useWindowWidth', () => ({
+jest.mock('../../hooks/useWindowWidth', () => ({
   __esModule: true,
   default: () => ({ md: true, lg: true, xl: true }),
 }));
 
-jest.mock('../../../hooks/useAllServices', () => ({
+jest.mock('../../hooks/useAllServices', () => ({
   __esModule: true,
   default: () => ({ linkSections: [], ready: true }),
 }));
 
-jest.mock('../../../hooks/useFavoritedServices', () => ({
+jest.mock('../../hooks/useFavoritedServices', () => ({
   __esModule: true,
   default: () => [],
 }));
@@ -37,10 +37,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
-import { Header } from '../Header';
-import { layoutLightwellHeaderAtom } from '../../../state/atoms/releaseAtom';
-import ChromeAuthContext from '../../../auth/ChromeAuthContext';
-import InternalChromeContext from '../../../utils/internalChromeContext';
+import { Header } from './Header';
+import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import InternalChromeContext from '../../utils/internalChromeContext';
 import { describe, expect, it, jest } from '@jest/globals';
 
 const mockUser = {
@@ -112,12 +112,25 @@ describe('Header Lightwell mode', () => {
   });
 
   it('should render search toolbar group when not in Lightwell mode', () => {
-    const { container } = renderHeader(false);
-    expect(container.querySelector('.pf-v6-u-ml-4xl-on-2xl')).toBeTruthy();
+    renderHeader(false);
+    expect(screen.getByTestId('search-toolbar-group')).toBeTruthy();
   });
 
   it('should hide search toolbar group when in Lightwell mode', () => {
-    const { container } = renderHeader(true);
-    expect(container.querySelector('.pf-v6-u-ml-4xl-on-2xl')).toBeFalsy();
+    renderHeader(true);
+    expect(screen.queryByTestId('search-toolbar-group')).toBeFalsy();
+  });
+
+  it('should render masthead logo as a link when not in Lightwell mode', () => {
+    renderHeader(false);
+    const logoLink = screen.getByRole('link', { name: /logo/i });
+    expect(logoLink).toBeTruthy();
+    expect(logoLink.getAttribute('href')).toBe('/');
+  });
+
+  it('should render masthead logo without a link when in Lightwell mode', () => {
+    renderHeader(true);
+    const logoLinks = screen.queryAllByRole('link', { name: /logo/i });
+    expect(logoLinks.length).toBe(0);
   });
 });
