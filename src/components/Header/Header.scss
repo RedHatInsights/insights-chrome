@@ -80,3 +80,8 @@
 .chr-c-menu-settings .pf-v6-c-menu__group:first-of-type > .pf-v6-c-menu__group-title {
   display: none;
 }
+
+.chr-c-masthead__lightwell-title {
+  white-space: nowrap;
+  color: var(--pf-t--global--text--color--regular);
+}

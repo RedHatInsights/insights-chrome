@@ -1,5 +1,6 @@
 import React, { Fragment, Suspense, memo, useContext, useState } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
+import { useAtomValue } from 'jotai';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadLogo, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
@@ -18,6 +19,7 @@ import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
 export type ToolbarConfig = {
   hideNotifications?: boolean;
@@ -54,6 +56,7 @@ const MemoizedHeader = memo(
       setSearchOpen(isOpen);
     };
     const isITLess = useFlag('platform.chrome.itless');
+    const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
@@ -74,7 +77,11 @@ const MemoizedHeader = memo(
             >
               <Logo theme={theme} />
             </MastheadLogo>
-            {!(!md && searchOpen) && <AllServicesDropdown />}
+            {isLightwellHeader ? (
+              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-lg pf-v6-u-font-weight-normal pf-v6-u-pl-sm">Red Hat Lightwell</span>
+            ) : (
+              !(!md && searchOpen) && <AllServicesDropdown />
+            )}
           </MastheadBrand>
         </MastheadMain>
         <MastheadContent className="pf-v6-u-mx-0">
@@ -98,11 +105,13 @@ const MemoizedHeader = memo(
                 )}
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
-                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group">
-                  <Suspense fallback={null}>
-                    <SearchInput onStateChange={hideAllServices} />
-                  </Suspense>
-                </ToolbarGroup>
+                {!isLightwellHeader && (
+                  <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group">
+                    <Suspense fallback={null}>
+                      <SearchInput onStateChange={hideAllServices} />
+                    </Suspense>
+                  </ToolbarGroup>
+                )}
                 <ToolbarGroup className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0" widget-type="InsightsToolbar" gap={{ default: 'gapSm' }}>
                   <HeaderTools toolbarConfig={toolbarConfig} />
                 </ToolbarGroup>

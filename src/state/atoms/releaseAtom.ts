@@ -69,6 +69,13 @@ export const layoutBannerHiddenAtom = atom(false);
  */
 export const layoutForceGlassThemeAtom = atom(false);
 
+/**
+ * Atom for layouts to signal a simplified header for Lightwell.
+ * When true, the AllServicesDropdown is replaced with a static "Red Hat Lightwell"
+ * header and the Search input is hidden.
+ */
+export const layoutLightwellHeaderAtom = atom(false);
+
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {
     const userConfig = await axios.post<ChromeUserConfig>('/api/chrome-service/v1/user/mark-preview-seen');
