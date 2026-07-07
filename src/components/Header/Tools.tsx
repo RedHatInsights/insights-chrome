@@ -358,23 +358,24 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const aboutMenuDropdownItems = aboutMenuItemsConfig.filter(({ enabled }) => enabled).map(({ item }) => item);
 
   /* Combine aboutMenuItems with a settings link on mobile */
+  const settingsMobileItems = toolbarConfig?.hideSettings
+    ? []
+    : [
+        {
+          url: settingsPath,
+          title: 'Settings',
+          target: '_self',
+        },
+        {
+          title: betaSwitcherTitle,
+          onClick: () => togglePreviewWithCheck(),
+        },
+      ];
+  const helpMobileItems = helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems;
+
   const mobileDropdownItems = [
-    ...(toolbarConfig?.hideSettings
-      ? []
-      : [
-          { title: 'separator' },
-          {
-            url: settingsPath,
-            title: 'Settings',
-            target: '_self',
-          },
-          {
-            title: betaSwitcherTitle,
-            onClick: () => togglePreviewWithCheck(),
-          },
-        ]),
-    { title: 'separator' },
-    ...(helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems),
+    ...(settingsMobileItems.length ? [{ title: 'separator' }, ...settingsMobileItems] : []),
+    ...(helpMobileItems.length ? [{ title: 'separator' }, ...helpMobileItems] : []),
   ];
 
   /* Help Panel Toggle Button */

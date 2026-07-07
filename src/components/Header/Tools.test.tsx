@@ -358,6 +358,16 @@ describe('Tools - toolbarConfig visibility', () => {
     const settingsElements = screen.queryAllByText('Settings');
     expect(settingsElements.length).toBeGreaterThanOrEqual(2);
   });
+
+  it('should not render an orphan separator in mobile dropdown when both settings and help are hidden', () => {
+    renderTools({}, { hideSettings: true, hideHelp: true });
+    expect(screen.queryAllByText('Settings')).toHaveLength(0);
+    expect(screen.queryByText('Support options')).not.toBeInTheDocument();
+    expect(screen.queryByText('Status page')).not.toBeInTheDocument();
+    // Verify no stray dividers: when both sections empty, no separator items should be in mobile dropdown
+    const dividers = document.querySelectorAll('li > hr.pf-v6-c-divider');
+    expect(dividers).toHaveLength(0);
+  });
 });
 
 describe('Tools - high contrast feature flag', () => {
