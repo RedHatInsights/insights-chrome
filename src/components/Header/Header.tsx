@@ -78,7 +78,7 @@ const MemoizedHeader = memo(
               <Logo theme={theme} />
             </MastheadLogo>
             {isLightwellHeader ? (
-              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-lg pf-v6-u-font-weight-normal pf-v6-u-pl-sm">Red Hat Lightwell</span>
+              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Red Hat Lightwell</span>
             ) : (
               !(!md && searchOpen) && <AllServicesDropdown />
             )}
