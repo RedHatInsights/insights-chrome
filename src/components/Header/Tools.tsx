@@ -359,16 +359,20 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
 
   /* Combine aboutMenuItems with a settings link on mobile */
   const mobileDropdownItems = [
-    { title: 'separator' },
-    {
-      url: settingsPath,
-      title: 'Settings',
-      target: '_self',
-    },
-    {
-      title: betaSwitcherTitle,
-      onClick: () => togglePreviewWithCheck(),
-    },
+    ...(toolbarConfig?.hideSettings
+      ? []
+      : [
+          { title: 'separator' },
+          {
+            url: settingsPath,
+            title: 'Settings',
+            target: '_self',
+          },
+          {
+            title: betaSwitcherTitle,
+            onClick: () => togglePreviewWithCheck(),
+          },
+        ]),
     { title: 'separator' },
     ...(helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems),
   ];

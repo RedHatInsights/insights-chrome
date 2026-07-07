@@ -345,6 +345,19 @@ describe('Tools - toolbarConfig visibility', () => {
     expect(screen.queryByTestId('PreviewSwitcher')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Help menu')).not.toBeInTheDocument();
   });
+
+  it('should not render settings or preview switcher in mobile dropdown when hideSettings is true', () => {
+    renderTools({}, { hideSettings: true });
+    // Neither desktop settings menu nor mobile settings link should appear
+    expect(screen.queryAllByText('Settings')).toHaveLength(0);
+  });
+
+  it('should render settings link in mobile dropdown by default', () => {
+    renderTools();
+    // Both desktop settings menu group title (H3) and mobile settings link (SPAN) should appear
+    const settingsElements = screen.queryAllByText('Settings');
+    expect(settingsElements.length).toBeGreaterThanOrEqual(2);
+  });
 });
 
 describe('Tools - high contrast feature flag', () => {
