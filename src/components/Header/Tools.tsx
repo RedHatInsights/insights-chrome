@@ -15,7 +15,7 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
-import { ITLess, getSection } from '../../utils/common';
+import { ITLess, getSection, LIGHTWELL_PATH } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -38,6 +38,8 @@ import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
 import type { ToolbarConfig } from './Header';
 import './Tools.scss';
+
+const isLightwellRoute = window.location.pathname === LIGHTWELL_PATH || window.location.pathname.startsWith(`${LIGHTWELL_PATH}/`);
 
 const InternalButton = () => (
   <Button
@@ -90,8 +92,8 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const isITLessEnv = useFlag('platform.chrome.itless');
-  const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
-  const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isDarkModeEnabled = useFlag('platform.chrome.dark-mode') || isLightwellRoute;
+  const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system') || isLightwellRoute;
   const isGlassForced = useAtomValue(layoutForceGlassThemeAtom);
   const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
