@@ -324,6 +324,27 @@ describe('Tools - toolbarConfig visibility', () => {
     expect(screen.getByText('Support options')).toBeInTheDocument();
     expect(screen.getByText('Status page')).toBeInTheDocument();
   });
+
+  it('should render settings menu by default', () => {
+    renderTools();
+    expect(screen.getByTestId('PreviewSwitcher')).toBeInTheDocument();
+  });
+
+  it('should hide settings menu when toolbarConfig.hideSettings is true', () => {
+    renderTools({}, { hideSettings: true });
+    expect(screen.queryByTestId('PreviewSwitcher')).not.toBeInTheDocument();
+  });
+
+  it('should still render help button when settings is hidden', () => {
+    renderTools({}, { hideSettings: true });
+    expect(screen.getByLabelText('Help menu')).toBeInTheDocument();
+  });
+
+  it('should hide both settings and help when both are true', () => {
+    renderTools({}, { hideSettings: true, hideHelp: true });
+    expect(screen.queryByTestId('PreviewSwitcher')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Help menu')).not.toBeInTheDocument();
+  });
 });
 
 describe('Tools - high contrast feature flag', () => {

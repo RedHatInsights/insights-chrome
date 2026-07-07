@@ -463,9 +463,11 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           </Tooltip>
         </ToolbarItem>
       )}
-      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
-      </ToolbarItem>
+      {!toolbarConfig?.hideSettings && (
+        <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+          <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
+        </ToolbarItem>
+      )}
       {!toolbarConfig?.hideHelp && (
         <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
           {helpPanelEnabled ? <HelpPanelToggleButton /> : <AboutButton />}

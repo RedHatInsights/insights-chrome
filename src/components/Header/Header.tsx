@@ -24,6 +24,7 @@ import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 export type ToolbarConfig = {
   hideNotifications?: boolean;
   hideHelp?: boolean;
+  hideSettings?: boolean;
 };
 
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
