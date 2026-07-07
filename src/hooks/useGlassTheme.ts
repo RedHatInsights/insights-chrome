@@ -28,13 +28,13 @@ const applyGlassTheme = (enabled: boolean) => {
 };
 
 const getInitialGlassTheme = (isEnabled: boolean, forceEnabled: boolean): boolean => {
-  if (!isEnabled) {
-    applyGlassTheme(false);
-    return false;
-  }
   if (forceEnabled) {
     applyGlassTheme(true);
     return true;
+  }
+  if (!isEnabled) {
+    applyGlassTheme(false);
+    return false;
   }
   const enabled = readGlassThemePreference();
   applyGlassTheme(enabled);
@@ -45,12 +45,12 @@ export const useGlassTheme = (isEnabled: boolean, forceEnabled = false) => {
   const [isGlassTheme, setIsGlassTheme] = useState<boolean>(() => getInitialGlassTheme(isEnabled, forceEnabled));
 
   useEffect(() => {
-    if (!isEnabled) {
-      setIsGlassTheme(false);
-      applyGlassTheme(false);
-    } else if (forceEnabled) {
+    if (forceEnabled) {
       setIsGlassTheme(true);
       applyGlassTheme(true);
+    } else if (!isEnabled) {
+      setIsGlassTheme(false);
+      applyGlassTheme(false);
     } else {
       const saved = readGlassThemePreference();
       setIsGlassTheme(saved);
