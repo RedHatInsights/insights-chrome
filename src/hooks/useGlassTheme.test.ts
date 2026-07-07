@@ -121,10 +121,22 @@ describe('useGlassTheme hook', () => {
       expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
     });
 
-    it('should not force glass on when feature flag is disabled', () => {
+    it('should force glass on even when feature flag is disabled', () => {
       const { result } = renderHook(() => useGlassTheme(false, true));
-      expect(result.current.isGlassTheme).toBe(false);
-      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(false);
+      expect(result.current.isGlassTheme).toBe(true);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
+    });
+
+    it('should keep glass on when feature flag changes to false while forceEnabled', () => {
+      const { result, rerender } = renderHook(({ enabled, forced }) => useGlassTheme(enabled, forced), {
+        initialProps: { enabled: true, forced: true },
+      });
+      expect(result.current.isGlassTheme).toBe(true);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
+
+      rerender({ enabled: false, forced: true });
+      expect(result.current.isGlassTheme).toBe(true);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
     });
   });
 });

@@ -9,7 +9,7 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useFeltTheme from '../hooks/useFeltTheme';
 
@@ -24,17 +24,20 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
   const setLayoutForceGlassTheme = useSetAtom(layoutForceGlassThemeAtom);
+  const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
 
   // Hide the BetaSwitcher banner directly from this layout
   // useLayoutEffect prevents a brief flash of the banner before the atom updates
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
     setLayoutForceGlassTheme(true);
+    setLayoutLightwellHeader(true);
     return () => {
       setLayoutBannerHidden(false);
       setLayoutForceGlassTheme(false);
+      setLayoutLightwellHeader(false);
     };
-  }, [setLayoutBannerHidden, setLayoutForceGlassTheme]);
+  }, [setLayoutBannerHidden, setLayoutForceGlassTheme, setLayoutLightwellHeader]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');

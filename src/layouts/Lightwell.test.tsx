@@ -29,7 +29,7 @@ import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import InternalChromeContext from '../utils/internalChromeContext';
 
@@ -164,5 +164,12 @@ describe('Lightwell', () => {
     expect(store.get(layoutForceGlassThemeAtom)).toBe(true);
     unmount();
     expect(store.get(layoutForceGlassThemeAtom)).toBe(false);
+  });
+
+  it('should set layoutLightwellHeaderAtom to true on mount and false on unmount', () => {
+    const { store, unmount } = renderLightwell();
+    expect(store.get(layoutLightwellHeaderAtom)).toBe(true);
+    unmount();
+    expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
   });
 });
