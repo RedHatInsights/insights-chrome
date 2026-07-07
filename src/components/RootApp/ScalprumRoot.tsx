@@ -40,9 +40,7 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
-
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
-// TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {

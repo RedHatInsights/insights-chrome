@@ -9,9 +9,9 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
-import useFeltTheme from '../hooks/useFeltTheme';
+import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
@@ -19,25 +19,20 @@ export type LightwellProps = {
 
 // TODO: Temporary layout for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
 const Lightwell = ({ Footer }: LightwellProps) => {
-  useFeltTheme();
+  useLightwellRouteSetup();
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
-  const setLayoutForceGlassTheme = useSetAtom(layoutForceGlassThemeAtom);
   const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
 
-  // Hide the BetaSwitcher banner directly from this layout
-  // useLayoutEffect prevents a brief flash of the banner before the atom updates
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
-    setLayoutForceGlassTheme(true);
     setLayoutLightwellHeader(true);
     return () => {
       setLayoutBannerHidden(false);
-      setLayoutForceGlassTheme(false);
       setLayoutLightwellHeader(false);
     };
-  }, [setLayoutBannerHidden, setLayoutForceGlassTheme, setLayoutLightwellHeader]);
+  }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');

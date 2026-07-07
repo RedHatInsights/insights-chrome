@@ -110,7 +110,7 @@ describe('Lightwell', () => {
   });
 
   afterEach(() => {
-    document.documentElement.classList.remove('pf-v6-theme-felt');
+    document.documentElement.classList.remove('pf-v6-theme-felt', 'pf-v6-theme-glass');
   });
 
   it('should render the layout shell', () => {
