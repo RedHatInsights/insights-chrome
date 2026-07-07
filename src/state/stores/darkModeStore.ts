@@ -51,3 +51,5 @@ export const useDarkModeStore = () => {
     isDark: state.isDark,
   };
 };
+
+export default useDarkModeStore;
