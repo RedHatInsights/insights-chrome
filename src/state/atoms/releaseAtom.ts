@@ -6,6 +6,9 @@ import { SearchPermissionsCache } from './localSearchAtom';
 import { atom } from 'jotai';
 import { userConfigAtom } from './userConfigAtom';
 import { ChromeUserConfig } from '../../utils/initUserConfig';
+import { LIGHTWELL_PATH } from '../../utils/common';
+
+const isLightwellPath = window.location.pathname.startsWith(LIGHTWELL_PATH);
 
 export const previewModalOpenAtom = atomWithToggle(false);
 
@@ -58,16 +61,17 @@ export const hidePreviewBannerAtom = atomWithToggle(initialHidePreviewBanner, as
 
 /**
  * Atom for layouts to signal that the preview banner should be hidden.
- * Used by the Lightwell layout to hide the BetaSwitcher directly,
- * instead of checking the URL path.
+ * Initialized from the current pathname so the banner never renders on Lightwell routes,
+ * even before any component mounts.
  */
-export const layoutBannerHiddenAtom = atom(false);
+export const layoutBannerHiddenAtom = atom(isLightwellPath);
 
 /**
  * Atom for layouts to signal that the glass theme should be force-enabled.
- * Used by the Lightwell layout to auto-enable glass theme without hardcoding URL checks.
+ * Initialized from the current pathname so the glass theme is already active
+ * before Header/Tools first renders on Lightwell routes.
  */
-export const layoutForceGlassThemeAtom = atom(false);
+export const layoutForceGlassThemeAtom = atom(isLightwellPath);
 
 /**
  * Atom for layouts to signal a simplified header for Lightwell.
