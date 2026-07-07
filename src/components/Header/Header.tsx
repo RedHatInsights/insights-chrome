@@ -9,7 +9,7 @@ import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import ContextSwitcher from '../ContextSwitcher';
 import Activation from '../Activation';
 import Logo from './Logo';
-import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
+import ChromeLink, { type LinkWrapperProps } from '../ChromeLink';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
