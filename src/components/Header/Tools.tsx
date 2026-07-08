@@ -107,16 +107,11 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
-  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
   const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
-  const enableGlass = () => toggleGlassTheme(undefined as never, true);
-  const disableGlass = () => {
-    if (isGlassForced) return;
-    toggleGlassTheme(undefined as never, false);
-  };
-
   const handleContrastSystem = () => {
     if (isGlassForced) return;
     disableGlass();
@@ -150,6 +145,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     },
     {
       title: intl.formatMessage(messages.theme),
+      isHidden: !isFeltThemeEnabled,
       customContent: (
         <ToggleGroup aria-label={intl.formatMessage(messages.theme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem

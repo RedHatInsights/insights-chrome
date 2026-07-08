@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const GLASS_THEME_KEY = 'chrome:glass-theme';
 const GLASS_THEME_CLASS = 'pf-v6-theme-glass';
@@ -58,11 +58,25 @@ export const useGlassTheme = (isEnabled: boolean, forceEnabled = false) => {
     }
   }, [isEnabled, forceEnabled]);
 
-  const toggleGlassTheme = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
-    setIsGlassTheme(checked);
-    applyGlassTheme(checked);
-    writeGlassThemePreference(checked);
+  const enableGlass = () => {
+    setIsGlassTheme(true);
+    applyGlassTheme(true);
+    writeGlassThemePreference(true);
   };
 
-  return { isGlassTheme, toggleGlassTheme };
+  const disableGlass = () => {
+    setIsGlassTheme(false);
+    applyGlassTheme(false);
+    writeGlassThemePreference(false);
+  };
+
+  const toggleGlassTheme = (_event: unknown, checked: boolean) => {
+    if (checked) {
+      enableGlass();
+    } else {
+      disableGlass();
+    }
+  };
+
+  return { isGlassTheme, toggleGlassTheme, enableGlass, disableGlass };
 };

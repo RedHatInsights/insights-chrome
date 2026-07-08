@@ -68,5 +68,3 @@ export const useFeltTheme = (forceEnabled = false) => {
 
   return { isFeltTheme, setFeltEnabled, setFeltDisabled, forceEnabled };
 };
-
-export default useFeltTheme;

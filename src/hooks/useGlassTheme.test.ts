@@ -1,8 +1,7 @@
-import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { useGlassTheme } from './useGlassTheme';
 
-const mockEvent = {} as React.FormEvent<HTMLInputElement>;
+const mockEvent = {};
 
 describe('useGlassTheme hook', () => {
   beforeEach(() => {
@@ -137,6 +136,25 @@ describe('useGlassTheme hook', () => {
       rerender({ enabled: false, forced: true });
       expect(result.current.isGlassTheme).toBe(true);
       expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
+    });
+  });
+
+  describe('enableGlass and disableGlass', () => {
+    it('should enable glass via enableGlass', () => {
+      const { result } = renderHook(() => useGlassTheme(true));
+      act(() => result.current.enableGlass());
+      expect(result.current.isGlassTheme).toBe(true);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(true);
+      expect(localStorage.getItem('chrome:glass-theme')).toBe('true');
+    });
+
+    it('should disable glass via disableGlass', () => {
+      localStorage.setItem('chrome:glass-theme', 'true');
+      const { result } = renderHook(() => useGlassTheme(true));
+      act(() => result.current.disableGlass());
+      expect(result.current.isGlassTheme).toBe(false);
+      expect(document.documentElement.classList.contains('pf-v6-theme-glass')).toBe(false);
+      expect(localStorage.getItem('chrome:glass-theme')).toBe('false');
     });
   });
 });
