@@ -74,6 +74,13 @@ export const layoutBannerHiddenAtom = atom(isLightwellPath);
 export const layoutForceGlassThemeAtom = atom(isLightwellPath);
 
 /**
+ * Atom for layouts to signal that the felt theme should be force-enabled.
+ * Initialized from the current pathname so the felt theme is already active
+ * before Header/Tools first renders on Lightwell routes.
+ */
+export const layoutForceFeltThemeAtom = atom(isLightwellPath);
+
+/**
  * Atom for layouts to signal a simplified header for Lightwell.
  * When true, the AllServicesDropdown is replaced with a static "Red Hat Lightwell"
  * header and the Search input is hidden.

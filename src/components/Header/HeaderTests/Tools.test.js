@@ -57,6 +57,7 @@ jest.mock('../../../state/atoms/releaseAtom', () => {
     isPreviewAtom: util.atomWithToggle(false),
     togglePreviewWithCheckAtom: util.atomWithToggle(false),
     layoutForceGlassThemeAtom: atom(false),
+    layoutForceFeltThemeAtom: atom(false),
   };
 });
 
