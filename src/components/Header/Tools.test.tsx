@@ -1,6 +1,6 @@
 import React from 'react';
 import { configure, fireEvent, render, screen } from '@testing-library/react';
-import { Provider } from 'jotai';
+import { Provider, createStore } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
 import Tools from './Tools';
@@ -86,12 +86,12 @@ jest.mock('../../hooks/useGlassTheme', () => ({
 }));
 const mockSetFeltEnabled = jest.fn();
 const mockSetFeltDisabled = jest.fn();
+const mockFeltThemeState = { isFeltTheme: false, forceEnabled: false };
 jest.mock('../../hooks/useFeltTheme', () => ({
   useFeltTheme: () => ({
-    isFeltTheme: false,
+    ...mockFeltThemeState,
     setFeltEnabled: mockSetFeltEnabled,
     setFeltDisabled: mockSetFeltDisabled,
-    forceEnabled: false,
   }),
 }));
 const mockSetDefaultContrast = jest.fn();
@@ -141,18 +141,20 @@ const mockInternalChromeContext = {
   drawerActions: { toggleDrawerContent: jest.fn() },
 };
 
+import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import type { ToolbarConfig } from './Header';
 
-const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig) => {
+const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
   const flags = { ...defaultFlags, ...flagOverrides };
   mockedUseFlag.mockImplementation((name: string) => flags[name] ?? false);
+  const jotaiStore = store ?? createStore();
 
   return render(
     <MemoryRouter>
       <IntlProvider locale="en">
         <ChromeAuthContext.Provider value={{ user: mockUser, token: 'test-token' } as any}>
           <InternalChromeContext.Provider value={mockInternalChromeContext as any}>
-            <Provider>
+            <Provider store={jotaiStore}>
               <Tools toolbarConfig={toolbarConfig} />
             </Provider>
           </InternalChromeContext.Provider>
@@ -437,7 +439,11 @@ describe('Tools - high contrast feature flag', () => {
 });
 
 describe('Tools - theme toggle', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
 
   it('should always render theme section', () => {
     renderTools();
@@ -458,5 +464,42 @@ describe('Tools - theme toggle', () => {
     const defaultBtn = document.getElementById('theme-default');
     fireEvent.click(defaultBtn!);
     expect(mockSetFeltDisabled).toHaveBeenCalled();
+  });
+
+  it('should disable theme-default when felt is forced', () => {
+    mockFeltThemeState.isFeltTheme = true;
+    mockFeltThemeState.forceEnabled = true;
+    const store = createStore();
+    store.set(layoutForceFeltThemeAtom, true);
+    renderTools({}, undefined, store);
+
+    const themeDefaultBtn = document.getElementById('theme-default');
+    expect(themeDefaultBtn).toBeDisabled();
+  });
+});
+
+describe('Tools - forced glass mode', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  it('should disable contrast items when glass is forced', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.high-contrast': true, 'platform.chrome.glass-theme': true }, undefined, store);
+
+    expect(document.getElementById('contrast-system')).toBeDisabled();
+    expect(document.getElementById('contrast-default')).toBeDisabled();
+    expect(document.getElementById('contrast-high')).toBeDisabled();
+  });
+
+  it('should not disable glass button when glass is forced', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.glass-theme': true }, undefined, store);
+
+    expect(document.getElementById('contrast-glass')).not.toBeDisabled();
   });
 });

@@ -112,17 +112,23 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const enableGlass = () => toggleGlassTheme(undefined as never, true);
-  const disableGlass = () => toggleGlassTheme(undefined as never, false);
+  const disableGlass = () => {
+    if (isGlassForced) return;
+    toggleGlassTheme(undefined as never, false);
+  };
 
   const handleContrastSystem = () => {
+    if (isGlassForced) return;
     disableGlass();
     setSystemContrast();
   };
   const handleContrastDefault = () => {
+    if (isGlassForced) return;
     disableGlass();
     setDefaultContrast();
   };
   const handleContrastHigh = () => {
+    if (isGlassForced) return;
     disableGlass();
     setHighContrast();
   };
@@ -206,6 +212,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
             isSelected={!isGlassTheme && contrastMode === HighContrastVariants.system}
             onChange={handleContrastSystem}
             aria-label={intl.formatMessage(messages.contrastSystem)}
+            isDisabled={isGlassForced}
           />
           <ToggleGroupItem
             text={intl.formatMessage(messages.contrastDefault)}
@@ -213,6 +220,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
             isSelected={!isGlassTheme && contrastMode === HighContrastVariants.default}
             onChange={handleContrastDefault}
             aria-label={intl.formatMessage(messages.contrastDefault)}
+            isDisabled={isGlassForced}
           />
           {isHighContrastEnabled && (
             <ToggleGroupItem
@@ -221,6 +229,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
               isSelected={!isGlassTheme && contrastMode === HighContrastVariants.high}
               onChange={handleContrastHigh}
               aria-label={intl.formatMessage(messages.contrastHigh)}
+              isDisabled={isGlassForced}
             />
           )}
           {isGlassModeEnabled && (

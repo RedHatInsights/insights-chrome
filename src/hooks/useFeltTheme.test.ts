@@ -58,6 +58,24 @@ describe('useFeltTheme', () => {
     expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
   });
 
+  it('should not persist to localStorage when setFeltEnabled is called in forced mode', () => {
+    const { result } = renderHook(() => useFeltTheme(true));
+    act(() => result.current.setFeltEnabled());
+    expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+  });
+
+  it('should restore saved preference when forceEnabled transitions to false', () => {
+    const { result, rerender } = renderHook(({ force }: { force: boolean }) => useFeltTheme(force), {
+      initialProps: { force: true },
+    });
+    expect(result.current.isFeltTheme).toBe(true);
+    expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
+
+    rerender({ force: false });
+    expect(result.current.isFeltTheme).toBe(false);
+    expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
+  });
+
   it('should expose forceEnabled state', () => {
     const { result: normalResult } = renderHook(() => useFeltTheme());
     expect(normalResult.current.forceEnabled).toBe(false);

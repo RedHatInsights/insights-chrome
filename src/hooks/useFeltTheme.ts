@@ -52,6 +52,7 @@ export const useFeltTheme = (forceEnabled = false) => {
   }, [forceEnabled]);
 
   const setFeltEnabled = () => {
+    if (forceEnabled) return;
     setIsFeltTheme(true);
     applyFeltTheme(true);
     writeFeltThemePreference(true);
