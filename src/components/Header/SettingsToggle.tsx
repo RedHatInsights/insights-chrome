@@ -82,7 +82,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
       toggle={(toggleRef) => (
         <MenuToggle
           ref={toggleRef}
-          variant="plain"
+          variant="default"
           className={props.className}
           id={props.id?.toString()}
           onClick={() => setIsOpen((prev) => !prev)}

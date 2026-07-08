@@ -106,7 +106,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
       toggle={(toggleRef) => (
         <MenuToggle
           ref={toggleRef}
-          variant="plain"
+          variant="default"
           className={props.className}
           id={props.id?.toString()}
           onClick={onToggle}

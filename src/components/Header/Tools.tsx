@@ -440,7 +440,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         className="tooltip-inner-help-cy"
       >
         <MenuToggle
-          variant="plain"
+          variant="default"
           icon={isPreview ? <AIExperienceIcon /> : <QuestionCircleIcon />}
           id="HelpPanelToggle"
           ouiaId="chrome-help-panel"
@@ -448,7 +448,9 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           onClick={handleToggle}
           isExpanded={isHelpPanelOpen}
           className="tooltip-button-help-cy chr-c-help-panel-toggle"
-        />
+        >
+          Help
+        </MenuToggle>
       </Tooltip>
     );
   };
