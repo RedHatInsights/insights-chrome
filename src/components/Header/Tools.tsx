@@ -2,7 +2,6 @@ import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
@@ -21,20 +20,17 @@ import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { isPreviewAtom, layoutForceGlassThemeAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
+import { isPreviewAtom, layoutForceFeltThemeAtom, layoutForceGlassThemeAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
-import AdjustIcon from '@patternfly/react-icons/dist/dynamic/icons/adjust-icon';
-import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
-import OutlinedMoonIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-moon-icon';
-import OutlinedSunIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-sun-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import { useGlassTheme } from '../../hooks/useGlassTheme';
+import { useFeltTheme } from '../../hooks/useFeltTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
 import type { ToolbarConfig } from './Header';
 import './Tools.scss';
@@ -93,6 +89,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
   const isGlassForced = useAtomValue(layoutForceGlassThemeAtom);
+  const isFeltForced = useAtomValue(layoutForceFeltThemeAtom);
   const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
   const { user, token } = useContext(ChromeAuthContext);
@@ -110,7 +107,30 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
-  const { isGlassTheme, toggleGlassTheme } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced);
+
+  /* Contrast mode handlers — coordinate glass + high-contrast hooks */
+  const handleContrastSystem = () => {
+    if (isGlassForced) return;
+    disableGlass();
+    setSystemContrast();
+  };
+  const handleContrastDefault = () => {
+    if (isGlassForced) return;
+    disableGlass();
+    setDefaultContrast();
+  };
+  const handleContrastHigh = () => {
+    if (isGlassForced) return;
+    disableGlass();
+    setHighContrast();
+  };
+  const handleContrastGlass = () => {
+    setDefaultContrast();
+    enableGlass();
+  };
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -124,86 +144,99 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
-      title: 'Color scheme',
-      isHidden: !isDarkModeEnabled,
-      items: [
-        ...(isDarkModeSystemEnabled
-          ? [
-              {
-                ouiaId: 'settings-menu-color-system',
-                title: (
-                  <>
-                    <AdjustIcon /> System {themeMode === ThemeVariants.system && <CheckIcon />}
-                  </>
-                ),
-                description: 'Follow system preference',
-                onClick: setSystemMode,
-              },
-            ]
-          : []),
-        {
-          ouiaId: 'settings-menu-color-light',
-          title: (
-            <>
-              <OutlinedSunIcon /> Light {themeMode === ThemeVariants.light && <CheckIcon />}
-            </>
-          ),
-          description: 'Always use light mode',
-          onClick: setLightMode,
-        },
-        {
-          ouiaId: 'settings-menu-color-dark',
-          title: (
-            <>
-              <OutlinedMoonIcon /> Dark {themeMode === ThemeVariants.dark && <CheckIcon />}
-            </>
-          ),
-          description: 'Always use dark mode',
-          onClick: setDarkMode,
-        },
-      ],
-    },
-    {
-      title: intl.formatMessage(messages.glassEffect),
-      isHidden: !isGlassModeEnabled,
+      title: intl.formatMessage(messages.theme),
+      isHidden: !isFeltThemeEnabled,
       customContent: (
-        <div className="pf-v6-u-mx-md pf-v6-u-my-sm">
-          <Switch
-            id="glass-theme-switch"
-            label={intl.formatMessage(messages.glassEffectDescription)}
-            isChecked={isGlassTheme}
-            hasCheckIcon
-            onChange={toggleGlassTheme}
+        <ToggleGroup aria-label={intl.formatMessage(messages.theme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.themeDefault)}
+            buttonId="theme-default"
+            isSelected={!isFeltTheme}
+            onChange={setFeltDisabled}
+            aria-label={intl.formatMessage(messages.themeDefault)}
+            isDisabled={isFeltForced}
           />
-        </div>
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.themeFelt)}
+            buttonId="theme-felt"
+            isSelected={isFeltTheme}
+            onChange={setFeltEnabled}
+            aria-label={intl.formatMessage(messages.themeFelt)}
+          />
+        </ToggleGroup>
       ),
     },
     {
-      title: intl.formatMessage(messages.contrast),
-      isHidden: !isHighContrastEnabled,
+      title: intl.formatMessage(messages.colorScheme),
+      isHidden: !isDarkModeEnabled,
       customContent: (
-        <ToggleGroup aria-label={intl.formatMessage(messages.contrast)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
+        <ToggleGroup aria-label={intl.formatMessage(messages.colorScheme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
+          {isDarkModeSystemEnabled && (
+            <ToggleGroupItem
+              text={intl.formatMessage(messages.colorSchemeSystem)}
+              buttonId="color-scheme-system"
+              isSelected={themeMode === ThemeVariants.system}
+              onChange={setSystemMode}
+              aria-label={intl.formatMessage(messages.colorSchemeSystem)}
+            />
+          )}
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.colorSchemeLight)}
+            buttonId="color-scheme-light"
+            isSelected={themeMode === ThemeVariants.light}
+            onChange={setLightMode}
+            aria-label={intl.formatMessage(messages.colorSchemeLight)}
+          />
+          <ToggleGroupItem
+            text={intl.formatMessage(messages.colorSchemeDark)}
+            buttonId="color-scheme-dark"
+            isSelected={themeMode === ThemeVariants.dark}
+            onChange={setDarkMode}
+            aria-label={intl.formatMessage(messages.colorSchemeDark)}
+          />
+        </ToggleGroup>
+      ),
+    },
+    {
+      title: intl.formatMessage(messages.contrastMode),
+      isHidden: !isHighContrastEnabled && !isGlassModeEnabled,
+      customContent: (
+        <ToggleGroup aria-label={intl.formatMessage(messages.contrastMode)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem
             text={intl.formatMessage(messages.contrastSystem)}
             buttonId="contrast-system"
-            isSelected={contrastMode === HighContrastVariants.system}
-            onChange={() => setSystemContrast()}
+            isSelected={!isGlassTheme && contrastMode === HighContrastVariants.system}
+            onChange={handleContrastSystem}
             aria-label={intl.formatMessage(messages.contrastSystem)}
+            isDisabled={isGlassForced}
           />
           <ToggleGroupItem
             text={intl.formatMessage(messages.contrastDefault)}
             buttonId="contrast-default"
-            isSelected={contrastMode === HighContrastVariants.default}
-            onChange={() => setDefaultContrast()}
+            isSelected={!isGlassTheme && contrastMode === HighContrastVariants.default}
+            onChange={handleContrastDefault}
             aria-label={intl.formatMessage(messages.contrastDefault)}
+            isDisabled={isGlassForced}
           />
-          <ToggleGroupItem
-            text={intl.formatMessage(messages.contrastHigh)}
-            buttonId="contrast-high"
-            isSelected={contrastMode === HighContrastVariants.high}
-            onChange={() => setHighContrast()}
-            aria-label={intl.formatMessage(messages.contrastHigh)}
-          />
+          {isHighContrastEnabled && (
+            <ToggleGroupItem
+              text={intl.formatMessage(messages.contrastHigh)}
+              buttonId="contrast-high"
+              isSelected={!isGlassTheme && contrastMode === HighContrastVariants.high}
+              onChange={handleContrastHigh}
+              aria-label={intl.formatMessage(messages.contrastHigh)}
+              isDisabled={isGlassForced}
+            />
+          )}
+          {isGlassModeEnabled && (
+            <ToggleGroupItem
+              text={intl.formatMessage(messages.contrastGlass)}
+              buttonId="contrast-glass"
+              isSelected={isGlassTheme}
+              onChange={handleContrastGlass}
+              aria-label={intl.formatMessage(messages.contrastGlass)}
+            />
+          )}
         </ToggleGroup>
       ),
     },

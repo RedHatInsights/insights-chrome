@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { useSetAtom } from 'jotai';
-import { layoutForceGlassThemeAtom } from '../state/atoms/releaseAtom';
+import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../state/atoms/releaseAtom';
 import { LIGHTWELL_PATH } from '../utils/common';
 
 const FELT_THEME_CLASS = 'pf-v6-theme-felt';
@@ -25,6 +25,7 @@ type UseLightwellRouteSetupOptions = {
  */
 const useLightwellRouteSetup = ({ enabled = true }: UseLightwellRouteSetupOptions = {}) => {
   const setLayoutForceGlassTheme = useSetAtom(layoutForceGlassThemeAtom);
+  const setLayoutForceFeltTheme = useSetAtom(layoutForceFeltThemeAtom);
 
   useLayoutEffect(() => {
     if (!enabled) {
@@ -33,12 +34,14 @@ const useLightwellRouteSetup = ({ enabled = true }: UseLightwellRouteSetupOption
 
     document.documentElement.classList.add(FELT_THEME_CLASS, GLASS_THEME_CLASS);
     setLayoutForceGlassTheme(true);
+    setLayoutForceFeltTheme(true);
 
     return () => {
       document.documentElement.classList.remove(FELT_THEME_CLASS, GLASS_THEME_CLASS);
       setLayoutForceGlassTheme(false);
+      setLayoutForceFeltTheme(false);
     };
-  }, [enabled, setLayoutForceGlassTheme]);
+  }, [enabled, setLayoutForceGlassTheme, setLayoutForceFeltTheme]);
 };
 
 export default useLightwellRouteSetup;
