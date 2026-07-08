@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -104,15 +104,14 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
       }}
       onOpenChange={setIsOpen}
       toggle={(toggleRef) => (
-        <Button
+        <MenuToggle
           ref={toggleRef}
-          variant={props.icon && 'control'}
+          variant="default"
           className={props.className}
           id={props.id?.toString()}
           onClick={onToggle}
           aria-label={props.ariaLabel}
-          aria-expanded={isOpen}
-          isClicked={isOpen}
+          isExpanded={isOpen}
           icon={props.icon && <props.icon />}
         />
       )}

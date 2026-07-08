@@ -1,6 +1,7 @@
 import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
@@ -438,18 +439,18 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         flipBehavior={['bottom']}
         className="tooltip-inner-help-cy"
       >
-        <Button
-          variant="control"
+        <MenuToggle
+          variant="default"
           icon={isPreview ? <AIExperienceIcon /> : <QuestionCircleIcon />}
           id="HelpPanelToggle"
           ouiaId="chrome-help-panel"
           aria-label="Toggle help panel"
           onClick={handleToggle}
-          isClicked={isHelpPanelOpen}
+          isExpanded={isHelpPanelOpen}
           className="tooltip-button-help-cy chr-c-help-panel-toggle"
         >
           Help
-        </Button>
+        </MenuToggle>
       </Tooltip>
     );
   };
