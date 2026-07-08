@@ -1,6 +1,6 @@
 import React from 'react';
 import { configure, fireEvent, render, screen } from '@testing-library/react';
-import { Provider } from 'jotai';
+import { Provider, createStore } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
 import Tools from './Tools';
@@ -77,10 +77,23 @@ jest.mock('../../hooks/useTheme', () => ({
   }),
   ThemeVariants: { light: 0, dark: 1, system: 2 },
 }));
+const mockEnableGlass = jest.fn();
+const mockDisableGlass = jest.fn();
 jest.mock('../../hooks/useGlassTheme', () => ({
   useGlassTheme: () => ({
     isGlassTheme: false,
-    toggleGlassTheme: jest.fn(),
+    enableGlass: mockEnableGlass,
+    disableGlass: mockDisableGlass,
+  }),
+}));
+const mockSetFeltEnabled = jest.fn();
+const mockSetFeltDisabled = jest.fn();
+const mockFeltThemeState = { isFeltTheme: false, forceEnabled: false };
+jest.mock('../../hooks/useFeltTheme', () => ({
+  useFeltTheme: () => ({
+    ...mockFeltThemeState,
+    setFeltEnabled: mockSetFeltEnabled,
+    setFeltDisabled: mockSetFeltDisabled,
   }),
 }));
 const mockSetDefaultContrast = jest.fn();
@@ -120,6 +133,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.itless': false,
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
+  'platform.chrome.felt-theme': false,
   'platform.chrome.glass-theme': false,
   'platform.chrome.high-contrast': false,
   'platform.chrome.notifications-drawer': false,
@@ -130,18 +144,20 @@ const mockInternalChromeContext = {
   drawerActions: { toggleDrawerContent: jest.fn() },
 };
 
+import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import type { ToolbarConfig } from './Header';
 
-const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig) => {
+const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
   const flags = { ...defaultFlags, ...flagOverrides };
   mockedUseFlag.mockImplementation((name: string) => flags[name] ?? false);
+  const jotaiStore = store ?? createStore();
 
   return render(
     <MemoryRouter>
       <IntlProvider locale="en">
         <ChromeAuthContext.Provider value={{ user: mockUser, token: 'test-token' } as any}>
           <InternalChromeContext.Provider value={mockInternalChromeContext as any}>
-            <Provider>
+            <Provider store={jotaiStore}>
               <Tools toolbarConfig={toolbarConfig} />
             </Provider>
           </InternalChromeContext.Provider>
@@ -162,16 +178,16 @@ describe('Tools - dark mode system feature flag', () => {
   });
 
   describe('when dark mode enabled and system theme enabled', () => {
-    it('should render all three theme options', () => {
+    it('should render all three color scheme options as ToggleGroup', () => {
       renderTools({
         'platform.chrome.dark-mode': true,
         'platform.chrome.dark-mode_system': true,
       });
 
       expect(screen.getByText('Color scheme')).toBeInTheDocument();
-      expect(screen.getByText('Follow system preference')).toBeInTheDocument();
-      expect(screen.getByText('Always use light mode')).toBeInTheDocument();
-      expect(screen.getByText('Always use dark mode')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-system')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-light')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-dark')).toBeInTheDocument();
     });
   });
 
@@ -183,8 +199,8 @@ describe('Tools - dark mode system feature flag', () => {
       });
 
       expect(screen.getByText('Color scheme')).toBeInTheDocument();
-      expect(screen.getByText('Always use light mode')).toBeInTheDocument();
-      expect(screen.getByText('Always use dark mode')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-light')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-dark')).toBeInTheDocument();
     });
 
     it('should not render system option', () => {
@@ -193,7 +209,7 @@ describe('Tools - dark mode system feature flag', () => {
         'platform.chrome.dark-mode_system': false,
       });
 
-      expect(screen.queryByText('Follow system preference')).not.toBeInTheDocument();
+      expect(document.getElementById('color-scheme-system')).not.toBeInTheDocument();
     });
   });
 
@@ -212,15 +228,15 @@ describe('Tools - dark mode system feature flag', () => {
       expect(screen.getByTestId('PreviewSwitcher')).toBeInTheDocument();
     });
 
-    it('should have OUIA IDs on color scheme options when dark mode is enabled', () => {
+    it('should render color scheme ToggleGroupItems when dark mode is enabled', () => {
       renderTools({
         'platform.chrome.dark-mode': true,
         'platform.chrome.dark-mode_system': true,
       });
 
-      expect(screen.getByTestId('settings-menu-color-system')).toBeInTheDocument();
-      expect(screen.getByTestId('settings-menu-color-light')).toBeInTheDocument();
-      expect(screen.getByTestId('settings-menu-color-dark')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-system')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-light')).toBeInTheDocument();
+      expect(document.getElementById('color-scheme-dark')).toBeInTheDocument();
     });
 
     it('should have OUIA IDs on Settings menu items', () => {
@@ -269,16 +285,25 @@ describe('Tools - dark mode system feature flag', () => {
     });
   });
 
-  describe('glass theme toggle', () => {
-    it('should render glass effect section when flag is enabled', () => {
+  describe('glass theme in contrast mode', () => {
+    it('should render Glass option in contrast mode when glass flag is enabled', () => {
       renderTools({ 'platform.chrome.glass-theme': true });
-      expect(screen.getByText('Glass effect')).toBeInTheDocument();
-      expect(document.getElementById('glass-theme-switch')).toBeInTheDocument();
+      expect(screen.getByText('Contrast mode')).toBeInTheDocument();
+      expect(document.getElementById('contrast-glass')).toBeInTheDocument();
     });
 
-    it('should not render glass effect section when flag is disabled', () => {
+    it('should not render Glass option when glass flag is disabled', () => {
       renderTools({ 'platform.chrome.glass-theme': false });
-      expect(screen.queryByText('Glass effect')).not.toBeInTheDocument();
+      expect(document.getElementById('contrast-glass')).not.toBeInTheDocument();
+    });
+
+    it('should show contrast mode section when only glass flag is enabled', () => {
+      renderTools({ 'platform.chrome.glass-theme': true, 'platform.chrome.high-contrast': false });
+      expect(screen.getByText('Contrast mode')).toBeInTheDocument();
+      expect(document.getElementById('contrast-system')).toBeInTheDocument();
+      expect(document.getElementById('contrast-default')).toBeInTheDocument();
+      expect(document.getElementById('contrast-glass')).toBeInTheDocument();
+      expect(document.getElementById('contrast-high')).not.toBeInTheDocument();
     });
   });
 });
@@ -374,38 +399,155 @@ describe('Tools - high contrast feature flag', () => {
   beforeEach(() => jest.clearAllMocks());
 
   describe('when high contrast is disabled', () => {
-    it('should not render contrast section', () => {
-      renderTools({ 'platform.chrome.high-contrast': false });
-      expect(screen.queryByText('Contrast')).not.toBeInTheDocument();
+    it('should not render contrast mode section when both flags disabled', () => {
+      renderTools({ 'platform.chrome.high-contrast': false, 'platform.chrome.glass-theme': false });
+      expect(screen.queryByText('Contrast mode')).not.toBeInTheDocument();
     });
   });
 
   describe('when high contrast is enabled', () => {
-    it('should render contrast section with toggle group', () => {
+    it('should render contrast mode section with toggle group', () => {
       renderTools({ 'platform.chrome.high-contrast': true });
 
-      expect(screen.getByText('Contrast')).toBeInTheDocument();
-      expect(screen.getByText('System')).toBeInTheDocument();
-      expect(screen.getByText('Default')).toBeInTheDocument();
-      expect(screen.getByText('High contrast')).toBeInTheDocument();
+      expect(screen.getByText('Contrast mode')).toBeInTheDocument();
+      expect(document.getElementById('contrast-system')).toBeInTheDocument();
+      expect(document.getElementById('contrast-default')).toBeInTheDocument();
+      expect(document.getElementById('contrast-high')).toBeInTheDocument();
     });
 
-    it('should call setSystemContrast when System is clicked', () => {
+    it('should call setSystemContrast and disableGlass when System is clicked', () => {
       renderTools({ 'platform.chrome.high-contrast': true });
-      fireEvent.click(screen.getByText('System'));
+      const systemBtn = document.getElementById('contrast-system');
+      fireEvent.click(systemBtn!);
       expect(mockSetSystemContrast).toHaveBeenCalled();
+      expect(mockDisableGlass).toHaveBeenCalled();
     });
 
-    it('should call setDefaultContrast when Default is clicked', () => {
+    it('should call setDefaultContrast and disableGlass when Default is clicked', () => {
       renderTools({ 'platform.chrome.high-contrast': true });
-      fireEvent.click(screen.getByText('Default'));
+      const defaultBtn = document.getElementById('contrast-default');
+      fireEvent.click(defaultBtn!);
       expect(mockSetDefaultContrast).toHaveBeenCalled();
+      expect(mockDisableGlass).toHaveBeenCalled();
     });
 
-    it('should call setHighContrast when High contrast is clicked', () => {
+    it('should call setHighContrast and disableGlass when High contrast is clicked', () => {
       renderTools({ 'platform.chrome.high-contrast': true });
-      fireEvent.click(screen.getByText('High contrast'));
+      const highBtn = document.getElementById('contrast-high');
+      fireEvent.click(highBtn!);
       expect(mockSetHighContrast).toHaveBeenCalled();
+      expect(mockDisableGlass).toHaveBeenCalled();
     });
+  });
+});
+
+describe('Tools - theme toggle', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  it('should not render theme section when felt-theme flag is disabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': false });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should render theme section when felt-theme flag is enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true });
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(document.getElementById('theme-default')).toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).toBeInTheDocument();
+  });
+
+  it('should call setFeltEnabled when Project Felt is clicked', () => {
+    renderTools({ 'platform.chrome.felt-theme': true });
+    const feltBtn = document.getElementById('theme-felt');
+    fireEvent.click(feltBtn!);
+    expect(mockSetFeltEnabled).toHaveBeenCalled();
+  });
+
+  it('should call setFeltDisabled when Default is clicked', () => {
+    renderTools({ 'platform.chrome.felt-theme': true });
+    const defaultBtn = document.getElementById('theme-default');
+    fireEvent.click(defaultBtn!);
+    expect(mockSetFeltDisabled).toHaveBeenCalled();
+  });
+
+  it('should disable theme-default when felt is forced', () => {
+    mockFeltThemeState.isFeltTheme = true;
+    mockFeltThemeState.forceEnabled = true;
+    const store = createStore();
+    store.set(layoutForceFeltThemeAtom, true);
+    renderTools({ 'platform.chrome.felt-theme': true }, undefined, store);
+
+    const themeDefaultBtn = document.getElementById('theme-default');
+    expect(themeDefaultBtn).toBeDisabled();
+  });
+});
+
+describe('Tools - forced glass mode', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  it('should disable contrast items when glass is forced', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.high-contrast': true, 'platform.chrome.glass-theme': true }, undefined, store);
+
+    expect(document.getElementById('contrast-system')).toBeDisabled();
+    expect(document.getElementById('contrast-default')).toBeDisabled();
+    expect(document.getElementById('contrast-high')).toBeDisabled();
+  });
+
+  it('should not disable glass button when glass is forced', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.glass-theme': true }, undefined, store);
+
+    expect(document.getElementById('contrast-glass')).not.toBeDisabled();
+  });
+});
+
+describe('Tools - glass ↔ high contrast mutual exclusivity', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  it('should call setDefaultContrast and enableGlass when Glass is clicked', () => {
+    renderTools({ 'platform.chrome.glass-theme': true, 'platform.chrome.high-contrast': true });
+    const glassBtn = document.getElementById('contrast-glass');
+    fireEvent.click(glassBtn!);
+    expect(mockSetDefaultContrast).toHaveBeenCalled();
+    expect(mockEnableGlass).toHaveBeenCalled();
+  });
+
+  it('should call disableGlass when switching from Glass to High contrast', () => {
+    renderTools({ 'platform.chrome.glass-theme': true, 'platform.chrome.high-contrast': true });
+    const highBtn = document.getElementById('contrast-high');
+    fireEvent.click(highBtn!);
+    expect(mockDisableGlass).toHaveBeenCalled();
+    expect(mockSetHighContrast).toHaveBeenCalled();
+  });
+
+  it('should call disableGlass when switching from Glass to System contrast', () => {
+    renderTools({ 'platform.chrome.glass-theme': true, 'platform.chrome.high-contrast': true });
+    const systemBtn = document.getElementById('contrast-system');
+    fireEvent.click(systemBtn!);
+    expect(mockDisableGlass).toHaveBeenCalled();
+    expect(mockSetSystemContrast).toHaveBeenCalled();
+  });
+
+  it('should call disableGlass when switching from Glass to Default contrast', () => {
+    renderTools({ 'platform.chrome.glass-theme': true, 'platform.chrome.high-contrast': true });
+    const defaultBtn = document.getElementById('contrast-default');
+    fireEvent.click(defaultBtn!);
+    expect(mockDisableGlass).toHaveBeenCalled();
+    expect(mockSetDefaultContrast).toHaveBeenCalled();
   });
 });
