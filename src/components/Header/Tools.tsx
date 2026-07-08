@@ -443,6 +443,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           variant="plain"
           icon={isPreview ? <AIExperienceIcon /> : <QuestionCircleIcon />}
           id="HelpPanelToggle"
+          ouiaId="HelpPanelToggle"
           aria-label="Toggle help panel"
           onClick={handleToggle}
           isExpanded={isHelpPanelOpen}
