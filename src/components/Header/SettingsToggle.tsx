@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -80,15 +80,14 @@ const SettingsToggle = (props: SettingsToggleProps) => {
       }}
       onOpenChange={setIsOpen}
       toggle={(toggleRef) => (
-        <Button
+        <MenuToggle
           ref={toggleRef}
-          variant={props.icon && 'control'}
+          variant="plain"
           className={props.className}
           id={props.id?.toString()}
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label={props.ariaLabel}
-          aria-expanded={isOpen}
-          isClicked={isOpen}
+          isExpanded={isOpen}
           icon={props.icon && <props.icon />}
         />
       )}
