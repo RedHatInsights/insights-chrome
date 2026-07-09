@@ -168,7 +168,14 @@ export const createChromeContext = ({
       refreshToken: chromeAuth.refreshToken,
       qe: {
         ...qe,
-        init: () => qe.init(chromeStore, { current: { user: { access_token: chromeAuth.token } } as any }),
+        init: () =>
+          qe.init(chromeStore, {
+            current: {
+              user: { access_token: chromeAuth.token },
+              signinRedirect: () => chromeAuth.login(),
+              signinSilent: () => chromeAuth.loginSilent(),
+            },
+          }),
       },
       reAuthWithScopes: chromeAuth.reAuthWithScopes,
     } as any,
