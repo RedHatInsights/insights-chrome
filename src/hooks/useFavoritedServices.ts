@@ -1,20 +1,19 @@
 import { ServiceTileProps } from '../components/FavoriteServices/ServiceTile';
 import useAllServices from './useAllServices';
-import { useEffect, useMemo, useState } from 'react';
-import fetchNavigationFiles, { extractNavItemGroups } from '../utils/fetchNavigationFiles';
-import { NavItem, Navigation } from '../@types/types';
+import { useMemo } from 'react';
+import { extractNavItemGroups } from '../utils/fetchNavigationFiles';
+import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
 import useFavoritePagesWrapper from './useFavoritePagesWrapper';
 import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
 import useAllLinks from './useAllLinks';
-import useFeoConfig from './useFeoConfig';
+import { useVisibleBundles } from '../state/atoms/visibleBundlesAtom';
 
 const useFavoritedServices = () => {
-  const useFeoGenerated = useFeoConfig();
   const { favoritePages } = useFavoritePagesWrapper();
   const { availableSections } = useAllServices();
   const allLinks = useAllLinks();
-  const [bundles, setBundles] = useState<Navigation[]>([]);
+  const bundles = useVisibleBundles();
 
   const fakeBundle: NavItem[] = useMemo(() => {
     // escape early if we have no services
@@ -31,14 +30,6 @@ const useFavoritedServices = () => {
     }, []);
   }, [availableSections]);
 
-  useEffect(() => {
-    fetchNavigationFiles(useFeoGenerated)
-      .then((data) => setBundles(data as Navigation[]))
-      .catch((error) => {
-        console.error('Unable to fetch favorite services', error);
-      });
-  }, [useFeoGenerated]);
-
   const linksWithFragments = useMemo(() => {
     const internalLinks = [...allLinks];
     // push items with unique hrefs from our fake bundle for leaf creation
@@ -50,8 +41,8 @@ const useFavoritedServices = () => {
     return internalLinks.map((link) => {
       let linkLeaf: ReturnType<typeof findNavLeafPath> | undefined;
       // use every to exit early if match was found
-      [...bundles, fakeBundle || []].every((bundle) => {
-        const leaf = findNavLeafPath(extractNavItemGroups(bundle), (item) => item?.href === link.href);
+      ([...bundles, fakeBundle || []] as (BundleNavigation | NavItem[])[]).every((bundle) => {
+        const leaf = findNavLeafPath(extractNavItemGroups(bundle as Navigation), (item) => item?.href === link.href);
         if (leaf.activeItem) {
           linkLeaf = leaf;
           return false;
