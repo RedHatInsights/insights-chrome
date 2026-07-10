@@ -2,7 +2,7 @@
 import initializeAccessRequestCookies from './initializeAccessRequestCookies';
 import * as crossAccountBouncer from './crossAccountBouncer';
 import Cookies from 'js-cookie';
-import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ORG_ID } from '../utils/consts';
+import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 
 jest.mock('./crossAccountBouncer', () => {
   return {
@@ -55,6 +55,7 @@ describe('initializeAccessRequestCookies', () => {
     localStorage.setItem(ACTIVE_REMOTE_REQUEST, 'some-local-storage');
     initializeAccessRequestCookies();
     expect(mockCookiesRemove).toHaveBeenCalledWith(CROSS_ACCESS_ORG_ID);
+    expect(mockCookiesRemove).toHaveBeenCalledWith(CROSS_ACCESS_ACCOUNT_NUMBER);
   });
 
   it('calls crossAccountBouncer if the initial account is expired', () => {
@@ -84,5 +85,20 @@ describe('initializeAccessRequestCookies', () => {
     );
     initializeAccessRequestCookies();
     expect(mockCrossAccountBouncer).not.toHaveBeenCalled();
+  });
+
+  it('triggers expiry check with legacy CROSS_ACCESS_ACCOUNT_NUMBER cookie only', () => {
+    // @ts-ignore - first call for CROSS_ACCESS_ORG_ID returns undefined
+    mockCookiesGet.mockReturnValueOnce(undefined);
+    // @ts-ignore - second call for CROSS_ACCESS_ACCOUNT_NUMBER returns legacy cookie
+    mockCookiesGet.mockReturnValueOnce('legacy-account-cookie');
+    localStorage.setItem(
+      ACTIVE_REMOTE_REQUEST,
+      JSON.stringify({
+        end_date: '2020-01-01', // expired
+      })
+    );
+    initializeAccessRequestCookies();
+    expect(mockCrossAccountBouncer).toHaveBeenCalled();
   });
 });
