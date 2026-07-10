@@ -5,6 +5,12 @@ import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
 
+/**
+ * Base path for the Lightwell route.
+ * Used in ScalprumRoot.tsx (route definition) and Tools.tsx (pathname check).
+ */
+export const LIGHTWELL_PATH = '/lightwell';
+
 export const DEFAULT_SSO_ROUTES = {
   prod: {
     url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com', 'us.console.redhat.com'],

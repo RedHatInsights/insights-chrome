@@ -18,7 +18,7 @@ import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 import { AllServicesDropdownContext, FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
-import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
+import { hidePreviewBannerAtom, layoutBannerHiddenAtom } from '../../state/atoms/releaseAtom';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 
 export type AllServicesMenuProps = {
@@ -34,6 +34,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSection>(linkSections[0]);
   const hideBanner = useAtomValue(hidePreviewBannerAtom);
+  const layoutHidden = useAtomValue(layoutBannerHiddenAtom);
 
   // Toggle currently active tab
   const handleTabClick = (event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent, tabIndex: string | number) => {
@@ -72,7 +73,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
       <div
         ref={menuRef}
         className={classNames('pf-v6-u-w-100 chr-c-page__services-nav-dropdown-menu', {
-          'preview-offset': !hideBanner,
+          'preview-offset': !hideBanner && !layoutHidden,
         })}
         data-testid="chr-c__find-app-service"
         onClick={handleClickOutside}

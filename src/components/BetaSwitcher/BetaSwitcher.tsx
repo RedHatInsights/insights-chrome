@@ -5,7 +5,14 @@ import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { hidePreviewBannerAtom, isPreviewAtom, previewModalOpenAtom, setPreviewSeenAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
+import {
+  hidePreviewBannerAtom,
+  isPreviewAtom,
+  layoutBannerHiddenAtom,
+  previewModalOpenAtom,
+  setPreviewSeenAtom,
+  togglePreviewWithCheckAtom,
+} from '../../state/atoms/releaseAtom';
 import BetaInfoModal from './BetaInfoModal';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 import BetaSwitcherDropdown from './BetaSwitcherDropdown';
@@ -15,6 +22,7 @@ import './BetaSwitcher.scss';
 const BetaSwitcher = () => {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [hideBanner, setHideBanner] = useAtom(hidePreviewBannerAtom);
+  const layoutHidden = useAtomValue(layoutBannerHiddenAtom);
   const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const setUserPreviewSeen = useSetAtom(setPreviewSeenAtom);
@@ -25,17 +33,17 @@ const BetaSwitcher = () => {
   useEffect(() => {
     const chromeRenderElement = document.getElementById('chrome-app-render-root');
     // adjust the height of the chrome render element to fit the banner and not show extra scrollbar
-    if (!hideBanner && bannerRef.current && chromeRenderElement) {
+    if (!hideBanner && !layoutHidden && bannerRef.current && chromeRenderElement) {
       const { height } = bannerRef.current.getBoundingClientRect();
       chromeRenderElement.style.height = `calc(100vh - ${height}px)`;
-    } else if (hideBanner && chromeRenderElement) {
+    } else if ((hideBanner || layoutHidden) && chromeRenderElement) {
       chromeRenderElement.style.removeProperty('height');
     }
     if (isPreview) {
       // preview should always reset the banner visibility
       setHideBanner(false);
     }
-  }, [isPreview, hideBanner]);
+  }, [isPreview, hideBanner, layoutHidden]);
 
   const handleBetaAccept = () => {
     setIsBetaModalOpen(false);
@@ -43,7 +51,7 @@ const BetaSwitcher = () => {
     setUserPreviewSeen();
   };
 
-  if (hideBanner) {
+  if (hideBanner || layoutHidden) {
     return null;
   }
 

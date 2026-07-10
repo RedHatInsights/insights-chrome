@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import AllServicesMenu from './AllServicesMenu';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
+import { layoutBannerHiddenAtom } from '../../state/atoms/releaseAtom';
 
 // Mock child components to isolate the unit under test
 jest.mock('../FavoriteServices/ServicesGallery', () => ({
@@ -53,8 +54,11 @@ const defaultProps = {
   favoritedServices: [],
 };
 
-const renderMenu = (props = {}) => {
+const renderMenu = (props = {}, storeOverrides?: (store: ReturnType<typeof createStore>) => void) => {
   const store = createStore();
+  if (storeOverrides) {
+    storeOverrides(store);
+  }
   return render(
     <MemoryRouter>
       <Provider store={store}>
@@ -84,5 +88,13 @@ describe('AllServicesMenu', () => {
     renderMenu();
     // The bug: aria-label showed the first section's description (AI/ML) even on Favorites tab
     expect(screen.queryByRole('tabpanel', { name: 'AI and machine learning services' })).not.toBeInTheDocument();
+  });
+
+  it('should not apply preview-offset class when layoutBannerHiddenAtom is true', () => {
+    renderMenu({}, (store) => {
+      store.set(layoutBannerHiddenAtom, true);
+    });
+    const menuEl = screen.getByTestId('chr-c__find-app-service');
+    expect(menuEl.classList.contains('preview-offset')).toBe(false);
   });
 });
