@@ -10,9 +10,38 @@ const MOCK_CHROME_ANALYTICS = {
   autocaptureAPIKeyDev: 'feo-dev-autocapture-key',
 };
 
+// Default user mock data
+const DEFAULT_MOCK_USER = {
+  identity: {
+    internal: {
+      org_id: 'org-123',
+      account_id: 'acct-456',
+    },
+    account_number: 'EBS-789',
+    user: {
+      is_org_admin: true,
+      is_internal: false,
+      locale: 'en_US',
+      email: 'testuser@example.com',
+      first_name: 'Test',
+      last_name: 'User',
+    },
+    organization: {
+      name: 'Test Org',
+    },
+  },
+  entitlements: {
+    insights: { is_entitled: true, is_trial: false },
+    ansible: { is_entitled: false, is_trial: true },
+  },
+};
+
 // Mutable mock state — tests mutate these before render
 let mockModuleDefinition: Record<string, unknown> | undefined = { analytics: { amplitude: { APIKeyDev: 'module-dev-key' } } };
 let mockChromeModules: Record<string, unknown> = { chrome: { analytics: MOCK_CHROME_ANALYTICS } };
+let mockActiveModule = 'test-app';
+let mockIsPreview = false;
+let mockUser = DEFAULT_MOCK_USER;
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag: string) => {
@@ -25,14 +54,41 @@ jest.mock('react-router-dom', () => ({ useNavigate: () => jest.fn() }));
 jest.mock('../utils/common', () => ({ isProd: () => false }));
 jest.mock('../state/atoms/activeModuleAtom', () => ({
   activeModuleDefinitionReadAtom: '__ACTIVE_MODULE_ATOM__',
+  activeModuleAtom: '__ACTIVE_MODULE_VALUE_ATOM__',
 }));
 jest.mock('../state/atoms/chromeModuleAtom', () => ({
   chromeModulesAtom: '__CHROME_MODULES_ATOM__',
+}));
+jest.mock('../state/atoms/releaseAtom', () => ({
+  isPreviewAtom: '__IS_PREVIEW_ATOM__',
+}));
+// Create a getter for mockUser to avoid circular dependency
+const getMockUser = () => mockUser;
+
+jest.mock('../auth/ChromeAuthContext', () => ({
+  __esModule: true,
+  default: {},
+}));
+
+jest.mock('react', () => {
+  const actualReact = jest.requireActual('react');
+  return {
+    ...actualReact,
+    useContext: jest.fn(() => {
+      // Return mockUser getter to avoid initialization issues
+      return { user: getMockUser() };
+    }),
+  };
+});
+jest.mock('../hooks/useBundle', () => ({
+  getUrl: jest.fn(() => 'test-bundle'),
 }));
 jest.mock('jotai', () => ({
   useAtomValue: jest.fn((atom: unknown) => {
     if (atom === '__ACTIVE_MODULE_ATOM__') return mockModuleDefinition;
     if (atom === '__CHROME_MODULES_ATOM__') return mockChromeModules;
+    if (atom === '__ACTIVE_MODULE_VALUE_ATOM__') return mockActiveModule;
+    if (atom === '__IS_PREVIEW_ATOM__') return mockIsPreview;
     return undefined;
   }),
 }));
@@ -40,6 +96,11 @@ jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock
 jest.mock('@amplitude/analytics-browser', () => ({
   add: jest.fn(),
   init: jest.fn(),
+  setUserId: jest.fn(),
+  identify: jest.fn(),
+  Identify: jest.fn().mockImplementation(() => ({
+    set: jest.fn().mockReturnThis(),
+  })),
 }));
 jest.mock('@amplitude/plugin-autocapture-browser', () => ({
   autocapturePlugin: jest.fn(() => ({ name: 'autocapture' })),
@@ -76,6 +137,9 @@ describe('useAmplitude', () => {
     // Reset mutable mock state to defaults
     mockModuleDefinition = { analytics: { amplitude: { APIKeyDev: 'module-dev-key' } } };
     mockChromeModules = { chrome: { analytics: MOCK_CHROME_ANALYTICS } };
+    mockActiveModule = 'test-app';
+    mockIsPreview = false;
+    mockUser = DEFAULT_MOCK_USER;
     // Clear handler registry
     Object.keys(onHandlers).forEach((key) => delete onHandlers[key]);
   });
@@ -220,7 +284,7 @@ describe('useAmplitude', () => {
     warnSpy.mockRestore();
   });
 
-  it('initializes autocapture with FEO config key', async () => {
+  it('initializes autocapture with FEO config key and enriched user properties', async () => {
     expect(amplitude).toBeDefined();
     expect(autocapturePlugin).toBeDefined();
 
@@ -236,7 +300,12 @@ describe('useAmplitude', () => {
 
     await waitFor(() => {
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
-      expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', 'user-1', {
+
+      // Verify init was called with proper config (no identifyOptions - that's not a real parameter)
+      const initCall = (amplitude.init as jest.Mock).mock.calls[0];
+      expect(initCall[0]).toBe('feo-dev-autocapture-key');
+      expect(initCall[1]).toBe('user-1');
+      expect(initCall[2]).toMatchObject({
         deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
@@ -245,6 +314,19 @@ describe('useAmplitude', () => {
           fileDownloads: true,
         },
       });
+
+      // Verify identify was called with enriched user properties
+      expect(amplitude.Identify).toHaveBeenCalled();
+      const identifyInstance = (amplitude.Identify as jest.Mock).mock.results[0].value;
+      expect(identifyInstance.set).toHaveBeenCalledWith('internal', false);
+      expect(identifyInstance.set).toHaveBeenCalledWith('isBeta', false);
+      expect(identifyInstance.set).toHaveBeenCalledWith('isOrgAdmin', true);
+      expect(identifyInstance.set).toHaveBeenCalledWith('org_id', 'org-123');
+      expect(identifyInstance.set).toHaveBeenCalledWith('account_id', 'org-123');
+      expect(identifyInstance.set).toHaveBeenCalledWith('account_number', 'EBS-789');
+      expect(identifyInstance.set).toHaveBeenCalledWith('current_bundle', 'test-bundle');
+      expect(identifyInstance.set).toHaveBeenCalledWith('current_app', 'test-app');
+      expect(amplitude.identify).toHaveBeenCalledWith(identifyInstance);
     });
 
     expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');

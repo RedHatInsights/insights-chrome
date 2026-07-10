@@ -1,13 +1,16 @@
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useSegment } from './useSegment';
 import { isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
-import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
+import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { chromeModulesAtom } from '../state/atoms/chromeModuleAtom';
+import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
+import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { getUrl } from '../hooks/useBundle';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
@@ -20,6 +23,9 @@ function useAmplitude() {
   const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const chromeModules = useAtomValue(chromeModulesAtom);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isPreview = useAtomValue(isPreviewAtom);
+  const { user } = useContext(ChromeAuthContext);
 
   // Chrome-level analytics config from FEO (fed-mods.json analytics section)
   const chromeAnalytics = chromeModules['chrome']?.analytics;
@@ -67,7 +73,12 @@ function useAmplitude() {
   };
 
   const initializeAmplitudeAutocapture = function () {
-    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready) {
+    console.log(
+      `useAmplitude: initializeAmplitudeAutocapture - flag=${enableAmplitudeAutocapture} init=${amplitudeSdkInitialized.current} ready=${ready} hasUser=${!!user}`
+    );
+
+    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready || !user) {
+      console.log('useAmplitude: EARLY RETURN - not initializing');
       return;
     }
 
@@ -83,11 +94,54 @@ function useAmplitude() {
     analytics?.ready(() => {
       analytics
         .user()
-        .then((user) => {
+        .then((segmentUser) => {
           try {
+            console.log(`useAmplitude: Building user properties - hasUser=${!!user} hasIdentity=${!!user?.identity} is_internal=${user?.identity?.user?.is_internal}`);
+
+            // Build enriched user properties from ChromeUser context
+            // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
+            const userProperties: Record<string, unknown> = {
+              // REQUIRED: User context - matches Segment property names
+              internal: user.identity.user?.is_internal,
+
+              // STRETCH GOALS: Additional high-value properties
+              isBeta: isPreview,
+              isOrgAdmin: user.identity.user?.is_org_admin,
+              org_id: user.identity.internal?.org_id,
+
+              // Additional organization context
+              account_id: user.identity.internal?.org_id,
+              account_number: user.identity.account_number,
+              organization_name: user.identity.organization?.name,
+
+              // Additional user context
+              locale: user.identity.user?.locale,
+              email_domain: user.identity.user?.email ? user.identity.user.email.split('@')[1]?.toLowerCase() : undefined,
+
+              // Application context
+              current_bundle: getUrl('bundle'),
+              current_app: activeModule,
+
+              // Entitlements
+              ...Object.entries(user.entitlements || {}).reduce(
+                (acc, [key, entitlement]) => ({
+                  ...acc,
+                  [`entitlement_${key}`]: entitlement.is_entitled,
+                  [`entitlement_${key}_trial`]: entitlement.is_trial,
+                }),
+                {}
+              ),
+            };
+
+            // Filter out undefined values
+            console.log('useAmplitude: userProperties before filtering:', JSON.stringify(userProperties));
+            const filteredUserProperties = Object.fromEntries(Object.entries(userProperties).filter(([, value]) => value !== undefined));
+            console.log(`useAmplitude: After filtering - ${Object.keys(filteredUserProperties).length} properties:`, JSON.stringify(filteredUserProperties));
+
+            // Initialize Amplitude SDK with autocapture plugin
             amplitude.add(autocapturePlugin());
-            amplitude.init(autocaptureKeyToUse, user.id() ?? undefined, {
-              deviceId: user.anonymousId() ?? undefined,
+            const initPromise = amplitude.init(autocaptureKeyToUse, segmentUser.id() ?? undefined, {
+              deviceId: segmentUser.anonymousId() ?? undefined,
               defaultTracking: {
                 sessions: true,
                 pageViews: true,
@@ -95,6 +149,25 @@ function useAmplitude() {
                 fileDownloads: true,
               },
             });
+
+            // Set user properties via identify() call
+            // IMPORTANT: Wait for init() to complete, then send identify()
+            initPromise?.promise?.then(() => {
+              if (Object.keys(filteredUserProperties).length > 0) {
+                console.log('Amplitude init complete - setting user properties:', Object.keys(filteredUserProperties));
+                const identifyEvent = new amplitude.Identify();
+                Object.entries(filteredUserProperties).forEach(([key, value]) => {
+                  // Type assertion: we've already filtered out undefined, value is a valid property type
+                  identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
+                });
+                // Send the identify event
+                amplitude.identify(identifyEvent);
+                console.log('Amplitude identify() called with enriched properties');
+              } else {
+                console.warn('No user properties to set for Amplitude autocapture');
+              }
+            });
+
             console.log('Amplitude SDK with autocapture initialized (separate project)');
           } catch (error) {
             amplitudeSdkInitialized.current = false;
@@ -186,7 +259,7 @@ function useAmplitude() {
 
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, autocaptureKeyToUse]);
+  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, autocaptureKeyToUse, user, activeModule, isPreview]);
 }
 
 export default useAmplitude;
