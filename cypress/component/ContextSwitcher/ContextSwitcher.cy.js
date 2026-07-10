@@ -134,4 +134,38 @@ describe('<ContextSwithcer />', () => {
     cy.get('.account-label').contains('17940002').should('exist');
     cy.get('.account-label').contains('17940003').should('exist');
   });
+
+  it('should handle legacy target_account fallback (pre-2026-06-03 data)', () => {
+    cy.viewport(1280, 720);
+    // Simulate pre-migration API response with target_account (no target_org)
+    cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
+      data: [
+        {
+          request_id: 'legacy-req-1',
+          target_account: '11223344',
+          start_date: '01 May 2026',
+          end_date: '31 May 2027',
+          created: '28 Apr 2026, 10:00 UTC',
+          status: 'approved',
+          user_id: 'testuser',
+          user_available: false,
+        },
+      ],
+    }).as('legacyRequests');
+
+    testUser.identity.user.is_internal = true;
+    cy.mount(
+      <Wrapper>
+        <ContextSwitcher orgId={testUser.identity.org_id} isInternal={testUser.identity.user.is_internal} />
+      </Wrapper>
+    );
+    cy.wait('@legacyRequests');
+
+    // Component should render
+    cy.contains('Organization:').should('exist');
+
+    // Legacy account_number should render via resolveAccountIdentifier fallback
+    // Dropdown auto-opens in test, so account is directly visible
+    cy.contains('11223344').should('exist');
+  });
 });
