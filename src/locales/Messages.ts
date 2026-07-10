@@ -608,4 +608,69 @@ export default defineMessages({
     description: 'Frosted glass effect',
     defaultMessage: 'Frosted glass effect',
   },
+  contrast: {
+    id: 'contrast',
+    description: 'Contrast',
+    defaultMessage: 'Contrast',
+  },
+  contrastSystem: {
+    id: 'contrastSystem',
+    description: 'System',
+    defaultMessage: 'System',
+  },
+  contrastDefault: {
+    id: 'contrastDefault',
+    description: 'Default',
+    defaultMessage: 'Default',
+  },
+  contrastHigh: {
+    id: 'contrastHigh',
+    description: 'High contrast',
+    defaultMessage: 'High contrast',
+  },
+  contrastGlass: {
+    id: 'contrastGlass',
+    description: 'Glass effect option in contrast mode',
+    defaultMessage: 'Glass',
+  },
+  contrastMode: {
+    id: 'contrastMode',
+    description: 'Contrast mode',
+    defaultMessage: 'Contrast mode',
+  },
+  theme: {
+    id: 'theme',
+    description: 'Theme',
+    defaultMessage: 'Theme',
+  },
+  themeDefault: {
+    id: 'themeDefault',
+    description: 'Default theme',
+    defaultMessage: 'Default',
+  },
+  themeFelt: {
+    id: 'themeFelt',
+    description: 'Project Felt theme',
+    defaultMessage: 'Project Felt',
+  },
+  colorScheme: {
+    id: 'colorScheme',
+    description: 'Color scheme',
+    defaultMessage: 'Color scheme',
+  },
+  colorSchemeSystem: {
+    id: 'colorSchemeSystem',
+    description: 'System color scheme',
+    defaultMessage: 'System',
+  },
+  colorSchemeLight: {
+    id: 'colorSchemeLight',
+    description: 'Light color scheme',
+    defaultMessage: 'Light',
+  },
+  colorSchemeDark: {
+    id: 'colorSchemeDark',
+    description: 'Dark color scheme',
+    defaultMessage: 'Dark',
+  },
 });

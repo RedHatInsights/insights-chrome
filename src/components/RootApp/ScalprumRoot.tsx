@@ -20,7 +20,7 @@ import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess } from '../../utils/common';
+import { ITLess, LIGHTWELL_PATH } from '../../utils/common';
 import { lazyWithRetry } from '../../utils/chunkLoadErrorUtils';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
@@ -40,8 +40,8 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
-
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
+const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
@@ -87,6 +87,15 @@ const ScalprumRoot = memo(
             />
           )}
           <Route path="/security" element={<DefaultLayout />} />
+          {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
+          <Route
+            path={`${LIGHTWELL_PATH}/*`}
+            element={
+              <Suspense fallback={LoadingFallback}>
+                <Lightwell />
+              </Suspense>
+            }
+          />
           <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
         </Routes>
       </ChromeProvider>

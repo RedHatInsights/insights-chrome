@@ -6,6 +6,9 @@ import { SearchPermissionsCache } from './localSearchAtom';
 import { atom } from 'jotai';
 import { userConfigAtom } from './userConfigAtom';
 import { ChromeUserConfig } from '../../utils/initUserConfig';
+import { LIGHTWELL_PATH } from '../../utils/common';
+
+const isLightwellPath = window.location.pathname.startsWith(LIGHTWELL_PATH);
 
 export const previewModalOpenAtom = atomWithToggle(false);
 
@@ -55,6 +58,34 @@ export const hidePreviewBannerAtom = atomWithToggle(initialHidePreviewBanner, as
     localStorage.setItem(HIDE_PREVIEW_BANNER_KEY, 'true');
   }
 });
+
+/**
+ * Atom for layouts to signal that the preview banner should be hidden.
+ * Initialized from the current pathname so the banner never renders on Lightwell routes,
+ * even before any component mounts.
+ */
+export const layoutBannerHiddenAtom = atom(isLightwellPath);
+
+/**
+ * Atom for layouts to signal that the glass theme should be force-enabled.
+ * Initialized from the current pathname so the glass theme is already active
+ * before Header/Tools first renders on Lightwell routes.
+ */
+export const layoutForceGlassThemeAtom = atom(isLightwellPath);
+
+/**
+ * Atom for layouts to signal that the felt theme should be force-enabled.
+ * Initialized from the current pathname so the felt theme is already active
+ * before Header/Tools first renders on Lightwell routes.
+ */
+export const layoutForceFeltThemeAtom = atom(isLightwellPath);
+
+/**
+ * Atom for layouts to signal a simplified header for Lightwell.
+ * When true, the AllServicesDropdown is replaced with a static "Red Hat Lightwell"
+ * header and the Search input is hidden.
+ */
+export const layoutLightwellHeaderAtom = atom(false);
 
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {

@@ -12,7 +12,9 @@ import LoadingFallback from '../../utils/loading-fallback';
 
 // Component that is displayed as a placeholder before auth init is finished
 const AppPlaceholder = () => {
-  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices', 'learning-resources'].includes(getUrl('bundle'));
+  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices', 'learning-resources', 'lightwell'].includes(getUrl('bundle'));
+  const hideFooter = ['lightwell'].includes(getUrl('bundle'));
+
   return (
     <MemoryRouter>
       <Page
@@ -40,7 +42,7 @@ const AppPlaceholder = () => {
       >
         <div className="chr-render">
           {LoadingFallback}
-          <ChromeFooter />
+          {!hideFooter && <ChromeFooter />}
         </div>
       </Page>
     </MemoryRouter>

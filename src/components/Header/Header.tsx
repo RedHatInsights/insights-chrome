@@ -1,5 +1,6 @@
 import React, { Fragment, Suspense, memo, useContext, useState } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
+import { useAtomValue } from 'jotai';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadLogo, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
@@ -8,7 +9,7 @@ import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import ContextSwitcher from '../ContextSwitcher';
 import Activation from '../Activation';
 import Logo from './Logo';
-import ChromeLink from '../ChromeLink';
+import ChromeLink, { type LinkWrapperProps } from '../ChromeLink';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
@@ -18,6 +19,13 @@ import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+
+export type ToolbarConfig = {
+  hideNotifications?: boolean;
+  hideHelp?: boolean;
+  hideSettings?: boolean;
+};
 
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
   return !!(user.orgId && user.username && user.accountNumber && user.email);
@@ -26,6 +34,7 @@ function hasUser(user: { orgId?: string; username?: string; accountNumber?: stri
 const MemoizedHeader = memo(
   ({
     breadcrumbsProps,
+    toolbarConfig,
     orgId,
     username,
     accountNumber,
@@ -33,6 +42,7 @@ const MemoizedHeader = memo(
     isInternal = false,
   }: {
     breadcrumbsProps?: Breadcrumbsprops;
+    toolbarConfig?: ToolbarConfig;
     orgId: string;
     username: string;
     accountNumber: string;
@@ -47,6 +57,7 @@ const MemoizedHeader = memo(
       setSearchOpen(isOpen);
     };
     const isITLess = useFlag('platform.chrome.itless');
+    const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
@@ -63,11 +74,15 @@ const MemoizedHeader = memo(
             <MastheadLogo
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
-              component={(props) => <ChromeLink {...props} appId="landing" href="/" />}
+              {...(!isLightwellHeader && { component: (props: LinkWrapperProps) => <ChromeLink {...props} appId="landing" href="/" /> })}
             >
               <Logo theme={theme} />
             </MastheadLogo>
-            {!(!md && searchOpen) && <AllServicesDropdown />}
+            {isLightwellHeader ? (
+              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Red Hat Lightwell</span>
+            ) : (
+              !(!md && searchOpen) && <AllServicesDropdown />
+            )}
           </MastheadBrand>
         </MastheadMain>
         <MastheadContent className="pf-v6-u-mx-0">
@@ -91,13 +106,15 @@ const MemoizedHeader = memo(
                 )}
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
-                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group">
-                  <Suspense fallback={null}>
-                    <SearchInput onStateChange={hideAllServices} />
-                  </Suspense>
-                </ToolbarGroup>
+                {!isLightwellHeader && (
+                  <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group" data-testid="search-toolbar-group">
+                    <Suspense fallback={null}>
+                      <SearchInput onStateChange={hideAllServices} />
+                    </Suspense>
+                  </ToolbarGroup>
+                )}
                 <ToolbarGroup className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0" widget-type="InsightsToolbar" gap={{ default: 'gapSm' }}>
-                  <HeaderTools />
+                  <HeaderTools toolbarConfig={toolbarConfig} />
                 </ToolbarGroup>
               </ToolbarGroup>
             </ToolbarContent>
@@ -110,7 +127,7 @@ const MemoizedHeader = memo(
 
 MemoizedHeader.displayName = 'MemoizedHeader';
 
-export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
+export const Header = ({ breadcrumbsProps, toolbarConfig }: { breadcrumbsProps?: Breadcrumbsprops; toolbarConfig?: ToolbarConfig }) => {
   // extract valid data from the context
   // we don't want to use the context directly to prevent unnecessary re-renders
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
@@ -122,14 +139,15 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
       orgId={user.identity.org_id}
       isInternal={user.identity.user.is_internal}
       breadcrumbsProps={breadcrumbsProps}
+      toolbarConfig={toolbarConfig}
     />
   );
 };
 
-export const HeaderTools = () => {
+export const HeaderTools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { ready } = useContext(ChromeAuthContext);
   if (!ready) {
     return <UnAuthtedHeader />;
   }
-  return <Tools />;
+  return <Tools toolbarConfig={toolbarConfig} />;
 };

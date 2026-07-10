@@ -4,6 +4,10 @@
   top: -1px;
 }
 
+:root:where(.pf-v6-theme-dark) .chr-c-ai-experience-icon {
+  filter: brightness(0) invert(1);
+}
+
 .chr-c-help-panel-toggle {
   --pf-v6-c-button--m-primary--m-display-lg--Gap: 0.25rem;
   --pf-v6-c-button--Gap: 0.25rem;
