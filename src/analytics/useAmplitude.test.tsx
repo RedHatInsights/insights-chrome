@@ -95,7 +95,9 @@ jest.mock('jotai', () => ({
 jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock, ready: true }) }));
 jest.mock('@amplitude/analytics-browser', () => ({
   add: jest.fn(),
-  init: jest.fn(),
+  init: jest.fn(() => ({
+    promise: Promise.resolve(),
+  })),
   setUserId: jest.fn(),
   identify: jest.fn(),
   Identify: jest.fn().mockImplementation(() => ({
@@ -329,8 +331,6 @@ describe('useAmplitude', () => {
       expect(amplitude.identify).toHaveBeenCalledWith(identifyInstance);
     });
 
-    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
-
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
       if (flag === 'platform.chrome.analytics.amplitude') return true;
       if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
@@ -370,8 +370,6 @@ describe('useAmplitude', () => {
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
       expect(amplitude.init).toHaveBeenCalled();
     });
-
-    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
 
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
       if (flag === 'platform.chrome.analytics.amplitude') return true;

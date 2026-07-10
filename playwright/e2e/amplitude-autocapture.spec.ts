@@ -14,6 +14,11 @@ import { gunzipSync } from 'zlib';
  * Amplitude with autocapture events.
  */
 
+// Test configuration constants
+const AMPLITUDE_REQUEST_TIMEOUT = 30000; // 30 seconds to wait for initial Amplitude request
+const EVENT_BATCH_DELAY = 2000; // 2 seconds to wait for event batching
+const NEGATIVE_TEST_WAIT = 3000; // 3 seconds to ensure no requests in negative test
+
 test.describe('Amplitude Autocapture - Enriched User Properties', () => {
   test('should send enriched user properties with autocapture events', async ({ page }) => {
     // CRITICAL: Re-enable analytics for this test
@@ -21,13 +26,6 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     await page.addInitScript(() => {
       localStorage.removeItem('chrome:analytics:disable');
       localStorage.removeItem('chrome:segment:disable');
-    });
-
-    // Listen to ALL console messages for debugging
-    const consoleMessages: string[] = [];
-    page.on('console', (msg) => {
-      const text = msg.text();
-      consoleMessages.push(`[${msg.type()}] ${text}`);
     });
 
     // Intercept FEO config (fed-mods.json) and inject Amplitude autocapture keys
@@ -124,9 +122,8 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
                 const decompressed = gunzipSync(postDataBuffer);
                 body = JSON.parse(decompressed.toString('utf-8'));
               } catch (decompError) {
-                // If decompression also fails, store the raw buffer as string for debugging
-                console.log(`Failed to decompress request to ${request.url()}:`, decompError);
-                body = postDataBuffer.toString('utf-8', 0, 100); // First 100 chars for debugging
+                // If decompression fails, capture raw buffer prefix for debugging test failures
+                body = postDataBuffer.toString('utf-8', 0, 100);
               }
             }
 
@@ -147,7 +144,7 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     // Navigate to a page to trigger autocapture initialization
     // and wait for the Amplitude request to be sent
     await Promise.all([
-      // Wait for Amplitude API request (up to 30s)
+      // Wait for Amplitude API request
       page.waitForRequest(
         (request) => {
           return (
@@ -155,30 +152,14 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
             request.method() === 'POST'
           );
         },
-        { timeout: 30000 }
+        { timeout: AMPLITUDE_REQUEST_TIMEOUT }
       ),
       // Navigate to the page
       page.goto('/insights/dashboard'),
     ]);
 
-    // Wait a bit more to ensure all batched events are sent
-    await page.waitForTimeout(2000);
-
-    // Debug: Log console messages and request details
-    console.log('\nConsole messages from page:');
-    console.log(consoleMessages.join('\n') || '(none captured)');
-
-    if (amplitudeRequests.length === 0) {
-      console.log('\nNo Amplitude requests captured.');
-    } else {
-      console.log(`\nCaptured ${amplitudeRequests.length} Amplitude requests`);
-      amplitudeRequests.forEach((req, i) => {
-        console.log(`\nRequest ${i + 1}:`);
-        console.log(`  URL: ${req.url}`);
-        console.log(`  Method: ${req.method}`);
-        console.log(`  Body:`, JSON.stringify(req.body, null, 2).substring(0, 500));
-      });
-    }
+    // Wait for event batching to complete
+    await page.waitForTimeout(EVENT_BATCH_DELAY);
 
     // Verify that Amplitude requests were made
     expect(amplitudeRequests.length).toBeGreaterThan(0);
@@ -213,8 +194,6 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
       return false;
     });
 
-    console.log(`\nFound ${eventsWithUserProperties.length} requests with $identify events`);
-
     // Should have at least one $identify event with user properties
     expect(eventsWithUserProperties.length).toBeGreaterThan(0);
 
@@ -244,9 +223,6 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
         break;
       }
     }
-
-    console.log('\nFull $identify event with enriched properties:');
-    console.log(JSON.stringify(identifyEventWithEnrichedProps, null, 2));
 
     expect(identifyEventWithEnrichedProps).toBeDefined();
 
@@ -349,8 +325,9 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
 
     // Navigate to a page
     await page.goto('/insights/dashboard');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
+
+    // Wait to ensure no Amplitude requests are made
+    await page.waitForTimeout(NEGATIVE_TEST_WAIT);
 
     // Verify that NO Amplitude requests were made
     expect(amplitudeRequests.length).toBe(0);
