@@ -324,7 +324,7 @@ describe('useAmplitude', () => {
       expect(identifyInstance.set).toHaveBeenCalledWith('isBeta', false);
       expect(identifyInstance.set).toHaveBeenCalledWith('isOrgAdmin', true);
       expect(identifyInstance.set).toHaveBeenCalledWith('org_id', 'org-123');
-      expect(identifyInstance.set).toHaveBeenCalledWith('account_id', 'org-123');
+      expect(identifyInstance.set).toHaveBeenCalledWith('account_id', 'acct-456');
       expect(identifyInstance.set).toHaveBeenCalledWith('account_number', 'EBS-789');
       expect(identifyInstance.set).toHaveBeenCalledWith('current_bundle', 'test-bundle');
       expect(identifyInstance.set).toHaveBeenCalledWith('current_app', 'test-app');

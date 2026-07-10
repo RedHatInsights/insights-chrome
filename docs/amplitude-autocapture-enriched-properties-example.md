@@ -19,7 +19,7 @@ Here's a real example of the enriched properties sent with Amplitude autocapture
       "isBeta": false,
       "isOrgAdmin": true,
       "org_id": "20283813",
-      "account_id": "20283813",
+      "account_id": "acct-456789",
       "account_number": "12845372",
       "locale": "en",
       "email_domain": "redhat.com",
@@ -91,7 +91,7 @@ Here's a real example of the enriched properties sent with Amplitude autocapture
 
 | Property | Type | Example | Description |
 |----------|------|---------|-------------|
-| `account_id` | string | `"20283813"` | Account identifier (matches org_id) |
+| `account_id` | string | `"acct-456789"` | Internal account identifier |
 | `account_number` | string | `"12845372"` | EBS account number |
 | `organization_name` | string | `"Acme Corp"` | Organization display name |
 
@@ -190,32 +190,32 @@ Each service has two properties:
 ## Example Analysis Queries
 
 ### 1. **Trial Conversion Analysis**
-```
+```text
 "Show me users who clicked 'Upgrade' button"
   WHERE entitlement_*_trial = true
   GROUP BY service
 ```
 
 ### 2. **Admin vs Non-Admin Feature Adoption**
-```
+```text
 "Compare feature X usage"
   WHERE isOrgAdmin = true vs false
 ```
 
 ### 3. **Beta Feature Validation**
-```
+```text
 "How many beta users clicked new feature Y?"
   WHERE isBeta = true
 ```
 
 ### 4. **Internal vs Customer Usage**
-```
+```text
 "Filter out internal testing from metrics"
   WHERE internal = false
 ```
 
 ### 5. **Cross-Product Journey**
-```
+```text
 "Track users navigating from Insights to Cost Management"
   WHERE entitlement_insights = true 
   AND entitlement_cost_management = true
@@ -223,7 +223,7 @@ Each service has two properties:
 ```
 
 ### 6. **Enterprise Customer Segmentation**
-```
+```text
 "Top 10 organizations by dashboard engagement"
   GROUP BY org_id, organization_name
   ORDER BY event_count DESC

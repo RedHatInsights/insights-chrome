@@ -146,12 +146,8 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     await Promise.all([
       // Wait for Amplitude API request
       page.waitForRequest(
-        (request) => {
-          return (
-            (request.url().includes('api.amplitude.com') || request.url().includes('api2.amplitude.com')) &&
-            request.method() === 'POST'
-          );
-        },
+        (request) =>
+          (request.url().includes('api.amplitude.com') || request.url().includes('api2.amplitude.com')) && request.method() === 'POST',
         { timeout: AMPLITUDE_REQUEST_TIMEOUT }
       ),
       // Navigate to the page

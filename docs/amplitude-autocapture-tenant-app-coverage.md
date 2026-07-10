@@ -35,8 +35,9 @@ The Amplitude autocapture plugin uses **browser-level event listeners** on the `
 
 1. ✅ **It captures events from the ENTIRE DOM** - not just Chrome shell elements
 2. ✅ **It captures events from dynamically loaded Module Federation apps** (tenant applications)
-3. ✅ **It captures events from iframes** (if same-origin)
-4. ✅ **User properties set via `identify()` persist across ALL captured events**
+3. ✅ **User properties set via `identify()` persist across ALL captured events**
+
+**Note on iframes:** Events from within iframes (even same-origin) are NOT automatically captured as they have separate document contexts. Module Federation apps render in the main document, not iframes, so this limitation doesn't affect tenant applications.
 
 ### What Gets Captured Automatically
 
@@ -196,6 +197,7 @@ Some enriched properties are **reactive** and update automatically as the user n
 
 | Scenario | Captured? | Notes |
 |----------|-----------|-------|
+| **Same-origin iframes** | ❌ NO | Separate document context; events don't bubble to parent |
 | **Cross-origin iframes** | ❌ NO | Browser security restrictions |
 | **Events before SDK init** | ❌ NO | Autocapture only starts after Chrome initializes |
 | **Custom events** | ❌ NO | Tenant apps must manually track via Segment/Amplitude |
@@ -246,7 +248,7 @@ The enriched properties (`internal`, `isOrgAdmin`, etc.) are **automatically inc
 ### Cost Management Team
 
 **"How many org admins created a budget this week?"**
-```
+```text
 Event: [Amplitude] Element Clicked
   WHERE [Amplitude] Element Text = "Create Budget"
   AND isOrgAdmin = true
@@ -254,7 +256,7 @@ Event: [Amplitude] Element Clicked
 ```
 
 **"Do trial users interact with the cost optimization recommendations?"**
-```
+```text
 Event: [Amplitude] Element Clicked
   WHERE [Amplitude] Page URL CONTAINS "/cost-management"
   AND entitlement_cost_management_trial = true
@@ -264,7 +266,7 @@ Event: [Amplitude] Element Clicked
 ### Ansible Team
 
 **"Are beta users clicking the new playbook builder?"**
-```
+```text
 Event: [Amplitude] Element Clicked
   WHERE [Amplitude] Element Text = "Create Playbook"
   AND isBeta = true
@@ -274,7 +276,7 @@ Event: [Amplitude] Element Clicked
 ### Subscriptions Team
 
 **"Which organizations are most engaged with subscription management?"**
-```
+```text
 Event: [Amplitude] Page Viewed
   WHERE [Amplitude] Page URL CONTAINS "/subscriptions"
   GROUP BY org_id, organization_name
@@ -321,19 +323,26 @@ Therefore, autocapture works seamlessly across all federated apps.
 
 ## Performance Impact
 
-### Zero Additional Load for Tenant Apps
+### No Additional Load for Tenant Apps
 
+Tenant applications benefit from Chrome-level initialization:
 - Amplitude SDK is loaded **once** by Chrome shell
 - Autocapture plugin is loaded **once** by Chrome shell  
 - Event listeners are registered **once** at the document level
-- Tenant apps add **zero additional analytics overhead**
+- Tenant apps incur no additional SDK loading or initialization overhead
 
 ### Minimal Runtime Impact
 
+The autocapture implementation uses efficient patterns to minimize performance impact:
 - Event listeners use **event delegation** (single listener per event type)
 - Event batching reduces network requests
 - Gzip compression on event payloads
-- Typical overhead: **< 50KB initial load, < 5KB per event batch**
+
+**Measured typical overhead** (varies by browser, network, and payload size):
+- Initial SDK/plugin load: ~50KB (gzipped)
+- Per event batch: ~2-5KB (varies with property count and batching)
+
+Note: Actual overhead depends on build configuration, browser environment, network conditions, and the number of properties included in each event.
 
 ---
 

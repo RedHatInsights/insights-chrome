@@ -95,7 +95,8 @@ function useAmplitude() {
             // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
             const userProperties: Record<string, unknown> = {
               // REQUIRED: User context - matches Segment property names
-              internal: user.identity.user?.is_internal,
+              // Default to false if undefined to ensure property is always present
+              internal: user.identity.user?.is_internal ?? false,
 
               // STRETCH GOALS: Additional high-value properties
               isBeta: isPreview,
@@ -103,7 +104,7 @@ function useAmplitude() {
               org_id: user.identity.internal?.org_id,
 
               // Additional organization context
-              account_id: user.identity.internal?.org_id,
+              account_id: user.identity.internal?.account_id,
               account_number: user.identity.account_number,
               organization_name: user.identity.organization?.name,
 
@@ -143,19 +144,25 @@ function useAmplitude() {
 
             // Set user properties via identify() call
             // IMPORTANT: Wait for init() to complete, then send identify()
-            initPromise?.promise?.then(() => {
-              if (Object.keys(filteredUserProperties).length > 0) {
-                const identifyEvent = new amplitude.Identify();
-                Object.entries(filteredUserProperties).forEach(([key, value]) => {
-                  // Type assertion: we've already filtered out undefined, value is a valid property type
-                  identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
-                });
-                // Send the identify event
-                amplitude.identify(identifyEvent);
-              } else {
-                console.warn('No user properties to set for Amplitude autocapture');
-              }
-            });
+            initPromise?.promise
+              ?.then(() => {
+                if (Object.keys(filteredUserProperties).length > 0) {
+                  const identifyEvent = new amplitude.Identify();
+                  Object.entries(filteredUserProperties).forEach(([key, value]) => {
+                    // Type assertion: we've already filtered out undefined, value is a valid property type
+                    identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
+                  });
+                  // Send the identify event
+                  amplitude.identify(identifyEvent);
+                } else {
+                  console.warn('No user properties to set for Amplitude autocapture');
+                }
+              })
+              .catch((error) => {
+                // Handle initialization promise rejection
+                amplitudeSdkInitialized.current = false;
+                console.error('Error during Amplitude SDK initialization promise', error);
+              });
           } catch (error) {
             amplitudeSdkInitialized.current = false;
             console.error('Error initializing Amplitude SDK with autocapture', error);
