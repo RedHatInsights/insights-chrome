@@ -102,10 +102,7 @@ describe('ThemeMenu Component', () => {
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
         // Wait for the useEffect to set localStorage asynchronously
-        cy.waitUntil(() => cy.getLocalStorage('chrome:theme').then((value) => value === 'system'), {
-          timeout: THEME_INIT_TIMEOUT,
-          errorMsg: 'Expected localStorage chrome:theme to be set to "system"',
-        });
+        cy.getLocalStorage('chrome:theme', { timeout: THEME_INIT_TIMEOUT }).should('equal', 'system');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('falls back to system light preference', () => {
@@ -120,10 +117,7 @@ describe('ThemeMenu Component', () => {
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
         // Wait for the useEffect to set localStorage asynchronously
-        cy.waitUntil(() => cy.getLocalStorage('chrome:theme').then((value) => value === 'system'), {
-          timeout: THEME_INIT_TIMEOUT,
-          errorMsg: 'Expected localStorage chrome:theme to be set to "system"',
-        });
+        cy.getLocalStorage('chrome:theme', { timeout: THEME_INIT_TIMEOUT }).should('equal', 'system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
     });
