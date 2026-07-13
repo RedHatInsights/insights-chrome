@@ -107,10 +107,8 @@ test.describe('Help Panel on All Services Page', () => {
     await expect(interactiveElement).toBeFocused({ timeout: FOCUS_TIMEOUT });
 
     // Verify button state changed when drawer opened
-    const clickedState = await helpButton.evaluate((el) => {
-      return el.classList.contains('pf-m-clicked') || el.getAttribute('aria-pressed') === 'true';
-    });
-    expect(clickedState).not.toBe(initialClickedState);
+    // Wait for the button state to update (happens asynchronously after drawer opens)
+    await expect(helpButton).toHaveAttribute('aria-pressed', 'true', { timeout: FOCUS_TIMEOUT });
 
     // Click the help button again to close
     await helpButton.click();

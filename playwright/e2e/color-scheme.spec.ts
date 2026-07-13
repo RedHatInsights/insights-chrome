@@ -75,7 +75,8 @@ test.describe('Color Scheme — Light / Dark / System', () => {
     await page.locator('#color-scheme-dark').click();
     await expect(page.locator('html')).toHaveClass(new RegExp(DARK_THEME_CLASS));
 
-    await page.reload();
+    // Use navigation instead of reload to avoid ERR_TOO_MANY_RETRIES in CI
+    await page.goto(page.url(), { waitUntil: 'domcontentloaded' });
     await topbar.openSettings();
 
     await expect(page.locator('html')).toHaveClass(new RegExp(DARK_THEME_CLASS));
