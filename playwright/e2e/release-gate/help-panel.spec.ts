@@ -76,7 +76,7 @@ test.describe('Help Panel on All Services Page', () => {
 
     // Get initial button state (should be false/unclicked)
     const initialClickedState = await helpButton.evaluate((el) => {
-      return el.classList.contains('pf-m-clicked') || el.getAttribute('aria-pressed') === 'true';
+      return el.getAttribute('aria-pressed') === 'true';
     });
 
     // Click the help button to open
