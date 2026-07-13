@@ -30,6 +30,16 @@ import FlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
 import { initializeVisibilityFunctions } from './VisibilitySingleton';
 import { navigationAtom } from '../state/atoms/navigationAtom';
 
+const mockVisibleBundles = jest.fn().mockReturnValue([]);
+jest.mock('../state/atoms/visibleBundlesAtom', () => ({
+  useVisibleBundles: () => mockVisibleBundles(),
+  useVisibleBundlesError: () => false,
+}));
+
+beforeEach(() => {
+  mockVisibleBundles.mockReturnValue([]);
+});
+
 jest.mock('@unleash/proxy-client-react', () => {
   const actual = jest.requireActual('@unleash/proxy-client-react');
   return {
@@ -155,7 +165,6 @@ describe('useNavigation', () => {
 
   describe('isHidden flag', () => {
     test('should propagate navigation item isHidden flag', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
       const store = createStore();
       const navItem = {
         href: '/foo',
@@ -168,13 +177,7 @@ describe('useNavigation', () => {
           navItems: [navItem],
         },
       };
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
+      mockVisibleBundles.mockReturnValue([{ id: 'insights', title: 'RHEL', navItems: [navItem] }]);
       const wrapper = ({ children }) => (
         <RouterDummy store={store} initialValues={[[navigationAtom, navigation]]} path="/insights">
           {children}
@@ -205,7 +208,7 @@ describe('useNavigation', () => {
 
   describe('levelArray', () => {
     test('should flatten and sort links based on the href length', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
+      jest.spyOn(axios.default, 'get');
       const navItem = {
         groupId: 'foo',
         title: 'bar',
@@ -242,13 +245,7 @@ describe('useNavigation', () => {
         },
       };
       const store = createStore();
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
+      mockVisibleBundles.mockReturnValue([{ id: 'insights', title: 'RHEL', navItems: [navItem] }]);
       const wrapper = ({ children }) => (
         <RouterDummy initialValues={[[navigationAtom, navigation]]} store={store} path="/insights">
           {children}
@@ -274,7 +271,6 @@ describe('useNavigation', () => {
 
   describe('activate child', () => {
     test('should mark /insights basic nav item as active', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
       const navItem = {
         title: 'bar',
         href: '/insights',
@@ -286,13 +282,7 @@ describe('useNavigation', () => {
         },
       };
       const store = createStore();
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
+      mockVisibleBundles.mockReturnValue([{ id: 'insights', title: 'RHEL', navItems: [navItem] }]);
       const wrapper = ({ children }) => (
         <RouterDummy initialValues={[[navigationAtom, navigation]]} store={store} path="/insights">
           {children}
@@ -316,8 +306,7 @@ describe('useNavigation', () => {
       });
     });
 
-    test.only('should mark nested /insights/dashboard nav item as its parent as active', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    test('should mark nested /insights/dashboard nav item as its parent as active', async () => {
       const navItem = {
         expandable: true,
         title: 'bar',
@@ -334,13 +323,13 @@ describe('useNavigation', () => {
         },
       };
       const store = createStore();
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
+      mockVisibleBundles.mockReturnValue([
+        {
+          id: 'insights',
+          title: 'RHEL',
+          navItems: [navItem],
+        },
+      ]);
       const wrapper = ({ children }) => (
         <RouterDummy initialValues={[[navigationAtom, navigation]]} store={store} path="/insights/dashboard">
           {children}

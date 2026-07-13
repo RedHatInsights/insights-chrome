@@ -2,20 +2,23 @@ import React from 'react';
 import AllServices from '../../../src/layouts/AllServices';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider as JotaiProvider } from 'jotai';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import userFixture from '../../fixtures/testUser.json';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
 import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
+import { visibleServiceTilesAtom, visibleServiceTilesReadyAtom } from '../../../src/state/atoms/visibleBundlesAtom';
+import servicesFixture from '../../fixtures/services.json';
 
 describe('<AllServices />', () => {
+  let store: ReturnType<typeof createStore>;
+
   beforeEach(() => {
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', {
-      status: 200,
-      fixture: 'services.json',
-    }).as('getServices');
+    store = createStore();
+    store.set(visibleServiceTilesAtom, servicesFixture as any);
+    store.set(visibleServiceTilesReadyAtom, true);
 
     cy.intercept('http://localhost:8080/entry?cacheBuster=*', '').as('getEntry');
     cy.intercept('http://localhost:8080/foo/bar.json', {
@@ -23,10 +26,6 @@ describe('<AllServices />', () => {
         entry: ['/entry'],
       },
     }).as('getFooBar');
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/navigation/settings-navigation.json?ts=*', {
-      status: 200,
-      fixture: 'settings-navigation.json',
-    }).as('getSettingsNav');
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json').as('getSearchIndexStage');
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/search-index-generated.json').as('getSearchIndexGenerated');
   });
@@ -36,7 +35,7 @@ describe('<AllServices />', () => {
       isPreview: false,
       getToken: () => Promise.resolve('mock-token-from-visibility'),
       getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
-      getUserPermissions: () => Promise.resolve([]), // Ensure it's an array
+      getUserPermissions: () => Promise.resolve([]),
     });
     const visibilityFunctions = getVisibilityFunctions();
     cy.mount(
@@ -60,7 +59,7 @@ describe('<AllServices />', () => {
         >
           <BrowserRouter>
             <FeatureFlagsProvider>
-              <JotaiProvider>
+              <JotaiProvider store={store}>
                 <IntlProvider locale="en">
                   <AllServices />
                 </IntlProvider>
