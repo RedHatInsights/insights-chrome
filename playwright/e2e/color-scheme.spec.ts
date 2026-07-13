@@ -1,27 +1,13 @@
 import { expect, test } from '../setup/test-setup';
 import { ChromeTopbar } from './pages/chrome-topbar';
+import { mockFeatureFlags } from '../helpers/feature-flags';
 
 const DARK_THEME_CLASS = 'pf-v6-theme-dark';
 const THEME_STORAGE_KEY = 'chrome:theme';
 
 test.describe('Color Scheme — Light / Dark / System', () => {
-  const REQUIRED_FLAGS = ['platform.chrome.dark-mode', 'platform.chrome.dark-mode_system'];
-
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/featureflags/v0**', async (route) => {
-      let toggles: object[] = [];
-      try {
-        const response = await route.fetch();
-        toggles = ((await response.json()) as { toggles?: object[] }).toggles ?? [];
-      } catch {
-        // noop
-      }
-      const filtered = toggles.filter((t: { name?: string }) => !REQUIRED_FLAGS.includes(t.name ?? ''));
-      for (const name of REQUIRED_FLAGS) {
-        filtered.push({ name, enabled: true, impressionData: false, variant: { name: 'disabled', enabled: false } });
-      }
-      await route.fulfill({ json: { toggles: filtered } });
-    });
+    await mockFeatureFlags(page, ['platform.chrome.dark-mode', 'platform.chrome.dark-mode_system']);
     await page.goto('/');
     await page.evaluate((key) => localStorage.removeItem(key), THEME_STORAGE_KEY);
     await page.reload();

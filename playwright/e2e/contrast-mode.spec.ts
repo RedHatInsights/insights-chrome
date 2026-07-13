@@ -1,5 +1,6 @@
 import { expect, test } from '../setup/test-setup';
 import { ChromeTopbar } from './pages/chrome-topbar';
+import { mockFeatureFlags } from '../helpers/feature-flags';
 
 const HIGH_CONTRAST_CLASS = 'pf-v6-theme-high-contrast';
 const GLASS_THEME_CLASS = 'pf-v6-theme-glass';
@@ -7,23 +8,8 @@ const HIGH_CONTRAST_STORAGE_KEY = 'chrome:high-contrast';
 const GLASS_STORAGE_KEY = 'chrome:glass-theme';
 
 test.describe('Contrast Mode — System / Default / High Contrast / Glass', () => {
-  const REQUIRED_FLAGS = ['platform.chrome.high-contrast', 'platform.chrome.glass-theme'];
-
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/featureflags/v0**', async (route) => {
-      let toggles: object[] = [];
-      try {
-        const response = await route.fetch();
-        toggles = ((await response.json()) as { toggles?: object[] }).toggles ?? [];
-      } catch {
-        // noop
-      }
-      const filtered = toggles.filter((t: { name?: string }) => !REQUIRED_FLAGS.includes(t.name ?? ''));
-      for (const name of REQUIRED_FLAGS) {
-        filtered.push({ name, enabled: true, impressionData: false, variant: { name: 'disabled', enabled: false } });
-      }
-      await route.fulfill({ json: { toggles: filtered } });
-    });
+    await mockFeatureFlags(page, ['platform.chrome.high-contrast', 'platform.chrome.glass-theme']);
     await page.goto('/');
     await page.evaluate(
       ([hcKey, glassKey]) => {
@@ -56,6 +42,9 @@ test.describe('Contrast Mode — System / Default / High Contrast / Glass', () =
 
     const stored = await page.evaluate((key) => localStorage.getItem(key), HIGH_CONTRAST_STORAGE_KEY);
     expect(stored).toBe('default');
+
+    const glassStored = await page.evaluate((key) => localStorage.getItem(key), GLASS_STORAGE_KEY);
+    expect(glassStored).not.toBe('true');
   });
 
   test('should switch to High contrast mode', async ({ page }) => {
@@ -89,6 +78,8 @@ test.describe('Contrast Mode — System / Default / High Contrast / Glass', () =
     await page.locator('#contrast-system').click();
 
     await expect(page.locator('#contrast-system')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('html')).not.toHaveClass(new RegExp(HIGH_CONTRAST_CLASS));
+    await expect(page.locator('html')).not.toHaveClass(new RegExp(GLASS_THEME_CLASS));
 
     const stored = await page.evaluate((key) => localStorage.getItem(key), HIGH_CONTRAST_STORAGE_KEY);
     expect(stored).toBe('system');
