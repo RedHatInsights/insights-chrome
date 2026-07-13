@@ -74,11 +74,6 @@ test.describe('Help Panel on All Services Page', () => {
     await expect(helpButton).toContainText('Help');
     await expect(helpButton).toHaveAttribute('aria-label', 'Toggle help panel');
 
-    // Get initial button state (should be false/unclicked)
-    const initialClickedState = await helpButton.evaluate((el) => {
-      return el.getAttribute('aria-pressed') === 'true';
-    });
-
     // Click the help button to open
     await helpButton.click();
 
@@ -106,9 +101,8 @@ test.describe('Help Panel on All Services Page', () => {
     await interactiveElement.focus();
     await expect(interactiveElement).toBeFocused({ timeout: FOCUS_TIMEOUT });
 
-    // Verify button state changed when drawer opened
-    // Wait for the button state to update (happens asynchronously after drawer opens)
-    await expect(helpButton).toHaveAttribute('aria-pressed', 'true', { timeout: FOCUS_TIMEOUT });
+    // Verify button state changed when drawer opened (uses aria-expanded, not aria-pressed)
+    await expect(helpButton).toHaveAttribute('aria-expanded', 'true', { timeout: FOCUS_TIMEOUT });
 
     // Click the help button again to close
     await helpButton.click();
