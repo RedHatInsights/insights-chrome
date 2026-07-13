@@ -22,7 +22,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import AllServicesBundle from '../components/AllServices/AllServicesBundle';
 import { BundleNavigation } from '../@types/types';
 import filterNavItemsByTitle from '../utils/filterNavItemsByTitle';
-import { fetchBundles } from '../hooks/useAllLinks';
+import { useVisibleBundles } from '../state/atoms/visibleBundlesAtom';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
@@ -67,6 +67,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
   const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
+  const visibleBundles = useVisibleBundles();
 
   useEffect(() => {
     if (isNotificationsDrawerExpanded && drawerPanelRef.current !== null) {
@@ -88,19 +89,14 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     ],
   };
 
-  const fetchNavigation = async () => {
-    const fetchNav = await fetchBundles();
-    const filteredBundles = fetchNav.filter(({ id }) => availableBundles.includes(id));
-    const withOthers = filteredBundles.concat(otherServicesBundle);
-    setOriginalBundles(withOthers);
-    setBundles(withOthers);
-  };
-
   useEffect(() => {
-    if (enableAllServicesRedesign) {
-      fetchNavigation();
+    if (enableAllServicesRedesign && visibleBundles.length > 0) {
+      const filteredBundles = visibleBundles.filter(({ id }) => availableBundles.includes(id));
+      const withOthers = filteredBundles.concat(otherServicesBundle);
+      setOriginalBundles(withOthers);
+      setBundles(withOthers);
     }
-  }, [enableAllServicesRedesign]);
+  }, [enableAllServicesRedesign, visibleBundles]);
 
   useEffect(() => {
     if (!filterValue) {
