@@ -1,5 +1,5 @@
 import { test, expect } from '../../setup/test-setup';
-import { ChromeTopbar } from '../pages/chrome-topbar';
+import { ChromeTopbar } from '@redhat-cloud-services/hcc-page-objects';
 
 /**
  * Test: Org ID visibility in overflow actions
