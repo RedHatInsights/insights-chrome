@@ -71,7 +71,7 @@ export class AllServicesPage {
     await this.filterInput.clear();
     // Use type() instead of fill() to trigger all keyboard events
     // This ensures client-side filtering logic responds properly
-    await this.filterInput.type(term);
+    await this.filterInput.pressSequentially(term);
 
     // Wait for DOM to stabilize - either results appear or empty state appears
     try {
