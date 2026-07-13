@@ -4,6 +4,8 @@ import { useTheme } from '../../../src/hooks/useTheme';
 import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
 import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
+const THEME_INIT_TIMEOUT = 3000;
+
 function DarkMode() {
   const { setLightMode, setDarkMode, setSystemMode } = useTheme();
 
@@ -99,7 +101,11 @@ describe('ThemeMenu Component', () => {
         });
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
+        // Wait for the useEffect to set localStorage asynchronously
+        cy.waitUntil(() => cy.getLocalStorage('chrome:theme').then((value) => value === 'system'), {
+          timeout: THEME_INIT_TIMEOUT,
+          errorMsg: 'Expected localStorage chrome:theme to be set to "system"',
+        });
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('falls back to system light preference', () => {
@@ -113,7 +119,11 @@ describe('ThemeMenu Component', () => {
         });
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
+        // Wait for the useEffect to set localStorage asynchronously
+        cy.waitUntil(() => cy.getLocalStorage('chrome:theme').then((value) => value === 'system'), {
+          timeout: THEME_INIT_TIMEOUT,
+          errorMsg: 'Expected localStorage chrome:theme to be set to "system"',
+        });
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
     });
