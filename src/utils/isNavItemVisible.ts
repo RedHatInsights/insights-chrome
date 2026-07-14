@@ -49,18 +49,18 @@ export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T
     }
   }
 
-  if (typeof result.groupId !== 'undefined') {
+  if (typeof result.groupId !== 'undefined' && Array.isArray(result.navItems)) {
     /**
      * Evalute group items
      */
-    result.navItems = await Promise.all(result.navItems!.map(evaluateVisibility));
+    result.navItems = await Promise.all(result.navItems.map(evaluateVisibility));
   }
 
-  if (result.expandable === true) {
+  if (result.expandable === true && Array.isArray(result.routes)) {
     /**
      * Evaluate sub routes
      */
-    result.routes = await Promise.all(result.routes!.map(evaluateVisibility));
+    result.routes = await Promise.all(result.routes.map(evaluateVisibility));
   }
 
   return result;

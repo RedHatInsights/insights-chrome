@@ -494,7 +494,7 @@ export const isGlobalFilterAllowed = () => {
 };
 
 export function isExpandableNav(item: NavItem): item is Required<NavItem, 'routes'> {
-  return !!item.expandable;
+  return !!item.expandable && Array.isArray(item.routes);
 }
 
 function isActiveLeaf(item: NavItem | undefined): boolean {
@@ -505,6 +505,9 @@ export function findNavLeafPath(
   navItems: (NavItem | undefined)[],
   matcher = isActiveLeaf
 ): { activeItem: Required<NavItem, 'href'> | undefined; navItems: NavItem[] } {
+  if (!Array.isArray(navItems)) {
+    return { activeItem: undefined, navItems: [] };
+  }
   let leaf: Required<NavItem, 'href'> | undefined;
   // store the parent nodes
   const leafPath: NavItem[] = [];
