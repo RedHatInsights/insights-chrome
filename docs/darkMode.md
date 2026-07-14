@@ -107,41 +107,60 @@ function MyContent({ isDark }: { isDark: boolean }) {
 }
 ```
 
-## CSS-Based Alternatives
+## CSS-Based Theme Styling in Tenant Apps
 
-For simple show/hide scenarios based on the active theme, you can use CSS classes instead of the JavaScript hook. Chrome applies the `pf-v6-theme-dark` class to the document root when dark mode is active.
+### Why Direct `.pf-v6-theme-dark` Selectors Don't Work
 
-### Show/Hide Elements by Theme
+Chrome applies the `pf-v6-theme-dark` class to the document root (`<html>`) when dark mode is active. However, **CSS styles in tenant apps are scoped** — each federated module is rendered inside a wrapper element with a module-specific class (e.g., `<div class="my-app">`) to prevent global CSS conflicts between modules. This means top-level selectors like `.pf-v6-theme-dark .my-component` will not match, because the scoping wraps them under the module class, making the document-level dark theme class unreachable.
 
-```css
-/* Only visible in light mode */
-.show-in-light {
-  display: revert;
+### Recommended Pattern: Hook + Custom Class
+
+Use the `useDarkModeStore` remote hook to read the theme state and apply a custom class name to a root element within your app. Then use that custom class in your CSS selectors.
+
+```tsx
+import { useRemoteHook } from '@scalprum/react-core';
+
+interface DarkModeState {
+  isDark: boolean;
 }
-.pf-v6-theme-dark .show-in-light {
-  display: none;
-}
 
-/* Only visible in dark mode */
-.show-in-dark {
-  display: none;
-}
-.pf-v6-theme-dark .show-in-dark {
-  display: revert;
+function MyAppRoot() {
+  const { hookResult: useDarkModeStore, loading } = useRemoteHook<() => DarkModeState>({
+    scope: 'chrome',
+    module: './theme/useDarkModeStore',
+    importName: 'useDarkModeStore',
+  });
+
+  const isDark = !loading && useDarkModeStore ? useDarkModeStore().isDark : false;
+
+  return (
+    <div className={isDark ? 'my-app-dark' : 'my-app-light'}>
+      {/* App content — all descendants can use .my-app-dark in CSS */}
+      <MyContent />
+    </div>
+  );
 }
 ```
 
-### Theme-Specific Styling
-
 ```css
+/* Theme-specific styling using your custom class */
 .my-component {
   background: #ffffff;
   color: #151515;
 }
 
-.pf-v6-theme-dark .my-component {
+.my-app-dark .my-component {
   background: #1a1a1a;
   color: #e0e0e0;
+}
+
+/* Show/hide elements by theme */
+.my-app-dark .show-in-light {
+  display: none;
+}
+
+.my-app-light .show-in-dark {
+  display: none;
 }
 ```
 
@@ -149,11 +168,11 @@ For simple show/hide scenarios based on the active theme, you can use CSS classe
 
 | Use Case | Approach |
 |----------|----------|
-| Simple show/hide of elements | CSS classes |
-| Theme-specific colors or styling | CSS classes |
-| Conditional rendering logic | `useDarkModeStore` hook |
-| Fetching theme-specific data | `useDarkModeStore` hook |
-| Passing theme to third-party libraries | `useDarkModeStore` hook |
+| Theme-specific colors or styling | Hook + custom class on root element |
+| Simple show/hide of elements | Hook + custom class on root element |
+| Conditional rendering logic | `useDarkModeStore` hook directly |
+| Fetching theme-specific data | `useDarkModeStore` hook directly |
+| Passing theme to third-party libraries | `useDarkModeStore` hook directly |
 
 ## How It Works Internally
 
