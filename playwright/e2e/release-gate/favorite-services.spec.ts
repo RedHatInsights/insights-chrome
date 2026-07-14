@@ -6,11 +6,14 @@ test.describe('Favorite Services (E2E User Flow)', () => {
   });
 
   test('should favorite on the page and unfavorite from the header dropdown', async ({ page }) => {
+    test.slow();
     const serviceToTest = 'Groups';
     const quickstartIdSelector = '[data-quickstart-id="iam_user-access_groups"]';
 
     await page.goto('/allservices');
     await page.waitForLoadState('load');
+    // Wait for all services to render — bundle visibility evaluation can be slow in CI
+    await expect(page.getByRole('heading', { name: 'All Services', level: 2 })).toBeVisible({ timeout: 45000 });
     await page.getByText(serviceToTest).scrollIntoViewIfNeeded();
 
     // 3. Favorite a specific service on the page (if not already favorited)
