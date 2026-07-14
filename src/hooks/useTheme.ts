@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
-import { getDarkModeStore } from '../state/stores/darkModeStore';
+import { getDarkModeStore, useDarkModeStore } from '../state/stores/darkModeStore';
+
+// Force webpack to treat useDarkModeStore as a used export so the module cache
+// includes it when remote modules load it via Module Federation.
+void useDarkModeStore;
 
 export enum ThemeVariants {
   light,
