@@ -19,16 +19,27 @@ interface DarkModeState {
 }
 
 function MyComponent() {
-  const { hookResult: useDarkModeStore, loading } = useRemoteHook<() => DarkModeState>({
+  const { hookResult: useDarkModeStore, loading, error } = useRemoteHook<() => DarkModeState>({
     scope: 'chrome',
     module: './theme/useDarkModeStore',
     importName: 'useDarkModeStore',
   });
 
-  if (loading || !useDarkModeStore) {
+  if (loading) {
     return <div>Loading theme...</div>;
   }
 
+  // Fall back to light mode on error or if the module isn't available
+  if (error || !useDarkModeStore) {
+    return <div>Current theme: Light</div>;
+  }
+
+  // Render in a child component so useDarkModeStore() is called
+  // unconditionally (React Rules of Hooks)
+  return <ThemeDisplay useDarkModeStore={useDarkModeStore} />;
+}
+
+function ThemeDisplay({ useDarkModeStore }: { useDarkModeStore: () => DarkModeState }) {
   const { isDark } = useDarkModeStore();
 
   return (
@@ -41,7 +52,7 @@ function MyComponent() {
 
 ## Important Caveats
 
-1. **Loading state handling is required.** The hook value is `null`/`undefined` until the Chrome module is loaded over the network. Always check `loading` or guard against `!useDarkModeStore` before calling it.
+1. **Loading state handling is required.** The hook value is `null`/`undefined` until the Chrome module is loaded over the network. Always check `loading` or guard against `!useDarkModeStore` before calling it. Because `useDarkModeStore()` is a React hook, it must be called unconditionally — move the call into a child component that only mounts after the loading/availability guard (see examples above).
 
 2. **Module path matters.** The correct module path is `./theme/useDarkModeStore`, **not** `./state/stores/darkModeStore`. The module path corresponds to the key in Chrome's webpack Module Federation `exposes` configuration, not the file system path.
 
@@ -93,8 +104,13 @@ function ThemeAwareComponent() {
     return <MyContent isDark={false} />;
   }
 
-  const { isDark } = useDarkModeStore();
+  // Render via child so useDarkModeStore() is called unconditionally
+  // (React Rules of Hooks — hook call count must be stable)
+  return <ThemeAwareContent useDarkModeStore={useDarkModeStore} />;
+}
 
+function ThemeAwareContent({ useDarkModeStore }: { useDarkModeStore: () => DarkModeState }) {
+  const { isDark } = useDarkModeStore();
   return <MyContent isDark={isDark} />;
 }
 
@@ -125,13 +141,27 @@ interface DarkModeState {
 }
 
 function MyAppRoot() {
-  const { hookResult: useDarkModeStore, loading } = useRemoteHook<() => DarkModeState>({
+  const { hookResult: useDarkModeStore, loading, error } = useRemoteHook<() => DarkModeState>({
     scope: 'chrome',
     module: './theme/useDarkModeStore',
     importName: 'useDarkModeStore',
   });
 
-  const isDark = !loading && useDarkModeStore ? useDarkModeStore().isDark : false;
+  if (loading) {
+    return <div className="my-app-light"><MyContent /></div>;
+  }
+
+  if (error || !useDarkModeStore) {
+    // Fall back to light mode
+    return <div className="my-app-light"><MyContent /></div>;
+  }
+
+  // Child component calls useDarkModeStore() unconditionally
+  return <ThemedAppRoot useDarkModeStore={useDarkModeStore} />;
+}
+
+function ThemedAppRoot({ useDarkModeStore }: { useDarkModeStore: () => DarkModeState }) {
+  const { isDark } = useDarkModeStore();
 
   return (
     <div className={isDark ? 'my-app-dark' : 'my-app-light'}>
