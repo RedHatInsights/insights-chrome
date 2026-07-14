@@ -99,6 +99,7 @@ declare global {
     _satellite?: {
       pageBottom?: () => void;
     };
+    __chrome_dark_mode_store__?: ReturnType<typeof import('../state/stores/darkModeStore').getDarkModeStore>;
   }
 }
 
