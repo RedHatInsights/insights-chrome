@@ -18,12 +18,18 @@ import ReactDOM from 'react-dom';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
+import { useInitVisibleBundles } from '../../state/atoms/visibleBundlesAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
 import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
 import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
 
 const NotEntitledModal = lazyWithRetry(() => import('../NotEntitledModal'));
 const Debugger = lazyWithRetry(() => import('../Debugger'));
+
+const VisibleBundlesInitializer = () => {
+  useInitVisibleBundles();
+  return null;
+};
 
 const RootApp = memo(({ accountId }: { accountId?: string }) => {
   const quickstartLinkStore = useQuickstartLinkStore();
@@ -113,6 +119,7 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']}>
       <SegmentProvider>
         <FeatureFlagsProvider>
+          <VisibleBundlesInitializer />
           {/* <CrossRequestNotifier /> */}
           <Suspense fallback={null}>
             <NotEntitledModal />

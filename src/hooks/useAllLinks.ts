@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { BundleNav, BundleNavigation, NavItem } from '../@types/types';
-import fetchNavigationFiles from '../utils/fetchNavigationFiles';
-import { evaluateVisibility } from '../utils/isNavItemVisible';
 import { isExpandableNav } from '../utils/common';
-import useFeoConfig from './useFeoConfig';
+import { useVisibleBundles } from '../state/atoms/visibleBundlesAtom';
 
 const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const firstLeaf = routes.find((item) => !item.expandable && item.href);
@@ -70,11 +68,11 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
 
 const getNavLinks = (navItems: NavItem[]): NavItem[] => {
   const links: NavItem[] = [];
-  navItems.forEach((item) => {
-    if (isExpandableNav(item)) {
-      links.concat(getNavLinks(item.routes));
+  navItems?.forEach((item) => {
+    if (isExpandableNav(item) && item.routes) {
+      links.push(...getNavLinks(item.routes));
     } else if (item.groupId && item.navItems) {
-      links.concat(getNavLinks(item.navItems));
+      links.push(...getNavLinks(item.navItems));
     } else {
       links.push(item);
     }
@@ -82,45 +80,22 @@ const getNavLinks = (navItems: NavItem[]): NavItem[] => {
   return links;
 };
 
-const fetchNavigation = async (feoGenerated = false) => {
-  const bundlesNavigation = await fetchNavigationFiles(feoGenerated).then((data) => data.map(handleBundleResponse));
-  const parsedBundles = await Promise.all(
-    bundlesNavigation.map(async (bundleNav) => ({
-      ...bundleNav,
-      links: (await Promise.all(bundleNav.links.map(evaluateVisibility))).filter(({ isHidden }) => !isHidden),
-    }))
-  );
-  const allLinks = parsedBundles.map(({ links }) => getNavLinks(links)).flat();
-  return allLinks;
-};
-
-const filterItem = async (navItems: NavItem[]): Promise<NavItem & { isHidden?: boolean }[]> => {
-  return Promise.all(
-    navItems.map(async (navItem) => ({
-      ...(await evaluateVisibility(navItem)),
-      ...(navItem.routes ? { routes: ((await filterItem(navItem.routes)) as NavItem[]).filter(({ isHidden }) => !isHidden) } : {}),
-      ...(navItem.navItems ? { navItems: ((await filterItem(navItem.navItems)) as NavItem[]).filter(({ isHidden }) => !isHidden) } : {}),
-    }))
-  );
-};
-
-export const fetchBundles = async (feoGenerated = false) => {
-  const bundlesNavigation = await fetchNavigationFiles(feoGenerated);
-  return await Promise.all(
-    bundlesNavigation.map(async (bundleNav) => ({
-      ...bundleNav,
-      navItems: (await filterItem(bundleNav.navItems)).filter(({ isHidden }) => !isHidden),
-    }))
-  );
-};
-
 const useAllLinks = () => {
-  const useFeoGenerated = useFeoConfig();
-  const [allLinks, setAllLinks] = useState<NavItem[]>([]);
-  useEffect(() => {
-    fetchNavigation(useFeoGenerated).then(setAllLinks);
-  }, [useFeoGenerated]);
-  return allLinks;
+  const bundles = useVisibleBundles();
+
+  return useMemo(() => {
+    if (bundles.length === 0) {
+      return [];
+    }
+    const bundleNavs = bundles.map(handleBundleResponse);
+    return bundleNavs
+      .map((bundleNav) => ({
+        ...bundleNav,
+        links: bundleNav.links.filter(({ isHidden }) => !isHidden),
+      }))
+      .map(({ links }) => getNavLinks(links))
+      .flat();
+  }, [bundles]);
 };
 
 export default useAllLinks;

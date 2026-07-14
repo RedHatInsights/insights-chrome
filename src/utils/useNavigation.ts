@@ -1,16 +1,12 @@
-import axios from 'axios';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
-import { evaluateVisibility } from './isNavItemVisible';
+import { BLOCK_CLEAR_GATEWAY_ERROR } from './common';
 import { QuickStartContext } from '@patternfly/quickstarts';
-import { useFlagsStatus } from '@unleash/proxy-client-react';
-import { BundleNavigation, NavItem, Navigation } from '../@types/types';
+import { NavItem, Navigation } from '../@types/types';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
-import fetchNavigationFiles from './fetchNavigationFiles';
-import useFeoConfig from '../hooks/useFeoConfig';
+import { useVisibleBundles, useVisibleBundlesError } from '../state/atoms/visibleBundlesAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -45,8 +41,8 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 };
 
 const useNavigation = () => {
-  const useFeoGenerated = useFeoConfig();
-  const { flagsReady, flagsError } = useFlagsStatus();
+  const visibleBundles = useVisibleBundles();
+  const bundlesError = useVisibleBundlesError();
   const clearGatewayError = useSetAtom(clearGatewayErrorAtom);
   const location = useLocation();
   const navigate = useNavigate();
@@ -103,86 +99,44 @@ const useNavigation = () => {
     });
   };
 
-  async function handleNavigationResponse(data: BundleNavigation): Promise<MutationObserver | undefined> {
-    try {
-      const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
-      const schema: any = {
-        ...data,
-        navItems,
-      };
-      const observer = registerLocationObserver(pathname, schema);
-      observer.observe(document.querySelector('body')!, {
-        childList: true,
-        subtree: true,
-      });
-      return observer;
-    } catch (error) {
-      // Hide nav if an error was encountered. Can happen for non-existing navigation files.
-      setNoNav(true);
-      return undefined;
-    }
-  }
-
   useEffect(() => {
-    let cancelled = false;
-    /**
-     * Use an object ref so the cleanup function can access the observer
-     * assigned asynchronously inside handleNavigationResponse.
-     */
-    const observerRef: { current: MutationObserver | undefined } = { current: undefined };
-    // reset no nav flag
-    setNoNav(false);
-    if (useFeoGenerated && currentNamespace && (flagsReady || flagsError)) {
-      fetchNavigationFiles(useFeoGenerated)
-        .then((bundles) => {
-          const bundle = bundles.find((b) => b.id === currentNamespace);
-          if (!bundle) {
-            setNoNav(true);
-            return;
-          }
-
-          return handleNavigationResponse(bundle);
-        })
-        .then((obs) => {
-          if (!obs) return;
-          if (cancelled) {
-            obs.disconnect();
-            return;
-          }
-          observerRef.current = obs;
-        })
-        .catch(() => {
-          setNoNav(true);
-        });
-    } else if (currentNamespace && (flagsReady || flagsError)) {
-      axios
-        .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json`)
-        // fallback static CSC for EE env
-        .catch(() => {
-          return axios.get<BundleNavigation>(`/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`);
-        })
-        .then(async (response) => {
-          return handleNavigationResponse(response.data);
-        })
-        .then((obs) => {
-          if (!obs) return;
-          if (cancelled) {
-            obs.disconnect();
-            return;
-          }
-          observerRef.current = obs;
-        })
-        .catch(() => {
-          setNoNav(true);
-        });
+    if (!currentNamespace) {
+      setNoNav(false);
+      return;
     }
-    return () => {
-      cancelled = true;
-      if (observerRef.current && typeof observerRef.current.disconnect === 'function') {
-        observerRef.current.disconnect();
-      }
+
+    if (bundlesError) {
+      setNoNav(true);
+      return;
+    }
+
+    if (visibleBundles.length === 0) {
+      return;
+    }
+
+    setNoNav(false);
+    const bundle = visibleBundles.find((b) => b.id === currentNamespace);
+    if (!bundle) {
+      setNoNav(true);
+      return;
+    }
+
+    const navItems = bundle.navItems.map(cleanNavItemsHref);
+    const navSchema: Navigation = {
+      ...bundle,
+      navItems,
+      sortedLinks: [],
     };
-  }, [currentNamespace, flagsReady, flagsError, useFeoGenerated]);
+    const observer = registerLocationObserver(pathname, navSchema);
+    observer.observe(document.querySelector('body')!, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [currentNamespace, visibleBundles, bundlesError]);
 
   return {
     loaded: !!schema,
