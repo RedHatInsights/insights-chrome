@@ -38,37 +38,37 @@ describe('evaluateVisibility', () => {
     expect(result).toEqual(item);
   });
 
-  it('handles expandable item with routes', async () => {
+  it('handles expandable item with navItems', async () => {
     const item: NavItem = {
       title: 'Expandable',
       expandable: true,
-      routes: [{ title: 'Child', href: '/child' }],
+      navItems: [{ title: 'Child', href: '/child' }],
     };
     const result = await evaluateVisibility(item);
     expect(result.isHidden).toBe(false);
-    expect(result.routes).toHaveLength(1);
-    expect(result.routes![0]).toEqual(expect.objectContaining({ title: 'Child', isHidden: false }));
+    expect(result.navItems).toHaveLength(1);
+    expect(result.navItems![0]).toEqual(expect.objectContaining({ title: 'Child', isHidden: false }));
   });
 
-  it('handles expandable item with undefined routes without crashing', async () => {
+  it('handles expandable item with undefined navItems without crashing', async () => {
     const item: NavItem = {
-      title: 'Expandable No Routes',
+      title: 'Expandable No NavItems',
       expandable: true,
     };
     const result = await evaluateVisibility(item);
     expect(result.isHidden).toBe(false);
-    expect(result.routes).toBeUndefined();
+    expect(result.navItems).toBeUndefined();
   });
 
-  it('handles expandable item with empty routes', async () => {
+  it('handles expandable item with empty navItems', async () => {
     const item: NavItem = {
       title: 'Expandable Empty',
       expandable: true,
-      routes: [],
+      navItems: [],
     };
     const result = await evaluateVisibility(item);
     expect(result.isHidden).toBe(false);
-    expect(result.routes).toEqual([]);
+    expect(result.navItems).toEqual([]);
   });
 
   it('handles group item with navItems', async () => {
@@ -91,19 +91,19 @@ describe('evaluateVisibility', () => {
     expect(result.navItems).toBeUndefined();
   });
 
-  it('recursively evaluates nested expandable routes', async () => {
+  it('recursively evaluates nested expandable navItems', async () => {
     const item: NavItem = {
       title: 'Parent',
       expandable: true,
-      routes: [
+      navItems: [
         {
           title: 'Nested Expandable',
           expandable: true,
-          routes: [{ title: 'Deep Child', href: '/deep' }],
+          navItems: [{ title: 'Deep Child', href: '/deep' }],
         },
       ],
     };
     const result = await evaluateVisibility(item);
-    expect(result.routes![0].routes![0]).toEqual(expect.objectContaining({ title: 'Deep Child', isHidden: false }));
+    expect(result.navItems![0].navItems![0]).toEqual(expect.objectContaining({ title: 'Deep Child', isHidden: false }));
   });
 });

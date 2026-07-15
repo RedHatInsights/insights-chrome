@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { BundleNav, BundleNavigation, NavItem } from '../@types/types';
-import { isExpandableNav } from '../utils/common';
 import { useVisibleBundles } from '../state/atoms/visibleBundlesAtom';
 
 const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
@@ -12,7 +11,7 @@ const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const nestedItems = firstLeaf ? [] : routes.filter((item) => item.expandable);
   // make sure to find first deeply nested item
   nestedItems.every((item) => {
-    childRoute = getFirstChildRoute(item.routes);
+    childRoute = getFirstChildRoute(item.navItems);
     return !childRoute;
   });
 
@@ -20,32 +19,28 @@ const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
 };
 
 const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & Partial<Pick<BundleNavigation, 'id' | 'title'>>): BundleNav => {
-  const flatLinks = bundle?.navItems?.reduce<(NavItem | NavItem[])[]>((acc, { navItems, routes, expandable, ...rest }) => {
-    // item is a group
-
+  const flatLinks = bundle?.navItems?.reduce<(NavItem | NavItem[])[]>((acc, { navItems, expandable, ...rest }) => {
+    // item is a group or expandable section with children
     if (navItems) {
-      acc.push(...handleBundleResponse({ ...rest, navItems }).links);
-      return acc;
-    }
-
-    if (typeof expandable !== 'undefined' && typeof routes !== 'undefined' && typeof rest.id !== 'undefined') {
-      const childRoute = getFirstChildRoute(routes);
-      if (childRoute) {
-        const expandableLink = {
-          ...childRoute,
-          title: rest.title,
-          description: rest.description,
-          id: rest.id,
-        };
-        acc.push(...routes, expandableLink);
-        // return acc;
+      if (expandable === true && typeof rest.id !== 'undefined') {
+        const childRoute = getFirstChildRoute(navItems);
+        if (childRoute) {
+          const expandableLink = {
+            ...childRoute,
+            title: rest.title,
+            description: rest.description,
+            id: rest.id,
+          };
+          acc.push(...navItems, expandableLink);
+        }
       }
-    }
 
-    // item is an expandable section
-    if (typeof expandable !== 'undefined' && typeof routes !== 'undefined') {
-      // console.log('rest:', { ...rest, routes });
-      acc.push(...handleBundleResponse({ ...rest, navItems: routes }).links);
+      if (expandable === true) {
+        acc.push(...handleBundleResponse({ ...rest, navItems }).links);
+        return acc;
+      }
+
+      acc.push(...handleBundleResponse({ ...rest, navItems }).links);
       return acc;
     }
 
@@ -69,9 +64,7 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
 const getNavLinks = (navItems: NavItem[]): NavItem[] => {
   const links: NavItem[] = [];
   navItems?.forEach((item) => {
-    if (isExpandableNav(item) && item.routes) {
-      links.push(...getNavLinks(item.routes));
-    } else if (item.groupId && item.navItems) {
+    if (item.navItems) {
       links.push(...getNavLinks(item.navItems));
     } else {
       links.push(item);

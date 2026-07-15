@@ -23,13 +23,13 @@ function findModuleByLink(href: string, { modules }: Pick<ChromeModule, 'modules
   return routes.find((route) => href.includes(route)) || '';
 }
 
-function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }: NavItem, modules: { [key: string]: ChromeModule }) {
+function getBundleLink({ title, isExternal, href, navItems, expandable, ...rest }: NavItem, modules: { [key: string]: ChromeModule }) {
   const costLinks: NavItem[] = [];
   const subscriptionsLinks: NavItem[] = [];
   let url = href;
   let appId = rest.appId!;
   if (expandable) {
-    routes?.forEach(({ href, title, ...rest }) => {
+    navItems?.forEach(({ href, title, ...rest }) => {
       if (href?.includes('/openshift/cost-management') && rest.filterable !== false) {
         costLinks.push({ ...rest, isFedramp: false, href, title });
       }
