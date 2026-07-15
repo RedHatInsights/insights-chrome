@@ -1,5 +1,7 @@
 import { test, expect } from '../../setup/test-setup';
 
+const TOOLTIP_TIMEOUT = 10000;
+
 test.describe('Landing page', () => {
   test.beforeEach(async ({ page }) => {
     page.on('load', async () => {
@@ -19,17 +21,19 @@ test.describe('Landing page', () => {
     const settingsButton = page.getByRole('button', { name: 'Settings menu' });
     await expect(settingsButton).toBeVisible();
 
-    // Verify settings tooltip is visible (PF6 renders tooltip with role="tooltip")
+    // Hover over settings button and verify tooltip appears
+    await settingsButton.hover();
     const settingsTooltip = page.getByRole('tooltip', { name: 'Settings' });
-    await expect(settingsTooltip).toBeVisible();
+    await expect(settingsTooltip).toBeVisible({ timeout: TOOLTIP_TIMEOUT });
 
     // Hover over help button (can be "Toggle help panel" or "Help menu" depending on preview mode)
     const helpButton = page.locator('.tooltip-button-help-cy');
     await expect(helpButton).toBeVisible();
+    await helpButton.hover();
 
     // Verify help tooltip is visible and contains help-related content
     // Tooltip text varies by mode: "Help" (non-preview) or "Learning resources, ..." (preview)
     const helpTooltip = page.getByRole('tooltip', { name: /Learning resources|^Help$/ });
-    await expect(helpTooltip).toBeVisible({ timeout: 10000 });
+    await expect(helpTooltip).toBeVisible({ timeout: TOOLTIP_TIMEOUT });
   });
 });
