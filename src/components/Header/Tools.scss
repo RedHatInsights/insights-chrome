@@ -12,3 +12,19 @@
   --pf-v6-c-button--m-primary--m-display-lg--Gap: 0.25rem;
   --pf-v6-c-button--Gap: 0.25rem;
 }
+
+// PF6 MenuToggle has no prop to suppress the caret without variant="plain" (which removes button styling).
+.tooltip-button-settings-cy {
+  justify-content: center;
+
+  .pf-v6-c-menu-toggle__controls {
+    display: none;
+  }
+}
+
+.chr-c-help-panel-toggle,
+.tooltip-button-help-cy {
+  .pf-v6-c-menu-toggle__toggle-icon {
+    display: none;
+  }
+}
