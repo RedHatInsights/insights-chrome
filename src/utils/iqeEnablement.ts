@@ -248,8 +248,6 @@ const qe = {
   fetchResults: () => {
     return fetchResults;
   },
-  // Exported for testing only
-  _resetInitialization,
 };
 
 export default qe;

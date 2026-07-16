@@ -8,7 +8,7 @@ import type { IqeAuthRef } from '../../src/utils/iqeEnablement';
 import { Provider as JotaiProvider, createStore, useAtomValue } from 'jotai';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import qe from '../../src/utils/iqeEnablement';
+import qe, { _resetInitialization } from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import testUserJson from '../fixtures/testUser.json';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
@@ -84,6 +84,8 @@ describe('Gateway errors', () => {
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
     // clear the instance
     removeScalprum();
+    // Reset initialization state to allow qe.init() to run for each test
+    _resetInitialization();
   });
 
   it('handles 403 3scale gateway error', () => {

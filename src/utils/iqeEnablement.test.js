@@ -1,14 +1,14 @@
-import iqeEnablement from './iqeEnablement';
+import * as iqeEnablement from './iqeEnablement';
 
 describe('iqeEnablement', () => {
   test('should correctly spread headers object', async () => {
-    const result = iqeEnablement.spreadAdditionalHeaders({ headers: { one: 'ONE', two: 'Two' } });
+    const result = iqeEnablement.default.spreadAdditionalHeaders({ headers: { one: 'ONE', two: 'Two' } });
 
     expect(result).toEqual({ one: 'ONE', two: 'Two' });
   });
 
   test('should correctly spread headers from array of arrays', async () => {
-    const result = iqeEnablement.spreadAdditionalHeaders({
+    const result = iqeEnablement.default.spreadAdditionalHeaders({
       headers: [
         ['one', 'ONE'],
         ['two', 'Two'],
@@ -63,13 +63,13 @@ describe('init() idempotency', () => {
     const pristineFetch = window.fetch;
 
     // Call init() multiple times (simulating token renewals)
-    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.default.init(mockStore, mockAuthRef);
     const firstPatch = window.fetch;
 
-    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.default.init(mockStore, mockAuthRef);
     const secondPatch = window.fetch;
 
-    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.default.init(mockStore, mockAuthRef);
     const thirdPatch = window.fetch;
 
     // All subsequent calls should result in the same patched function (no re-wrapping)
@@ -93,17 +93,17 @@ describe('init() idempotency', () => {
     const originalSend = window.XMLHttpRequest.prototype.send;
 
     // First init - should patch
-    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.default.init(mockStore, mockAuthRef);
     const firstPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(firstPatchedSend).not.toBe(originalSend);
 
     // Second init - should NOT re-patch (idempotent)
-    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.default.init(mockStore, mockAuthRef);
     const secondPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(secondPatchedSend).toBe(firstPatchedSend);
 
     // Third init - still should NOT re-patch
-    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.default.init(mockStore, mockAuthRef);
     const thirdPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(thirdPatchedSend).toBe(firstPatchedSend);
   });
@@ -123,7 +123,7 @@ describe('isExcluded', () => {
     'https://consent.trustarc.com/analytics?action=0&domain=example.com',
     'http://consent.trustarc.com/analytics?test=1',
   ])('excludes %s', (url) => {
-    expect(iqeEnablement.isExcluded(url)).toBe(true);
+    expect(iqeEnablement.default.isExcluded(url)).toBe(true);
   });
 
   // negative cases
@@ -140,7 +140,7 @@ describe('isExcluded', () => {
     'https://different-domain.com/analytics',
     'https://api.example.com/upgrades_info',
   ])('does not exclude %s', (url) => {
-    expect(iqeEnablement.isExcluded(url)).toBe(false);
+    expect(iqeEnablement.default.isExcluded(url)).toBe(false);
   });
 
   // edge cases
@@ -150,6 +150,6 @@ describe('isExcluded', () => {
     ['consent.trustarc.com/analytics', false],
     ['api.openshift.com/api/upgrades_info', false],
   ])('isExcluded(%s) → %s', (url, expected) => {
-    expect(iqeEnablement.isExcluded(url)).toBe(expected);
+    expect(iqeEnablement.default.isExcluded(url)).toBe(expected);
   });
 });
