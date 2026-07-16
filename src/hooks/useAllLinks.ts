@@ -35,11 +35,6 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
         }
       }
 
-      if (expandable === true) {
-        acc.push(...handleBundleResponse({ ...rest, navItems }).links);
-        return acc;
-      }
-
       acc.push(...handleBundleResponse({ ...rest, navItems }).links);
       return acc;
     }
