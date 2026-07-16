@@ -15,10 +15,13 @@ function normalizeNavItem(item: RawNavItem): NavItem {
   };
 }
 
-function normalizeBundle(bundle: BundleNavigation): BundleNavigation {
+type RawBundleNavigation = Omit<BundleNavigation, 'navItems'> & { routes?: RawNavItem[]; navItems?: RawNavItem[] };
+
+function normalizeBundle(bundle: RawBundleNavigation): BundleNavigation {
+  const children = bundle.navItems ?? bundle.routes ?? [];
   return {
     ...bundle,
-    navItems: (bundle.navItems as RawNavItem[]).map(normalizeNavItem),
+    navItems: children.map(normalizeNavItem),
   };
 }
 
