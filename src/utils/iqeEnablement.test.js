@@ -107,6 +107,44 @@ describe('init() idempotency', () => {
     const thirdPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(thirdPatchedSend).toBe(firstPatchedSend);
   });
+
+  test('should use latest authRef token even after second init() call (token renewal scenario)', async () => {
+    const mockStore = { set: jest.fn() };
+    const mockAuthRef = {
+      current: {
+        user: { access_token: 'initial-token' },
+        signinRedirect: jest.fn(),
+        signinSilent: jest.fn(),
+      },
+    };
+
+    // Mock fetch to return a resolved promise
+    const mockFetch = jest.fn(() => Promise.resolve(new Response('{}', { status: 200 })));
+    window.fetch = mockFetch;
+
+    // First init with initial token
+    iqeEnablement.default.init(mockStore, mockAuthRef);
+
+    // Simulate token renewal - update the authRef with new token
+    mockAuthRef.current.user.access_token = 'renewed-token';
+
+    // Second init (should be idempotent - no re-patching)
+    iqeEnablement.default.init(mockStore, mockAuthRef);
+
+    // Make a fetch request to a relative API path (triggers auth injection)
+    await window.fetch('/api/chrome-service/v1/test');
+
+    // Verify fetch was called with a Request object
+    expect(mockFetch).toHaveBeenCalled();
+    const requestArg = mockFetch.mock.calls[0][0];
+
+    // Get the Authorization header from the request
+    const authHeader = requestArg.headers.get('Authorization');
+
+    // Verify the renewed token is used, not the initial token
+    expect(authHeader).toBe('Bearer renewed-token');
+    expect(authHeader).not.toBe('Bearer initial-token');
+  });
 });
 
 describe('isExcluded', () => {
