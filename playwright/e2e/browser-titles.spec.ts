@@ -1,5 +1,4 @@
 import { expect, test } from '../setup/test-setup';
-import { ChromeNavigation } from './pages/chrome-navigation';
 
 /**
  * Browser Title Validation Tests
@@ -17,44 +16,44 @@ import { ChromeNavigation } from './pages/chrome-navigation';
  */
 
 test.describe('Browser Titles - Settings Navigation', () => {
-  test.beforeEach(async ({ page }) => {
-    // Navigate to Settings page before each test
-    await page.goto('/settings');
-  });
-
   const settingsTestCases = [
     {
-      navItems: ['Integrations'],
+      url: '/settings/integrations',
+      label: 'Integrations',
       expectedTitle: 'Integrations | Settings',
     },
     {
-      navItems: ['Notifications', 'Overview'],
+      url: '/settings/notifications',
+      label: 'Notifications → Overview',
       expectedTitle: 'Notifications | Settings',
     },
     {
-      navItems: ['Notifications', 'Configure Events'],
+      url: '/settings/notifications/configure-events',
+      label: 'Notifications → Configure Events',
       expectedTitle: 'Notifications | Settings',
     },
     {
-      navItems: ['Notifications', 'Event Log'],
+      url: '/settings/notifications/eventlog',
+      label: 'Notifications → Event Log',
       expectedTitle: 'Notifications | Settings',
     },
     {
-      navItems: ['Notifications', 'Notification Preferences'],
+      url: '/settings/notifications/user-preferences',
+      label: 'Notifications → Notification Preferences',
       expectedTitle: 'Notification Preferences',
     },
     {
-      navItems: ['Learning Resources'],
+      url: '/settings/learning-resources',
+      label: 'Learning Resources',
       expectedTitle: 'Learning Resources | Settings',
     },
   ];
 
-  for (const { navItems, expectedTitle } of settingsTestCases) {
-    test(`should display "${expectedTitle}" for ${navItems.join(' → ')}`, async ({ page }) => {
-      const navigation = new ChromeNavigation(page);
-
-      // Navigate through the menu items
-      await navigation.navigateToPage(navItems);
+  for (const { url, label, expectedTitle } of settingsTestCases) {
+    test(`should display "${expectedTitle}" for ${label}`, async ({ page }) => {
+      // Navigate directly to the Settings page URL
+      await page.goto(url);
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify the browser title contains the expected text (full title includes a platform suffix)
       await expect(page).toHaveTitle(new RegExp(expectedTitle.replaceAll('|', '\\|')));

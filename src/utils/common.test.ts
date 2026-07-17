@@ -1,4 +1,118 @@
-import { getErrorMessage } from './common';
+import { findNavLeafPath, getErrorMessage, isExpandableNav } from './common';
+import { NavItem } from '../@types/types';
+
+describe('isExpandableNav', () => {
+  it('returns true when expandable is true and routes is an array', () => {
+    const item: NavItem = { expandable: true, routes: [{ title: 'Child', href: '/child' }] };
+    expect(isExpandableNav(item)).toBe(true);
+  });
+
+  it('returns true when expandable is true and routes is empty array', () => {
+    const item: NavItem = { expandable: true, routes: [] };
+    expect(isExpandableNav(item)).toBe(true);
+  });
+
+  it('returns false when expandable is true but routes is undefined', () => {
+    const item: NavItem = { expandable: true };
+    expect(isExpandableNav(item)).toBe(false);
+  });
+
+  it('returns false when expandable is false', () => {
+    const item: NavItem = { expandable: false, routes: [{ title: 'Child', href: '/child' }] };
+    expect(isExpandableNav(item)).toBe(false);
+  });
+
+  it('returns false when expandable is undefined', () => {
+    const item: NavItem = { title: 'Leaf', href: '/leaf' };
+    expect(isExpandableNav(item)).toBe(false);
+  });
+});
+
+describe('findNavLeafPath', () => {
+  const makeMatcher = (targetHref: string) => (item: NavItem | undefined) => item?.href === targetHref;
+
+  it('finds a leaf item in a flat list', () => {
+    const navItems: NavItem[] = [
+      { title: 'A', href: '/a' },
+      { title: 'B', href: '/b' },
+    ];
+    const result = findNavLeafPath(navItems, makeMatcher('/b'));
+    expect(result.activeItem).toEqual(expect.objectContaining({ href: '/b' }));
+    expect(result.navItems).toEqual([]);
+  });
+
+  it('finds a leaf item in nested expandable routes', () => {
+    const navItems: NavItem[] = [
+      {
+        title: 'Parent',
+        expandable: true,
+        routes: [{ title: 'Child', href: '/parent/child' }],
+      },
+    ];
+    const result = findNavLeafPath(navItems, makeMatcher('/parent/child'));
+    expect(result.activeItem).toEqual(expect.objectContaining({ href: '/parent/child' }));
+    expect(result.navItems).toEqual([expect.objectContaining({ title: 'Parent' })]);
+  });
+
+  it('returns undefined activeItem when no match is found', () => {
+    const navItems: NavItem[] = [{ title: 'A', href: '/a' }];
+    const result = findNavLeafPath(navItems, makeMatcher('/nonexistent'));
+    expect(result.activeItem).toBeUndefined();
+    expect(result.navItems).toEqual([]);
+  });
+
+  it('handles expandable items with undefined routes without crashing', () => {
+    const navItems: NavItem[] = [
+      { title: 'Bad Expandable', expandable: true },
+      { title: 'Good Leaf', href: '/good' },
+    ];
+    const result = findNavLeafPath(navItems, makeMatcher('/good'));
+    expect(result.activeItem).toEqual(expect.objectContaining({ href: '/good' }));
+  });
+
+  it('handles empty navItems array', () => {
+    const result = findNavLeafPath([]);
+    expect(result.activeItem).toBeUndefined();
+    expect(result.navItems).toEqual([]);
+  });
+
+  it('handles undefined navItems without crashing', () => {
+    const result = findNavLeafPath(undefined as unknown as NavItem[]);
+    expect(result.activeItem).toBeUndefined();
+    expect(result.navItems).toEqual([]);
+  });
+
+  it('handles null navItems without crashing', () => {
+    const result = findNavLeafPath(null as unknown as NavItem[]);
+    expect(result.activeItem).toBeUndefined();
+    expect(result.navItems).toEqual([]);
+  });
+
+  it('handles undefined entries in navItems array', () => {
+    const navItems = [undefined, { title: 'Valid', href: '/valid' }, undefined] as (NavItem | undefined)[];
+    const result = findNavLeafPath(navItems, makeMatcher('/valid'));
+    expect(result.activeItem).toEqual(expect.objectContaining({ href: '/valid' }));
+  });
+
+  it('builds full parent path for deeply nested items', () => {
+    const navItems: NavItem[] = [
+      {
+        title: 'L1',
+        expandable: true,
+        routes: [
+          {
+            title: 'L2',
+            expandable: true,
+            routes: [{ title: 'L3', href: '/l1/l2/l3' }],
+          },
+        ],
+      },
+    ];
+    const result = findNavLeafPath(navItems, makeMatcher('/l1/l2/l3'));
+    expect(result.activeItem).toEqual(expect.objectContaining({ href: '/l1/l2/l3' }));
+    expect(result.navItems.map((n) => n.title)).toEqual(['L1', 'L2']);
+  });
+});
 
 describe('getErrorMessage', () => {
   it('extracts string errors', () => {
