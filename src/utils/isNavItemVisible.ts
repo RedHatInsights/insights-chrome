@@ -20,7 +20,6 @@ export type ItemWithPermissionsConfig<T> = T & {
   groupId?: string;
   navItems?: ItemWithPermissionsConfig<NavItem>[];
   expandable?: boolean;
-  routes?: ItemWithPermissionsConfig<NavItem>[];
 };
 
 export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T>) => {
@@ -49,18 +48,8 @@ export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T
     }
   }
 
-  if (typeof result.groupId !== 'undefined' && Array.isArray(result.navItems)) {
-    /**
-     * Evalute group items
-     */
+  if (Array.isArray(result.navItems)) {
     result.navItems = await Promise.all(result.navItems.map(evaluateVisibility));
-  }
-
-  if (result.expandable === true && Array.isArray(result.routes)) {
-    /**
-     * Evaluate sub routes
-     */
-    result.routes = await Promise.all(result.routes.map(evaluateVisibility));
   }
 
   return result;

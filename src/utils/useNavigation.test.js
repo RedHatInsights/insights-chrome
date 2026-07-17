@@ -221,7 +221,7 @@ describe('useNavigation', () => {
           },
           {
             expandable: true,
-            routes: [
+            navItems: [
               {
                 href: '/baz',
               },
@@ -310,7 +310,7 @@ describe('useNavigation', () => {
       const navItem = {
         expandable: true,
         title: 'bar',
-        routes: [
+        navItems: [
           {
             href: '/insights/dashboard',
           },
@@ -351,7 +351,7 @@ describe('useNavigation', () => {
             {
               expandable: true,
               title: 'bar',
-              routes: [
+              navItems: [
                 {
                   href: '/insights/dashboard',
                   active: true,
