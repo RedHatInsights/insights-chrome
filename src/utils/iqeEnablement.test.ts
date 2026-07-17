@@ -1,4 +1,4 @@
-import { describe, test, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import iqeEnablement, { _resetInitialization } from './iqeEnablement';
 import type { IqeAuthRef } from './iqeEnablement';
 import type { Store } from 'jotai';
