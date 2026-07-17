@@ -23,6 +23,7 @@ Chrome exposes these modules for consuming apps:
 | `./search/useSearch` | `src/hooks/useSearch.ts` | Search hook for apps |
 | `./analytics/intercom/OpenShiftItercom` | `src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx` | Intercom module component |
 | `./analytics/intercom/useOpenShiftIntercomStore` | `src/state/stores/openShiftIntercomStore.ts` | Intercom state store |
+| `./theme/useDarkModeStore` | `src/state/stores/darkModeStore.ts` | Dark mode / color scheme hook ([docs](./darkMode.md)) |
 
 ### Shared Dependencies (Singletons)
 
