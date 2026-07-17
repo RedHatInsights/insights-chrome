@@ -11,12 +11,11 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
 type AllServicesBundleProps = BundleNavigation;
 
 const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBundleProps) => {
-  const items = navItems.flatMap(({ href, title, navItems, id, routes, isExternal }) => {
-    const children = routes || navItems;
-    return children
-      ? children.flatMap(({ routes, title: childTitle, href: subHref, id: subId, isExternal }) => {
-          return routes
-            ? routes.map(({ href: childHref, id: nestedId, title: nestedTitle, isExternal }) => ({
+  const items = navItems.flatMap(({ href, title, navItems: childNavItems, id, isExternal }) => {
+    return childNavItems
+      ? childNavItems.flatMap(({ navItems: nestedNavItems, title: childTitle, href: subHref, id: subId, isExternal }) => {
+          return nestedNavItems
+            ? nestedNavItems.map(({ href: childHref, id: nestedId, title: nestedTitle, isExternal }) => ({
                 title: nestedTitle,
                 href: childHref,
                 id: nestedId,
