@@ -7,11 +7,15 @@ interface DarkModeState {
 
 const EVENTS = ['SET_DARK', 'SET_LIGHT'] as const;
 
-let store: ReturnType<typeof createSharedStore<DarkModeState, typeof EVENTS>> | null = null;
+type DarkModeStore = ReturnType<typeof createSharedStore<DarkModeState, typeof EVENTS>>;
 
-export const getDarkModeStore = () => {
-  if (!store) {
-    store = createSharedStore({
+// Anchor the singleton to window so Chrome's internal code and Module Federation
+// consumers share the same instance even if webpack creates separate module closures.
+const STORE_KEY = '__chrome_dark_mode_store__';
+
+export const getDarkModeStore = (): DarkModeStore => {
+  if (!window[STORE_KEY]) {
+    window[STORE_KEY] = createSharedStore({
       initialState: { isDark: false } as DarkModeState,
       events: EVENTS,
       onEventChange: (state, event): DarkModeState => {
@@ -26,12 +30,12 @@ export const getDarkModeStore = () => {
       },
     });
   }
-  return store;
+  return window[STORE_KEY]!;
 };
 
 /** @internal Reset the store singleton. For testing only. */
 export const _resetDarkModeStore = () => {
-  store = null;
+  delete window[STORE_KEY];
 };
 
 /**
