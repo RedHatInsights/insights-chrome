@@ -1,4 +1,4 @@
-import { describe, test, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import iqeEnablement, { _resetInitialization } from './iqeEnablement';
 import type { IqeAuthRef } from './iqeEnablement';
 import type { Store } from 'jotai';
@@ -34,13 +34,11 @@ describe('init() idempotency', () => {
     originalFetch = window.fetch;
     originalXHR = window.XMLHttpRequest;
 
-    // Mock fetch and XHR
+    // Mock fetch
     window.fetch = jest.fn() as typeof window.fetch;
-    window.XMLHttpRequest = function (this: XMLHttpRequest) {
-      this.open = jest.fn();
-      this.send = jest.fn();
-      this.setRequestHeader = jest.fn();
-    } as unknown as typeof XMLHttpRequest;
+
+    // Mock only XMLHttpRequest.prototype methods (not instance-level)
+    // This allows init() to properly intercept and patch
     window.XMLHttpRequest.prototype.open = jest.fn();
     window.XMLHttpRequest.prototype.send = jest.fn();
     window.XMLHttpRequest.prototype.setRequestHeader = jest.fn();
@@ -147,6 +145,152 @@ describe('init() idempotency', () => {
     // Verify the renewed token is used, not the initial token
     expect(authHeader).toBe('Bearer renewed-token');
     expect(authHeader).not.toBe('Bearer initial-token');
+  });
+
+  test('should inject x-rh-frontend-origin header exactly once on fetch requests', async () => {
+    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
+      current: {
+        user: { access_token: 'test-token' },
+        signinRedirect: jest.fn(),
+        signinSilent: jest.fn(),
+      },
+    };
+
+    // Mock the original fetch to capture the final Request object
+    let capturedRequest: Request | undefined;
+    const mockOriginalFetch = jest.fn((req: Request) => {
+      capturedRequest = req;
+      return Promise.resolve(new Response('{}', { status: 200 }));
+    });
+
+    // Set up the mock BEFORE init
+    window.fetch = mockOriginalFetch as typeof window.fetch;
+
+    // Now init will wrap our mock
+    iqeEnablement.init(mockStore, mockAuthRef);
+
+    // Make a fetch request to location.origin + /api path (triggers both headers)
+    await window.fetch(`${location.origin}/api/test-endpoint`);
+
+    // Verify headers
+    expect(mockOriginalFetch).toHaveBeenCalled();
+    expect(capturedRequest).toBeDefined();
+
+    const authHeader = capturedRequest!.headers.get('Authorization');
+    const originHeader = capturedRequest!.headers.get('x-rh-frontend-origin');
+
+    expect(authHeader).toBe('Bearer test-token');
+    expect(originHeader).toBe('hcc');
+
+    // Verify headers appear only once (no duplicates)
+    const allHeaders = Array.from(capturedRequest!.headers.entries());
+    const authCount = allHeaders.filter(([key]) => key.toLowerCase() === 'authorization').length;
+    const originCount = allHeaders.filter(([key]) => key === 'x-rh-frontend-origin').length;
+
+    expect(authCount).toBe(1);
+    expect(originCount).toBe(1);
+  });
+
+  test('should inject headers exactly once on XMLHttpRequest after multiple init() calls', () => {
+    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
+      current: {
+        user: { access_token: 'test-token' },
+        signinRedirect: jest.fn(),
+        signinSilent: jest.fn(),
+      },
+    };
+
+    // Restore real XHR
+    window.XMLHttpRequest = originalXHR;
+
+    // Track setRequestHeader calls
+    const setRequestHeaderSpy = jest.fn();
+    const originalSetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
+
+    window.XMLHttpRequest.prototype.setRequestHeader = function (name: string, value: string) {
+      setRequestHeaderSpy(name, value);
+      return originalSetRequestHeader.call(this, name, value);
+    };
+
+    // Call init() multiple times - should only patch once
+    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
+
+    // Instantiate an XMLHttpRequest and call methods
+    const xhr = new window.XMLHttpRequest();
+    xhr.open('GET', `${location.origin}/api/test-endpoint`);
+    xhr.send();
+
+    // Verify setRequestHeader was called exactly twice (Authorization + x-rh-frontend-origin)
+    // Even though init() was called 3 times, headers should only be injected once
+    // Note: 'Auth' is converted to 'Authorization' by the setRequestHeader wrapper
+    expect(setRequestHeaderSpy).toHaveBeenCalledWith('Authorization', 'Bearer test-token');
+    expect(setRequestHeaderSpy).toHaveBeenCalledWith('x-rh-frontend-origin', 'hcc');
+
+    // Count calls - should be exactly 2 total
+    expect(setRequestHeaderSpy).toHaveBeenCalledTimes(2);
+
+    const authCalls = setRequestHeaderSpy.mock.calls.filter(([name]) => name === 'Authorization');
+    const originCalls = setRequestHeaderSpy.mock.calls.filter(([name]) => name === 'x-rh-frontend-origin');
+
+    expect(authCalls.length).toBe(1);
+    expect(originCalls.length).toBe(1);
+  });
+});
+
+describe('header injection helpers', () => {
+  describe('spreadAdditionalHeaders with Headers object', () => {
+    test('should pass through Headers instance unchanged', () => {
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+
+      const result = iqeEnablement.spreadAdditionalHeaders({ headers });
+
+      // Current implementation returns Headers object as-is (not converted to plain object)
+      expect(result).toBe(headers);
+      expect(result instanceof Headers).toBe(true);
+    });
+
+    test('should return empty object when no headers provided', () => {
+      const result = iqeEnablement.spreadAdditionalHeaders(undefined);
+      expect(result).toEqual({});
+    });
+
+    test('should return empty object when headers is undefined in options', () => {
+      const result = iqeEnablement.spreadAdditionalHeaders({});
+      expect(result).toEqual({});
+    });
+  });
+});
+
+describe('hasPendingAjax', () => {
+  test('should return false when no pending requests', () => {
+    const result = iqeEnablement.hasPendingAjax();
+    expect(result).toBe(false);
+  });
+});
+
+describe('isPageSafe', () => {
+  test('should return true when no unsafe elements', () => {
+    const result = iqeEnablement.isPageSafe();
+    expect(result).toBe(true);
+  });
+
+  test('should return false when unsafe elements present', () => {
+    // Add an unsafe element
+    const div = document.createElement('div');
+    div.setAttribute('data-ouia-safe', 'false');
+    document.body.appendChild(div);
+
+    const result = iqeEnablement.isPageSafe();
+    expect(result).toBe(false);
+
+    // Cleanup
+    document.body.removeChild(div);
   });
 });
 
