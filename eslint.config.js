@@ -98,6 +98,48 @@ module.exports = defineConfig(
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-restricted-imports': 'off',
+      'no-magic-numbers': [
+        'error',
+        {
+          ignore: [0, 1, -1],
+          ignoreArrayIndexes: true,
+          ignoreDefaultValues: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
+    },
+  },
+
+  // Playwright-specific configuration
+  {
+    name: 'insights-chrome/playwright',
+    files: ['playwright/**/*.ts', 'playwright/**/*.tsx', 'playwright/**/*.js'],
+    languageOptions: {
+      parser: typescriptParser,
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    rules: {
+      ...typescriptEslint.configs.recommended.rules,
+      'react/prop-types': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-restricted-imports': 'off',
+      'no-magic-numbers': [
+        'error',
+        {
+          ignore: [0, 1, -1],
+          ignoreArrayIndexes: true,
+          ignoreDefaultValues: true,
+          enforceConst: true,
+          detectObjects: false,
+        },
+      ],
     },
   },
 
