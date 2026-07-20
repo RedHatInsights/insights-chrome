@@ -419,6 +419,7 @@ Chrome exposes modules for other applications:
 - `./search/useSearch` - Search hook for consuming apps
 - `./analytics/intercom/OpenShiftItercom` - Intercom module component
 - `./analytics/intercom/useOpenShiftIntercomStore` - Intercom state store
+- `./theme/useDarkModeStore` - Dark mode / color scheme hook ([docs](docs/darkMode.md))
 
 **Register modules:**
 ```typescript
