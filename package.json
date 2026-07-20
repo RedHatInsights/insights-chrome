@@ -38,6 +38,8 @@
     "translations:compile": "npx formatjs compile ./locales/translation-template.json --out-file ./src/locales/translations.json",
     "translations:datafile": "node scripts/createDataJson.js",
     "verify": "npm-run-all lint build test",
+    "pre-push-check": "./scripts/pre-push-check.sh",
+    "setup-hooks": "./scripts/setup-git-hooks.sh",
     "postinstall": "rm -rf .webpack-cache",
     "ci:unit-tests": "run-s test",
     "ci:lint": "run-s lint",

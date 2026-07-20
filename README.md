@@ -71,6 +71,34 @@ The CI wrapper starts its own dev server — don't run with a dev server already
 CHROME_ACCOUNT=<username> CHROME_PASSWORD="<password>" npm run ci:cypress-e2e-tests
 ```
 
+5. Running pre-push validation
+
+To catch TypeScript and test errors before pushing, run:
+
+```sh
+./scripts/pre-push-check.sh
+```
+
+Or set up automatic pre-push validation (recommended):
+
+```sh
+# One-time setup
+./scripts/setup-git-hooks.sh
+
+# Now validation runs automatically on every push
+git push
+
+# To skip validation (not recommended)
+git push --no-verify
+```
+
+The pre-push check runs:
+- TypeScript build validation
+- ESLint checks
+- Unit tests
+
+This prevents CI failures by catching errors locally before pushing.
+
 ## Running chrome locally
 
 **Prerequisites:**
