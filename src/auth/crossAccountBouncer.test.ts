@@ -19,10 +19,13 @@ describe('crossAccountBouncer', () => {
   });
 
   it('sets localStorage request timeout and removes active remote request', () => {
+    // Seed ACTIVE_REMOTE_REQUEST to verify removal
+    localStorage.setItem(ACTIVE_REMOTE_REQUEST, JSON.stringify({ request_id: 'test-123', target_org: 'old-org' }));
     // @ts-expect-error mock returns string instead of Record<string, string>
-    mockCookiesGet.mockReturnValueOnce('some-cookie');
+    mockCookiesGet.mockReturnValueOnce('some-org-id');
     crossAccountBouncer();
-    expect(localStorage.getItem(ACCOUNT_REQUEST_TIMEOUT)).toEqual('some-cookie');
+    expect(mockCookiesGet).toHaveBeenCalledWith(CROSS_ACCESS_ORG_ID);
+    expect(localStorage.getItem(ACCOUNT_REQUEST_TIMEOUT)).toEqual('some-org-id');
     expect(localStorage.getItem(ACTIVE_REMOTE_REQUEST)).toBeNull();
   });
 
