@@ -127,6 +127,20 @@ describe('kesselPermissions', () => {
       expect(mockedCheckSelf).toHaveBeenCalled();
       expect(mockedCheckSelfBulk).not.toHaveBeenCalled();
     });
+
+    test('should return false on SDK error', async () => {
+      mockedCheckSelfBulk.mockRejectedValueOnce(new Error('Network Error'));
+      const permissions = createKesselPermissions();
+      const result = await permissions.checkAny(['edit', 'view']);
+      expect(result).toBe(false);
+    });
+
+    test('should return false when resource is null for non-workspace type', async () => {
+      const permissions = createKesselPermissions();
+      const result = await permissions.checkAny(['view'], 'group');
+      expect(result).toBe(false);
+      expect(mockedCheckSelfBulk).not.toHaveBeenCalled();
+    });
   });
 
   describe('checkAll', () => {
@@ -163,6 +177,33 @@ describe('kesselPermissions', () => {
       const results = await permissions.checkAll(['view', 'edit']);
       expect(results).toHaveLength(2);
       expect(results.every((r) => r.allowed === false)).toBe(true);
+    });
+
+    test('should use checkSelf for single relation', async () => {
+      mockedCheckSelf.mockResolvedValueOnce({ allowed: 'ALLOWED_TRUE' });
+      const permissions = createKesselPermissions();
+      const results = await permissions.checkAll(['view']);
+      expect(results).toHaveLength(1);
+      expect(results[0]).toEqual({ allowed: true, relation: 'view', resource: { id: mockWorkspaceId, type: 'workspace' } });
+      expect(mockedCheckSelf).toHaveBeenCalled();
+      expect(mockedCheckSelfBulk).not.toHaveBeenCalled();
+    });
+
+    test('should return all-false results on SDK error', async () => {
+      mockedCheckSelfBulk.mockRejectedValueOnce(new Error('Network Error'));
+      const permissions = createKesselPermissions();
+      const results = await permissions.checkAll(['view', 'edit']);
+      expect(results).toHaveLength(2);
+      expect(results.every((r) => r.allowed === false)).toBe(true);
+      expect(results[0]).toEqual({ allowed: false, relation: 'view', resource: { id: '', type: 'workspace' } });
+    });
+
+    test('should return all-false results on SDK error with custom resource type', async () => {
+      mockedCheckSelf.mockRejectedValueOnce(new Error('Network Error'));
+      const permissions = createKesselPermissions();
+      const results = await permissions.checkAll(['view'], 'group', 'grp-1');
+      expect(results).toHaveLength(1);
+      expect(results[0]).toEqual({ allowed: false, relation: 'view', resource: { id: 'grp-1', type: 'group' } });
     });
   });
 });
