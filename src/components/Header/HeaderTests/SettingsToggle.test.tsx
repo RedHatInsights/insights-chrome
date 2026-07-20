@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import SettingsToggle from '../SettingsToggle';
+import { render, screen } from '@testing-library/react';
+import SettingsToggle, { SettingsToggleProps } from '../SettingsToggle';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ jest.mock('../../../state/atoms/releaseAtom', () => {
 });
 
 describe('SettingsToggle', () => {
-  const dropdownItems = [
+  const dropdownItems: SettingsToggleProps['dropdownItems'] = [
     {
       items: [
         {
@@ -24,7 +24,7 @@ describe('SettingsToggle', () => {
     },
   ];
 
-  const renderSettingsToggle = (props = {}) =>
+  const renderSettingsToggle = (props: Partial<SettingsToggleProps> = {}) =>
     render(
       <MemoryRouter>
         <JotaiProvider>
@@ -34,15 +34,14 @@ describe('SettingsToggle', () => {
     );
 
   it('should include chr-c-toolbar-toggle class on the toggle button', () => {
-    const { container } = renderSettingsToggle();
-    const toggleButton = container.querySelector('#TestSettings');
-    expect(toggleButton).toBeTruthy();
+    renderSettingsToggle();
+    const toggleButton = screen.getByRole('button', { name: 'Settings menu' });
     expect(toggleButton).toHaveClass('chr-c-toolbar-toggle');
   });
 
   it('should append additional className alongside chr-c-toolbar-toggle', () => {
-    const { container } = renderSettingsToggle({ className: 'my-custom-class' });
-    const toggleButton = container.querySelector('#TestSettings');
+    renderSettingsToggle({ className: 'my-custom-class' });
+    const toggleButton = screen.getByRole('button', { name: 'Settings menu' });
     expect(toggleButton).toHaveClass('chr-c-toolbar-toggle');
     expect(toggleButton).toHaveClass('my-custom-class');
   });

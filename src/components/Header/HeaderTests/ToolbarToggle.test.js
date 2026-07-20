@@ -71,8 +71,8 @@ describe('ToolbarToggle', () => {
   });
 
   it('should include chr-c-toolbar-toggle class on the toggle button', () => {
-    const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
-    const toggleButton = container.querySelector('#foo');
+    render(<ToolbarToggle {...toolbarToggleProps} ariaLabel="Test toggle" />);
+    const toggleButton = screen.getByRole('button', { name: 'Test toggle' });
     expect(toggleButton).toHaveClass('chr-c-toolbar-toggle');
   });
 
