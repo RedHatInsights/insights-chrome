@@ -120,9 +120,7 @@ describe('init() idempotency', () => {
     };
 
     // Mock fetch to return a resolved promise
-    const mockFetch = jest.fn<(input: Request) => Promise<Response>>((input: Request) =>
-      Promise.resolve(new Response('{}', { status: 200 }))
-    );
+    const mockFetch = jest.fn<(input: Request) => Promise<Response>>(() => Promise.resolve(new Response('{}', { status: 200 })));
     window.fetch = mockFetch as typeof window.fetch;
 
     // First init with initial token
