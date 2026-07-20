@@ -98,16 +98,9 @@ module.exports = defineConfig(
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-restricted-imports': 'off',
-      'no-magic-numbers': [
-        'error',
-        {
-          ignore: [0, 1, -1],
-          ignoreArrayIndexes: true,
-          ignoreDefaultValues: true,
-          enforceConst: true,
-          detectObjects: false,
-        },
-      ],
+      // Note: no-magic-numbers rule is not enabled to avoid false positives on viewport sizes, test data, etc.
+      // Convention: Use named constants for timeouts in E2E tests for CI environment compatibility
+      // Example: const BUTTON_CLICK_TIMEOUT = 5000; await button.click({ timeout: BUTTON_CLICK_TIMEOUT });
     },
   },
 
@@ -130,16 +123,9 @@ module.exports = defineConfig(
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-restricted-imports': 'off',
-      'no-magic-numbers': [
-        'error',
-        {
-          ignore: [0, 1, -1],
-          ignoreArrayIndexes: true,
-          ignoreDefaultValues: true,
-          enforceConst: true,
-          detectObjects: false,
-        },
-      ],
+      // Note: no-magic-numbers rule is not enabled to avoid false positives on viewport sizes, test data, etc.
+      // Convention: Use named constants for timeouts in E2E tests for CI environment compatibility
+      // Example: const TOOLTIP_TIMEOUT = 10000; await expect(tooltip).toBeVisible({ timeout: TOOLTIP_TIMEOUT });
     },
   },
 
