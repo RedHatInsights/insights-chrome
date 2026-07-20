@@ -70,6 +70,12 @@ describe('ToolbarToggle', () => {
     // expect(container.querySelectorAll('.pf-v6-c-menu__list-item')).toHaveLength(0);
   });
 
+  it('should include chr-c-toolbar-toggle class on the toggle button', () => {
+    const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
+    const toggleButton = container.querySelector('#foo');
+    expect(toggleButton).toHaveClass('chr-c-toolbar-toggle');
+  });
+
   it('should call onClick menu item callback', async () => {
     const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
     const toggleButton = container.querySelector('#foo');
