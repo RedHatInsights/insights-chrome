@@ -143,6 +143,7 @@
     "@patternfly/react-icons": "^6.5.0",
     "@patternfly/react-table": "^6.5.0",
     "@patternfly/react-tokens": "^6.5.0",
+    "@project-kessel/react-kessel-access-check": "^0.5.3",
     "@redhat-cloud-services/chrome": "^2.2.0",
     "@redhat-cloud-services/entitlements-client": "^4.0.8",
     "@redhat-cloud-services/frontend-components": "^7.4.1",

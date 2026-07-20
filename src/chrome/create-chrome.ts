@@ -29,6 +29,7 @@ import { ScalprumComponentProps } from '@scalprum/react-core';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { computeDrawerToggle } from './computeDrawerToggle';
 import { TagRegisteredWith, globalFilterHiddenAtom, globalFilterScopeAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
+import { type ChromePermissionsAPI, createKesselPermissions } from './kesselPermissions';
 
 // Global event listeners registry for PUBLIC_EVENTS
 const eventListeners = new Map<string, Map<string, GenericCB>>();
@@ -153,7 +154,8 @@ export const createChromeContext = ({
 
   const isITLessEnv = ITLess();
 
-  const api: ChromeAPI = {
+  // FIXME: Update @redhat-cloud-services/types to include 'permissions' property
+  const api: ChromeAPI & { permissions: ChromePermissionsAPI } = {
     ...actions,
     addWsEventListener,
     auth: {
@@ -263,6 +265,7 @@ export const createChromeContext = ({
     requestPdf: (options) => requestPdf(options, chromeAuth.getRefreshToken),
     drawerActions,
     search: searchAPI,
+    permissions: createKesselPermissions(),
   };
 
   return api;

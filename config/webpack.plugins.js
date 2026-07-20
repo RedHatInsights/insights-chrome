@@ -88,6 +88,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { '@scalprum/core': { singleton: true, requiredVersion: deps['@scalprum/core'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
+        { '@project-kessel/react-kessel-access-check': { singleton: true, requiredVersion: deps['@project-kessel/react-kessel-access-check'] } },
         getDynamicModules(process.cwd()),
       ],
     }),

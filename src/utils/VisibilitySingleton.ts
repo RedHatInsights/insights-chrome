@@ -6,6 +6,24 @@ import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
+import { type ApiConfig, checkSelf, checkSelfBulk } from '@project-kessel/react-kessel-access-check/core/api-client';
+import { fetchDefaultWorkspace } from '@project-kessel/react-kessel-access-check';
+
+const KESSEL_API_CONFIG: ApiConfig = {
+  baseUrl: '',
+  apiPath: '/api/kessel/v1beta2',
+};
+
+let workspacePromise: Promise<string | null> | null = null;
+
+async function getDefaultWorkspaceId(): Promise<string | null> {
+  if (!workspacePromise) {
+    workspacePromise = fetchDefaultWorkspace('')
+      .then((ws) => ws.id)
+      .catch(() => null);
+  }
+  return workspacePromise;
+}
 
 const matcherMapper = {
   isEmpty,
@@ -60,6 +78,9 @@ const initialize = ({
   getUserPermissions: ChromeAPI['getUserPermissions'];
   isPreview: boolean;
 }) => {
+  // Reset workspace cache on re-initialization (e.g. after token refresh)
+  workspacePromise = null;
+
   /**
    * Check if is permitted to see navigation link
    * @param {array} permissions array checked user permissions
@@ -127,9 +148,13 @@ const initialize = ({
     },
     loosePermissions: (permissions: string[]) => checkPermissions(permissions, 'some'),
     /**
-     * Check Kessel tenant-scoped permissions. Takes an array of Kessel relation
+     * Check Kessel workspace-scoped permissions. Takes an array of Kessel relation
      * strings and returns true if the user has at least one (OR logic).
      * The caller's frontend.yaml provides native Kessel relation names.
+     *
+     * @deprecated Use `useChrome().permissions.check()` or `useSelfAccessCheck` from
+     * `@project-kessel/react-kessel-access-check` instead. This function will be
+     * removed in a future release.
      */
     loosePermissionsKessel: async (relations: string[]) => {
       try {
@@ -137,30 +162,35 @@ const initialize = ({
           return false;
         }
 
-        const data = await getUser();
-        const orgId = data?.identity?.org_id;
-        if (!orgId) {
+        const workspaceId = await getDefaultWorkspaceId();
+        if (!workspaceId) {
           return false;
         }
 
         const resource = {
-          resourceId: `redhat/${orgId}`,
-          resourceType: 'tenant',
-          reporter: { type: 'rbac' },
+          id: workspaceId,
+          type: 'workspace',
+          reporter: { type: 'rbac' as const },
         };
         const dedupedRelations = [...new Set(relations)];
 
         if (dedupedRelations.length === 1) {
-          const response = await axios.post('/api/kessel/v1beta2/checkself', { object: resource, relation: dedupedRelations[0] });
-          return response.data?.allowed === 'ALLOWED_TRUE';
+          const response = await checkSelf(KESSEL_API_CONFIG, {
+            relation: dedupedRelations[0],
+            resource,
+          });
+          return response.allowed === 'ALLOWED_TRUE';
         }
 
-        const response = await axios.post('/api/kessel/v1beta2/checkselfbulk', {
-          items: dedupedRelations.map((relation) => ({ object: resource, relation })),
+        const response = await checkSelfBulk(KESSEL_API_CONFIG, {
+          items: dedupedRelations.map((relation) => ({
+            resource,
+            relation,
+          })),
           consistency: { minimizeLatency: true },
         });
-        const pairs = response.data?.pairs ?? [];
-        return Array.isArray(pairs) && pairs.some((r: { item?: { allowed: string } }) => r.item?.allowed === 'ALLOWED_TRUE');
+        const pairs = response.pairs ?? [];
+        return Array.isArray(pairs) && pairs.some((r) => r.item?.allowed === 'ALLOWED_TRUE');
       } catch (error) {
         console.error('loosePermissionsKessel failed', error);
         return false;
