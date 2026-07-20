@@ -14,7 +14,7 @@
 }
 
 // PF6 MenuToggle has no prop to suppress the caret without variant="plain" (which removes button styling).
-.tooltip-button-settings-cy {
+.chr-c-settings-toggle {
   justify-content: center;
 
   .pf-v6-c-menu-toggle__controls {
@@ -22,8 +22,7 @@
   }
 }
 
-.chr-c-help-panel-toggle,
-.tooltip-button-help-cy {
+.chr-c-help-toggle {
   .pf-v6-c-menu-toggle__toggle-icon {
     display: none;
   }

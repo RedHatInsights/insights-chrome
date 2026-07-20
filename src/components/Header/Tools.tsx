@@ -447,7 +447,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           aria-label="Toggle help panel"
           onClick={handleToggle}
           isExpanded={isHelpPanelOpen}
-          className="tooltip-button-help-cy chr-c-help-panel-toggle"
+          className="tooltip-button-help-cy chr-c-help-panel-toggle chr-c-help-toggle"
         >
           Help
         </MenuToggle>
@@ -466,7 +466,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         ariaLabel="Help menu"
         hasToggleIndicator={null}
         dropdownItems={aboutMenuDropdownItems}
-        className="tooltip-button-help-cy"
+        className="tooltip-button-help-cy chr-c-help-toggle"
       />
     </Tooltip>
   );
