@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import iqeEnablement, { _resetInitialization } from './iqeEnablement';
 import type { IqeAuthRef } from './iqeEnablement';
-import type { Store } from 'jotai';
+import { createStore } from 'jotai';
 
 describe('iqeEnablement', () => {
   test('should correctly spread headers object', async () => {
@@ -51,12 +51,12 @@ describe('init() idempotency', () => {
   });
 
   test('should only monkey-patch once even when called multiple times', () => {
-    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockStore = createStore();
     const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'test-token' },
-        signinRedirect: jest.fn(),
-        signinSilent: jest.fn(),
+        signinRedirect: jest.fn<() => Promise<void>>(),
+        signinSilent: jest.fn<() => Promise<unknown>>(),
       },
     };
 
@@ -82,12 +82,12 @@ describe('init() idempotency', () => {
   });
 
   test('should not re-wrap XHR methods on multiple init() calls', () => {
-    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockStore = createStore();
     const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'test-token' },
-        signinRedirect: jest.fn(),
-        signinSilent: jest.fn(),
+        signinRedirect: jest.fn<() => Promise<void>>(),
+        signinSilent: jest.fn<() => Promise<unknown>>(),
       },
     };
 
@@ -110,17 +110,19 @@ describe('init() idempotency', () => {
   });
 
   test('should use latest authRef token even after second init() call (token renewal scenario)', async () => {
-    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockStore = createStore();
     const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'initial-token' },
-        signinRedirect: jest.fn(),
-        signinSilent: jest.fn(),
+        signinRedirect: jest.fn<() => Promise<void>>(),
+        signinSilent: jest.fn<() => Promise<unknown>>(),
       },
     };
 
     // Mock fetch to return a resolved promise
-    const mockFetch = jest.fn(() => Promise.resolve(new Response('{}', { status: 200 })));
+    const mockFetch = jest.fn<(input: Request) => Promise<Response>>((input: Request) =>
+      Promise.resolve(new Response('{}', { status: 200 }))
+    );
     window.fetch = mockFetch as typeof window.fetch;
 
     // First init with initial token
@@ -137,10 +139,10 @@ describe('init() idempotency', () => {
 
     // Verify fetch was called with a Request object
     expect(mockFetch).toHaveBeenCalled();
-    const requestArg = mockFetch.mock.calls[0][0] as Request;
+    const requestArg = mockFetch.mock.calls[0]?.[0] as Request;
 
     // Get the Authorization header from the request
-    const authHeader = requestArg.headers.get('Authorization');
+    const authHeader = requestArg?.headers.get('Authorization');
 
     // Verify the renewed token is used, not the initial token
     expect(authHeader).toBe('Bearer renewed-token');
@@ -148,12 +150,12 @@ describe('init() idempotency', () => {
   });
 
   test('should inject x-rh-frontend-origin header exactly once on fetch requests', async () => {
-    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockStore = createStore();
     const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'test-token' },
-        signinRedirect: jest.fn(),
-        signinSilent: jest.fn(),
+        signinRedirect: jest.fn<() => Promise<void>>(),
+        signinSilent: jest.fn<() => Promise<unknown>>(),
       },
     };
 
@@ -193,12 +195,12 @@ describe('init() idempotency', () => {
   });
 
   test('should inject headers exactly once on XMLHttpRequest after multiple init() calls', () => {
-    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockStore = createStore();
     const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'test-token' },
-        signinRedirect: jest.fn(),
-        signinSilent: jest.fn(),
+        signinRedirect: jest.fn<() => Promise<void>>(),
+        signinSilent: jest.fn<() => Promise<unknown>>(),
       },
     };
 
