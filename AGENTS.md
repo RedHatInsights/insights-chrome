@@ -31,6 +31,7 @@ Existing documentation for deeper reference:
 | [docs/localSearchDevelopment.md](docs/localSearchDevelopment.md) | Search implementation |
 | [docs/wsSubscription.md](docs/wsSubscription.md) | WebSocket subscriptions |
 | [docs/wildcard-permissions.md](docs/wildcard-permissions.md) | Wildcard permission handling |
+| [docs/darkMode.md](docs/darkMode.md) | Dark mode / color scheme remote hook for consuming apps |
 
 ## Project Structure
 
