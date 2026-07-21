@@ -2,23 +2,23 @@ import { findNavLeafPath, getErrorMessage, isExpandableNav } from './common';
 import { NavItem } from '../@types/types';
 
 describe('isExpandableNav', () => {
-  it('returns true when expandable is true and routes is an array', () => {
-    const item: NavItem = { expandable: true, routes: [{ title: 'Child', href: '/child' }] };
+  it('returns true when expandable is true and navItems is an array', () => {
+    const item: NavItem = { expandable: true, navItems: [{ title: 'Child', href: '/child' }] };
     expect(isExpandableNav(item)).toBe(true);
   });
 
-  it('returns true when expandable is true and routes is empty array', () => {
-    const item: NavItem = { expandable: true, routes: [] };
+  it('returns true when expandable is true and navItems is empty array', () => {
+    const item: NavItem = { expandable: true, navItems: [] };
     expect(isExpandableNav(item)).toBe(true);
   });
 
-  it('returns false when expandable is true but routes is undefined', () => {
+  it('returns false when expandable is true but navItems is undefined', () => {
     const item: NavItem = { expandable: true };
     expect(isExpandableNav(item)).toBe(false);
   });
 
   it('returns false when expandable is false', () => {
-    const item: NavItem = { expandable: false, routes: [{ title: 'Child', href: '/child' }] };
+    const item: NavItem = { expandable: false, navItems: [{ title: 'Child', href: '/child' }] };
     expect(isExpandableNav(item)).toBe(false);
   });
 
@@ -41,12 +41,12 @@ describe('findNavLeafPath', () => {
     expect(result.navItems).toEqual([]);
   });
 
-  it('finds a leaf item in nested expandable routes', () => {
+  it('finds a leaf item in nested expandable navItems', () => {
     const navItems: NavItem[] = [
       {
         title: 'Parent',
         expandable: true,
-        routes: [{ title: 'Child', href: '/parent/child' }],
+        navItems: [{ title: 'Child', href: '/parent/child' }],
       },
     ];
     const result = findNavLeafPath(navItems, makeMatcher('/parent/child'));
@@ -61,7 +61,7 @@ describe('findNavLeafPath', () => {
     expect(result.navItems).toEqual([]);
   });
 
-  it('handles expandable items with undefined routes without crashing', () => {
+  it('handles expandable items with undefined navItems without crashing', () => {
     const navItems: NavItem[] = [
       { title: 'Bad Expandable', expandable: true },
       { title: 'Good Leaf', href: '/good' },
@@ -99,11 +99,11 @@ describe('findNavLeafPath', () => {
       {
         title: 'L1',
         expandable: true,
-        routes: [
+        navItems: [
           {
             title: 'L2',
             expandable: true,
-            routes: [{ title: 'L3', href: '/l1/l2/l3' }],
+            navItems: [{ title: 'L3', href: '/l1/l2/l3' }],
           },
         ],
       },

@@ -38,19 +38,19 @@ describe('filterHiddenItems', () => {
     expect(result[0].navItems).toEqual([expect.objectContaining({ title: 'visible child' })]);
   });
 
-  it('should recursively filter hidden routes in expandable items', () => {
+  it('should recursively filter hidden navItems in expandable items', () => {
     const items: NavItem[] = [
       {
         title: 'expandable',
         expandable: true,
-        routes: [
+        navItems: [
           { title: 'v2 route', href: '/iam/access-management/roles' },
           { title: 'v1 route', href: '/iam/user-access/roles', isHidden: true },
         ],
       },
     ];
     const result = filterHiddenItems(items);
-    expect(result[0].routes).toEqual([expect.objectContaining({ title: 'v2 route' })]);
+    expect(result[0].navItems).toEqual([expect.objectContaining({ title: 'v2 route' })]);
   });
 
   it('should remove a parent group if it is hidden', () => {
@@ -76,7 +76,7 @@ describe('filterHiddenItems', () => {
           {
             title: 'expandable',
             expandable: true,
-            routes: [
+            navItems: [
               { title: 'deep visible', href: '/a' },
               { title: 'deep hidden', href: '/b', isHidden: true },
             ],
@@ -85,7 +85,7 @@ describe('filterHiddenItems', () => {
       },
     ];
     const result = filterHiddenItems(items);
-    expect(result[0].navItems![0].routes).toEqual([expect.objectContaining({ title: 'deep visible' })]);
+    expect(result[0].navItems![0].navItems).toEqual([expect.objectContaining({ title: 'deep visible' })]);
   });
 
   it('should return empty array when all items are hidden', () => {
@@ -96,7 +96,7 @@ describe('filterHiddenItems', () => {
     expect(filterHiddenItems(items)).toEqual([]);
   });
 
-  it('should pass through items without navItems or routes unchanged', () => {
+  it('should pass through items without navItems unchanged', () => {
     const items: NavItem[] = [{ title: 'leaf', href: '/a', appId: 'foo' }];
     const result = filterHiddenItems(items);
     expect(result).toEqual([{ title: 'leaf', href: '/a', appId: 'foo' }]);

@@ -48,7 +48,6 @@ export type NavItem = {
   groupId?: string;
   expandable?: boolean;
   href?: string;
-  routes?: NavItem[];
   navItems?: NavItem[];
   active?: boolean;
   isHidden?: boolean;
@@ -223,7 +222,7 @@ export type ChromeNavItemProps = {
 
 export type ChromeNavExpandableProps = {
   title: string;
-  routes: RouteDefinition[];
+  navItems?: NavItem[];
   active?: boolean;
   isHidden?: boolean;
   id?: string;

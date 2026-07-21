@@ -16,7 +16,7 @@ function cleanNavItemsHref(navItem: NavItem) {
   }
 
   if (result.expandable === true) {
-    result.routes = result.routes?.map(cleanNavItemsHref);
+    result.navItems = result.navItems?.map(cleanNavItemsHref);
   }
 
   if (typeof result.href === 'string') {
