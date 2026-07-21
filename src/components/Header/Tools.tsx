@@ -447,7 +447,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           aria-label="Toggle help panel"
           onClick={handleToggle}
           isExpanded={isHelpPanelOpen}
-          className="tooltip-button-help-cy chr-c-help-panel-toggle"
+          className="chr-c-toolbar-toggle tooltip-button-help-cy chr-c-help-panel-toggle"
         >
           Help
         </MenuToggle>
