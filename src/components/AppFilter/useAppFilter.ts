@@ -1,11 +1,8 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
-import { getChromeStaticPathname } from '../../utils/common';
-import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { useAtomValue } from 'jotai';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
-import { navigationAtom } from '../../state/atoms/navigationAtom';
+import { useVisibleBundles } from '../../state/atoms/visibleBundlesAtom';
 
 export type AppFilterBucket = {
   id: string;
@@ -26,13 +23,13 @@ function findModuleByLink(href: string, { modules }: Pick<ChromeModule, 'modules
   return routes.find((route) => href.includes(route)) || '';
 }
 
-function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }: NavItem, modules: { [key: string]: ChromeModule }) {
+function getBundleLink({ title, isExternal, href, navItems, expandable, ...rest }: NavItem, modules: { [key: string]: ChromeModule }) {
   const costLinks: NavItem[] = [];
   const subscriptionsLinks: NavItem[] = [];
   let url = href;
   let appId = rest.appId!;
   if (expandable) {
-    routes?.forEach(({ href, title, ...rest }) => {
+    navItems?.forEach(({ href, title, ...rest }) => {
       if (href?.includes('/openshift/cost-management') && rest.filterable !== false) {
         costLinks.push({ ...rest, isFedramp: false, href, title });
       }
@@ -96,10 +93,10 @@ const useAppFilter = () => {
       },
     },
   });
-  const existingSchemas = useAtomValue(navigationAtom);
+  const visibleBundles = useVisibleBundles();
   const modules = useAtomValue(chromeModulesAtom);
 
-  const handleBundleData = async ({ data: { id, navItems, title } }: { data: BundleNavigation }) => {
+  const handleBundleData = ({ id, navItems, title }: BundleNavigation) => {
     const links: (NavItem & {
       costLinks: NavItem[];
       subscriptionsLinks: NavItem[];
@@ -119,28 +116,22 @@ const useAppFilter = () => {
       cost: [],
       subs: [],
     };
-    const promises = links.map(async ({ costLinks, subscriptionsLinks, ...rest }) => {
-      const nextIndex = bundleLinks.length;
+    links.forEach(({ costLinks, subscriptionsLinks, ...rest }) => {
       if (costLinks.length > 0) {
-        extraLinks.cost = await costLinks.filter(evaluateVisibility);
+        extraLinks.cost.push(...costLinks.filter((item) => !item.isHidden));
       }
 
       if (subscriptionsLinks.length > 0) {
-        extraLinks.subs = await subscriptionsLinks.filter(evaluateVisibility);
+        extraLinks.subs.push(...subscriptionsLinks.filter((item) => !item.isHidden));
       }
       if (rest.filterable !== true && (subscriptionsLinks.length > 0 || costLinks.length > 0)) {
         return;
       }
 
-      /**
-       * We have to create a placeholder for the link item, in order to preserver the links order
-       */
-      bundleLinks.push({ ...rest, isHidden: true });
-      const link = await evaluateVisibility(rest);
-
-      bundleLinks[nextIndex] = link;
+      if (!rest.isHidden) {
+        bundleLinks.push(rest);
+      }
     });
-    await Promise.all(promises);
 
     setState((prev) => ({
       ...prev,
@@ -165,27 +156,18 @@ const useAppFilter = () => {
   };
 
   useEffect(() => {
-    if (state.isOpen && !state.isLoading && !state.isLoaded) {
+    if (state.isOpen && !state.isLoading && !state.isLoaded && visibleBundles.length > 0) {
       setState((prev) => ({
         ...prev,
         isLoading: true,
       }));
-      const bundles = requiredBundles.filter((app) => !Object.keys(existingSchemas).includes(app));
-      bundles.map((fragment) =>
-        axios
-          .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
-          // fallback static CSC for EE env
-          .catch(() => {
-            return axios.get<BundleNavigation>(`$/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
-          })
-          .then(handleBundleData)
-          .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data } as { data: BundleNavigation })))
-          .catch((err) => {
-            console.error('Unable to load appfilter bundle', err, fragment);
-          })
-      );
+      visibleBundles.forEach(handleBundleData);
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
     }
-  }, [state.isOpen]);
+  }, [state.isOpen, visibleBundles, modules]);
 
   const setIsOpen = (isOpen: boolean) => {
     setState((prev) => ({

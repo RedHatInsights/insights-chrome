@@ -3,13 +3,35 @@ import React from 'react';
 import AllServicesDropdown from '../../../src/components/AllServicesDropdown/AllServicesDropdown';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider as JotaiProvider } from 'jotai';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
 import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
+import { visibleServiceTilesAtom, visibleServiceTilesReadyAtom } from '../../../src/state/atoms/visibleBundlesAtom';
+
+const testServiceTiles: any[] = [
+  {
+    id: 'testSection',
+    description: 'Test section description',
+    title: 'Test section',
+    icon: 'CloudUploadAltIcon',
+    links: [
+      {
+        title: 'Test Link',
+        href: '/test/link',
+        description: 'Test link description',
+      },
+    ],
+  },
+];
 
 describe('<AllServicesDropdown />', () => {
+  let store: ReturnType<typeof createStore>;
+
   beforeEach(() => {
+    store = createStore();
+    store.set(visibleServiceTilesAtom, testServiceTiles);
+    store.set(visibleServiceTilesReadyAtom, true);
     // mock chrome and scalprum generic requests
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
       data: [],
@@ -31,21 +53,6 @@ describe('<AllServicesDropdown />', () => {
       cy.contains('Test link').click();
       cy.contains('View all').should('not.exist');
     }
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', [
-      {
-        id: 'testSection',
-        description: 'Test section description',
-        title: 'Test section',
-        icon: 'CloudUploadAltIcon',
-        links: [
-          {
-            title: 'Test Link',
-            href: '/test/link',
-            description: 'Test link description',
-          },
-        ],
-      },
-    ]);
     cy.window().then((win) => {
       (win as any).foo = {
         init: () => undefined,
@@ -66,7 +73,7 @@ describe('<AllServicesDropdown />', () => {
         {/* @ts-ignore */}
         <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
           <FeatureFlagsProvider>
-            <JotaiProvider>
+            <JotaiProvider store={store}>
               <BrowserRouter>
                 <IntlProvider locale="en">
                   <AllServicesDropdown />
@@ -86,21 +93,6 @@ describe('<AllServicesDropdown />', () => {
   });
 
   it('should automatically minimize tabs after clicking on small screen', () => {
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', [
-      {
-        id: 'testSection',
-        description: 'Test section description',
-        title: 'Test section',
-        icon: 'CloudUploadAltIcon',
-        links: [
-          {
-            title: 'Test Link',
-            href: '/test/link',
-            description: 'Test link description',
-          },
-        ],
-      },
-    ]);
     cy.window().then((win) => {
       (win as any).foo = {
         init: () => undefined,
@@ -119,7 +111,7 @@ describe('<AllServicesDropdown />', () => {
           },
         }}
       >
-        <JotaiProvider>
+        <JotaiProvider store={store}>
           {/* @ts-ignore */}
           <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
             <FeatureFlagsProvider>

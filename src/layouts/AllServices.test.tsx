@@ -36,9 +36,8 @@ jest.mock('../hooks/useAllServices', () => ({
   }),
 }));
 
-jest.mock('../hooks/useAllLinks', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fetchBundles: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
+jest.mock('../state/atoms/visibleBundlesAtom', () => ({
+  useVisibleBundles: jest.fn().mockReturnValue([]),
 }));
 
 jest.mock('../utils/common', () => ({

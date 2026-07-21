@@ -220,13 +220,13 @@ const activateChild = (
   childRoutes: NavItem[]
 ): {
   active: boolean;
-  routes: NavItem[];
+  navItems: NavItem[];
 } => {
   let hasActiveChild = false;
-  const routes = childRoutes.map((item) => {
+  const navItems = childRoutes.map((item) => {
     // If expandable traverse children again
     if (item.expandable) {
-      const nestedResult = activateChild(hrefMatch, item.routes || []);
+      const nestedResult = activateChild(hrefMatch, item.navItems || []);
       // mark active if nested child is active
       if (nestedResult.active) {
         hasActiveChild = true;
@@ -234,7 +234,7 @@ const activateChild = (
       return {
         ...item,
         active: nestedResult.active,
-        routes: nestedResult.routes,
+        navItems: nestedResult.navItems,
       };
     }
     const active = item.href === hrefMatch;
@@ -248,24 +248,23 @@ const activateChild = (
   });
   return {
     active: hasActiveChild,
-    routes,
+    navItems,
   };
 };
 
 function mutateSchema(hrefMatch: string, navItems: NavItem[]): NavItem[] {
   return navItems.map((item) => {
-    const { href, routes, navItems } = item;
+    const { href, navItems } = item;
     if (!href && navItems) {
+      if (item.expandable) {
+        return {
+          ...item,
+          ...activateChild(hrefMatch, navItems),
+        };
+      }
       return {
         ...item,
         navItems: mutateSchema(hrefMatch, navItems),
-      };
-    }
-
-    if (!href && routes) {
-      return {
-        ...item,
-        ...activateChild(hrefMatch, routes),
       };
     }
 
@@ -291,13 +290,9 @@ export const highlightItems = (pathname: string, navItems: NavItem[], sortedLink
 };
 
 export const levelArray = (navItems: NavItem[]): string[] => {
-  return flatMap<NavItem, string>(navItems, ({ href, routes, navItems }) => {
+  return flatMap<NavItem, string>(navItems, ({ href, navItems }) => {
     if (!href && navItems) {
       return levelArray(navItems);
-    }
-
-    if (!href && routes) {
-      return levelArray(routes);
     }
 
     if (href) {
@@ -493,8 +488,8 @@ export const isGlobalFilterAllowed = () => {
   return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
 };
 
-export function isExpandableNav(item: NavItem): item is Required<NavItem, 'routes'> {
-  return !!item.expandable;
+export function isExpandableNav(item: NavItem): item is Required<NavItem, 'navItems'> {
+  return !!item.expandable && Array.isArray(item.navItems);
 }
 
 function isActiveLeaf(item: NavItem | undefined): boolean {
@@ -505,6 +500,9 @@ export function findNavLeafPath(
   navItems: (NavItem | undefined)[],
   matcher = isActiveLeaf
 ): { activeItem: Required<NavItem, 'href'> | undefined; navItems: NavItem[] } {
+  if (!Array.isArray(navItems)) {
+    return { activeItem: undefined, navItems: [] };
+  }
   let leaf: Required<NavItem, 'href'> | undefined;
   // store the parent nodes
   const leafPath: NavItem[] = [];
@@ -513,7 +511,7 @@ export function findNavLeafPath(
     const item = navItems[index];
     index += 1;
     if (item && isExpandableNav(item)) {
-      const { activeItem, navItems } = findNavLeafPath(item.routes, matcher) || {};
+      const { activeItem, navItems } = findNavLeafPath(item.navItems, matcher) || {};
       if (activeItem) {
         leaf = activeItem;
         // append parent nodes of an active item

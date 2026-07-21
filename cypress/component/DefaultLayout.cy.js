@@ -13,6 +13,7 @@ import Footer from '../../src/components/Footer/Footer';
 import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
 import chromeStore from '../../src/state/chromeStore';
 import InternalChromeContext from '../../src/utils/internalChromeContext';
+import { visibleBundlesAtom } from '../../src/state/atoms/visibleBundlesAtom';
 
 const testUser = {
   identity: {
@@ -139,6 +140,7 @@ describe('<Default layout />', () => {
   });
 
   beforeEach(() => {
+    chromeStore.set(visibleBundlesAtom, []);
     cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
       statusCode: 200,
     });
@@ -177,9 +179,7 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json', {
-      navItems: [...Array(5)],
-    }).as('navRequest');
+    chromeStore.set(visibleBundlesAtom, [{ id: 'insights', title: 'RHEL', navItems: [...Array(5)] }]);
     const elem = cy
       .mount(
         <Wrapper>
@@ -187,7 +187,6 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
-    cy.wait('@navRequest');
     elem.get('body').matchImageSnapshot();
   });
 
@@ -197,9 +196,7 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json', {
-      navItems: [...Array(30)],
-    }).as('navRequest');
+    chromeStore.set(visibleBundlesAtom, [{ id: 'insights', title: 'RHEL', navItems: [...Array(30)] }]);
     const elem = cy
       .mount(
         <Wrapper>
@@ -207,7 +204,6 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
-    cy.wait('@navRequest');
     elem.get('body').matchImageSnapshot();
   });
 
@@ -217,9 +213,7 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json', {
-      navItems: [...Array(5)],
-    }).as('navRequest');
+    chromeStore.set(visibleBundlesAtom, [{ id: 'insights', title: 'RHEL', navItems: [...Array(5)] }]);
     const elem = cy
       .mount(
         <Wrapper>
@@ -227,7 +221,6 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
-    cy.wait('@navRequest');
     elem.get('body').matchImageSnapshot();
   });
 });
