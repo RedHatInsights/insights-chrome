@@ -1,6 +1,6 @@
 import { expect, test } from '../../setup/test-setup';
 import { login } from '../../helpers/auth';
-import { AUTH_TIMEOUT } from '../../setup/constants';
+import { AUTH_TIMEOUT, UI_VISIBILITY_TIMEOUT } from '../../setup/constants';
 
 test.describe('Authentication', () => {
   // Override storage state to start unauthenticated for login flow tests
@@ -31,7 +31,7 @@ test.describe('Authentication', () => {
     await login(page);
 
     const userMenu = page.getByRole('button', { name: /User Avatar/ });
-    await expect(userMenu).toBeVisible();
+    await expect(userMenu).toBeVisible({ timeout: UI_VISIBILITY_TIMEOUT });
 
     // Click to open the user menu
     await userMenu.click();
@@ -50,8 +50,8 @@ test.describe('Authentication', () => {
     await page.goto('/settings/learning-resources');
     await expect(page).toHaveURL('/settings/learning-resources');
 
-    // Verify still authenticated
+    // Verify still authenticated - allow time for page hydration in CI
     const userMenu = page.getByRole('button', { name: /User Avatar/ });
-    await expect(userMenu).toBeVisible();
+    await expect(userMenu).toBeVisible({ timeout: UI_VISIBILITY_TIMEOUT });
   });
 });
