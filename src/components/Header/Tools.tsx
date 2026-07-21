@@ -176,7 +176,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         {
           ouiaId: 'UserAccess',
           url: identityAndAccessManagmentPath,
-          title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
+          title: isOrgAdmin ? (workspacesEnabled ? 'Access management' : 'User Access') : 'My User Access',
           description: workspacesEnabled ? (
             <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
               Workspaces model available
