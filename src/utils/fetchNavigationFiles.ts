@@ -4,6 +4,27 @@ import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
 import { ITLess, getChromeStaticPathname } from './common';
 
+type RawNavItem = Omit<NavItem, 'navItems'> & { routes?: RawNavItem[]; navItems?: RawNavItem[] };
+
+function normalizeNavItem(item: RawNavItem): NavItem {
+  const { routes, navItems, ...rest } = item;
+  const children = navItems ?? routes;
+  return {
+    ...rest,
+    ...(children ? { navItems: children.map(normalizeNavItem) } : {}),
+  };
+}
+
+type RawBundleNavigation = Omit<BundleNavigation, 'navItems'> & { routes?: RawNavItem[]; navItems?: RawNavItem[] };
+
+function normalizeBundle(bundle: RawBundleNavigation): BundleNavigation {
+  const children = bundle.navItems ?? bundle.routes ?? [];
+  return {
+    ...bundle,
+    navItems: children.map(normalizeNavItem),
+  };
+}
+
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
 }
@@ -38,7 +59,7 @@ const fetchNavigationFiles = async (feoGenerated = false) => {
   if (feoGenerated) {
     // aggregate data call
     const { data: aggregateData } = await axios.get<BundleNavigation[]>('/api/chrome-service/v1/static/bundles-generated.json');
-    const bundleNavigation = aggregateData.filter(isBundleNavigation);
+    const bundleNavigation = aggregateData.filter(isBundleNavigation).map(normalizeBundle);
     return bundleNavigation;
   }
   const bundles = ITLess() ? itLessBundles : requiredBundles;
@@ -65,7 +86,7 @@ const fetchNavigationFiles = async (feoGenerated = false) => {
         })
     )
   )
-    .then((data) => data.filter(isBundleNavigation))
+    .then((data) => data.filter(isBundleNavigation).map(normalizeBundle))
     .then((data) => {
       filesCache.data = data;
       filesCache.ready = true;
