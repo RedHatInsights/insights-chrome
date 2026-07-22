@@ -5,6 +5,7 @@ import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import AllServices from '../../layouts/AllServices';
@@ -245,11 +246,13 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
 
   return (
-    <InternalChromeContext.Provider value={mutableChromeApi.current}>
-      <ScalprumProvider config={scalprumProviderProps.config} api={scalprumProviderProps.api} pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}>
-        <ScalprumRoot />
-      </ScalprumProvider>
-    </InternalChromeContext.Provider>
+    <AccessCheck.Provider baseUrl="" apiPath="/api/kessel/v1beta2">
+      <InternalChromeContext.Provider value={mutableChromeApi.current}>
+        <ScalprumProvider config={scalprumProviderProps.config} api={scalprumProviderProps.api} pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}>
+          <ScalprumRoot />
+        </ScalprumProvider>
+      </InternalChromeContext.Provider>
+    </AccessCheck.Provider>
   );
 };
 
