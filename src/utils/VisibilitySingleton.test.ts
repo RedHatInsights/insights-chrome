@@ -316,18 +316,33 @@ describe('VisibilitySingleton', () => {
   });
 
   describe('loosePermissionsKessel', () => {
+    const mockWorkspaceId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+
     beforeEach(() => {
       getUser.mockImplementation(() => Promise.resolve(userMock));
       mockedAxios.post.mockReset();
+      mockedAxios.get.mockReset();
+      mockedAxios.get.mockResolvedValue({ data: { data: [{ id: mockWorkspaceId }] } });
+      // Re-initialize to reset the workspace cache
+      initializeVisibilityFunctions({ getUser, getToken, getUserPermissions, isPreview: false });
+      visibilityFunctions = getVisibilityFunctions();
     });
 
-    test('should return false if org_id is missing', async () => {
-      getUser.mockImplementationOnce(() =>
-        Promise.resolve({
-          ...userMock,
-          identity: { ...userMock.identity, org_id: undefined },
-        })
-      );
+    test('should return false if workspace fetch fails', async () => {
+      mockedAxios.get.mockReset();
+      mockedAxios.get.mockRejectedValueOnce(new Error('Workspace fetch failed'));
+      initializeVisibilityFunctions({ getUser, getToken, getUserPermissions, isPreview: false });
+      visibilityFunctions = getVisibilityFunctions();
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(false);
+      expect(mockedAxios.post).not.toHaveBeenCalled();
+    });
+
+    test('should return false if workspace returns empty data', async () => {
+      mockedAxios.get.mockReset();
+      mockedAxios.get.mockResolvedValueOnce({ data: { data: [] } });
+      initializeVisibilityFunctions({ getUser, getToken, getUserPermissions, isPreview: false });
+      visibilityFunctions = getVisibilityFunctions();
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
       expect(result).toBe(false);
       expect(mockedAxios.post).not.toHaveBeenCalled();
@@ -343,10 +358,11 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_TRUE' } });
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
       expect(result).toBe(true);
+      expect(mockedAxios.get).toHaveBeenCalledWith('/api/rbac/v2/workspaces/', { params: { type: 'default' } });
       expect(mockedAxios.post).toHaveBeenCalledWith(
         '/api/kessel/v1beta2/checkself',
         expect.objectContaining({
-          object: { resourceId: 'redhat/123', resourceType: 'tenant', reporter: { type: 'rbac' } },
+          object: { resourceId: mockWorkspaceId, resourceType: 'workspace', reporter: { type: 'rbac' } },
           relation: 'rbac_roles_read',
         })
       );
@@ -407,6 +423,29 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockRejectedValueOnce(new Error('Network Error'));
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
       expect(result).toBe(false);
+    });
+
+    test('should retry workspace fetch after a failure', async () => {
+      mockedAxios.get.mockReset();
+      mockedAxios.get.mockRejectedValueOnce(new Error('Workspace fetch failed'));
+      initializeVisibilityFunctions({ getUser, getToken, getUserPermissions, isPreview: false });
+      visibilityFunctions = getVisibilityFunctions();
+
+      const result1 = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result1).toBe(false);
+
+      mockedAxios.get.mockResolvedValueOnce({ data: { data: [{ id: mockWorkspaceId }] } });
+      mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_TRUE' } });
+      const result2 = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result2).toBe(true);
+      expect(mockedAxios.get).toHaveBeenCalledTimes(2);
+    });
+
+    test('should cache workspace ID across multiple calls', async () => {
+      mockedAxios.post.mockResolvedValue({ data: { allowed: 'ALLOWED_TRUE' } });
+      await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      await visibilityFunctions.loosePermissionsKessel(['rbac_groups_read']);
+      expect(mockedAxios.get).toHaveBeenCalledTimes(1);
     });
   });
 });

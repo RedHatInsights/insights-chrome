@@ -7,6 +7,21 @@ import get from 'lodash/get';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
 
+let workspacePromise: Promise<string | null> | null = null;
+
+async function getDefaultWorkspaceId(): Promise<string | null> {
+  if (!workspacePromise) {
+    workspacePromise = axios
+      .get('/api/rbac/v2/workspaces/', { params: { type: 'default' } })
+      .then((res) => res.data?.data?.[0]?.id ?? null)
+      .catch(() => {
+        workspacePromise = null;
+        return null;
+      });
+  }
+  return workspacePromise;
+}
+
 const matcherMapper = {
   isEmpty,
   isNotEmpty: (value: any) => !isEmpty(value),
@@ -60,6 +75,8 @@ const initialize = ({
   getUserPermissions: ChromeAPI['getUserPermissions'];
   isPreview: boolean;
 }) => {
+  workspacePromise = null;
+
   /**
    * Check if is permitted to see navigation link
    * @param {array} permissions array checked user permissions
@@ -127,7 +144,7 @@ const initialize = ({
     },
     loosePermissions: (permissions: string[]) => checkPermissions(permissions, 'some'),
     /**
-     * Check Kessel tenant-scoped permissions. Takes an array of Kessel relation
+     * Check Kessel workspace-scoped permissions. Takes an array of Kessel relation
      * strings and returns true if the user has at least one (OR logic).
      * The caller's frontend.yaml provides native Kessel relation names.
      */
@@ -137,15 +154,14 @@ const initialize = ({
           return false;
         }
 
-        const data = await getUser();
-        const orgId = data?.identity?.org_id;
-        if (!orgId) {
+        const workspaceId = await getDefaultWorkspaceId();
+        if (!workspaceId) {
           return false;
         }
 
         const resource = {
-          resourceId: `redhat/${orgId}`,
-          resourceType: 'tenant',
+          resourceId: workspaceId,
+          resourceType: 'workspace',
           reporter: { type: 'rbac' },
         };
         const dedupedRelations = [...new Set(relations)];
