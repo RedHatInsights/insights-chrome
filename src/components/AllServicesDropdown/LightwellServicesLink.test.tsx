@@ -7,6 +7,12 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import LightwellServicesLink from './LightwellServicesLink';
 
+jest.mock('@scalprum/react-core', () => ({
+  ScalprumComponent: (props: Record<string, unknown>) => (
+    <div data-testid="scalprum-lightwell-icon" data-scope={props.scope} data-module={props.module} />
+  ),
+}));
+
 const renderWithProviders = () => {
   const store = createStore();
   store.set(activeModuleAtom, 'testModule');
@@ -51,11 +57,12 @@ describe('LightwellServicesLink', () => {
     expect(link).toHaveAttribute('data-ouia-component-id', 'AllServices-Dropdown-Lightwell');
   });
 
-  it('should render the LightwellIcon SVG inside the link', () => {
+  it('should render the LightwellIcon via ScalprumComponent from frontend-assets', () => {
     renderWithProviders();
-    const link = screen.getByRole('link', { name: /lightwell/i });
-    const icon = link.querySelector('svg.allservices-icon');
+    const icon = screen.getByTestId('scalprum-lightwell-icon');
     expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute('data-scope', 'frontend-assets');
+    expect(icon).toHaveAttribute('data-module', './LightwellIcon');
   });
 
   it('should make the entire content clickable as a single link', () => {
