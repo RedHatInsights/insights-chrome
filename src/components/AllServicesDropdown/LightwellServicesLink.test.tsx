@@ -7,8 +7,11 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import LightwellServicesLink from './LightwellServicesLink';
 
+const mockUseScalprum = jest.fn();
+
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-lightwell-icon" data-scope={props.scope} data-module={props.module} />,
+  useScalprum: () => mockUseScalprum(),
 }));
 
 const renderWithProviders = () => {
@@ -38,6 +41,12 @@ const renderWithProviders = () => {
 };
 
 describe('LightwellServicesLink', () => {
+  beforeEach(() => {
+    mockUseScalprum.mockReturnValue({
+      config: { 'frontend-assets': { name: 'frontend-assets', manifestLocation: '/frontend-assets/manifest.json' } },
+    });
+  });
+
   it('should render the Lightwell label', () => {
     renderWithProviders();
     expect(screen.getByText('Lightwell')).toBeInTheDocument();
@@ -69,5 +78,14 @@ describe('LightwellServicesLink', () => {
     const links = container.querySelectorAll('a');
     expect(links).toHaveLength(1);
     expect(links[0]).toHaveAttribute('href', '/lightwell');
+  });
+
+  it('should not render the icon when frontend-assets scope is unavailable', () => {
+    mockUseScalprum.mockReturnValue({ config: {} });
+    renderWithProviders();
+    expect(screen.queryByTestId('scalprum-lightwell-icon')).not.toBeInTheDocument();
+    // Link and label still render
+    expect(screen.getByRole('link', { name: /lightwell/i })).toBeInTheDocument();
+    expect(screen.getByText('Lightwell')).toBeInTheDocument();
   });
 });
