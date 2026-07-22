@@ -1,14 +1,17 @@
-import * as iqeEnablement from './iqeEnablement';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import iqeEnablement, { _resetInitialization } from './iqeEnablement';
+import type { IqeAuthRef } from './iqeEnablement';
+import type { Store } from 'jotai';
 
 describe('iqeEnablement', () => {
   test('should correctly spread headers object', async () => {
-    const result = iqeEnablement.default.spreadAdditionalHeaders({ headers: { one: 'ONE', two: 'Two' } });
+    const result = iqeEnablement.spreadAdditionalHeaders({ headers: { one: 'ONE', two: 'Two' } });
 
     expect(result).toEqual({ one: 'ONE', two: 'Two' });
   });
 
   test('should correctly spread headers from array of arrays', async () => {
-    const result = iqeEnablement.default.spreadAdditionalHeaders({
+    const result = iqeEnablement.spreadAdditionalHeaders({
       headers: [
         ['one', 'ONE'],
         ['two', 'Two'],
@@ -20,24 +23,24 @@ describe('iqeEnablement', () => {
 });
 
 describe('init() idempotency', () => {
-  let originalFetch;
-  let originalXHR;
+  let originalFetch: typeof window.fetch;
+  let originalXHR: typeof window.XMLHttpRequest;
 
   beforeEach(() => {
     // Reset initialization state before each test
-    iqeEnablement._resetInitialization();
+    _resetInitialization();
 
     // Store original implementations
     originalFetch = window.fetch;
     originalXHR = window.XMLHttpRequest;
 
     // Mock fetch and XHR
-    window.fetch = jest.fn();
-    window.XMLHttpRequest = function () {
+    window.fetch = jest.fn() as typeof window.fetch;
+    window.XMLHttpRequest = function (this: XMLHttpRequest) {
       this.open = jest.fn();
       this.send = jest.fn();
       this.setRequestHeader = jest.fn();
-    };
+    } as unknown as typeof XMLHttpRequest;
     window.XMLHttpRequest.prototype.open = jest.fn();
     window.XMLHttpRequest.prototype.send = jest.fn();
     window.XMLHttpRequest.prototype.setRequestHeader = jest.fn();
@@ -50,8 +53,8 @@ describe('init() idempotency', () => {
   });
 
   test('should only monkey-patch once even when called multiple times', () => {
-    const mockStore = { set: jest.fn() };
-    const mockAuthRef = {
+    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'test-token' },
         signinRedirect: jest.fn(),
@@ -63,13 +66,13 @@ describe('init() idempotency', () => {
     const pristineFetch = window.fetch;
 
     // Call init() multiple times (simulating token renewals)
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
     const firstPatch = window.fetch;
 
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
     const secondPatch = window.fetch;
 
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
     const thirdPatch = window.fetch;
 
     // All subsequent calls should result in the same patched function (no re-wrapping)
@@ -81,8 +84,8 @@ describe('init() idempotency', () => {
   });
 
   test('should not re-wrap XHR methods on multiple init() calls', () => {
-    const mockStore = { set: jest.fn() };
-    const mockAuthRef = {
+    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'test-token' },
         signinRedirect: jest.fn(),
@@ -93,24 +96,24 @@ describe('init() idempotency', () => {
     const originalSend = window.XMLHttpRequest.prototype.send;
 
     // First init - should patch
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
     const firstPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(firstPatchedSend).not.toBe(originalSend);
 
     // Second init - should NOT re-patch (idempotent)
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
     const secondPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(secondPatchedSend).toBe(firstPatchedSend);
 
     // Third init - still should NOT re-patch
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
     const thirdPatchedSend = window.XMLHttpRequest.prototype.send;
     expect(thirdPatchedSend).toBe(firstPatchedSend);
   });
 
   test('should use latest authRef token even after second init() call (token renewal scenario)', async () => {
-    const mockStore = { set: jest.fn() };
-    const mockAuthRef = {
+    const mockStore = { set: jest.fn() } as unknown as Store;
+    const mockAuthRef: React.MutableRefObject<IqeAuthRef> = {
       current: {
         user: { access_token: 'initial-token' },
         signinRedirect: jest.fn(),
@@ -120,23 +123,23 @@ describe('init() idempotency', () => {
 
     // Mock fetch to return a resolved promise
     const mockFetch = jest.fn(() => Promise.resolve(new Response('{}', { status: 200 })));
-    window.fetch = mockFetch;
+    window.fetch = mockFetch as typeof window.fetch;
 
     // First init with initial token
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
 
     // Simulate token renewal - update the authRef with new token
-    mockAuthRef.current.user.access_token = 'renewed-token';
+    mockAuthRef.current.user!.access_token = 'renewed-token';
 
     // Second init (should be idempotent - no re-patching)
-    iqeEnablement.default.init(mockStore, mockAuthRef);
+    iqeEnablement.init(mockStore, mockAuthRef);
 
     // Make a fetch request to a relative API path (triggers auth injection)
     await window.fetch('/api/chrome-service/v1/test');
 
     // Verify fetch was called with a Request object
     expect(mockFetch).toHaveBeenCalled();
-    const requestArg = mockFetch.mock.calls[0][0];
+    const requestArg = mockFetch.mock.calls[0][0] as Request;
 
     // Get the Authorization header from the request
     const authHeader = requestArg.headers.get('Authorization');
@@ -161,7 +164,7 @@ describe('isExcluded', () => {
     'https://consent.trustarc.com/analytics?action=0&domain=example.com',
     'http://consent.trustarc.com/analytics?test=1',
   ])('excludes %s', (url) => {
-    expect(iqeEnablement.default.isExcluded(url)).toBe(true);
+    expect(iqeEnablement.isExcluded(url)).toBe(true);
   });
 
   // negative cases
@@ -178,16 +181,16 @@ describe('isExcluded', () => {
     'https://different-domain.com/analytics',
     'https://api.example.com/upgrades_info',
   ])('does not exclude %s', (url) => {
-    expect(iqeEnablement.default.isExcluded(url)).toBe(false);
+    expect(iqeEnablement.isExcluded(url)).toBe(false);
   });
 
   // edge cases
-  test.each([
+  test.each<[string, boolean]>([
     ['', false],
     ['not-a-url', false],
     ['consent.trustarc.com/analytics', false],
     ['api.openshift.com/api/upgrades_info', false],
   ])('isExcluded(%s) → %s', (url, expected) => {
-    expect(iqeEnablement.default.isExcluded(url)).toBe(expected);
+    expect(iqeEnablement.isExcluded(url)).toBe(expected);
   });
 });
