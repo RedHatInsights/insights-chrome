@@ -13,6 +13,7 @@ import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/co
 import { Link } from 'react-router-dom';
 import './AllServicesTabs.scss';
 import PlatformServiceslinks from './PlatformServicesLinks';
+import LightwellServicesLink from './LightwellServicesLink';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type AllServicesTabsProps = {
@@ -93,6 +94,11 @@ const AllServicesTabs = ({
         Platforms
       </Content>
       <PlatformServiceslinks />
+      <Divider className="pf-v6-u-mt-md" />
+      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-md" component={ContentVariants.small}>
+        Lightwell
+      </Content>
+      <LightwellServicesLink />
       <>
         <Divider className="pf-v6-u-mt-md" />
         <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.small}>
