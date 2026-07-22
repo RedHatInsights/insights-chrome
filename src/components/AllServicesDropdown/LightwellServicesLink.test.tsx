@@ -1,19 +1,19 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { Provider as JotaiProvider, createStore } from "jotai";
-import NavContext from "../Navigation/navContext";
-import { activeModuleAtom } from "../../state/atoms/activeModuleAtom";
-import { moduleRoutesAtom } from "../../state/atoms/chromeModuleAtom";
-import LightwellServicesLink from "./LightwellServicesLink";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { Provider as JotaiProvider, createStore } from 'jotai';
+import NavContext from '../Navigation/navContext';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
+import LightwellServicesLink from './LightwellServicesLink';
 
-jest.mock("@scalprum/react-core", () => ({
+jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-lightwell-icon" data-scope={props.scope} data-module={props.module} />,
 }));
 
 const renderWithProviders = () => {
   const store = createStore();
-  store.set(activeModuleAtom, "testModule");
+  store.set(activeModuleAtom, 'testModule');
   store.set(moduleRoutesAtom, []);
 
   return render(
@@ -37,37 +37,37 @@ const renderWithProviders = () => {
   );
 };
 
-describe("LightwellServicesLink", () => {
-  it("should render the Lightwell label", () => {
+describe('LightwellServicesLink', () => {
+  it('should render the Lightwell label', () => {
     renderWithProviders();
-    expect(screen.getByText("Lightwell")).toBeInTheDocument();
+    expect(screen.getByText('Lightwell')).toBeInTheDocument();
   });
 
-  it("should render a link to /lightwell", () => {
+  it('should render a link to /lightwell', () => {
     renderWithProviders();
-    const link = screen.getByRole("link", { name: /lightwell/i });
-    expect(link).toHaveAttribute("href", "/lightwell");
+    const link = screen.getByRole('link', { name: /lightwell/i });
+    expect(link).toHaveAttribute('href', '/lightwell');
   });
 
-  it("should set the OUIA component ID", () => {
+  it('should set the OUIA component ID', () => {
     renderWithProviders();
-    const link = screen.getByRole("link", { name: /lightwell/i });
-    expect(link).toHaveAttribute("data-ouia-component-id", "AllServices-Dropdown-Lightwell");
+    const link = screen.getByRole('link', { name: /lightwell/i });
+    expect(link).toHaveAttribute('data-ouia-component-id', 'AllServices-Dropdown-Lightwell');
   });
 
-  it("should render the LightwellIcon via ScalprumComponent from frontend-assets", () => {
+  it('should render the LightwellIcon via ScalprumComponent from frontend-assets', () => {
     renderWithProviders();
-    const icon = screen.getByTestId("scalprum-lightwell-icon");
+    const icon = screen.getByTestId('scalprum-lightwell-icon');
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute("data-scope", "frontend-assets");
-    expect(icon).toHaveAttribute("data-module", "./LightwellIcon");
+    expect(icon).toHaveAttribute('data-scope', 'frontend-assets');
+    expect(icon).toHaveAttribute('data-module', './LightwellIcon');
   });
 
-  it("should make the entire content clickable as a single link", () => {
+  it('should make the entire content clickable as a single link', () => {
     const { container } = renderWithProviders();
     // Only one link should exist — icon and label are both inside it
-    const links = container.querySelectorAll("a");
+    const links = container.querySelectorAll('a');
     expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute("href", "/lightwell");
+    expect(links[0]).toHaveAttribute('href', '/lightwell');
   });
 });
