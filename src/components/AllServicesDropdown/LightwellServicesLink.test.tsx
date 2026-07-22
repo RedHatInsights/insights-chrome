@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider, createStore } from 'jotai';
-import { describe, expect, it, jest } from '@jest/globals';
 import NavContext from '../Navigation/navContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
@@ -16,7 +15,17 @@ const renderWithProviders = () => {
   return render(
     <MemoryRouter>
       <JotaiProvider store={store}>
-        <NavContext.Provider value={{ onLinkClick: jest.fn() }}>
+        <NavContext.Provider
+          value={{
+            onLinkClick: jest.fn(),
+            componentMapper: {
+              group: () => null,
+              expandable: () => null,
+              item: () => null,
+              dynamicNav: () => null,
+            },
+          }}
+        >
           <LightwellServicesLink />
         </NavContext.Provider>
       </JotaiProvider>
