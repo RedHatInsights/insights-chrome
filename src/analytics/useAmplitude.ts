@@ -72,6 +72,7 @@ function useAmplitude() {
     }
   };
 
+  // Initialize the Amplitude SDK once
   const initializeAmplitudeAutocapture = function () {
     if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready || !user) {
       return;
@@ -91,45 +92,6 @@ function useAmplitude() {
         .user()
         .then((segmentUser) => {
           try {
-            // Build enriched user properties from ChromeUser context
-            // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
-            const userProperties: Record<string, unknown> = {
-              // REQUIRED: User context - matches Segment property names
-              // Default to false if undefined to ensure property is always present
-              internal: user.identity.user?.is_internal ?? false,
-
-              // STRETCH GOALS: Additional high-value properties
-              isBeta: isPreview,
-              isOrgAdmin: user.identity.user?.is_org_admin,
-              org_id: user.identity.internal?.org_id,
-
-              // Additional organization context
-              account_id: user.identity.internal?.account_id,
-              account_number: user.identity.account_number,
-              organization_name: user.identity.organization?.name,
-
-              // Additional user context
-              locale: user.identity.user?.locale,
-              email_domain: user.identity.user?.email ? user.identity.user.email.split('@')[1]?.toLowerCase() : undefined,
-
-              // Application context
-              current_bundle: getUrl('bundle'),
-              current_app: activeModule,
-
-              // Entitlements
-              ...Object.entries(user.entitlements || {}).reduce(
-                (acc, [key, entitlement]) => ({
-                  ...acc,
-                  [`entitlement_${key}`]: entitlement.is_entitled,
-                  [`entitlement_${key}_trial`]: entitlement.is_trial,
-                }),
-                {}
-              ),
-            };
-
-            // Filter out undefined values
-            const filteredUserProperties = Object.fromEntries(Object.entries(userProperties).filter(([, value]) => value !== undefined));
-
             // Initialize Amplitude SDK with autocapture plugin
             amplitude.add(autocapturePlugin());
             const initPromise = amplitude.init(autocaptureKeyToUse, segmentUser.id() ?? undefined, {
@@ -142,17 +104,17 @@ function useAmplitude() {
               },
             });
 
-            // Set user properties via identify() call
-            // IMPORTANT: Wait for init() to complete, then send identify()
+            // Wait for init() to complete, then send initial identify()
             initPromise?.promise
               ?.then(() => {
+                // Send initial user properties
+                const filteredUserProperties = buildUserProperties();
                 if (Object.keys(filteredUserProperties).length > 0) {
                   const identifyEvent = new amplitude.Identify();
                   Object.entries(filteredUserProperties).forEach(([key, value]) => {
                     // Type assertion: we've already filtered out undefined, value is a valid property type
                     identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
                   });
-                  // Send the identify event
                   amplitude.identify(identifyEvent);
                 } else {
                   console.warn('No user properties to set for Amplitude autocapture');
@@ -173,6 +135,78 @@ function useAmplitude() {
           console.error('Error getting user for Amplitude autocapture', error);
         });
     });
+  };
+
+  // Build enriched user properties - extracted to helper function for reuse
+  const buildUserProperties = function (): Record<string, unknown> {
+    if (!user) {
+      return {};
+    }
+
+    // Build enriched user properties from ChromeUser context
+    // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
+    const userProperties: Record<string, unknown> = {
+      // REQUIRED: User context - matches Segment property names
+      // Default to false if undefined to ensure property is always present
+      internal: user.identity.user?.is_internal ?? false,
+
+      // STRETCH GOALS: Additional high-value properties
+      isBeta: isPreview,
+      isOrgAdmin: user.identity.user?.is_org_admin,
+      org_id: user.identity.internal?.org_id,
+
+      // Additional organization context
+      account_id: user.identity.internal?.account_id,
+      account_number: user.identity.account_number,
+      organization_name: user.identity.organization?.name,
+
+      // Additional user context
+      locale: user.identity.user?.locale,
+      email_domain: user.identity.user?.email ? user.identity.user.email.split('@')[1]?.toLowerCase() : undefined,
+
+      // Application context
+      current_bundle: getUrl('bundle'),
+      current_app: activeModule,
+
+      // Entitlements
+      ...Object.entries(user.entitlements || {}).reduce(
+        (acc, [key, entitlement]) => ({
+          ...acc,
+          [`entitlement_${key}`]: entitlement.is_entitled,
+          [`entitlement_${key}_trial`]: entitlement.is_trial,
+        }),
+        {}
+      ),
+    };
+
+    // Filter out undefined values
+    return Object.fromEntries(Object.entries(userProperties).filter(([, value]) => value !== undefined));
+  };
+
+  // Update user properties via identify() - called on navigation changes
+  const updateAmplitudeUserProperties = function () {
+    // Only update if SDK is already initialized
+    if (!amplitudeSdkInitialized.current || !user) {
+      return;
+    }
+
+    try {
+      const filteredUserProperties = buildUserProperties();
+
+      if (Object.keys(filteredUserProperties).length > 0) {
+        const identifyEvent = new amplitude.Identify();
+        Object.entries(filteredUserProperties).forEach(([key, value]) => {
+          // Type assertion: we've already filtered out undefined, value is a valid property type
+          identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
+        });
+        // Send the identify event
+        amplitude.identify(identifyEvent);
+      } else {
+        console.warn('No user properties to set for Amplitude autocapture');
+      }
+    } catch (error) {
+      console.error('Error updating Amplitude user properties', error);
+    }
   };
 
   const initializeAmplitude = function () {
@@ -251,9 +285,15 @@ function useAmplitude() {
     };
   }, [enableAmplitude, ready, navigate, analytics, keyToUse]);
 
+  // Initialize Amplitude autocapture SDK once
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, autocaptureKeyToUse, user, activeModule, isPreview]);
+  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, user]);
+
+  // Update user properties when activeModule or isPreview changes
+  useEffect(() => {
+    updateAmplitudeUserProperties();
+  }, [activeModule, isPreview]);
 }
 
 export default useAmplitude;

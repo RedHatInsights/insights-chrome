@@ -414,4 +414,64 @@ describe('useAmplitude', () => {
     errorSpy.mockRestore();
     warnSpy.mockRestore();
   });
+
+  it('updates current_app and current_bundle properties on navigation', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    // Start with dashboard
+    mockActiveModule = 'dashboard';
+    mockIsPreview = false;
+
+    const { rerender } = render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
+      expect(amplitude.init).toHaveBeenCalled();
+    });
+
+    // Verify initial identify call
+    await waitFor(() => {
+      expect(amplitude.Identify).toHaveBeenCalled();
+      const firstIdentifyInstance = (amplitude.Identify as jest.Mock).mock.results[0].value;
+      expect(firstIdentifyInstance.set).toHaveBeenCalledWith('current_app', 'dashboard');
+      expect(firstIdentifyInstance.set).toHaveBeenCalledWith('isBeta', false);
+      expect(amplitude.identify).toHaveBeenCalledWith(firstIdentifyInstance);
+    });
+
+    // Clear mocks to track new calls
+    jest.clearAllMocks();
+
+    // Navigate to cost-management and enable preview
+    mockActiveModule = 'cost-management';
+    mockIsPreview = true;
+
+    // Trigger rerender to simulate navigation
+    rerender(<TestComponent />);
+
+    // Verify identify was called again with updated properties
+    await waitFor(() => {
+      expect(amplitude.Identify).toHaveBeenCalled();
+      const secondIdentifyInstance = (amplitude.Identify as jest.Mock).mock.results[0].value;
+      expect(secondIdentifyInstance.set).toHaveBeenCalledWith('current_app', 'cost-management');
+      expect(secondIdentifyInstance.set).toHaveBeenCalledWith('isBeta', true);
+      expect(amplitude.identify).toHaveBeenCalledWith(secondIdentifyInstance);
+    });
+
+    // Verify init was NOT called again (SDK already initialized)
+    expect(amplitude.init).not.toHaveBeenCalled();
+    expect(amplitude.add).not.toHaveBeenCalled();
+
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+    logSpy.mockRestore();
+  });
 });
