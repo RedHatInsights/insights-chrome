@@ -26,6 +26,8 @@ function useAmplitude() {
   const activeModule = useAtomValue(activeModuleAtom);
   const isPreview = useAtomValue(isPreviewAtom);
   const { user } = useContext(ChromeAuthContext);
+  // Use stable scalar from user object to avoid effect re-runs on every render
+  const userAccountNumber = user?.identity?.account_number;
 
   // Chrome-level analytics config from FEO (fed-mods.json analytics section)
   const chromeAnalytics = chromeModules['chrome']?.analytics;
@@ -288,7 +290,7 @@ function useAmplitude() {
   // Initialize Amplitude autocapture SDK once
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, user]);
+  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, userAccountNumber]);
 
   // Update user properties when activeModule or isPreview changes
   useEffect(() => {
