@@ -1,6 +1,6 @@
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { useSegment } from './useSegment';
 import { isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
@@ -74,8 +74,66 @@ function useAmplitude() {
     }
   };
 
+  // Build and send enriched user properties via identify()
+  // useCallback ensures fresh captures of activeModule/isPreview/user on each call
+  const sendIdentifyEvent = useCallback(() => {
+    if (!user) {
+      return;
+    }
+
+    // Build enriched user properties from ChromeUser context
+    // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
+    const userProperties: Record<string, unknown> = {
+      // REQUIRED: User context - matches Segment property names
+      // Default to false if undefined to ensure property is always present
+      internal: user.identity.user?.is_internal ?? false,
+
+      // STRETCH GOALS: Additional high-value properties
+      isBeta: isPreview,
+      isOrgAdmin: user.identity.user?.is_org_admin,
+      org_id: user.identity.internal?.org_id,
+
+      // Additional organization context
+      account_id: user.identity.internal?.account_id,
+      account_number: user.identity.account_number,
+
+      // Additional user context
+      locale: user.identity.user?.locale,
+      email_domain: user.identity.user?.email ? user.identity.user.email.split('@')[1]?.toLowerCase() : undefined,
+
+      // Application context
+      current_bundle: getUrl('bundle'),
+      current_app: activeModule,
+
+      // Entitlements (NOTE: unbounded enumeration - payload grows with entitlement count)
+      ...Object.entries(user.entitlements || {}).reduce(
+        (acc, [key, entitlement]) => ({
+          ...acc,
+          [`entitlement_${key}`]: entitlement.is_entitled,
+          [`entitlement_${key}_trial`]: entitlement.is_trial,
+        }),
+        {}
+      ),
+    };
+
+    // Filter out undefined values
+    const filteredUserProperties = Object.fromEntries(Object.entries(userProperties).filter(([, value]) => value !== undefined));
+
+    if (Object.keys(filteredUserProperties).length > 0) {
+      const identifyEvent = new amplitude.Identify();
+      Object.entries(filteredUserProperties).forEach(([key, value]) => {
+        // Type assertion: we've already filtered out undefined, value is a valid property type
+        identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
+      });
+      amplitude.identify(identifyEvent);
+    } else {
+      console.warn('No user properties to set for Amplitude autocapture');
+    }
+  }, [user, activeModule, isPreview]);
+
   // Initialize the Amplitude SDK once
-  const initializeAmplitudeAutocapture = function () {
+  // useCallback with sendIdentifyEvent dep ensures we call the latest version
+  const initializeAmplitudeAutocapture = useCallback(() => {
     if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready || !user) {
       return;
     }
@@ -109,18 +167,7 @@ function useAmplitude() {
             // Wait for init() to complete, then send initial identify()
             initPromise?.promise
               ?.then(() => {
-                // Send initial user properties
-                const filteredUserProperties = buildUserProperties();
-                if (Object.keys(filteredUserProperties).length > 0) {
-                  const identifyEvent = new amplitude.Identify();
-                  Object.entries(filteredUserProperties).forEach(([key, value]) => {
-                    // Type assertion: we've already filtered out undefined, value is a valid property type
-                    identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
-                  });
-                  amplitude.identify(identifyEvent);
-                } else {
-                  console.warn('No user properties to set for Amplitude autocapture');
-                }
+                sendIdentifyEvent();
               })
               .catch((error) => {
                 // Handle initialization promise rejection
@@ -137,78 +184,7 @@ function useAmplitude() {
           console.error('Error getting user for Amplitude autocapture', error);
         });
     });
-  };
-
-  // Build enriched user properties - extracted to helper function for reuse
-  const buildUserProperties = function (): Record<string, unknown> {
-    if (!user) {
-      return {};
-    }
-
-    // Build enriched user properties from ChromeUser context
-    // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
-    const userProperties: Record<string, unknown> = {
-      // REQUIRED: User context - matches Segment property names
-      // Default to false if undefined to ensure property is always present
-      internal: user.identity.user?.is_internal ?? false,
-
-      // STRETCH GOALS: Additional high-value properties
-      isBeta: isPreview,
-      isOrgAdmin: user.identity.user?.is_org_admin,
-      org_id: user.identity.internal?.org_id,
-
-      // Additional organization context
-      account_id: user.identity.internal?.account_id,
-      account_number: user.identity.account_number,
-
-      // Additional user context
-      locale: user.identity.user?.locale,
-      email_domain: user.identity.user?.email ? user.identity.user.email.split('@')[1]?.toLowerCase() : undefined,
-
-      // Application context
-      current_bundle: getUrl('bundle'),
-      current_app: activeModule,
-
-      // Entitlements
-      ...Object.entries(user.entitlements || {}).reduce(
-        (acc, [key, entitlement]) => ({
-          ...acc,
-          [`entitlement_${key}`]: entitlement.is_entitled,
-          [`entitlement_${key}_trial`]: entitlement.is_trial,
-        }),
-        {}
-      ),
-    };
-
-    // Filter out undefined values
-    return Object.fromEntries(Object.entries(userProperties).filter(([, value]) => value !== undefined));
-  };
-
-  // Update user properties via identify() - called on navigation changes
-  const updateAmplitudeUserProperties = function () {
-    // Only update if SDK is already initialized
-    if (!amplitudeSdkInitialized.current || !user) {
-      return;
-    }
-
-    try {
-      const filteredUserProperties = buildUserProperties();
-
-      if (Object.keys(filteredUserProperties).length > 0) {
-        const identifyEvent = new amplitude.Identify();
-        Object.entries(filteredUserProperties).forEach(([key, value]) => {
-          // Type assertion: we've already filtered out undefined, value is a valid property type
-          identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
-        });
-        // Send the identify event
-        amplitude.identify(identifyEvent);
-      } else {
-        console.warn('No user properties to set for Amplitude autocapture');
-      }
-    } catch (error) {
-      console.error('Error updating Amplitude user properties', error);
-    }
-  };
+  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, user, sendIdentifyEvent]);
 
   const initializeAmplitude = function () {
     return analytics
@@ -289,12 +265,16 @@ function useAmplitude() {
   // Initialize Amplitude autocapture SDK once
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, userAccountNumber]);
+  }, [initializeAmplitudeAutocapture]);
 
-  // Update user properties when activeModule or isPreview changes
+  // Update user properties when activeModule, isPreview, or user changes
   useEffect(() => {
-    updateAmplitudeUserProperties();
-  }, [activeModule, isPreview]);
+    // Only send if SDK is already initialized
+    if (!amplitudeSdkInitialized.current) {
+      return;
+    }
+    sendIdentifyEvent();
+  }, [activeModule, isPreview, userAccountNumber, sendIdentifyEvent]);
 }
 
 export default useAmplitude;
