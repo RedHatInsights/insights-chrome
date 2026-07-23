@@ -159,7 +159,7 @@ WHERE isBeta = true AND [Amplitude] Element Text = "Create Playbook"
 **Top engaged organizations:**
 ```
 Event: [Amplitude] Page Viewed
-GROUP BY org_id, organization_name
+GROUP BY org_id
 ORDER BY event_count DESC
 ```
 

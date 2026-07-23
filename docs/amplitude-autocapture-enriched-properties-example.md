@@ -50,7 +50,6 @@
 |----------|------|---------|-------------|
 | `account_id` | string | `"acct-456789"` | Internal account ID |
 | `account_number` | string | `"12845372"` | EBS account number |
-| `organization_name` | string | `"Acme Corp"` | Org display name |
 
 ### User Context
 
@@ -98,7 +97,7 @@ GROUP BY current_app sequence
 
 **Enterprise segmentation:**
 ```
-GROUP BY org_id, organization_name
+GROUP BY org_id
 ORDER BY event_count DESC
 ```
 

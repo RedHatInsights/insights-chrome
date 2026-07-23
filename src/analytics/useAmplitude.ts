@@ -160,7 +160,6 @@ function useAmplitude() {
       // Additional organization context
       account_id: user.identity.internal?.account_id,
       account_number: user.identity.account_number,
-      organization_name: user.identity.organization?.name,
 
       // Additional user context
       locale: user.identity.user?.locale,
