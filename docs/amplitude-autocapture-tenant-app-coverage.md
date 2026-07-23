@@ -1,418 +1,205 @@
 # Amplitude Autocapture - Tenant Application Coverage
 
-## TL;DR: **YES** ✅ 
-
-**All tenant applications automatically benefit from these enriched user properties with ZERO additional work required.**
-
----
+All tenant applications automatically get enriched user properties on autocapture events with zero code changes.
 
 ## How It Works
 
 ### Chrome-Level Initialization
 
-The Amplitude autocapture SDK is initialized **once at the Chrome/platform level** in `src/analytics/useAmplitude.ts`:
+Amplitude autocapture SDK initializes once in Chrome shell (`src/analytics/useAmplitude.ts`):
 
 ```typescript
-// Initialized in Chrome shell
 amplitude.add(autocapturePlugin());
 amplitude.init(autocaptureKeyToUse, userId, {
   deviceId: deviceId,
   defaultTracking: {
-    sessions: true,      // ✅ Tracks all page sessions
-    pageViews: true,     // ✅ Tracks all page navigations
-    formInteractions: true,  // ✅ Tracks all form interactions
-    fileDownloads: true, // ✅ Tracks all file downloads
+    sessions: true,
+    pageViews: true,
+    formInteractions: true,
+    fileDownloads: true,
   },
 });
-
-// Set enriched user properties ONCE
-amplitude.identify(identifyEvent); // Contains all 40+ properties
+amplitude.identify(identifyEvent); // 40+ enriched properties
 ```
 
 ### DOM-Level Event Capture
 
-The Amplitude autocapture plugin uses **browser-level event listeners** on the `document` or `window` object. This means:
+Autocapture plugin uses browser-level event listeners on `document`:
 
-1. ✅ **It captures events from the ENTIRE DOM** - not just Chrome shell elements
-2. ✅ **It captures events from dynamically loaded Module Federation apps** (tenant applications)
-3. ✅ **User properties set via `identify()` persist across ALL captured events**
+- Captures events from entire DOM (Chrome shell + tenant apps)
+- Captures events from Module Federation apps (same document context)
+- User properties persist across all captured events
+- **Note**: Iframe events not captured (separate document context; Module Federation apps don't use iframes)
 
-**Note on iframes:** Events from within iframes (even same-origin) are NOT automatically captured as they have separate document contexts. Module Federation apps render in the main document, not iframes, so this limitation doesn't affect tenant applications.
+### What Gets Captured
 
-### What Gets Captured Automatically
+- Clicks on buttons, links, navigation
+- Form interactions (focus, changes, submissions)
+- Page views (route changes)
+- File downloads
 
-When a user interacts with **any tenant application**, autocapture tracks:
+All events include enriched user properties automatically.
 
-- **Clicks** on buttons, links, navigation items
-- **Form interactions** - input focus, value changes, submissions
-- **Page views** - route changes within tenant apps
-- **File downloads** - any file download triggers
+## Example: Cross-App Journey
 
-**All of these events automatically include the enriched user properties.**
+User navigates Dashboard → Cost Management:
 
----
-
-## Example: User Journey Across Apps
-
-### Scenario
-A user navigates from Insights Dashboard → Cost Management → Subscriptions
-
-### What Amplitude Captures
-
-#### Event 1: Click on "Cost Management" nav link (in Chrome shell)
+**Event 1: Click "Cost Management" nav link**
 ```json
 {
   "event_type": "[Amplitude] Element Clicked",
-  "event_properties": {
-    "[Amplitude] Element Tag": "a",
-    "[Amplitude] Element Text": "Cost Management",
-    "[Amplitude] Element Selector": "nav > ul > li > a"
-  },
   "user_properties": {
     "$set": {
-      "internal": false,
-      "isOrgAdmin": true,
-      "org_id": "20283813",
       "current_bundle": "insights",
       "current_app": "dashboard",
-      "entitlement_cost_management": true,
-      // ... all 40+ enriched properties
+      "isOrgAdmin": true,
+      "org_id": "20283813"
+      // ... 40+ properties
     }
   }
 }
 ```
 
-#### Event 2: Page view for Cost Management app (tenant app)
+**Event 2: Cost Management page view**
 ```json
 {
   "event_type": "[Amplitude] Page Viewed",
-  "event_properties": {
-    "[Amplitude] Page URL": "/cost-management/overview",
-    "[Amplitude] Page Title": "Cost Management Overview"
-  },
   "user_properties": {
     "$set": {
-      "internal": false,
+      "current_bundle": "cost-management",  // Updated
+      "current_app": "cost-management",     // Updated
       "isOrgAdmin": true,
-      "org_id": "20283813",
-      "current_bundle": "cost-management",  // ← Updated automatically!
-      "current_app": "cost-management",     // ← Updated automatically!
-      "entitlement_cost_management": true,
-      // ... all 40+ enriched properties
+      "org_id": "20283813"
+      // ... 40+ properties
     }
   }
 }
 ```
 
-#### Event 3: Click "Create Budget" button (in Cost Management tenant app)
+**Event 3: Click "Create Budget" button**
 ```json
 {
   "event_type": "[Amplitude] Element Clicked",
   "event_properties": {
-    "[Amplitude] Element Tag": "button",
-    "[Amplitude] Element Text": "Create Budget",
-    "[Amplitude] Element Selector": ".pf-c-button.pf-m-primary"
+    "[Amplitude] Element Text": "Create Budget"
   },
   "user_properties": {
     "$set": {
-      "internal": false,
-      "isOrgAdmin": true,
-      "org_id": "20283813",
       "current_bundle": "cost-management",
       "current_app": "cost-management",
-      "entitlement_cost_management": true,
-      // ... all 40+ enriched properties
+      "entitlement_cost_management": true
+      // ... 40+ properties
     }
   }
 }
 ```
 
-#### Event 4: Form submission in Cost Management tenant app
-```json
-{
-  "event_type": "[Amplitude] Form Submitted",
-  "event_properties": {
-    "[Amplitude] Form ID": "budget-create-form",
-    "[Amplitude] Form Action": "/api/cost-management/v1/budgets"
-  },
-  "user_properties": {
-    "$set": {
-      "internal": false,
-      "isOrgAdmin": true,
-      "org_id": "20283813",
-      "current_bundle": "cost-management",
-      "current_app": "cost-management",
-      "entitlement_cost_management": true,
-      // ... all 40+ enriched properties
-    }
-  }
-}
-```
+## Dynamic Properties
 
----
+Properties that update on navigation:
 
-## Dynamic Property Updates
+| Property | Updates When |
+|----------|--------------|
+| `current_bundle` | Navigate to different bundle |
+| `current_app` | Navigate to different app |
+| `isBeta` | Toggle Preview mode |
 
-Some enriched properties are **reactive** and update automatically as the user navigates:
+Properties that remain static:
 
-### Properties That Update on Navigation
-
-| Property | Updates When | Example |
-|----------|--------------|---------|
-| `current_bundle` | User navigates to different bundle | `"insights"` → `"openshift"` |
-| `current_app` | User navigates to different app | `"dashboard"` → `"cost-management"` |
-| `isBeta` | User toggles Preview mode | `false` → `true` |
-
-### Properties That Remain Static
-
-| Property | Stays Constant | Example |
-|----------|----------------|---------|
-| `internal` | For entire session | `false` |
-| `isOrgAdmin` | For entire session | `true` |
-| `org_id` | For entire session | `"20283813"` |
-| `entitlement_*` | For entire session | `true/false` |
-| `locale` | For entire session | `"en"` |
-| `email_domain` | For entire session | `"redhat.com"` |
-
-**Note:** Chrome's `useAmplitude` hook has a `useEffect` dependency array that includes `activeModule` and `isPreview`, so when these change, the `identify()` call is re-triggered with updated values.
-
----
+`internal`, `isOrgAdmin`, `org_id`, `entitlement_*`, `locale`, `email_domain`
 
 ## Coverage Matrix
 
-### ✅ What IS Captured (with enriched properties)
+**What IS captured:**
+- Module Federation apps
+- React and non-React apps
+- Dynamically loaded content
+- SPAs with client-side routing
+- Forms, buttons, links, downloads
 
-| Tenant App Type | Captured? | Notes |
-|-----------------|-----------|-------|
-| **Module Federation apps** | ✅ YES | All federated apps loaded by Scalprum |
-| **React apps** | ✅ YES | Any React app rendered in the platform |
-| **Non-React apps** | ✅ YES | Plain HTML/JS apps also captured |
-| **Dynamically loaded content** | ✅ YES | Content loaded after initial page load |
-| **SPAs with client-side routing** | ✅ YES | Route changes tracked as page views |
-| **Forms in tenant apps** | ✅ YES | Form interactions tracked |
-| **Buttons/links in tenant apps** | ✅ YES | Click events tracked |
-| **File downloads in tenant apps** | ✅ YES | Download events tracked |
-
-### ❌ What is NOT Captured
-
-| Scenario | Captured? | Notes |
-|----------|-----------|-------|
-| **Same-origin iframes** | ❌ NO | Separate document context; events don't bubble to parent |
-| **Cross-origin iframes** | ❌ NO | Browser security restrictions |
-| **Events before SDK init** | ❌ NO | Autocapture only starts after Chrome initializes |
-| **Custom events** | ❌ NO | Tenant apps must manually track via Segment/Amplitude |
-| **Server-side actions** | ❌ NO | Only client-side DOM events |
-
----
+**What is NOT captured:**
+- Same-origin/cross-origin iframes (separate document context)
+- Events before SDK initialization
+- Custom events (use Segment `analytics.track()`)
+- Server-side actions
 
 ## Tenant App Developer Experience
 
-### What Tenant Apps Need to Do
+**Required:** Nothing. Zero code changes.
 
-**NOTHING.** 🎉
-
-Tenant applications automatically benefit from:
-- ✅ All 40+ enriched user properties
-- ✅ Automatic click tracking
-- ✅ Automatic form tracking
-- ✅ Automatic page view tracking
-- ✅ Proper user/device/session identification
-
-### What Tenant Apps CAN Do (Optional)
-
-If a tenant app wants to send **custom events** with additional properties, they can still use Segment as before:
-
+**Optional custom events:**
 ```typescript
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-const MyComponent = () => {
-  const { analytics } = useChrome();
-  
-  const handleSpecialAction = () => {
-    // Custom event - will be forwarded to Amplitude via Segment integration
-    analytics.track('Budget Created', {
-      budget_amount: 1000,
-      budget_period: 'monthly',
-      // Enriched properties are ALREADY attached automatically!
-    });
-  };
-};
+const { analytics } = useChrome();
+analytics.track('Budget Created', { budget_amount: 1000 });
+// Enriched properties automatically included
 ```
 
-The enriched properties (`internal`, `isOrgAdmin`, etc.) are **automatically included** via the autocapture SDK's identify call - tenant apps don't need to manually attach them.
+## Example Queries
 
----
-
-## Example Queries Tenant Apps Can Now Use
-
-### Cost Management Team
-
-**"How many org admins created a budget this week?"**
-```text
+**Org admins creating budgets:**
+```
 Event: [Amplitude] Element Clicked
-  WHERE [Amplitude] Element Text = "Create Budget"
-  AND isOrgAdmin = true
-  GROUP BY date
+WHERE [Amplitude] Element Text = "Create Budget" AND isOrgAdmin = true
 ```
 
-**"Do trial users interact with the cost optimization recommendations?"**
-```text
+**Trial users interacting with features:**
+```
 Event: [Amplitude] Element Clicked
-  WHERE [Amplitude] Page URL CONTAINS "/cost-management"
-  AND entitlement_cost_management_trial = true
-  GROUP BY [Amplitude] Element Text
+WHERE entitlement_cost_management_trial = true
 ```
 
-### Ansible Team
-
-**"Are beta users clicking the new playbook builder?"**
-```text
+**Beta feature adoption:**
+```
 Event: [Amplitude] Element Clicked
-  WHERE [Amplitude] Element Text = "Create Playbook"
-  AND isBeta = true
-  AND entitlement_ansible = true
+WHERE isBeta = true AND [Amplitude] Element Text = "Create Playbook"
 ```
 
-### Subscriptions Team
-
-**"Which organizations are most engaged with subscription management?"**
-```text
+**Top engaged organizations:**
+```
 Event: [Amplitude] Page Viewed
-  WHERE [Amplitude] Page URL CONTAINS "/subscriptions"
-  GROUP BY org_id, organization_name
-  ORDER BY event_count DESC
+GROUP BY org_id, organization_name
+ORDER BY event_count DESC
 ```
 
----
+## Technical Details
 
-## Technical Implementation Notes
+**Amplitude Browser SDK:** Singleton pattern. Chrome initializes once; tenant apps share the same instance.
 
-### Amplitude Browser SDK Architecture
+**Autocapture plugin:**
+- Attaches event listeners to `document` (not scoped to specific elements)
+- Uses event delegation (captures events from any child element)
+- Listeners persist across route changes
+- User properties from `identify()` attach to all subsequent events
 
-The Amplitude Browser SDK v2 uses a **singleton pattern**:
+**Module Federation:** Tenant apps render into the same DOM, events bubble to same document listeners, share same Amplitude SDK instance. Autocapture works seamlessly.
 
-```typescript
-// Chrome initializes once
-import * as amplitude from '@amplitude/analytics-browser';
-amplitude.init(apiKey, userId);
-amplitude.identify(enrichedProperties);
-
-// Tenant apps DON'T need to initialize - the same instance is used
-// Browser-level event listeners capture ALL DOM events
-```
-
-### Autocapture Plugin Behavior
-
-From `@amplitude/plugin-autocapture-browser@1.27.2`:
-
-1. **Attaches event listeners to `document`** - not scoped to a specific element
-2. **Uses event delegation** - captures events that bubble up from ANY child element
-3. **Event listeners persist across route changes** - no re-initialization needed
-4. **User properties set via `identify()` are attached to ALL subsequent events**
-
-### Module Federation Isolation
-
-Even though tenant apps are loaded via Module Federation (separate webpack bundles), they:
-- ✅ Render into the **same DOM** (document object)
-- ✅ Events bubble up to the **same document listeners**
-- ✅ Share the **same Amplitude SDK instance** (singleton)
-
-Therefore, autocapture works seamlessly across all federated apps.
-
----
-
-## Performance Impact
-
-### No Additional Load for Tenant Apps
-
-Tenant applications benefit from Chrome-level initialization:
-- Amplitude SDK is loaded **once** by Chrome shell
-- Autocapture plugin is loaded **once** by Chrome shell  
-- Event listeners are registered **once** at the document level
-- Tenant apps incur no additional SDK loading or initialization overhead
-
-### Minimal Runtime Impact
-
-The autocapture implementation uses efficient patterns to minimize performance impact:
-- Event listeners use **event delegation** (single listener per event type)
+**Performance:**
+- SDK loaded once by Chrome (~50KB gzipped)
+- Single event listener per event type (delegation)
 - Event batching reduces network requests
-- Gzip compression on event payloads
+- Per batch: ~2-5KB (varies with payload size)
 
-**Measured typical overhead** (varies by browser, network, and payload size):
-- Initial SDK/plugin load: ~50KB (gzipped)
-- Per event batch: ~2-5KB (varies with property count and batching)
+**Feature flag:** `platform.chrome.analytics.amplitude.autocapture`
 
-Note: Actual overhead depends on build configuration, browser environment, network conditions, and the number of properties included in each event.
-
----
-
-## Feature Flag Gating
-
-The autocapture feature is controlled by the `platform.chrome.analytics.amplitude.autocapture` Unleash flag.
-
-### When Enabled
-- ✅ All tenant app events captured
-- ✅ All enriched properties attached
-- ✅ Works across all bundles/apps
-
-### When Disabled
-- ❌ No autocapture events sent
-- ✅ Segment events still work (tenant apps using custom tracking)
-- ✅ No impact on tenant app functionality
-
----
-
-## Summary for Tenant Teams
-
-### 🎉 The Good News
-
-**Your app automatically gets:**
-- 40+ enriched user properties on ALL autocapture events
-- Automatic click, form, page view, and download tracking
-- Proper user/organization/entitlement segmentation
-- Zero code changes required
-- Zero performance overhead
-- Zero maintenance burden
-
-### 📊 What You Can Do Now
-
-1. **Analyze user behavior** without custom tracking code
-2. **Segment by entitlements** to understand trial vs paid usage
-3. **Filter internal vs customer** usage for accurate metrics
-4. **Track cross-product journeys** using org_id
-5. **Compare admin vs user behavior** using isOrgAdmin
-6. **Measure beta adoption** using isBeta flag
-
-### 🚀 Next Steps
-
-1. Log into Amplitude (if you have access)
-2. Browse autocapture events for your app
-3. See enriched properties automatically attached
-4. Build dashboards/queries using the new properties
-5. Share insights with your team!
-
----
-
-## Questions?
+## FAQ
 
 **Q: Do I need to install Amplitude SDK in my tenant app?**  
-A: No! Chrome shell handles it.
+No. Chrome shell handles it.
 
 **Q: Do I need to call `amplitude.identify()` in my app?**  
-A: No! Chrome shell already did it.
+No. Chrome shell already did it.
 
-**Q: Can I add my own custom properties?**  
-A: Yes! Use Segment `analytics.track()` as before. Enriched properties are automatically included.
+**Q: Can I add custom properties?**  
+Yes. Use Segment `analytics.track()` as before. Enriched properties are automatically included.
 
 **Q: What if my app uses a custom Amplitude instance?**  
-A: The autocapture instance is separate. Your custom instance won't conflict.
+Autocapture instance is separate. No conflict.
 
-**Q: How do I test this locally?**  
-A: Enable the `platform.chrome.analytics.amplitude.autocapture` feature flag and check browser DevTools Network tab for Amplitude requests.
-
-**Q: When will this go live?**  
-A: Once the PR is merged and deployed, it's gated by the Unleash feature flag, which can be enabled per environment.
+**Q: How do I test locally?**  
+Enable the feature flag and check browser DevTools Network tab for Amplitude requests.
 
 ---
 
-**Bottom line: All 50+ tenant applications in the Hybrid Cloud Console automatically benefit from enriched Amplitude autocapture properties with zero effort. 🎊**
+**Bottom line:** All 50+ tenant applications automatically benefit from enriched Amplitude autocapture with zero effort.
