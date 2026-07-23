@@ -1,13 +1,16 @@
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { useSegment } from './useSegment';
 import { isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
-import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
+import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { chromeModulesAtom } from '../state/atoms/chromeModuleAtom';
+import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
+import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { getUrl } from '../hooks/useBundle';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
@@ -20,6 +23,11 @@ function useAmplitude() {
   const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const chromeModules = useAtomValue(chromeModulesAtom);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isPreview = useAtomValue(isPreviewAtom);
+  const { user } = useContext(ChromeAuthContext);
+  // Use stable scalar from user object to avoid effect re-runs on every render
+  const userAccountNumber = user?.identity?.account_number;
 
   // Chrome-level analytics config from FEO (fed-mods.json analytics section)
   const chromeAnalytics = chromeModules['chrome']?.analytics;
@@ -66,8 +74,67 @@ function useAmplitude() {
     }
   };
 
-  const initializeAmplitudeAutocapture = function () {
-    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready) {
+  // Build and send enriched user properties via identify()
+  // useCallback ensures fresh captures of activeModule/isPreview/user on each call
+  const sendIdentifyEvent = useCallback(() => {
+    if (!user) {
+      return;
+    }
+
+    // Build enriched user properties from ChromeUser context
+    // Property names match Segment conventions (camelCase for booleans, snake_case for IDs)
+    const userProperties: Record<string, unknown> = {
+      // REQUIRED: User context - matches Segment property names
+      // Default to false if undefined to ensure property is always present
+      internal: user.identity.user?.is_internal ?? false,
+
+      // STRETCH GOALS: Additional high-value properties
+      isBeta: isPreview,
+      isOrgAdmin: user.identity.user?.is_org_admin,
+      org_id: user.identity.internal?.org_id,
+
+      // Additional organization context
+      account_id: user.identity.internal?.account_id,
+      account_number: user.identity.account_number,
+
+      // Additional user context
+      locale: user.identity.user?.locale,
+      email_domain: user.identity.user?.email ? user.identity.user.email.split('@')[1]?.toLowerCase() : undefined,
+
+      // Application context
+      current_bundle: getUrl('bundle'),
+      current_app: activeModule,
+
+      // Entitlements (NOTE: unbounded enumeration - payload grows with entitlement count)
+      ...Object.entries(user.entitlements || {}).reduce(
+        (acc, [key, entitlement]) => ({
+          ...acc,
+          [`entitlement_${key}`]: entitlement.is_entitled,
+          [`entitlement_${key}_trial`]: entitlement.is_trial,
+        }),
+        {}
+      ),
+    };
+
+    // Filter out undefined values
+    const filteredUserProperties = Object.fromEntries(Object.entries(userProperties).filter(([, value]) => value !== undefined));
+
+    if (Object.keys(filteredUserProperties).length > 0) {
+      const identifyEvent = new amplitude.Identify();
+      Object.entries(filteredUserProperties).forEach(([key, value]) => {
+        // Type assertion: we've already filtered out undefined, value is a valid property type
+        identifyEvent.set(key, value as string | number | boolean | string[] | number[]);
+      });
+      amplitude.identify(identifyEvent);
+    } else {
+      console.warn('No user properties to set for Amplitude autocapture');
+    }
+  }, [user, activeModule, isPreview]);
+
+  // Initialize the Amplitude SDK once
+  // useCallback with sendIdentifyEvent dep ensures we call the latest version
+  const initializeAmplitudeAutocapture = useCallback(() => {
+    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready || !user) {
       return;
     }
 
@@ -83,11 +150,12 @@ function useAmplitude() {
     analytics?.ready(() => {
       analytics
         .user()
-        .then((user) => {
+        .then((segmentUser) => {
           try {
+            // Initialize Amplitude SDK with autocapture plugin
             amplitude.add(autocapturePlugin());
-            amplitude.init(autocaptureKeyToUse, user.id() ?? undefined, {
-              deviceId: user.anonymousId() ?? undefined,
+            const initPromise = amplitude.init(autocaptureKeyToUse, segmentUser.id() ?? undefined, {
+              deviceId: segmentUser.anonymousId() ?? undefined,
               defaultTracking: {
                 sessions: true,
                 pageViews: true,
@@ -95,7 +163,17 @@ function useAmplitude() {
                 fileDownloads: true,
               },
             });
-            console.log('Amplitude SDK with autocapture initialized (separate project)');
+
+            // Wait for init() to complete, then send initial identify()
+            initPromise?.promise
+              ?.then(() => {
+                sendIdentifyEvent();
+              })
+              .catch((error) => {
+                // Handle initialization promise rejection
+                amplitudeSdkInitialized.current = false;
+                console.error('Error during Amplitude SDK initialization promise', error);
+              });
           } catch (error) {
             amplitudeSdkInitialized.current = false;
             console.error('Error initializing Amplitude SDK with autocapture', error);
@@ -106,7 +184,7 @@ function useAmplitude() {
           console.error('Error getting user for Amplitude autocapture', error);
         });
     });
-  };
+  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, user, sendIdentifyEvent]);
 
   const initializeAmplitude = function () {
     return analytics
@@ -184,9 +262,19 @@ function useAmplitude() {
     };
   }, [enableAmplitude, ready, navigate, analytics, keyToUse]);
 
+  // Initialize Amplitude autocapture SDK once
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, autocaptureKeyToUse]);
+  }, [initializeAmplitudeAutocapture]);
+
+  // Update user properties when activeModule, isPreview, or user changes
+  useEffect(() => {
+    // Only send if SDK is already initialized
+    if (!amplitudeSdkInitialized.current) {
+      return;
+    }
+    sendIdentifyEvent();
+  }, [activeModule, isPreview, userAccountNumber, sendIdentifyEvent]);
 }
 
 export default useAmplitude;

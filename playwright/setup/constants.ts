@@ -25,3 +25,10 @@ export const NAVIGATION_TIMEOUT = 60000; // 60 seconds
  * This timeout accounts for async index loading + query execution time in CI.
  */
 export const SEARCH_TIMEOUT = 10000; // 10 seconds
+
+/**
+ * Timeout for UI element visibility checks.
+ * CI environments may have slower rendering and hydration times.
+ * Used for waiting for elements to appear after navigation or user interactions.
+ */
+export const UI_VISIBILITY_TIMEOUT = 10000; // 10 seconds
