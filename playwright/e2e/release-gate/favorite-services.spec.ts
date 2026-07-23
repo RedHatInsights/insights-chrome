@@ -2,7 +2,9 @@ import { test, expect } from '../../setup/test-setup';
 
 test.describe('Favorite Services (E2E User Flow)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    page.on('load', async () => {
+      await page.evaluate(() => document.getElementById('webpack-dev-server-client-overlay')?.remove()).catch(() => {});
+    });
   });
 
   test('should favorite on the page and unfavorite from the header dropdown', async ({ page }) => {

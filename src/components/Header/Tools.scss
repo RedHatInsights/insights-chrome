@@ -14,11 +14,8 @@
 }
 
 // PF6 MenuToggle has no prop to suppress the caret without variant="plain" (which removes button styling).
-.chr-c-settings-toggle,
-.chr-c-help-toggle {
-  .pf-v6-c-menu-toggle__controls {
-    display: none;
-  }
+.chr-c-toolbar-toggle .pf-v6-c-menu-toggle__controls {
+  display: none;
 }
 
 .chr-c-settings-toggle {
