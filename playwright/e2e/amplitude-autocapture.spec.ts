@@ -16,8 +16,12 @@ import { gunzipSync } from 'zlib';
 
 // Test configuration constants
 const AMPLITUDE_REQUEST_TIMEOUT = 30000; // 30 seconds to wait for initial Amplitude request
-const EVENT_BATCH_DELAY = 2000; // 2 seconds to wait for event batching
-const NEGATIVE_TEST_WAIT = 3000; // 3 seconds to ensure no requests in negative test
+// EVENT_BATCH_DELAY: Amplitude batches events. After waitForRequest() catches the FIRST request,
+// we need to wait for additional batched requests to arrive. Necessary for slow CI environments.
+const EVENT_BATCH_DELAY = 2000; // 2 seconds to collect all batched events
+// NEGATIVE_TEST_WAIT: Proving a negative (no request made) requires waiting long enough to account
+// for slow CI. networkidle won't work due to background WebSocket/polling activity.
+const NEGATIVE_TEST_WAIT = 3000; // 3 seconds to ensure no requests in slow CI
 
 test.describe('Amplitude Autocapture - Enriched User Properties', () => {
   test('should send enriched user properties with autocapture events', async ({ page }) => {
