@@ -474,4 +474,179 @@ describe('useAmplitude', () => {
     });
     logSpy.mockRestore();
   });
+
+  it('handles null user gracefully during initialization', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    // Set user to null
+    mockUser = null as any;
+
+    render(<TestComponent />);
+
+    // Wait a bit to ensure no initialization happens
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify SDK was NOT initialized with null user
+    expect(amplitude.add).not.toHaveBeenCalled();
+    expect(amplitude.init).not.toHaveBeenCalled();
+    expect(amplitude.identify).not.toHaveBeenCalled();
+
+    // Restore
+    mockUser = DEFAULT_MOCK_USER;
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+  });
+
+  it('handles init promise rejection gracefully', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    // Mock init to return a rejected promise
+    (amplitude.init as jest.Mock).mockReturnValue({
+      promise: Promise.reject(new Error('Init failed')),
+    });
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<TestComponent />);
+
+    // Wait for promise rejection to be handled
+    await waitFor(() => {
+      expect(errorSpy).toHaveBeenCalledWith('Error during Amplitude SDK initialization promise', expect.any(Error));
+    });
+
+    // Verify add and init were called despite the error
+    expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
+    expect(amplitude.init).toHaveBeenCalled();
+
+    errorSpy.mockRestore();
+
+    // Restore default mock
+    (amplitude.init as jest.Mock).mockReturnValue({
+      promise: Promise.resolve(),
+    });
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+  });
+
+  it('handles missing entitlements gracefully', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    // Set user with no entitlements
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      entitlements: undefined as any,
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(amplitude.init).toHaveBeenCalled();
+      expect(amplitude.identify).toHaveBeenCalled();
+    });
+
+    // Verify identify was called but no entitlement properties were set
+    const identifyInstance = (amplitude.Identify as jest.Mock).mock.results[0].value;
+    const setCalls = (identifyInstance.set as jest.Mock).mock.calls;
+    const entitlementCalls = setCalls.filter(([key]: [string]) => key.startsWith('entitlement_'));
+    expect(entitlementCalls.length).toBe(0);
+
+    // Restore
+    mockUser = DEFAULT_MOCK_USER;
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+  });
+
+  it('handles missing email gracefully', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    // Set user with no email
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        user: {
+          ...DEFAULT_MOCK_USER.identity.user,
+          email: undefined as any,
+        },
+      },
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(amplitude.init).toHaveBeenCalled();
+      expect(amplitude.identify).toHaveBeenCalled();
+    });
+
+    // Verify identify was called but email_domain was filtered out (undefined)
+    const identifyInstance = (amplitude.Identify as jest.Mock).mock.results[0].value;
+    const setCalls = (identifyInstance.set as jest.Mock).mock.calls;
+    const emailDomainCall = setCalls.find(([key]: [string]) => key === 'email_domain');
+    expect(emailDomainCall).toBeUndefined();
+
+    // Restore
+    mockUser = DEFAULT_MOCK_USER;
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+  });
+
+  it('does not call updateAmplitudeUserProperties before SDK is initialized', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return false;
+    });
+
+    // Start with dashboard
+    mockActiveModule = 'dashboard';
+    mockIsPreview = false;
+
+    const { rerender } = render(<TestComponent />);
+
+    // Navigate to cost-management (should trigger update effect)
+    mockActiveModule = 'cost-management';
+    mockIsPreview = true;
+    rerender(<TestComponent />);
+
+    // Wait a bit
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify identify was NOT called (SDK not initialized)
+    expect(amplitude.identify).not.toHaveBeenCalled();
+
+    // Restore
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+  });
 });
