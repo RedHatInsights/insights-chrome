@@ -10,8 +10,11 @@ jest.mock('./VisibilitySingleton', () => ({
     featureFlag: mockFeatureFlag,
     scope: (requiredScope: string) => {
       try {
-        const currentScopes: string[] = JSON.parse(localStorage.getItem('@chrome/login-scopes') || '[]');
-        return currentScopes.includes(requiredScope);
+        const parsed: unknown = JSON.parse(localStorage.getItem('@chrome/login-scopes') || '[]');
+        if (!Array.isArray(parsed)) {
+          return false;
+        }
+        return parsed.includes(requiredScope);
       } catch {
         return false;
       }
@@ -23,6 +26,10 @@ describe('evaluateVisibility', () => {
   beforeEach(() => {
     mockIsOrgAdmin.mockReset().mockResolvedValue(true);
     mockFeatureFlag.mockReset().mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('@chrome/login-scopes');
   });
 
   it('returns the item unchanged when it has no permissions', async () => {
@@ -116,8 +123,6 @@ describe('evaluateVisibility', () => {
     } as unknown as NavItem;
     const result = await evaluateVisibility(item);
     expect(result.isHidden).toBe(false);
-
-    localStorage.removeItem('@chrome/login-scopes');
   });
 
   it('should hide nav item when scope permission does not match any login scope', async () => {
@@ -134,8 +139,19 @@ describe('evaluateVisibility', () => {
     } as unknown as NavItem;
     const result = await evaluateVisibility(item);
     expect(result.isHidden).toBe(true);
+  });
 
-    localStorage.removeItem('@chrome/login-scopes');
+  it('should hide nav item when login scopes storage contains non-array JSON', async () => {
+    localStorage.setItem('@chrome/login-scopes', '"api.iam.service_accounts"');
+
+    const item = {
+      title: 'Service Accounts',
+      href: '/iam/service-accounts',
+      id: 'service-accounts',
+      permissions: [{ method: 'scope', args: ['api.iam.service_accounts'] }],
+    } as unknown as NavItem;
+    const result = await evaluateVisibility(item);
+    expect(result.isHidden).toBe(true);
   });
 
   it('recursively evaluates nested expandable navItems', async () => {

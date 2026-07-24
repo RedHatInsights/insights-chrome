@@ -203,8 +203,11 @@ const initialize = ({
     featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
     scope: (requiredScope: string) => {
       try {
-        const currentScopes: string[] = JSON.parse(localStorage.getItem(LOGIN_SCOPES_STORAGE_KEY) || '[]');
-        return currentScopes.includes(requiredScope);
+        const parsed: unknown = JSON.parse(localStorage.getItem(LOGIN_SCOPES_STORAGE_KEY) || '[]');
+        if (!Array.isArray(parsed)) {
+          return false;
+        }
+        return parsed.includes(requiredScope);
       } catch {
         return false;
       }
