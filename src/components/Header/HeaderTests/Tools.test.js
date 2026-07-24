@@ -179,8 +179,8 @@ describe('Tools', () => {
         settingsButton.click();
       });
 
-      // Check that the link with correct href exists (note: "Acess" is a typo in the source code)
-      const iamLink = screen.getByRole('link', { name: /Acess management/i });
+      // Check that the link with correct href exists
+      const iamLink = screen.getByRole('link', { name: /Access management/i });
       expect(iamLink).toBeInTheDocument();
       expect(iamLink).toHaveAttribute('href', '/iam/overview');
     });
