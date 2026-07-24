@@ -8,6 +8,14 @@ jest.mock('./VisibilitySingleton', () => ({
   getVisibilityFunctions: () => ({
     isOrgAdmin: mockIsOrgAdmin,
     featureFlag: mockFeatureFlag,
+    scope: (requiredScope: string) => {
+      try {
+        const currentScopes: string[] = JSON.parse(localStorage.getItem('@chrome/login-scopes') || '[]');
+        return currentScopes.includes(requiredScope);
+      } catch {
+        return false;
+      }
+    },
   }),
 }));
 

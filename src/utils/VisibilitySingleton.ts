@@ -1,5 +1,5 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { isProd } from './common';
+import { isProd, LOGIN_SCOPES_STORAGE_KEY } from './common';
 import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
@@ -201,6 +201,14 @@ const initialize = ({
       }
     },
     featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
+    scope: (requiredScope: string) => {
+      try {
+        const currentScopes: string[] = JSON.parse(localStorage.getItem(LOGIN_SCOPES_STORAGE_KEY) || '[]');
+        return currentScopes.includes(requiredScope);
+      } catch {
+        return false;
+      }
+    },
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
