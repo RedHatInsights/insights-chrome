@@ -2,16 +2,34 @@ import { evaluateVisibility } from './isNavItemVisible';
 import { NavItem } from '../@types/types';
 
 const mockIsOrgAdmin = jest.fn().mockResolvedValue(true);
+const mockFeatureFlag = jest.fn().mockReturnValue(true);
 
 jest.mock('./VisibilitySingleton', () => ({
   getVisibilityFunctions: () => ({
     isOrgAdmin: mockIsOrgAdmin,
+    featureFlag: mockFeatureFlag,
+    scope: (requiredScope: string) => {
+      try {
+        const parsed: unknown = JSON.parse(localStorage.getItem('@chrome/login-scopes') || '[]');
+        if (!Array.isArray(parsed)) {
+          return false;
+        }
+        return parsed.includes(requiredScope);
+      } catch {
+        return false;
+      }
+    },
   }),
 }));
 
 describe('evaluateVisibility', () => {
   beforeEach(() => {
     mockIsOrgAdmin.mockReset().mockResolvedValue(true);
+    mockFeatureFlag.mockReset().mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('@chrome/login-scopes');
   });
 
   it('returns the item unchanged when it has no permissions', async () => {
@@ -89,6 +107,51 @@ describe('evaluateVisibility', () => {
     const result = await evaluateVisibility(item);
     expect(result.isHidden).toBe(false);
     expect(result.navItems).toBeUndefined();
+  });
+
+  it('should show nav item when scope permission matches a login scope (service-accounts pattern)', async () => {
+    localStorage.setItem('@chrome/login-scopes', JSON.stringify(['openid', 'api.console', 'api.iam.service_accounts']));
+
+    const item = {
+      title: 'Service Accounts',
+      href: '/iam/service-accounts',
+      id: 'service-accounts',
+      permissions: [
+        { method: 'featureFlag', args: ['platform.rbac.workspaces', true] },
+        { method: 'scope', args: ['api.iam.service_accounts'] },
+      ],
+    } as unknown as NavItem;
+    const result = await evaluateVisibility(item);
+    expect(result.isHidden).toBe(false);
+  });
+
+  it('should hide nav item when scope permission does not match any login scope', async () => {
+    localStorage.setItem('@chrome/login-scopes', JSON.stringify(['openid', 'api.console']));
+
+    const item = {
+      title: 'Service Accounts',
+      href: '/iam/service-accounts',
+      id: 'service-accounts',
+      permissions: [
+        { method: 'featureFlag', args: ['platform.rbac.workspaces', true] },
+        { method: 'scope', args: ['api.iam.service_accounts'] },
+      ],
+    } as unknown as NavItem;
+    const result = await evaluateVisibility(item);
+    expect(result.isHidden).toBe(true);
+  });
+
+  it('should hide nav item when login scopes storage contains non-array JSON', async () => {
+    localStorage.setItem('@chrome/login-scopes', '"api.iam.service_accounts"');
+
+    const item = {
+      title: 'Service Accounts',
+      href: '/iam/service-accounts',
+      id: 'service-accounts',
+      permissions: [{ method: 'scope', args: ['api.iam.service_accounts'] }],
+    } as unknown as NavItem;
+    const result = await evaluateVisibility(item);
+    expect(result.isHidden).toBe(true);
   });
 
   it('recursively evaluates nested expandable navItems', async () => {
