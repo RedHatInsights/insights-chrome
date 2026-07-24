@@ -42,6 +42,12 @@ describe('<AllServicesDropdown />', () => {
         entry: ['/entry'],
       },
     });
+    cy.intercept('http://localhost:8080/frontend-assets/manifest.json', {
+      'frontend-assets': {
+        entry: ['/frontend-assets-entry'],
+      },
+    });
+    cy.intercept('http://localhost:8080/frontend-assets-entry?cacheBuster=*', '');
   });
 
   it('should close all services dropdown in link matches current pathname', () => {
@@ -60,6 +66,12 @@ describe('<AllServicesDropdown />', () => {
           default: () => <div>Foo</div>,
         }),
       };
+      (win as any)['frontend-assets'] = {
+        init: () => undefined,
+        get: () => () => ({
+          default: () => <div data-testid="scalprum-lightwell-icon" />,
+        }),
+      };
     });
     cy.mount(
       <ScalprumProvider
@@ -67,6 +79,10 @@ describe('<AllServicesDropdown />', () => {
           foo: {
             name: 'foo',
             manifestLocation: '/foo/bar.json',
+          },
+          'frontend-assets': {
+            name: 'frontend-assets',
+            manifestLocation: '/frontend-assets/manifest.json',
           },
         }}
       >
@@ -100,6 +116,12 @@ describe('<AllServicesDropdown />', () => {
           default: () => <div>Foo</div>,
         }),
       };
+      (win as any)['frontend-assets'] = {
+        init: () => undefined,
+        get: () => () => ({
+          default: () => <div data-testid="scalprum-lightwell-icon" />,
+        }),
+      };
     });
     cy.viewport(320, 568);
     cy.mount(
@@ -108,6 +130,10 @@ describe('<AllServicesDropdown />', () => {
           foo: {
             name: 'foo',
             manifestLocation: '/foo/bar.json',
+          },
+          'frontend-assets': {
+            name: 'frontend-assets',
+            manifestLocation: '/frontend-assets/manifest.json',
           },
         }}
       >

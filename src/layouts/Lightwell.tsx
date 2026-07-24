@@ -9,7 +9,7 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 
@@ -23,16 +23,13 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
-  const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
 
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
-    setLayoutLightwellHeader(true);
     return () => {
       setLayoutBannerHidden(false);
-      setLayoutLightwellHeader(false);
     };
-  }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
+  }, [setLayoutBannerHidden]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -64,7 +61,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         onPageResize={null}
         masthead={
           <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
-            <Header breadcrumbsProps={{ hideNav: true }} toolbarConfig={{ hideNotifications: true, hideHelp: true, hideSettings: true }} />
+            <Header breadcrumbsProps={{ hideNav: false }} toolbarConfig={{ hideNotifications: true, hideSettings: true }} />
           </Masthead>
         }
         {...(isDrawerEnabled && {
