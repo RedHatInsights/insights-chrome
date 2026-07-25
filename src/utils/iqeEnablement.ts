@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
 import { createStore } from 'jotai';
@@ -10,7 +8,10 @@ export interface IqeAuthRef {
   signinRedirect: (...args: never[]) => Promise<void>;
   signinSilent: (...args: never[]) => Promise<unknown>;
 }
-// TODO: Refactor this file to use modern JS
+
+interface ExtendedXMLHttpRequest extends XMLHttpRequest {
+  _url?: string;
+}
 
 let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
@@ -72,22 +73,43 @@ const shouldInjectAuthHeaders = (path: URL | Request | string = '') => {
   return true;
 };
 
-const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
-  let additionalHeaders: any = {};
-  if (options && options.headers) {
-    if (Array.isArray(options.headers)) {
-      for (const el in options.headers) {
-        additionalHeaders[options.headers[el][0]] = options.headers[el].slice(1).join(', ');
-      }
-    } else {
-      additionalHeaders = options.headers;
-    }
+const spreadAdditionalHeaders = (options: RequestInit | undefined): Record<string, string> => {
+  if (!options?.headers) {
+    return {};
   }
 
-  return additionalHeaders;
+  if (Array.isArray(options.headers)) {
+    return options.headers.reduce(
+      (acc, [key, ...values]) => {
+        acc[key] = values.join(', ');
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+  }
+
+  // Handle Headers object or plain object
+  if (options.headers instanceof Headers) {
+    const result: Record<string, string> = {};
+    options.headers.forEach((value, key) => {
+      result[key] = value;
+    });
+    return result;
+  }
+
+  return options.headers as Record<string, string>;
 };
 
+// Guard to ensure init() only runs once, preventing layered monkey-patching on every token refresh
+let initialized = false;
+
 export function init(chromeStore: ReturnType<typeof createStore>, authRef: React.MutableRefObject<IqeAuthRef>) {
+  // Early return if already initialized - prevents duplicate header injection on silent token renewals
+  if (initialized) {
+    return;
+  }
+  initialized = true;
+
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -102,34 +124,41 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
   }
 
   // must use function here because arrows dont "this" like functions
-  window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) {
-    // @ts-ignore
-    this._url = url;
-    // @ts-ignore
-    const req = open.apply(this, arguments);
-
-    return req;
+  window.XMLHttpRequest.prototype.open = function openReplacement(
+    method: string,
+    url: string | URL,
+    async?: boolean,
+    username?: string | null,
+    password?: string | null
+  ) {
+    (this as ExtendedXMLHttpRequest)._url = url.toString();
+    return open.call(this, method, url, async ?? true, username ?? null, password ?? null);
   };
 
-  window.XMLHttpRequest.prototype.setRequestHeader = function serRequestHeaderReplacement() {
-    if (arguments[0] === 'Authorization') {
-      authRequests.add((this as XMLHttpRequest & { _url: string })._url);
+  window.XMLHttpRequest.prototype.setRequestHeader = function setRequestHeaderReplacement(name: string, value: string) {
+    if (name === 'Authorization') {
+      const url = (this as ExtendedXMLHttpRequest)._url;
+      if (url) {
+        authRequests.add(url);
+      }
     }
 
     // if the header is Auth change it to Authorization, since that's our internal name
-    // @ts-ignore
-    return setRequestHeader.apply(this, [arguments[0] === 'Auth' ? 'Authorization' : arguments[0], arguments[1]]);
+    const headerName = name === 'Auth' ? 'Authorization' : name;
+    return setRequestHeader.call(this, headerName, value);
   };
 
   // must use function here because arrows dont "this" like functions
-  window.XMLHttpRequest.prototype.send = function sendReplacement() {
-    if (shouldInjectAuthHeaders((this as XMLHttpRequest & { _url: string })._url)) {
-      if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
+  window.XMLHttpRequest.prototype.send = function sendReplacement(body?: Document | XMLHttpRequestBodyInit | null) {
+    const extThis = this as ExtendedXMLHttpRequest;
+
+    if (extThis._url && shouldInjectAuthHeaders(extThis._url)) {
+      if (!authRequests.has(extThis._url)) {
         // Send Auth header, it will be changed to Authorization later down the line
         this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
       }
     }
-    if (shouldInjectUIHeader((this as XMLHttpRequest & { _url: string })._url)) {
+    if (extThis._url && shouldInjectUIHeader(extThis._url)) {
       this.setRequestHeader(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
 
@@ -150,17 +179,16 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
         }
       }
     };
-    // @ts-ignore
-    return send.apply(this, arguments);
+    return send.call(this, body);
   };
 
   /**
    * Check response errors for cross_account requests.
-   * If we get error response with specific cross account error message, we kick the user out of the corss account session.
+   * If we get error response with specific cross account error message, we kick the user out of the cross account session.
    */
-  window.fetch = function fetchReplacement(input: URL | RequestInfo = '', init?: RequestInit | undefined, ...rest) {
+  window.fetch = function fetchReplacement(input: URL | RequestInfo, init?: RequestInit): Promise<Response> {
     const tid = Math.random().toString(36);
-    const request: Request = new Request(input, init);
+    const request = new Request(input, init);
 
     if (shouldInjectAuthHeaders(input) && !request.headers.has('Authorization')) {
       request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
@@ -170,14 +198,14 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
       request.headers.append(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
 
-    const prom = oldFetch.apply(this, [request, ...rest]);
+    const prom = oldFetch.call(this, request);
     if (iqeEnabled) {
-      fetchResults[tid] = arguments[0];
+      fetchResults[tid] = input;
       prom
-        .then(function () {
+        .then(() => {
           delete fetchResults[tid];
         })
-        .catch(function (err) {
+        .catch((err) => {
           delete fetchResults[tid];
           throw err;
         });
@@ -199,7 +227,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
 
             return res;
           } catch (error) {
-            console.error('unable to check unauthotized response', error);
+            console.error('unable to check unauthorized response', error);
             return res;
           }
         }
@@ -212,6 +240,11 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
   };
 }
 
+// Exported for testing only - allows tests to reset initialization state
+export function _resetInitialization() {
+  initialized = false;
+}
+
 const qe = {
   init,
   isExcluded,
@@ -219,11 +252,20 @@ const qe = {
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);
     xhrResults = xhrResults.filter((result) => result.readyState !== 4 && result.readyState !== 0);
-    // @ts-ignore
-    xhrRemoved.map((e) => console.log(`[iqe] xhr complete:   ${e._url}`));
-    // @ts-ignore
-    xhrResults.map((e) => console.log(`[iqe] xhr incomplete: ${e._url}`));
-    Object.values(fetchResults).map((e) => console.log(`[iqe] fetch incomplete: ${e}`));
+
+    xhrRemoved.forEach((e) => {
+      const url = (e as ExtendedXMLHttpRequest)._url;
+      console.log(`[iqe] xhr complete:   ${url ?? 'unknown'}`);
+    });
+
+    xhrResults.forEach((e) => {
+      const url = (e as ExtendedXMLHttpRequest)._url;
+      console.log(`[iqe] xhr incomplete: ${url ?? 'unknown'}`);
+    });
+
+    Object.values(fetchResults).forEach((e) => {
+      console.log(`[iqe] fetch incomplete: ${e}`);
+    });
 
     return xhrResults.length > 0 || Object.values(fetchResults).length > 0;
   },
