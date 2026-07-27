@@ -9,6 +9,7 @@ import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import ContextSwitcher from '../ContextSwitcher';
 import Activation from '../Activation';
 import Logo from './Logo';
+import LightwellLogo from './LightwellLogo';
 import ChromeLink, { type LinkWrapperProps } from '../ChromeLink';
 import { DeepRequired } from 'utility-types';
 
@@ -76,13 +77,10 @@ const MemoizedHeader = memo(
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
               {...(!isLightwellHeader && { component: (props: LinkWrapperProps) => <ChromeLink {...props} appId="landing" href="/" /> })}
             >
-              <Logo theme={theme} />
+              {isLightwellHeader ? <LightwellLogo /> : <Logo theme={theme} />}
             </MastheadLogo>
-            {isLightwellHeader ? (
-              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Lightwell</span>
-            ) : (
-              !(!md && searchOpen) && <AllServicesDropdown />
-            )}
+            {isLightwellHeader && <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Lightwell</span>}
+            {!(!md && searchOpen) && <AllServicesDropdown />}
           </MastheadBrand>
         </MastheadMain>
         <MastheadContent className="pf-v6-u-mx-0">

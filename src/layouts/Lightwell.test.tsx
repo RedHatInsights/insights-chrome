@@ -180,4 +180,12 @@ describe('Lightwell', () => {
     unmount();
     expect(store.get(activeModuleAtom)).toBeUndefined();
   });
+
+  it('should render breadcrumb with Hybrid Cloud Console link', () => {
+    const { container } = renderLightwell();
+    const breadcrumb = container.querySelector('.pf-v6-c-breadcrumb');
+    expect(breadcrumb).toBeTruthy();
+    const hccLink = container.querySelector('a[href="/"]');
+    expect(hccLink?.textContent).toContain('Hybrid Cloud Console');
+  });
 });

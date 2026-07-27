@@ -105,10 +105,10 @@ describe('Header Lightwell mode', () => {
     expect(screen.queryByText('Lightwell')).toBeFalsy();
   });
 
-  it('should render "Lightwell" text instead of AllServicesDropdown when in Lightwell mode', () => {
+  it('should render "Lightwell" title alongside AllServicesDropdown when in Lightwell mode', () => {
     renderHeader(true);
     expect(screen.getByText('Lightwell')).toBeTruthy();
-    expect(screen.queryByText('Red Hat Hybrid Cloud Console')).toBeFalsy();
+    expect(screen.getByText('Red Hat Hybrid Cloud Console')).toBeTruthy();
   });
 
   it('should render search toolbar group when not in Lightwell mode', () => {
