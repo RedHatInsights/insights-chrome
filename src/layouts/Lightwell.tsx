@@ -2,8 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
-import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core/dist/dynamic/components/Breadcrumb';
-import { PageBreadcrumb } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Header } from '../components/Header/Header';
@@ -15,7 +14,7 @@ import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawe
 import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
-import { Link } from 'react-router-dom';
+import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
@@ -85,14 +84,9 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
         })}
       >
-        <PageBreadcrumb hasBodyWrapper={false} className="pf-v6-u-p-0">
-          <Breadcrumb className="pf-v6-u-pt-sm pf-v6-u-pl-lg">
-            <BreadcrumbItem to="/" component={(props) => <Link {...props} to="/" />}>
-              Hybrid Cloud Console
-            </BreadcrumbItem>
-            <BreadcrumbItem isActive>Lightwell</BreadcrumbItem>
-          </Breadcrumb>
-        </PageBreadcrumb>
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs />
+        </ToolbarGroup>
         <RedirectBanner />
         <ScalprumComponent
           scope="contentSources"

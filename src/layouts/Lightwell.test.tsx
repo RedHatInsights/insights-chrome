@@ -12,6 +12,20 @@ jest.mock('../components/ErrorComponents/DefaultErrorComponent', () => ({
   default: () => <div data-testid="mock-error-component" />,
 }));
 
+jest.mock('../hooks/useBreadcrumbsLinks', () => ({
+  __esModule: true,
+  default: () => [{ title: 'Lightwell', href: '/lightwell' }],
+}));
+
+jest.mock('../hooks/useFavoritePagesWrapper', () => ({
+  __esModule: true,
+  default: () => ({
+    favoritePages: [],
+    favoritePage: jest.fn(),
+    unfavoritePage: jest.fn(),
+  }),
+}));
+
 jest.unmock('../components/NotificationsDrawer/DrawerPanelContent');
 
 // jest.mock does not intercept @scalprum/* in this project's SWC/Jest setup,
@@ -181,11 +195,10 @@ describe('Lightwell', () => {
     expect(store.get(activeModuleAtom)).toBeUndefined();
   });
 
-  it('should render breadcrumb with Hybrid Cloud Console link', () => {
+  it('should render the established Breadcrumbs component with favorites support', () => {
     const { container } = renderLightwell();
-    const breadcrumb = container.querySelector('.pf-v6-c-breadcrumb');
+    // Verify the Breadcrumbs component renders (uses established breadcrumbs behavior)
+    const breadcrumb = container.querySelector('.chr-c-breadcrumbs');
     expect(breadcrumb).toBeTruthy();
-    const hccLink = container.querySelector('a[href="/"]');
-    expect(hccLink?.textContent).toContain('Hybrid Cloud Console');
   });
 });

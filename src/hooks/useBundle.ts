@@ -26,6 +26,7 @@ export const bundleMapping: {
   subscriptions: 'Subscription Services',
   docs: 'Documentation',
   'user-preferences': 'User Preferences',
+  lightwell: 'Lightwell',
 };
 
 const useBundle = () => {
