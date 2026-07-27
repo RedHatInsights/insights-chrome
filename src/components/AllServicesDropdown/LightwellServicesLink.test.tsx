@@ -7,13 +7,6 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import LightwellServicesLink from './LightwellServicesLink';
 
-const mockUseScalprum = jest.fn();
-
-jest.mock('@scalprum/react-core', () => ({
-  ScalprumComponent: (props: Record<string, unknown>) => <div data-testid="scalprum-lightwell-icon" data-scope={props.scope} data-module={props.module} />,
-  useScalprum: () => mockUseScalprum(),
-}));
-
 const renderWithProviders = () => {
   const store = createStore();
   store.set(activeModuleAtom, 'testModule');
@@ -41,12 +34,6 @@ const renderWithProviders = () => {
 };
 
 describe('LightwellServicesLink', () => {
-  beforeEach(() => {
-    mockUseScalprum.mockReturnValue({
-      config: { 'frontend-assets': { name: 'frontend-assets', manifestLocation: '/frontend-assets/manifest.json' } },
-    });
-  });
-
   it('should render the Lightwell label', () => {
     renderWithProviders();
     expect(screen.getByText('Lightwell')).toBeInTheDocument();
@@ -64,12 +51,13 @@ describe('LightwellServicesLink', () => {
     expect(link).toHaveAttribute('data-ouia-component-id', 'AllServices-Dropdown-Lightwell');
   });
 
-  it('should render the LightwellIcon via ScalprumComponent from frontend-assets', () => {
-    renderWithProviders();
-    const icon = screen.getByTestId('scalprum-lightwell-icon');
+  it('should render the Lightwell icon as a static image', () => {
+    const { container } = renderWithProviders();
+    const icon = container.querySelector('img[src*="lightwell-logomark"]');
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('data-scope', 'frontend-assets');
-    expect(icon).toHaveAttribute('data-module', './LightwellIcon');
+    expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
+    expect(icon).toHaveAttribute('width', '32');
+    expect(icon).toHaveAttribute('height', '32');
   });
 
   it('should make the entire content clickable as a single link', () => {
@@ -78,14 +66,5 @@ describe('LightwellServicesLink', () => {
     const links = container.querySelectorAll('a');
     expect(links).toHaveLength(1);
     expect(links[0]).toHaveAttribute('href', '/lightwell');
-  });
-
-  it('should not render the icon when frontend-assets scope is unavailable', () => {
-    mockUseScalprum.mockReturnValue({ config: {} });
-    renderWithProviders();
-    expect(screen.queryByTestId('scalprum-lightwell-icon')).not.toBeInTheDocument();
-    // Link and label still render
-    expect(screen.getByRole('link', { name: /lightwell/i })).toBeInTheDocument();
-    expect(screen.getByText('Lightwell')).toBeInTheDocument();
   });
 });
