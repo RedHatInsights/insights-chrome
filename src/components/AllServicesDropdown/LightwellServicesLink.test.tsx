@@ -56,8 +56,8 @@ describe('LightwellServicesLink', () => {
     const icon = container.querySelector('img[src*="lightwell-logomark"]');
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
-    expect(icon).toHaveAttribute('width', '32');
-    expect(icon).toHaveAttribute('height', '32');
+    expect(icon).toHaveAttribute('width', '22');
+    expect(icon).toHaveAttribute('height', '22');
   });
 
   it('should make the entire content clickable as a single link', () => {

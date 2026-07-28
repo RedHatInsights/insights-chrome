@@ -7,7 +7,7 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
  * Uses a plain <img> tag to avoid federated module loading issues
  * (consistent with LightwellLogo.tsx in the masthead).
  */
-const LightwellIcon = () => <img src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" width="32" height="32" />;
+const LightwellIcon = () => <img src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" width="22" height="22" />;
 
 const LightwellServicesLink = () => {
   return (
