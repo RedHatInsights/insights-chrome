@@ -3,7 +3,6 @@ import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdro
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
@@ -79,25 +78,21 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
         onClick={handleClickOutside}
       >
         <Backdrop>
-          <Panel variant="raised" className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
+          <Panel variant="raised" isGlass className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
             <PanelMain>
-              <Sidebar>
-                <SidebarPanel>
-                  <Stack>
-                    <StackItem className="pf-v6-u-w-100">
-                      <AllServicesTabs
-                        activeTabKey={activeTabKey}
-                        handleTabClick={handleTabClick}
-                        isExpanded={isExpanded}
-                        onToggle={onToggle}
-                        linkSections={linkSections}
-                        tabContentRef={tabContentRef}
-                        onTabClick={onTabClick}
-                        activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                        setIsExpanded={setIsOpen}
-                      />
-                    </StackItem>
-                  </Stack>
+              <Sidebar hasBorder>
+                <SidebarPanel backgroundVariant="secondary" tabIndex={0}>
+                  <AllServicesTabs
+                    activeTabKey={activeTabKey}
+                    handleTabClick={handleTabClick}
+                    isExpanded={isExpanded}
+                    onToggle={onToggle}
+                    linkSections={linkSections}
+                    tabContentRef={tabContentRef}
+                    onTabClick={onTabClick}
+                    activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
+                    setIsExpanded={setIsExpanded}
+                  />
                 </SidebarPanel>
                 <SidebarContent>
                   <Card isPlain>

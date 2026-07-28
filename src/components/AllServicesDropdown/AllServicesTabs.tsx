@@ -41,10 +41,12 @@ const TabWrapper = (props: TabWrapper) => {
 
   const handleMouseEnter = () => {
     stopHoverEffect();
+    const previouslyFocused = document.activeElement as HTMLElement | null;
     const timeout = setTimeout(() => {
       // should be available only in preview
       // use refs to supply the required tab events
       if (isPreview) {
+        previouslyFocused?.blur();
         tabRef.current?.click();
       }
     }, 300);

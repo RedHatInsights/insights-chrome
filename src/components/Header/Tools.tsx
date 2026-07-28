@@ -466,7 +466,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         ariaLabel="Help menu"
         hasToggleIndicator={null}
         dropdownItems={aboutMenuDropdownItems}
-        className="tooltip-button-help-cy"
+        className="tooltip-button-help-cy chr-c-help-toggle"
       />
     </Tooltip>
   );

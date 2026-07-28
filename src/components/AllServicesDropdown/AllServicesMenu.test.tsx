@@ -15,13 +15,24 @@ jest.mock('../FavoriteServices/ServicesGallery', () => ({
 
 jest.mock('./AllServicesTabs', () => ({
   __esModule: true,
-  default: ({ onTabClick, linkSections }: { onTabClick: (section: AllServicesSection, index: string) => void; linkSections: AllServicesSection[] }) => (
+  default: ({
+    onTabClick,
+    linkSections,
+    setIsExpanded,
+  }: {
+    onTabClick: (section: AllServicesSection, index: string) => void;
+    linkSections: AllServicesSection[];
+    setIsExpanded: (isExpanded: boolean) => void;
+  }) => (
     <div data-testid="all-services-tabs">
       {linkSections.map((section, index) => (
         <button key={section.id} data-testid={`tab-${section.id}`} onClick={() => onTabClick(section, `${index}-${section.id}`)}>
           {section.title}
         </button>
       ))}
+      <button data-testid="collapse-tabs" onClick={() => setIsExpanded(false)}>
+        Collapse
+      </button>
     </div>
   ),
 }));
@@ -96,5 +107,21 @@ describe('AllServicesMenu', () => {
     });
     const menuEl = screen.getByTestId('chr-c__find-app-service');
     expect(menuEl.classList.contains('preview-offset')).toBe(false);
+  });
+
+  it('should not close the menu when tabs are collapsed via setIsExpanded', async () => {
+    const setIsOpen = jest.fn();
+    renderMenu({ setIsOpen });
+    const collapseButton = screen.getByTestId('collapse-tabs');
+    await userEvent.click(collapseButton);
+    expect(setIsOpen).not.toHaveBeenCalled();
+  });
+
+  it('should close the menu when the close button is clicked', async () => {
+    const setIsOpen = jest.fn();
+    renderMenu({ setIsOpen, isOpen: true });
+    const closeButton = screen.getByRole('button', { name: 'Close menu' });
+    await userEvent.click(closeButton);
+    expect(setIsOpen).toHaveBeenCalled();
   });
 });
