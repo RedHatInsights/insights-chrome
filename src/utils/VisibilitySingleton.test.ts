@@ -1,6 +1,7 @@
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
 import axios from 'axios';
+import * as common from './common';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -407,6 +408,34 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockRejectedValueOnce(new Error('Network Error'));
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
       expect(result).toBe(false);
+    });
+  });
+
+  describe('isITLess', () => {
+    let itLessSpy: jest.SpyInstance;
+
+    afterEach(() => {
+      itLessSpy?.mockRestore();
+    });
+
+    test('should return true when expected=true and environment is ITLess', () => {
+      itLessSpy = jest.spyOn(common, 'ITLess').mockReturnValue(true);
+      expect(visibilityFunctions.isITLess(true)).toBe(true);
+    });
+
+    test('should return false when expected=false and environment is ITLess', () => {
+      itLessSpy = jest.spyOn(common, 'ITLess').mockReturnValue(true);
+      expect(visibilityFunctions.isITLess(false)).toBe(false);
+    });
+
+    test('should return true when expected=false and environment is not ITLess', () => {
+      itLessSpy = jest.spyOn(common, 'ITLess').mockReturnValue(false);
+      expect(visibilityFunctions.isITLess(false)).toBe(true);
+    });
+
+    test('should return false when expected=true and environment is not ITLess', () => {
+      itLessSpy = jest.spyOn(common, 'ITLess').mockReturnValue(false);
+      expect(visibilityFunctions.isITLess(true)).toBe(false);
     });
   });
 });
