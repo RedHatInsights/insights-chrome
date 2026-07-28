@@ -1,5 +1,5 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { LOGIN_SCOPES_STORAGE_KEY, isProd, ITLess } from './common';
+import { ITLess, LOGIN_SCOPES_STORAGE_KEY, isProd } from './common';
 import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
