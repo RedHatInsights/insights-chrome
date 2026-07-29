@@ -10,9 +10,11 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 import { Link } from 'react-router-dom';
 import './AllServicesTabs.scss';
 import PlatformServiceslinks from './PlatformServicesLinks';
+import ChromeLink from '../ChromeLink';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type AllServicesTabsProps = {
@@ -93,6 +95,20 @@ const AllServicesTabs = ({
         Platforms
       </Content>
       <PlatformServiceslinks />
+      <Divider className="pf-v6-u-mt-md" />
+      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-md" component={ContentVariants.small}>
+        Lightwell
+      </Content>
+      <Split className="pf-v6-u-px-lg pf-v6-u-mb-0">
+        <SplitItem>
+          <img src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" className="platform-icon" />
+        </SplitItem>
+        <SplitItem className="pf-v6-u-pt-xs">
+          <ChromeLink href="/lightwell" data-ouia-component-id="AllServices-Dropdown-Lightwell" className="pf-v6-u-pl-sm chr-m-plain">
+            Lightwell
+          </ChromeLink>
+        </SplitItem>
+      </Split>
       <>
         <Divider className="pf-v6-u-mt-md" />
         <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.small}>
