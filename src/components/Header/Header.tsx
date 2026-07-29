@@ -81,7 +81,10 @@ const MemoizedHeader = memo(
               </MastheadLogo>
             )}
             {isLightwellHeader ? (
-              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Lightwell</span>
+              <>
+                <AllServicesDropdown iconOnly />
+                <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Lightwell</span>
+              </>
             ) : (
               !(!md && searchOpen) && <AllServicesDropdown />
             )}

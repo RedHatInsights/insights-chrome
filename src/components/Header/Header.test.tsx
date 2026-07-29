@@ -110,6 +110,15 @@ describe('Header Lightwell mode', () => {
     expect(screen.queryByText('Red Hat Hybrid Cloud Console')).toBeFalsy();
   });
 
+  it('should render AllServicesDropdown with icon-only toggle when in Lightwell mode', () => {
+    renderHeader(true);
+    const toggle = document.querySelector('[data-ouia-component-id="AllServices-DropdownToggle"]');
+    expect(toggle).toBeTruthy();
+    expect(toggle!.classList.contains('pf-m-plain')).toBe(true);
+    expect(toggle!.textContent).not.toContain('Red Hat Hybrid Cloud Console');
+    expect(toggle!.getAttribute('aria-label')).toBe('All services');
+  });
+
   it('should render search toolbar group when not in Lightwell mode', () => {
     renderHeader(false);
     expect(screen.getByTestId('search-toolbar-group')).toBeTruthy();

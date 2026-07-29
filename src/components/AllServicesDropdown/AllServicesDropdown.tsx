@@ -17,7 +17,11 @@ export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
 };
 
-const AllServicesDropdown = () => {
+export type AllServicesDropdownProps = {
+  iconOnly?: boolean;
+};
+
+const AllServicesDropdown = ({ iconOnly = false }: AllServicesDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -71,13 +75,15 @@ const AllServicesDropdown = () => {
   const toggle = (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
-      className="chr-c-link-service-toggle pf-v6-u-pr-sm"
+      className={iconOnly ? undefined : 'chr-c-link-service-toggle pf-v6-u-pr-sm'}
+      variant={iconOnly ? 'plain' : undefined}
+      aria-label={iconOnly ? 'All services' : undefined}
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
     >
-      <ThIcon className="pf-v6-u-mr-sm" />
-      Red Hat Hybrid Cloud Console
+      <ThIcon className={iconOnly ? undefined : 'pf-v6-u-mr-sm'} />
+      {!iconOnly && 'Red Hat Hybrid Cloud Console'}
     </MenuToggle>
   );
 
