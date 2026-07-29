@@ -16,7 +16,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
       # cache node modules for all jobs to use
       - uses: actions/cache@v5
@@ -27,7 +27,7 @@ jobs:
             /home/runner/.cache/Cypress
             .cypress-cache
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i # use cached modules
+      - run: npm ci # use cached modules
   # unit testing job
   test-unit:
     runs-on: ubuntu-latest
@@ -38,14 +38,14 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
       - uses: actions/cache@v5
         id: node_modules-cache
         with:
           path: "**/node_modules"
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - run: npm run test -- --coverage
       - uses: codecov/codecov-action@v6
         with:
@@ -60,14 +60,14 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
       - uses: actions/cache@v5
         id: node_modules-cache
         with:
           path: "**/node_modules"
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - run: npm run lint
   # cypress component testing
   cypress-component:
@@ -79,7 +79,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'      
       # consume installed modules and webpack cache
       - uses: actions/cache@v5
@@ -90,7 +90,7 @@ jobs:
             /home/runner/.cache/Cypress
             .cypress-cache
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - uses: cypress-io/github-action@v6
         with:
             component: true
@@ -106,12 +106,12 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
       - uses: actions/cache@v5
         id: node_modules-cache
         with:
           path: "**/node_modules"
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - run: npm run build

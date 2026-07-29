@@ -153,6 +153,6 @@ npm run analyze      # Bundle analyzer
 
 - **GitHub Actions** (`.github/workflows/test.yml`): lint, unit tests, Cypress, build, Playwright
 - **Konflux/Tekton** (`.tekton/`): container builds, SBOM, enterprise contract checks
-- Node version: `22.19.0`
+- Node version: see `.nvmrc`
 - PR images expire after 5 days
 - Default branch: `master`
