@@ -1,5 +1,5 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { LOGIN_SCOPES_STORAGE_KEY, isProd } from './common';
+import { ITLess, LOGIN_SCOPES_STORAGE_KEY, isProd } from './common';
 import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
@@ -212,6 +212,7 @@ const initialize = ({
         return false;
       }
     },
+    isITLess: (expected: boolean) => ITLess() === expected,
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules

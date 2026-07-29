@@ -1,8 +1,13 @@
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
 import axios from 'axios';
+import { ITLess } from './common';
 
 jest.mock('axios');
+jest.mock('./common', () => ({
+  ...jest.requireActual('./common'),
+  ITLess: jest.fn(() => false),
+}));
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 jest.mock('@scalprum/core', () => {
@@ -31,7 +36,7 @@ describe('VisibilitySingleton', () => {
   const getUser = jest.fn().mockImplementation(() => Promise.resolve(userMock));
   const getToken = jest.fn().mockImplementation(() => Promise.resolve('a.a'));
   const getUserPermissions = jest.fn();
-  let visibilityFunctions: VisibilityFunctions;
+  let visibilityFunctions: VisibilityFunctions & { isITLess: (expected: boolean) => boolean };
 
   beforeEach(() => {
     initializeVisibilityFunctions({
@@ -407,6 +412,35 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockRejectedValueOnce(new Error('Network Error'));
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
       expect(result).toBe(false);
+    });
+  });
+
+  describe('isITLess', () => {
+    const mockedITLess = ITLess as jest.Mock;
+
+    afterEach(() => {
+      mockedITLess.mockReset();
+      mockedITLess.mockReturnValue(false);
+    });
+
+    test('should return true when expected=true and environment is ITLess', () => {
+      mockedITLess.mockReturnValue(true);
+      expect(visibilityFunctions.isITLess(true)).toBe(true);
+    });
+
+    test('should return false when expected=false and environment is ITLess', () => {
+      mockedITLess.mockReturnValue(true);
+      expect(visibilityFunctions.isITLess(false)).toBe(false);
+    });
+
+    test('should return true when expected=false and environment is not ITLess', () => {
+      mockedITLess.mockReturnValue(false);
+      expect(visibilityFunctions.isITLess(false)).toBe(true);
+    });
+
+    test('should return false when expected=true and environment is not ITLess', () => {
+      mockedITLess.mockReturnValue(false);
+      expect(visibilityFunctions.isITLess(true)).toBe(false);
     });
   });
 });
