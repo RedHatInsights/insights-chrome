@@ -21,6 +21,6 @@
     ]
   },
   "include": ["src/**/*.ts", "**/*.tsx", "config/*.d.ts"],
-  "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx"]
+  "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx", "**/*.test.ts", "**/*.test.tsx"]
 }
 
