@@ -39,8 +39,9 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import { Header } from './Header';
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 import { describe, expect, it, jest } from '@jest/globals';
 
 const mockUser = {
@@ -66,13 +67,13 @@ const mockAuthContextValue = {
   logout: jest.fn(),
   getUser: jest.fn<() => Promise<typeof mockUser>>().mockResolvedValue(mockUser),
   getToken: jest.fn<() => Promise<string>>().mockResolvedValue('test-token'),
-};
+} as unknown as ChromeAuthContextValue;
 
 const mockInternalChromeContext = {
   drawerActions: {
     toggleDrawerContent: jest.fn(),
   },
-};
+} as unknown as ChromeAPI;
 
 const renderHeader = (lightwellHeader = false) => {
   const store = createStore();
@@ -84,10 +85,8 @@ const renderHeader = (lightwellHeader = false) => {
     store,
     ...render(
       <MemoryRouter>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <InternalChromeContext.Provider value={mockInternalChromeContext as any}>
+        <ChromeAuthContext.Provider value={mockAuthContextValue}>
+          <InternalChromeContext.Provider value={mockInternalChromeContext}>
             <Provider store={store}>
               <Header />
             </Provider>
@@ -128,9 +127,9 @@ describe('Header Lightwell mode', () => {
     expect(logoLink.getAttribute('href')).toBe('/');
   });
 
-  it('should render masthead logo without a link when in Lightwell mode', () => {
+  it('should not render masthead logo when in Lightwell mode', () => {
     renderHeader(true);
-    const logoLinks = screen.queryAllByRole('link', { name: /logo/i });
-    expect(logoLinks.length).toBe(0);
+    const logo = screen.queryByAltText('Red Hat Logo');
+    expect(logo).toBeFalsy();
   });
 });
