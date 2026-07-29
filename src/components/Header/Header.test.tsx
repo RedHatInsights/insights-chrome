@@ -141,4 +141,17 @@ describe('Header Lightwell mode', () => {
     const logo = screen.queryByAltText('Red Hat Logo');
     expect(logo).toBeFalsy();
   });
+
+  it('should render Lightwell logomark in masthead when in Lightwell mode', () => {
+    renderHeader(true);
+    const logomark = document.querySelector('.chr-c-masthead__lightwell-logo');
+    expect(logomark).toBeTruthy();
+    expect(logomark!.getAttribute('src')).toContain('lightwell-logomark');
+  });
+
+  it('should not render Lightwell logomark when not in Lightwell mode', () => {
+    renderHeader(false);
+    const logomark = document.querySelector('.chr-c-masthead__lightwell-logo');
+    expect(logomark).toBeFalsy();
+  });
 });

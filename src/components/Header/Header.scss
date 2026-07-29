@@ -81,6 +81,13 @@
   display: none;
 }
 
+.chr-c-masthead__lightwell-logo {
+  width: 24px;
+  height: 24px;
+  align-self: center;
+  margin-left: var(--pf-t--global--spacer--sm);
+}
+
 .chr-c-masthead__lightwell-title {
   align-self: center;
   font-family: 'Red Hat Display', 'RedHatDisplay', 'Overpass', overpass, helvetica, arial, sans-serif;

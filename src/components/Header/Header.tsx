@@ -83,6 +83,7 @@ const MemoizedHeader = memo(
             {isLightwellHeader ? (
               <>
                 <AllServicesDropdown iconOnly />
+                <img src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" className="chr-c-masthead__lightwell-logo" />
                 <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Lightwell</span>
               </>
             ) : (
