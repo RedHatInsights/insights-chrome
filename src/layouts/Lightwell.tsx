@@ -1,10 +1,13 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core/dist/dynamic/components/Breadcrumb';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
-import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Page, PageBreadcrumb } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Header } from '../components/Header/Header';
+import ChromeLink from '../components/ChromeLink';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
@@ -73,6 +76,18 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
         })}
       >
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <PageBreadcrumb hasBodyWrapper={false} className="chr-c-breadcrumbs pf-v6-u-p-0 pf-v6-u-w-100">
+            <div className="pf-v6-u-display-flex pf-v6-u-pt-sm pf-v6-u-pb-0 pf-v6-u-pl-lg">
+              <Breadcrumb>
+                <BreadcrumbItem to="/" component={(props) => <ChromeLink {...props} href="/" />}>
+                  Hybrid Cloud Console
+                </BreadcrumbItem>
+                <BreadcrumbItem isActive>Lightwell</BreadcrumbItem>
+              </Breadcrumb>
+            </div>
+          </PageBreadcrumb>
+        </ToolbarGroup>
         <RedirectBanner />
         <ScalprumComponent
           scope="contentSources"

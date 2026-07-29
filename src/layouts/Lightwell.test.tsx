@@ -30,8 +30,9 @@ import Lightwell from './Lightwell';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import InternalChromeContext from '../utils/internalChromeContext';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 
 const mockUser = {
   identity: {
@@ -56,13 +57,13 @@ const mockAuthContextValue = {
   logout: jest.fn(),
   getUser: jest.fn<() => Promise<typeof mockUser>>().mockResolvedValue(mockUser),
   getToken: jest.fn<() => Promise<string>>().mockResolvedValue('test-token'),
-};
+} as unknown as ChromeAuthContextValue;
 
 const mockInternalChromeContextValue = {
   drawerActions: {
     toggleDrawerContent: jest.fn(),
   },
-};
+} as unknown as ChromeAPI;
 
 const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
   const defaultFlags: Record<string, boolean> = {
@@ -79,10 +80,8 @@ const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
     store,
     ...render(
       <MemoryRouter>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <InternalChromeContext.Provider value={mockInternalChromeContextValue as any}>
+        <ChromeAuthContext.Provider value={mockAuthContextValue}>
+          <InternalChromeContext.Provider value={mockInternalChromeContextValue}>
             <Provider store={store}>
               <Lightwell Footer={<div data-testid="mock-footer" />} />
             </Provider>
@@ -171,5 +170,22 @@ describe('Lightwell', () => {
     expect(store.get(layoutLightwellHeaderAtom)).toBe(true);
     unmount();
     expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
+  });
+
+  it('should render breadcrumb with "Hybrid Cloud Console" linking to / and active "Lightwell"', () => {
+    const { container } = renderLightwell();
+    const breadcrumb = container.querySelector('.chr-c-breadcrumbs');
+    expect(breadcrumb).toBeTruthy();
+
+    const items = breadcrumb!.querySelectorAll('.pf-v6-c-breadcrumb__item');
+    expect(items.length).toBe(2);
+
+    const firstLink = items[0].querySelector('a');
+    expect(firstLink).toBeTruthy();
+    expect(firstLink!.getAttribute('href')).toBe('/');
+    expect(firstLink!.textContent).toContain('Hybrid Cloud Console');
+
+    const activeItem = items[1];
+    expect(activeItem.textContent).toContain('Lightwell');
   });
 });
