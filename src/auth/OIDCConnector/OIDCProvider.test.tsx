@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 
 // Mock oidc-client-ts before importing component
-const mockInMemoryWebStorageInstance = {};
+const MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE = {};
 jest.mock('oidc-client-ts', () => ({
   UserManager: jest.fn().mockImplementation(() => ({
     getUser: jest.fn(),
@@ -30,7 +30,7 @@ jest.mock('oidc-client-ts', () => ({
     settings: {},
   })),
   WebStorageStateStore: jest.fn(),
-  InMemoryWebStorage: jest.fn().mockImplementation(() => mockInMemoryWebStorageInstance),
+  InMemoryWebStorage: jest.fn().mockImplementation(() => MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE),
 }));
 
 jest.mock('react-oidc-context', () => ({
@@ -90,7 +90,7 @@ describe('OIDCProvider', () => {
   });
 
   it('should render children with resolved ssoUrl and microFrontendConfig after setupSSO succeeds', async () => {
-    const mockSSOConfig = { ssoUrl: 'https://sso.stage.redhat.com/auth' };
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
     const mockFedModulesData = {
       data: {
         $schema: 'http://json-schema.org/draft-07/schema#',
@@ -100,7 +100,7 @@ describe('OIDCProvider', () => {
     };
 
     mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
-    mockResolveSSOUrl.mockReturnValue('https://sso.stage.redhat.com/auth/');
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
     mockLoadFedModules.mockResolvedValue(mockFedModulesData);
 
     render(
@@ -121,7 +121,7 @@ describe('OIDCProvider', () => {
   });
 
   it('should strip $schema from microFrontendConfig', async () => {
-    const mockSSOConfig = { ssoUrl: 'https://sso.stage.redhat.com/auth' };
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
     const mockFedModulesData = {
       data: {
         $schema: 'http://json-schema.org/draft-07/schema#',
@@ -130,7 +130,7 @@ describe('OIDCProvider', () => {
     };
 
     mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
-    mockResolveSSOUrl.mockReturnValue('https://sso.stage.redhat.com/auth/');
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
     mockLoadFedModules.mockResolvedValue(mockFedModulesData);
 
     render(
@@ -148,10 +148,10 @@ describe('OIDCProvider', () => {
   });
 
   it('should show AppPlaceholder when loadFedModules fails', async () => {
-    const mockSSOConfig = { ssoUrl: 'https://sso.stage.redhat.com/auth' };
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
 
     mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
-    mockResolveSSOUrl.mockReturnValue('https://sso.stage.redhat.com/auth/');
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
     mockLoadFedModules.mockRejectedValue(new Error('Network error'));
 
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
@@ -175,9 +175,9 @@ describe('OIDCProvider', () => {
   });
 
   it('should call loadSSOConfig and resolveSSOUrl during setup', async () => {
-    const mockSSOConfig = { ssoUrl: 'https://sso.redhat.com/auth', ssoMapping: {} };
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth', ssoMapping: {} };
     mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
-    mockResolveSSOUrl.mockReturnValue('https://sso.redhat.com/auth/');
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
     mockLoadFedModules.mockResolvedValue({
       data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
     });
@@ -195,9 +195,9 @@ describe('OIDCProvider', () => {
   });
 
   it('should use InMemoryWebStorage instead of localStorage for token storage', async () => {
-    const mockSSOConfig = { ssoUrl: 'https://sso.redhat.com/auth' };
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
     mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
-    mockResolveSSOUrl.mockReturnValue('https://sso.redhat.com/auth/');
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
     mockLoadFedModules.mockResolvedValue({
       data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
     });
@@ -216,7 +216,7 @@ describe('OIDCProvider', () => {
     expect(InMemoryWebStorage).toHaveBeenCalled();
 
     // Verify WebStorageStateStore was called with the in-memory store
-    expect(WebStorageStateStore).toHaveBeenCalledWith({ store: mockInMemoryWebStorageInstance });
+    expect(WebStorageStateStore).toHaveBeenCalledWith({ store: MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE });
 
     // Verify UserManager was configured correctly
     const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
@@ -224,9 +224,9 @@ describe('OIDCProvider', () => {
   });
 
   it('should enable PKCE by not setting disablePKCE', async () => {
-    const mockSSOConfig = { ssoUrl: 'https://sso.redhat.com/auth' };
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
     mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
-    mockResolveSSOUrl.mockReturnValue('https://sso.redhat.com/auth/');
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
     mockLoadFedModules.mockResolvedValue({
       data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
     });

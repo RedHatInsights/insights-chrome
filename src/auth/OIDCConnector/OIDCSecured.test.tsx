@@ -98,7 +98,7 @@ describe('OIDCSecured', () => {
     useAuth.mockReturnValue(mockAuth);
 
     render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
         <div>child</div>
       </OIDCSecured>
     );
@@ -117,7 +117,7 @@ describe('OIDCSecured', () => {
     useAuth.mockReturnValue(mockAuth);
 
     const { getByTestId } = render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
         <div data-testid="child">child</div>
       </OIDCSecured>
     );
@@ -125,9 +125,9 @@ describe('OIDCSecured', () => {
     // Should show placeholder, not throw
     expect(getByTestId('app-placeholder')).toBeInTheDocument();
 
-    // Should attempt silent recovery
+    // Should attempt silent recovery with base scopes
     await waitFor(() => {
-      expect(signinSilent).toHaveBeenCalled();
+      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: 'openid api.console api.ask_red_hat' }));
     });
   });
 
@@ -140,13 +140,13 @@ describe('OIDCSecured', () => {
     useAuth.mockReturnValue(mockAuth);
 
     render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
         <div>child</div>
       </OIDCSecured>
     );
 
     await waitFor(() => {
-      expect(signinSilent).toHaveBeenCalled();
+      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: 'openid api.console api.ask_red_hat' }));
       expect(mockLogin).toHaveBeenCalledWith(expect.objectContaining({ error: mockAuth.error }));
     });
   });
@@ -159,7 +159,7 @@ describe('OIDCSecured', () => {
     useAuth.mockReturnValue(mockAuth);
 
     render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
         <div>child</div>
       </OIDCSecured>
     );
@@ -184,14 +184,15 @@ describe('OIDCSecured', () => {
     useAuth.mockReturnValue(mockAuth);
 
     render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
         <div>child</div>
       </OIDCSecured>
     );
 
     await waitFor(() => {
       // Should try signinSilent first (in-memory storage loses state on refresh)
-      expect(signinSilent).toHaveBeenCalled();
+      // Must request the same base scopes as login() to avoid token downgrade
+      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
     });
 
     // If signinSilent succeeds, login redirect should NOT be called
@@ -211,13 +212,13 @@ describe('OIDCSecured', () => {
     useAuth.mockReturnValue(mockAuth);
 
     render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
         <div>child</div>
       </OIDCSecured>
     );
 
     await waitFor(() => {
-      expect(signinSilent).toHaveBeenCalled();
+      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
       // signinSilent failed → falls back to login redirect
       expect(mockLogin).toHaveBeenCalled();
     });
