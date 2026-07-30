@@ -112,7 +112,7 @@ const nonKonfluxDevServerConfiguration = () => {
 
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
-  const contextualConfigSettings = process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration();
+  const contextualConfigSettings = dev ? (process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration()) : {};
 
   return {
     entry: dev
