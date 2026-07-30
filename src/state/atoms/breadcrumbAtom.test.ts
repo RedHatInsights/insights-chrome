@@ -1,12 +1,12 @@
 import { createStore } from 'jotai';
 import {
-  appBreadcrumbStorageAtom,
-  breadcrumbReplaceModeAtom,
   appBreadcrumbOverrideAtom,
   appBreadcrumbSegmentsAtom,
+  appBreadcrumbStorageAtom,
   breadcrumbPathnameAtom,
-  clearAppBreadcrumbsAtom,
+  breadcrumbReplaceModeAtom,
   buildBreadcrumbSegments,
+  clearAppBreadcrumbsAtom,
 } from './breadcrumbAtom';
 
 describe('breadcrumbAtom', () => {
@@ -73,10 +73,7 @@ describe('breadcrumbAtom', () => {
     });
 
     it('should return empty array when replace mode is active', () => {
-      store.set(
-        appBreadcrumbStorageAtom,
-        new Map([['/insights/advisor/systems', { title: 'Systems' }]])
-      );
+      store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
       store.set(breadcrumbReplaceModeAtom, true);
 
       const segments = store.get(appBreadcrumbSegmentsAtom);
@@ -121,10 +118,7 @@ describe('breadcrumbAtom', () => {
     it('should handle trailing slashes in pathnames', () => {
       store.set(breadcrumbPathnameAtom, '/insights/advisor/systems');
 
-      store.set(
-        appBreadcrumbStorageAtom,
-        new Map([['/insights/advisor/systems/', { title: 'Systems' }]])
-      );
+      store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems/', { title: 'Systems' }]]));
 
       const segments = store.get(appBreadcrumbSegmentsAtom);
       expect(segments.length).toBeGreaterThan(0);
@@ -133,10 +127,7 @@ describe('breadcrumbAtom', () => {
     it('should handle wildcards in pathnames', () => {
       store.set(breadcrumbPathnameAtom, '/insights/advisor/systems/anything');
 
-      store.set(
-        appBreadcrumbStorageAtom,
-        new Map([['/insights/advisor/systems/*', { title: 'Systems' }]])
-      );
+      store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems/*', { title: 'Systems' }]]));
 
       const segments = store.get(appBreadcrumbSegmentsAtom);
       expect(segments.length).toBeGreaterThan(0);
@@ -157,16 +148,13 @@ describe('breadcrumbAtom', () => {
       const segments = store.get(appBreadcrumbSegmentsAtom);
 
       expect(segments.length).toBeGreaterThanOrEqual(2);
-      expect(segments.find(s => s.title === 'System 123')).toBeDefined();
+      expect(segments.find((s) => s.title === 'System 123')).toBeDefined();
     });
 
     it('should return empty for non-matching pathname', () => {
       store.set(breadcrumbPathnameAtom, '/settings/rbac/roles');
 
-      store.set(
-        appBreadcrumbStorageAtom,
-        new Map([['/insights/advisor/systems', { title: 'Systems' }]])
-      );
+      store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
 
       const segments = store.get(appBreadcrumbSegmentsAtom);
       expect(segments).toEqual([]);
@@ -194,10 +182,7 @@ describe('breadcrumbAtom', () => {
 
   describe('clearAppBreadcrumbsAtom', () => {
     it('should clear all breadcrumb state', () => {
-      store.set(
-        appBreadcrumbStorageAtom,
-        new Map([['/insights/advisor/systems', { title: 'Systems' }]])
-      );
+      store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
       store.set(breadcrumbReplaceModeAtom, true);
       store.set(appBreadcrumbOverrideAtom, [{ pathname: '/test', title: 'Test' }]);
 

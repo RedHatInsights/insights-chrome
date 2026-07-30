@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Breadcrumbs from './Breadcrumbs';
-import { appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom, appBreadcrumbOverrideAtom, breadcrumbPathnameAtom } from '../../state/atoms/breadcrumbAtom';
-import { navigationAtom } from '../../state/atoms/navigationAtom';
+import { appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, breadcrumbPathnameAtom, breadcrumbReplaceModeAtom } from '../../state/atoms/breadcrumbAtom';
+import { useFlag } from '@unleash/proxy-client-react';
 
 // Mock dependencies
 jest.mock('../../hooks/useBreadcrumbsLinks', () => ({
@@ -64,9 +64,7 @@ describe('Breadcrumbs', () => {
   it('should merge chrome and app breadcrumbs', () => {
     // Use replace mode to set app breadcrumbs
     store.set(breadcrumbReplaceModeAtom, true);
-    store.set(appBreadcrumbOverrideAtom, [
-      { pathname: '/insights/advisor/systems', title: 'Systems' }
-    ]);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems', title: 'Systems' }]);
 
     renderBreadcrumbs();
 
@@ -83,9 +81,7 @@ describe('Breadcrumbs', () => {
 
     // Use replace mode to set app breadcrumbs
     store.set(breadcrumbReplaceModeAtom, true);
-    store.set(appBreadcrumbOverrideAtom, [
-      { pathname: '/insights/advisor/systems/123', title: 'System 123' }
-    ]);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }]);
 
     renderBreadcrumbs();
 
@@ -123,10 +119,7 @@ describe('Breadcrumbs', () => {
   it('should NOT omit bundle root segment', () => {
     mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'Insights', href: '/insights' }]);
 
-    store.set(
-      appBreadcrumbStorageAtom,
-      new Map([['/insights/advisor/systems', { title: 'Systems' }]])
-    );
+    store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
     store.set(breadcrumbPathnameAtom, '/insights/advisor/systems');
 
     renderBreadcrumbs();
@@ -138,9 +131,7 @@ describe('Breadcrumbs', () => {
   it('should use replace mode override when active', () => {
     // Set replace mode with override
     store.set(breadcrumbReplaceModeAtom, true);
-    store.set(appBreadcrumbOverrideAtom, [
-      { pathname: '/custom/path', title: 'Custom Breadcrumb' },
-    ]);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/custom/path', title: 'Custom Breadcrumb' }]);
 
     renderBreadcrumbs();
 
@@ -195,9 +186,7 @@ describe('Breadcrumbs', () => {
   it('should render breadcrumbs with state options', () => {
     const stateOptions = { state: { filters: { status: 'active' } } };
     store.set(breadcrumbReplaceModeAtom, true);
-    store.set(appBreadcrumbOverrideAtom, [
-      { pathname: '/insights/advisor/systems', title: 'Systems', options: stateOptions }
-    ]);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems', title: 'Systems', options: stateOptions }]);
 
     renderBreadcrumbs();
 
@@ -205,13 +194,9 @@ describe('Breadcrumbs', () => {
   });
 
   it('should not render app breadcrumbs when feature flag disabled', () => {
-    const { useFlag } = require('@unleash/proxy-client-react');
-    useFlag.mockReturnValue(false);
+    jest.mocked(useFlag).mockReturnValue(false);
 
-    store.set(
-      appBreadcrumbStorageAtom,
-      new Map([['/insights/advisor/systems', { title: 'Systems' }]])
-    );
+    store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
     store.set(breadcrumbPathnameAtom, '/insights/advisor/systems');
 
     renderBreadcrumbs();
@@ -221,6 +206,6 @@ describe('Breadcrumbs', () => {
     expect(screen.getByText('Advisor')).toBeInTheDocument();
 
     // Reset mock
-    useFlag.mockReturnValue(true);
+    jest.mocked(useFlag).mockReturnValue(true);
   });
 });

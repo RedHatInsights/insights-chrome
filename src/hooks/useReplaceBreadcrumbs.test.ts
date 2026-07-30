@@ -1,12 +1,12 @@
 import { renderHook } from '@testing-library/react';
-import { createStore, Provider } from 'jotai';
+import { Provider, createStore } from 'jotai';
 import { appBreadcrumbOverrideAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 import useReplaceBreadcrumbs from './useReplaceBreadcrumbs';
+import { useFlag } from '@unleash/proxy-client-react';
 import React from 'react';
 
-// Mock useFlag
 jest.mock('@unleash/proxy-client-react', () => ({
-  useFlag: jest.fn(() => true), // Default enabled
+  useFlag: jest.fn(() => true),
 }));
 
 describe('useReplaceBreadcrumbs', () => {
@@ -113,8 +113,7 @@ describe('useReplaceBreadcrumbs', () => {
   });
 
   it('should not update state when feature flag disabled', () => {
-    const { useFlag } = require('@unleash/proxy-client-react');
-    useFlag.mockReturnValue(false);
+    jest.mocked(useFlag).mockReturnValue(false);
 
     const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
     renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
@@ -122,7 +121,6 @@ describe('useReplaceBreadcrumbs', () => {
     expect(store.get(breadcrumbReplaceModeAtom)).toBe(false);
     expect(store.get(appBreadcrumbOverrideAtom)).toEqual([]);
 
-    // Reset mock
-    useFlag.mockReturnValue(true);
+    jest.mocked(useFlag).mockReturnValue(true);
   });
 });

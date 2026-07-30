@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
-import { appBreadcrumbOverrideAtom, breadcrumbReplaceModeAtom, type AppBreadcrumbSegment } from '../state/atoms/breadcrumbAtom';
+import { type AppBreadcrumbSegment, appBreadcrumbOverrideAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 
 /**
  * Hook for replacing the entire app breadcrumb array
@@ -35,25 +35,26 @@ function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
   const setReplaceMode = useSetAtom(breadcrumbReplaceModeAtom);
   const setOverride = useSetAtom(appBreadcrumbOverrideAtom);
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
+  const breadcrumbsRef = useRef(breadcrumbs);
+  const breadcrumbsKey = JSON.stringify(breadcrumbs);
 
   useEffect(() => {
-    // Feature flag disabled - no-op
+    breadcrumbsRef.current = breadcrumbs;
+  }, [breadcrumbsKey]);
+
+  useEffect(() => {
     if (!isEnabled) {
       return;
     }
 
-    // Enable replace mode
     setReplaceMode(true);
+    setOverride(breadcrumbsRef.current);
 
-    // Set override array
-    setOverride(breadcrumbs);
-
-    // Cleanup - disable replace mode when component unmounts
     return () => {
       setReplaceMode(false);
       setOverride([]);
     };
-  }, [breadcrumbs, setReplaceMode, setOverride, isEnabled]);
+  }, [breadcrumbsKey, setReplaceMode, setOverride, isEnabled]);
 }
 
 export default useReplaceBreadcrumbs;

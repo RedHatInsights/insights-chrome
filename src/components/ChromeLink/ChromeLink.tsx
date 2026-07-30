@@ -128,7 +128,7 @@ LinkWrapper.displayName = 'MemoizedLinkWrapper';
 
 const basepath = document.baseURI;
 
-const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
+const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, state, replace, preventScrollReset, ...rest }: RefreshLinkProps) => rest;
 
 const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
   const { href, isExternal, onLinkClick, isBeta, ...rest } = cleanRefreshLinkProps(props);

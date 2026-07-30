@@ -41,7 +41,11 @@ export function buildBreadcrumbSegments(storage: Map<string, BreadcrumbEntry>, c
     return [];
   }
 
-  const sortedPathnames = Array.from(storage.keys()).sort((a, b) => b.length - a.length);
+  const sortedPathnames = Array.from(storage.keys()).sort((a, b) => {
+    const cleanA = a.replace(/\/$/, '').replace(/\/\*$/, '');
+    const cleanB = b.replace(/\/$/, '').replace(/\/\*$/, '');
+    return cleanB.length - cleanA.length;
+  });
 
   let matchedPathname: string | null = null;
 
@@ -68,7 +72,11 @@ export function buildBreadcrumbSegments(storage: Map<string, BreadcrumbEntry>, c
   const cleanedMatchedPath = matchedPathname.replace(/\/$/, '').replace(/\/\*$/, '');
   const pathParts = cleanedMatchedPath.split('/').filter((part) => part.length > 0);
 
-  const sortedStorageEntries = Array.from(storage.entries()).sort((a, b) => b[0].length - a[0].length);
+  const sortedStorageEntries = Array.from(storage.entries()).sort((a, b) => {
+    const cleanA = a[0].replace(/\/$/, '').replace(/\/\*$/, '');
+    const cleanB = b[0].replace(/\/$/, '').replace(/\/\*$/, '');
+    return cleanB.length - cleanA.length;
+  });
 
   for (let i = 0; i < pathParts.length; i++) {
     const segmentPath = '/' + pathParts.slice(0, i + 1).join('/');

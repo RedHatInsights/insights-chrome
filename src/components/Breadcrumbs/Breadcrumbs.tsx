@@ -13,13 +13,7 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
-import {
-  appBreadcrumbSegmentsAtom,
-  appBreadcrumbOverrideAtom,
-  breadcrumbReplaceModeAtom,
-  breadcrumbPathnameAtom,
-  type AppBreadcrumbSegment,
-} from '../../state/atoms/breadcrumbAtom';
+import { appBreadcrumbOverrideAtom, appBreadcrumbSegmentsAtom, breadcrumbPathnameAtom, breadcrumbReplaceModeAtom } from '../../state/atoms/breadcrumbAtom';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -77,9 +71,7 @@ const Breadcrumbs = () => {
     // 2. Last chrome segment is NOT the app mount pathname (design requirement)
     const lastChromeSegment = chromeSegments[chromeSegments.length - 1];
     const chromeToUse =
-      chromeSegments.length > 1 && appMountPathname && lastChromeSegment?.href !== appMountPathname
-        ? chromeSegments.slice(0, -1)
-        : chromeSegments;
+      chromeSegments.length > 1 && appMountPathname && lastChromeSegment?.href !== appMountPathname ? chromeSegments.slice(0, -1) : chromeSegments;
 
     // Merge chrome + app segments
     return [

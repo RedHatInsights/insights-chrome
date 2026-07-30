@@ -1,12 +1,12 @@
 import { renderHook } from '@testing-library/react';
-import { createStore, Provider } from 'jotai';
+import { Provider, createStore } from 'jotai';
 import { appBreadcrumbStorageAtom } from '../state/atoms/breadcrumbAtom';
 import useBreadcrumbs from './useBreadcrumbs';
+import { useFlag } from '@unleash/proxy-client-react';
 import React from 'react';
 
-// Mock useFlag
 jest.mock('@unleash/proxy-client-react', () => ({
-  useFlag: jest.fn(() => true), // Default enabled
+  useFlag: jest.fn(() => true),
 }));
 
 describe('useBreadcrumbs', () => {
@@ -67,9 +67,7 @@ describe('useBreadcrumbs', () => {
   it('should warn on invalid pathname (not starting with /)', () => {
     renderHook(() => useBreadcrumbs('insights/advisor/systems', 'Systems'), { wrapper });
 
-    expect(console.warn).toHaveBeenCalledWith(
-      '[useBreadcrumbs] Invalid pathname "insights/advisor/systems" - must be absolute path starting with /'
-    );
+    expect(console.warn).toHaveBeenCalledWith('[useBreadcrumbs] Invalid pathname "insights/advisor/systems" - must be absolute path starting with /');
 
     const storage = store.get(appBreadcrumbStorageAtom);
     expect(storage.size).toBe(0);
@@ -116,15 +114,13 @@ describe('useBreadcrumbs', () => {
   });
 
   it('should not update storage when feature flag disabled', () => {
-    const { useFlag } = require('@unleash/proxy-client-react');
-    useFlag.mockReturnValue(false);
+    jest.mocked(useFlag).mockReturnValue(false);
 
     renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems'), { wrapper });
 
     const storage = store.get(appBreadcrumbStorageAtom);
     expect(storage.size).toBe(0);
 
-    // Reset mock
-    useFlag.mockReturnValue(true);
+    jest.mocked(useFlag).mockReturnValue(true);
   });
 });
