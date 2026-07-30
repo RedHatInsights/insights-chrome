@@ -1,0 +1,78 @@
+import { useEffect, useRef } from 'react';
+import { useSetAtom } from 'jotai';
+import { useFlag } from '@unleash/proxy-client-react';
+import type { NavigateOptions } from 'react-router-dom';
+import { appBreadcrumbStorageAtom } from '../state/atoms/breadcrumbAtom';
+
+/**
+ * Hook for incrementally adding breadcrumb entries to the app breadcrumb storage.
+ * Each route can call this hook independently to register its breadcrumb.
+ *
+ * The `options` parameter is stabilized internally via JSON serialization,
+ * so callers do NOT need to memoize it.
+ *
+ * @param pathname - Full pathname including bundle prefix (e.g., "/insights/advisor/systems/123")
+ * @param title - Breadcrumb title to display
+ * @param options - NavigateOptions from react-router (state, replace, preventScrollReset, relative)
+ *
+ * Exposed as a federated module via Scalprum:
+ * @example
+ * ```tsx
+ * import { useRemoteHook } from '@scalprum/react-core';
+ *
+ * function SystemDetailPage() {
+ *   const { id } = useParams();
+ *
+ *   useRemoteHook({
+ *     scope: 'chrome',
+ *     module: './breadcrumbs/useBreadcrumbs',
+ *     args: [
+ *       `/insights/advisor/systems/${id}`,
+ *       `System ${id}`,
+ *       { state: { filters: currentFilters } },
+ *     ],
+ *   });
+ *
+ *   return <div>...</div>;
+ * }
+ * ```
+ */
+function useBreadcrumbs(pathname: string, title: string, options?: NavigateOptions): void {
+  const setStorage = useSetAtom(appBreadcrumbStorageAtom);
+  const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
+  const optionsRef = useRef(options);
+  const optionsKey = JSON.stringify(options);
+
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [optionsKey]);
+
+  useEffect(() => {
+    if (!isEnabled) {
+      return;
+    }
+
+    if (!pathname || !pathname.startsWith('/')) {
+      console.warn(`[useBreadcrumbs] Invalid pathname "${pathname}" - must be absolute path starting with /`);
+      return;
+    }
+
+    const cleanedPathname = pathname.replace(/\/$/, '').replace(/\/\*$/, '');
+
+    setStorage((prev) => {
+      const next = new Map(prev);
+      next.set(cleanedPathname, { title, options: optionsRef.current });
+      return next;
+    });
+
+    return () => {
+      setStorage((prev) => {
+        const next = new Map(prev);
+        next.delete(cleanedPathname);
+        return next;
+      });
+    };
+  }, [pathname, title, optionsKey, setStorage, isEnabled]);
+}
+
+export default useBreadcrumbs;
