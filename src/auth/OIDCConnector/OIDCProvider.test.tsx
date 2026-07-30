@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 
 // Mock oidc-client-ts before importing component
+const mockInMemoryWebStorageInstance = {};
 jest.mock('oidc-client-ts', () => ({
   UserManager: jest.fn().mockImplementation(() => ({
     getUser: jest.fn(),
@@ -29,6 +30,7 @@ jest.mock('oidc-client-ts', () => ({
     settings: {},
   })),
   WebStorageStateStore: jest.fn(),
+  InMemoryWebStorage: jest.fn().mockImplementation(() => mockInMemoryWebStorageInstance),
 }));
 
 jest.mock('react-oidc-context', () => ({
@@ -66,6 +68,7 @@ jest.mock('./OIDCUserManagerErrorBoundary', () => ({
 }));
 
 import OIDCProvider from './OIDCProvider';
+import { InMemoryWebStorage, UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
 describe('OIDCProvider', () => {
   beforeEach(() => {
@@ -189,5 +192,57 @@ describe('OIDCProvider', () => {
       expect(mockLoadSSOConfig).toHaveBeenCalledTimes(1);
       expect(mockResolveSSOUrl).toHaveBeenCalledWith(mockSSOConfig);
     });
+  });
+
+  it('should use InMemoryWebStorage instead of localStorage for token storage', async () => {
+    const mockSSOConfig = { ssoUrl: 'https://sso.redhat.com/auth' };
+    mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
+    mockResolveSSOUrl.mockReturnValue('https://sso.redhat.com/auth/');
+    mockLoadFedModules.mockResolvedValue({
+      data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
+    });
+
+    render(
+      <OIDCProvider>
+        <div>Content</div>
+      </OIDCProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+
+    // Verify InMemoryWebStorage was instantiated
+    expect(InMemoryWebStorage).toHaveBeenCalled();
+
+    // Verify WebStorageStateStore was called with the in-memory store
+    expect(WebStorageStateStore).toHaveBeenCalledWith({ store: mockInMemoryWebStorageInstance });
+
+    // Verify UserManager was configured correctly
+    const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
+    expect(userManagerConfig).not.toHaveProperty('disablePKCE');
+  });
+
+  it('should enable PKCE by not setting disablePKCE', async () => {
+    const mockSSOConfig = { ssoUrl: 'https://sso.redhat.com/auth' };
+    mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
+    mockResolveSSOUrl.mockReturnValue('https://sso.redhat.com/auth/');
+    mockLoadFedModules.mockResolvedValue({
+      data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
+    });
+
+    render(
+      <OIDCProvider>
+        <div>Content</div>
+      </OIDCProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+
+    const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
+    // PKCE should be enabled (disablePKCE must not be true)
+    expect(userManagerConfig.disablePKCE).not.toBe(true);
   });
 });

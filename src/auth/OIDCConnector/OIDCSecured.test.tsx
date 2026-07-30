@@ -170,4 +170,56 @@ describe('OIDCSecured', () => {
       expect(localStorage.getItem(RH_USER_ID_STORAGE_KEY)).toBe(null);
     });
   });
+
+  it('attempts signinSilent before login redirect when not authenticated', async () => {
+    const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    hasAuthParams.mockReturnValue(false);
+
+    const signinSilent = jest.fn().mockResolvedValue(undefined);
+    mockAuth.isAuthenticated = false;
+    mockAuth.isLoading = false;
+    mockAuth.activeNavigator = undefined;
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      // Should try signinSilent first (in-memory storage loses state on refresh)
+      expect(signinSilent).toHaveBeenCalled();
+    });
+
+    // If signinSilent succeeds, login redirect should NOT be called
+    expect(mockLogin).not.toHaveBeenCalled();
+  });
+
+  it('falls back to login redirect when signinSilent fails on unauthenticated load', async () => {
+    const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    hasAuthParams.mockReturnValue(false);
+
+    const signinSilent = jest.fn().mockRejectedValue(new Error('No SSO session'));
+    mockAuth.isAuthenticated = false;
+    mockAuth.isLoading = false;
+    mockAuth.activeNavigator = undefined;
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(signinSilent).toHaveBeenCalled();
+      // signinSilent failed → falls back to login redirect
+      expect(mockLogin).toHaveBeenCalled();
+    });
+  });
 });

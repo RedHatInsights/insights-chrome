@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ITLess, loadFedModules, loadSSOConfig, resolveSSOUrl } from '../../utils/common';
 import { AuthProvider } from 'react-oidc-context';
-import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
+import { InMemoryWebStorage, UserManager, WebStorageStateStore } from 'oidc-client-ts';
 import { OIDCSecured } from './OIDCSecured';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
@@ -58,11 +58,9 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           check_session_iframe: `https://${window.location.host}/apps/chrome/js/silent-check-sso.html`,
           revocation_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/revoke`,
         },
-        // removes code_challenge query param from the url
-        disablePKCE: true,
         response_type: 'code',
         response_mode: 'fragment',
-        userStore: new WebStorageStateStore({ store: window.localStorage }),
+        userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
       }),
     [state?.ssoUrl]
   );

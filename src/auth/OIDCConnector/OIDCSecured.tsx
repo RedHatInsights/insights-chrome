@@ -139,7 +139,14 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     initializeAccessRequestCookies();
 
     if (!hasAuthParams() && !auth.activeNavigator && !auth.isLoading && !auth.isAuthenticated) {
-      login(auth, initialModuleConfig?.ssoScopes);
+      // With in-memory token storage, persisted user state is lost on page
+      // refresh. Attempt a silent SSO re-auth via iframe first to avoid a
+      // full-page redirect when the SSO session is still valid.
+      try {
+        await auth.signinSilent();
+      } catch {
+        login(auth, initialModuleConfig?.ssoScopes);
+      }
     }
   };
 
