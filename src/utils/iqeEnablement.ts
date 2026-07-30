@@ -87,7 +87,16 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
+// Guard to ensure init() only runs once, preventing layered monkey-patching on every token refresh
+let initialized = false;
+
 export function init(chromeStore: ReturnType<typeof createStore>, authRef: React.MutableRefObject<IqeAuthRef>) {
+  // Early return if already initialized - prevents duplicate header injection on silent token renewals
+  if (initialized) {
+    return;
+  }
+  initialized = true;
+
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -210,6 +219,11 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
         throw err;
       });
   };
+}
+
+// Exported for testing only - allows tests to reset initialization state
+export function _resetInitialization() {
+  initialized = false;
 }
 
 const qe = {
