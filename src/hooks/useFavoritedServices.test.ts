@@ -33,11 +33,13 @@ const setupMocks = ({
     favoritePages,
     favoritePage: jest.fn(),
     unfavoritePage: jest.fn(),
+    initialized: true,
   } as ReturnType<typeof useFavoritePagesWrapper>);
   mockUseAllServices.mockReturnValue({
     availableSections,
     linkSections: availableSections,
     ready: true,
+    error: false,
     filterValue: '',
     setFilterValue: jest.fn(),
   } as ReturnType<typeof useAllServices>);
