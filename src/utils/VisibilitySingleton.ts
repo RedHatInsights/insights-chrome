@@ -224,6 +224,17 @@ const initialize = ({
         return false;
       }
     },
+    isKesselOrgOnboarded: (expected: boolean) => {
+      if (ITLess() || getFeatureFlagsError()) {
+        return false;
+      }
+
+      try {
+        return getUnleashClient().isEnabled('platform.rbac.workspaces') === expected;
+      } catch {
+        return false;
+      }
+    },
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
