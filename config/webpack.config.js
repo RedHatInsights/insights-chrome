@@ -215,6 +215,9 @@ const commonConfig = ({ dev }) => {
               loader: 'sass-loader',
               options: {
                 sourceMap: true,
+                sassOptions: {
+                  quietDeps: true,
+                },
               },
             },
           ],
@@ -294,6 +297,14 @@ const pfConfig = {
             options: {
               sassOptions: {
                 outputStyle: 'compressed',
+                // PF5 5.4.2 (latest) uses @import internally and deprecated
+                // global built-in functions. No upstream fix available.
+                // Silence @import warnings from pf-5-assets.scss (can't use
+                // @use because PF5 files depend on @import's global scope).
+                silenceDeprecations: ['import'],
+                // Suppress deprecation warnings from PF5 dependency files
+                // (global-builtin functions, deprecated if() syntax, etc.)
+                quietDeps: true,
               },
               sourceMap: true,
             },
