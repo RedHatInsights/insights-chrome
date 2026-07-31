@@ -31,54 +31,44 @@ import { contextSwitcherOpenAtom } from '../../state/atoms/contextSwitcher';
 
 export type ContextSwitcherProps = {
   className?: string;
-  accountNumber?: string;
   orgId?: string;
   isInternal?: boolean;
 };
 
-// The API returns name/email fields when query_by=user_id, but the generated
-// CrossAccountRequestByUserId type does not include them.
-type CrossAccountRequestInternal = CrossAccountRequestByUserId & {
-  first_name?: string | null;
-  last_name?: string | null;
-  email: string;
-};
+// query_by=user_id returns ONLY: request_id, target_org, user_id, start_date, end_date, created, status
+// query_by=target_org returns name/email via BOP lookup (first_name, last_name, email, user_available)
+// ContextSwitcher uses query_by=user_id, so name/email fields are never present
+type CrossAccountRequestInternal = CrossAccountRequestByUserId;
 
 /**
  * Resolve the display/dedup identifier for a cross-account request.
- * The RBAC API stopped returning target_account (RHCLOUD-48475); target_org is now canonical.
- *
- * TEMPORARY BACKWARD COMPAT: Fall back to target_account for:
- * 1. Old localStorage from users who previously used cross-account feature
- * 2. Outdated @redhat-cloud-services/rbac-client@6.0.1 type still defines target_account
- *
- * TODO: Remove target_account fallback after:
- * - Upgrading rbac-client to 9.x (separate ticket needed)
- * - 90 days post-deploy (allows localStorage to rotate through TAM access expirations)
+ * RBAC API stopped returning target_account on 2026-06-03 (RHCLOUD-36475).
+ * Fallback to target_account for pre-migration localStorage/API responses.
  */
 const resolveAccountIdentifier = (request: CrossAccountRequestInternal): string | undefined => request.target_org ?? request.target_account;
 
-const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: ContextSwitcherProps) => {
+const ContextSwitcher = ({ orgId, className, isInternal }: ContextSwitcherProps) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useAtom(contextSwitcherOpenAtom);
   const [data, setData] = useState<CrossAccountRequestInternal[]>([]);
   const [searchValue, setSearchValue] = useState('');
-  const [selectedAccountNumber, setSelectedAccountNumber] = useState(accountNumber);
+  const [selectedOrgId, setSelectedOrgId] = useState(orgId);
   const onSelect = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleItemClick = (target_account?: string, request_id?: string, end_date?: Date, target_org?: string) => {
-    const accountIdentifier = target_org ?? target_account;
-    if (!target_org || !accountIdentifier || accountIdentifier === selectedAccountNumber) {
+  const handleItemClick = (request_id?: string, end_date?: Date, accountIdentifier?: string) => {
+    if (!accountIdentifier || accountIdentifier === selectedOrgId) {
       return;
     }
     localStorage.removeItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION);
     localStorage.removeItem(REQUESTS_COUNT);
     localStorage.removeItem(REQUESTS_DATA);
-    setSelectedAccountNumber(accountIdentifier);
-    Cookies.set(CROSS_ACCESS_ACCOUNT_NUMBER, accountIdentifier);
-    Cookies.set(CROSS_ACCESS_ORG_ID, target_org);
+    setSelectedOrgId(accountIdentifier);
+
+    // RHCLOUD-48475: Only use CROSS_ACCESS_ORG_ID cookie.
+    // Do NOT set CROSS_ACCESS_ACCOUNT_NUMBER — that causes 3scale to write org_id into identity.account_number.
+    Cookies.set(CROSS_ACCESS_ORG_ID, accountIdentifier);
 
     /**
      * We need to keep the request id somewhere to check if the request is still active after session start.
@@ -89,7 +79,7 @@ const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: Contex
       ACTIVE_REMOTE_REQUEST,
       JSON.stringify({
         request_id,
-        target_account: accountIdentifier, // TEMPORARY: Keep key name for backward compat (RHCLOUD-48475)
+        target_org: accountIdentifier,
         end_date,
       })
     );
@@ -98,10 +88,10 @@ const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: Contex
   };
 
   const resetAccountRequest = () => {
-    if (accountNumber === selectedAccountNumber) {
+    if (orgId === selectedOrgId) {
       return;
     }
-    setSelectedAccountNumber(accountNumber);
+    setSelectedOrgId(orgId);
     Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
     Cookies.remove(CROSS_ACCESS_ORG_ID);
     localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
@@ -116,9 +106,22 @@ const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: Contex
       if (initialAccount) {
         try {
           const parsed = JSON.parse(initialAccount);
-          // TEMPORARY: Fallback to target_account for old localStorage format (RHCLOUD-48475)
-          // TODO: Remove fallback after 90 days post-deploy
-          setSelectedAccountNumber(parsed.target_org ?? parsed.target_account);
+          // Migrate old localStorage: API removed target_account on 2026-06-03
+          const orgId = parsed.target_org ?? parsed.target_account;
+          if (orgId) {
+            setSelectedOrgId(orgId);
+            // Write back migrated format if this was an old entry
+            if (!parsed.target_org && parsed.target_account) {
+              localStorage.setItem(
+                ACTIVE_REMOTE_REQUEST,
+                JSON.stringify({
+                  request_id: parsed.request_id,
+                  target_org: orgId,
+                  end_date: parsed.end_date,
+                })
+              );
+            }
+          }
         } catch {
           console.log('Unable to parse initial account. Using default account');
         }
@@ -165,8 +168,8 @@ const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: Contex
   const filteredData = data && data.filter((item) => `${resolveAccountIdentifier(item)}`.includes(searchValue));
 
   const contextSwitcherToggle = (toggleRef: React.RefObject<any>) => (
-    <MenuToggle ref={toggleRef} isExpanded={isOpen} onClick={onSelect} aria-label="Selected account:">
-      Account: {selectedAccountNumber}
+    <MenuToggle ref={toggleRef} isExpanded={isOpen} onClick={onSelect} aria-label="Selected organization:">
+      Organization: {selectedOrgId}
     </MenuToggle>
   );
 
@@ -188,12 +191,12 @@ const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: Contex
           </InputGroup>
         </MenuSearchInput>
       </MenuSearch>
-      {accountNumber?.includes(searchValue) ? (
+      {orgId?.includes(searchValue) ? (
         <DropdownItem onClick={resetAccountRequest}>
           <Content className="chr-c-content-account">
             <Content component="p" className="account-label pf-v6-u-mb-0 sentry-mask data-hj-suppress">
-              <span>{accountNumber}</span>
-              {accountNumber === `${selectedAccountNumber}` && (
+              <span>{orgId}</span>
+              {orgId === `${selectedOrgId}` && (
                 <Icon size="sm" className="pf-v6-u-ml-auto">
                   <CheckIcon color="var(--pf-t--global--icon--color--brand--default)" />
                 </Icon>
@@ -210,21 +213,18 @@ const ContextSwitcher = ({ accountNumber, orgId, className, isInternal }: Contex
       {filteredData?.length === 0 ? <DropdownItem>{intl.formatMessage(messages.noResults)}</DropdownItem> : <Fragment />}
       {filteredData ? (
         filteredData.map((item) => {
-          const { target_account, request_id, end_date, target_org, email, first_name, last_name } = item;
+          const { request_id, end_date } = item;
           const accountIdentifier = resolveAccountIdentifier(item);
           return (
-            <DropdownItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
+            <DropdownItem onClick={() => handleItemClick(request_id, end_date, accountIdentifier)} key={request_id}>
               <Content className="chr-c-content-account">
-                <Content component="p" className="account-label">
-                  <span>{accountIdentifier}</span>
-                  {accountIdentifier === selectedAccountNumber && (
+                <Content component="p" className="account-label pf-v6-u-mb-0">
+                  <span>{accountIdentifier ?? 'N/A'}</span>
+                  {accountIdentifier && accountIdentifier === selectedOrgId && (
                     <Icon size="sm" className="pf-v6-u-ml-auto">
                       <CheckIcon color="var(--pf-t--global--icon--color--brand--default)" />
                     </Icon>
                   )}
-                </Content>
-                <Content className="account-name" component="small">
-                  {first_name && last_name ? `${first_name} ${last_name}` : email}
                 </Content>
               </Content>
             </DropdownItem>

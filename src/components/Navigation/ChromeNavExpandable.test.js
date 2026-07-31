@@ -26,7 +26,7 @@ describe('ChromeNavExpandable', () => {
     appId: 'testModule',
     href: '/foo',
     title: expandableTitle,
-    routes: [{ appId: 'bar', title: 'title', href: '/foo/bar' }],
+    navItems: [{ appId: 'bar', title: 'title', href: '/foo/bar' }],
     id: 'test-id',
   };
 
@@ -55,7 +55,7 @@ describe('ChromeNavExpandable', () => {
       <NavContextWrapper>
         <ChromeNavExpandable
           {...testProps}
-          routes={[
+          navItems={[
             {
               appId: 'testModule',
               href: '/foo',

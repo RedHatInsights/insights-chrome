@@ -8,7 +8,7 @@ import type { IqeAuthRef } from '../../src/utils/iqeEnablement';
 import { Provider as JotaiProvider, createStore, useAtomValue } from 'jotai';
 import { AxiosError, AxiosResponse } from 'axios';
 
-import qe from '../../src/utils/iqeEnablement';
+import qe, { _resetInitialization } from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import testUserJson from '../fixtures/testUser.json';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
@@ -61,6 +61,12 @@ function createEnv(code: string, childNode: React.ReactNode) {
 }
 
 describe('Gateway errors', () => {
+  // Store original globals to prevent wrapper stacking across tests
+  let originalFetch: typeof window.fetch;
+  let originalXHROpen: typeof XMLHttpRequest.prototype.open;
+  let originalXHRSend: typeof XMLHttpRequest.prototype.send;
+  let originalXHRSetRequestHeader: typeof XMLHttpRequest.prototype.setRequestHeader;
+
   before(() => {
     initializeVisibilityFunctions({
       getUser() {
@@ -70,10 +76,17 @@ describe('Gateway errors', () => {
       getUserPermissions: () => Promise.resolve([]),
       isPreview: false,
     });
+    // Capture pristine implementations once
+    originalFetch = window.fetch;
+    originalXHROpen = window.XMLHttpRequest.prototype.open;
+    originalXHRSend = window.XMLHttpRequest.prototype.send;
+    originalXHRSetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
   });
+
   after(() => {
     window.localStorage.removeItem(BLOCK_CLEAR_GATEWAY_ERROR);
   });
+
   beforeEach(() => {
     window.localStorage.setItem(BLOCK_CLEAR_GATEWAY_ERROR, 'true');
     cy.intercept('GET', '/api/featureflags/*', { toggles: [] });
@@ -84,6 +97,13 @@ describe('Gateway errors', () => {
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
     // clear the instance
     removeScalprum();
+    // Restore pristine globals before resetting initialization
+    window.fetch = originalFetch;
+    window.XMLHttpRequest.prototype.open = originalXHROpen;
+    window.XMLHttpRequest.prototype.send = originalXHRSend;
+    window.XMLHttpRequest.prototype.setRequestHeader = originalXHRSetRequestHeader;
+    // Reset initialization state to allow qe.init() to run for each test
+    _resetInitialization();
   });
 
   it('handles 403 3scale gateway error', () => {

@@ -79,7 +79,7 @@ const MemoizedHeader = memo(
               <Logo theme={theme} />
             </MastheadLogo>
             {isLightwellHeader ? (
-              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Red Hat Lightwell</span>
+              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Lightwell</span>
             ) : (
               !(!md && searchOpen) && <AllServicesDropdown />
             )}
@@ -101,7 +101,7 @@ const MemoizedHeader = memo(
               <ToolbarGroup variant="filter-group">
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
-                    <ContextSwitcher accountNumber={accountNumber} orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
+                    <ContextSwitcher orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
