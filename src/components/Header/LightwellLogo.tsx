@@ -1,11 +1,17 @@
 import React, { memo } from 'react';
 
+interface LightwellLogoProps {
+  theme?: 'light' | 'dark';
+}
+
 /**
- * Lightwell logomark for the masthead.
- * Uses the official SVG from frontend-assets (partners-icons/lightwell-logomark.svg).
+ * Lightwell logo for the masthead.
+ * Uses themed SVGs from frontend-assets — lightwell-light.svg for light theme,
+ * lightwell-dark.svg for dark theme.
  */
-const LightwellLogo = () => (
-  <img className="chr-c-brand" src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="Lightwell" width="30" height="30" />
-);
+const LightwellLogo = ({ theme = 'light' }: LightwellLogoProps) => {
+  const src = theme === 'dark' ? '/apps/frontend-assets/partners-icons/lightwell-dark.svg' : '/apps/frontend-assets/partners-icons/lightwell-light.svg';
+  return <img className="chr-c-brand" src={src} alt="Lightwell" height="30" />;
+};
 
 export default memo(LightwellLogo);

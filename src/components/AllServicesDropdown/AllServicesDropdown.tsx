@@ -71,14 +71,13 @@ const AllServicesDropdown = () => {
   const toggle = (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
-      className="chr-c-link-service-toggle pf-v6-u-pr-sm"
+      className="chr-c-link-service-toggle"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isFullHeight
+      variant="plain"
     >
-      <ThIcon className="pf-v6-u-mr-sm" />
-      Red Hat Hybrid Cloud Console
+      <ThIcon />
     </MenuToggle>
   );
 
