@@ -142,6 +142,15 @@ const commonConfig = ({ dev }) => {
         }
       : {}),
     devtool: dev ? false : 'hidden-source-map',
+    // @rhds/elements rh-footer uses new URL(expr, import.meta.url) for
+    // isomorphic asset resolution — webpack can't statically analyze
+    // the runtime expression but it works correctly at runtime.
+    ignoreWarnings: [
+      {
+        module: /@rhds[\\/]elements/,
+        message: /Critical dependency: the request of a dependency is an expression/,
+      },
+    ],
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
