@@ -213,6 +213,17 @@ const initialize = ({
       }
     },
     isITLess: (expected: boolean) => ITLess() === expected,
+    isKesselEnabled: (expected: boolean) => {
+      if (ITLess() || getFeatureFlagsError()) {
+        return false;
+      }
+
+      try {
+        return getUnleashClient().isEnabled('platform.chrome.kessel') === expected;
+      } catch {
+        return false;
+      }
+    },
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules

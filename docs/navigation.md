@@ -34,6 +34,7 @@ List of available permissions methods:
     * `isNotEmpty` is a negation of `isEmpty`
 * `featureFlag` - test if feature flag name is enabled. First argument is name of the featureFlag and second is the expected value (`true` or `false`)
 * `isITLess` - test if current environment is ITLess (FedRAMP/Commercial). First argument is the expected value (`true` or `false`)
+* `isKesselEnabled` - test if Kessel is deployed in the current environment. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.chrome.kessel` feature flag. First argument is the expected value (`true` or `false`)
 
 #### apiRequest example
 
