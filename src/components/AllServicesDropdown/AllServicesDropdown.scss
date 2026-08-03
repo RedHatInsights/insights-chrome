@@ -14,15 +14,6 @@
   max-width: 240px;
   // Ensure it doesn't shrink too much
   flex-shrink: 0;
-
-  // override menu toggle extra bottom border
-  &.pf-v6-c-menu-toggle::after {
-    border-bottom: none;
-  }
-  &.pf-v6-c-menu-toggle:hover::after,
-  &.pf-m-expanded::after {
-    border-bottom: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--global--border--color--status--info--default);
-  }
 }
 
 .platform-icon {
@@ -60,11 +51,6 @@
   // To not cover the entire screen including masthead
   .pf-v6-c-backdrop {
     position: relative;
-    background-color: rgba(21, 21, 21, 0.0)
-  }
-
-  .pf-v6-c-tabs__list::before {
-    border-left:none !important;
   }
 }
 
@@ -95,7 +81,7 @@
   .chr-c-panel-services-nav {
     margin-left: 25px;
     margin-right: 25px;
-    border-radius: 18px;
+    overflow: hidden;
     .chr-l-stack__item-browse-all-services {
       border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
     }
@@ -105,25 +91,17 @@
         height: 820px;
       }
       &__content {
-        border-bottom-right-radius: 16px;
-        border-top-right-radius: 16px;
         height: 820px;
         overflow: auto;
       }
       &__panel {
-        border-bottom-left-radius: 18px;
-        border-top-left-radius: 18px;
-        border-right: 1px solid var(--pf-t--global--border--color--default);
         flex-basis: 500px;
         height: 820px;
-        .pf-v6-c-tabs {
-          --pf-v6-c-tabs__item--m-current__link--after--BorderColor: transparent;
-          --pf-v6-c-tabs--m-vertical__link--PaddingTop: var(--pf-t--global--spacer--sm);
-          --pf-v6-c-tabs--m-vertical__link--PaddingBottom: var(--pf-t--global--spacer--sm);
-          --pf-v6-c-tabs__link--PaddingRight: var(--pf-t--global--spacer--md);
-          --pf-v6-c-tabs__link--PaddingLeft: var(--pf-t--global--spacer--md);
-          --pf-v6-c-tabs__item--m-current__link--Color: var(--pf-t--global--text--color--link--default);
-          --pf-v6-c-tabs--m-vertical--MaxWidth: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        &:focus-visible {
+          outline: var(--pf-t--global--border--width--focus--default) solid var(--pf-t--global--color--brand--default);
+          outline-offset: -2px;
         }
         .pf-v6-c-tabs__item-text {
           flex-grow: 1;
