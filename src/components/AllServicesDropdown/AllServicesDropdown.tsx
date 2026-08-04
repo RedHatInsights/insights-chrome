@@ -75,6 +75,7 @@ const AllServicesDropdown = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
+      isFullHeight
     >
       <ThIcon className="pf-v6-u-mr-sm" />
       Red Hat Hybrid Cloud Console
