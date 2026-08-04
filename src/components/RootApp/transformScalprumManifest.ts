@@ -1,8 +1,8 @@
-import { PluginManifest } from '@openshift/dynamic-plugin-sdk';
+import { RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
 
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 
-function transformScalprumManifest(manifest: PluginManifest, config: ScalprumConfig) {
+function transformScalprumManifest(manifest: RemotePluginManifest, config: ScalprumConfig) {
   if (manifest.name === 'chrome') {
     return {
       ...manifest,
