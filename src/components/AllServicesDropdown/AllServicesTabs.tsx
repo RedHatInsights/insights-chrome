@@ -45,6 +45,7 @@ const TabWrapper = (props: TabWrapper) => {
       // should be available only in preview
       // use refs to supply the required tab events
       if (isPreview) {
+        (document.activeElement as HTMLElement)?.blur();
         tabRef.current?.click();
       }
     }, 300);
