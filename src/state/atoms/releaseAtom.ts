@@ -85,7 +85,7 @@ export const layoutForceFeltThemeAtom = atom(isLightwellPath);
  * When true, the AllServicesDropdown is replaced with a static "Lightwell"
  * header and the Search input is hidden.
  */
-export const layoutLightwellHeaderAtom = atom(false);
+export const layoutLightwellHeaderAtom = atom(isLightwellPath);
 
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {
