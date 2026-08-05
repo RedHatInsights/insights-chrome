@@ -13,6 +13,18 @@ describe('darkModeStore', () => {
       expect(store1).toBe(store2);
     });
 
+    it('should anchor the store to window so Module Federation consumers share the same instance', () => {
+      const store = getDarkModeStore();
+      expect(window.__chrome_dark_mode_store__).toBe(store);
+    });
+
+    it('should clear the window singleton on reset', () => {
+      getDarkModeStore();
+      expect(window.__chrome_dark_mode_store__).toBeDefined();
+      _resetDarkModeStore();
+      expect(window.__chrome_dark_mode_store__).toBeUndefined();
+    });
+
     it('should have initial state isDark: false', () => {
       const store = getDarkModeStore();
       expect(store.getState()).toEqual({ isDark: false });
