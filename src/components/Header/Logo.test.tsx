@@ -8,9 +8,7 @@ import { describe, expect, it } from '@jest/globals';
 const renderLogo = (options: { theme?: 'light' | 'dark'; lightwellHeader?: boolean } = {}) => {
   const { theme, lightwellHeader = false } = options;
   const store = createStore();
-  if (lightwellHeader) {
-    store.set(layoutLightwellHeaderAtom, true);
-  }
+  store.set(layoutLightwellHeaderAtom, lightwellHeader);
 
   return render(
     <Provider store={store}>
@@ -27,17 +25,16 @@ describe('Logo', () => {
     expect(img.getAttribute('src')).not.toBe('/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
   });
 
-  it('should render same non-Lightwell logo for both themes', () => {
+  it('should render Red Hat logo for both themes (not Lightwell)', () => {
+    // SVG imports resolve to identical 'test-file-stub' via fileMock.js — cannot distinguish light vs dark in Jest
     const { unmount } = renderLogo({ theme: 'dark' });
-    const darkSrc = screen.getByAltText('Red Hat Logo').getAttribute('src');
+    const darkImg = screen.getByAltText('Red Hat Logo');
+    expect(darkImg.getAttribute('src')).not.toBe('/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
     unmount();
 
     renderLogo({ theme: 'light' });
-    const lightSrc = screen.getByAltText('Red Hat Logo').getAttribute('src');
-
-    // Both are stubbed in Jest but we verify neither is the Lightwell logo
-    expect(darkSrc).not.toBe('/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
-    expect(lightSrc).not.toBe('/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
+    const lightImg = screen.getByAltText('Red Hat Logo');
+    expect(lightImg.getAttribute('src')).not.toBe('/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
   });
 
   it('should render Lightwell logo and alt text when layoutLightwellHeaderAtom is true', () => {
