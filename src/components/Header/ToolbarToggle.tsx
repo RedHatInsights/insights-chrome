@@ -107,7 +107,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
         <MenuToggle
           ref={toggleRef}
           variant="default"
-          className={props.className}
+          className={`chr-c-toolbar-toggle${props.className ? ` ${props.className}` : ''}`}
           id={props.id?.toString()}
           onClick={onToggle}
           aria-label={props.ariaLabel}

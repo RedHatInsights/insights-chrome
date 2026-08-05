@@ -8,6 +8,7 @@ import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
@@ -24,6 +25,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
   const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
+  const setActiveModule = useSetAtom(activeModuleAtom);
 
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
@@ -33,6 +35,13 @@ const Lightwell = ({ Footer }: LightwellProps) => {
       setLayoutLightwellHeader(false);
     };
   }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
+
+  useEffect(() => {
+    setActiveModule('contentSources');
+    return () => {
+      setActiveModule(undefined);
+    };
+  }, [setActiveModule]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');

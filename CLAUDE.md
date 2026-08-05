@@ -419,6 +419,7 @@ Chrome exposes modules for other applications:
 - `./search/useSearch` - Search hook for consuming apps
 - `./analytics/intercom/OpenShiftItercom` - Intercom module component
 - `./analytics/intercom/useOpenShiftIntercomStore` - Intercom state store
+- `./theme/useDarkModeStore` - Dark mode / color scheme hook ([docs](docs/darkMode.md))
 
 **Register modules:**
 ```typescript
@@ -545,7 +546,7 @@ npm run verify              # Runs: lint + build + test
 5. **Build** - Production webpack build
 6. **Playwright E2E Tests** - Release gate tests
 
-**Node version:** 22.19.0
+**Node version:** see `.nvmrc`
 
 ### Konflux CI/CD (Tekton Pipelines)
 

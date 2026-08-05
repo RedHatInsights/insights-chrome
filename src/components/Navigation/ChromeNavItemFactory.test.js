@@ -34,7 +34,7 @@ describe('ChromeNavItemFactory', () => {
     id: 'test-id',
     title: expandableTitle,
     expandable: true,
-    routes: [itemProps],
+    navItems: [itemProps],
   };
   const groupItemProps = {
     groupId: 'group',

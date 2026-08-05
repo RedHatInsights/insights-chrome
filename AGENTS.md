@@ -31,6 +31,7 @@ Existing documentation for deeper reference:
 | [docs/localSearchDevelopment.md](docs/localSearchDevelopment.md) | Search implementation |
 | [docs/wsSubscription.md](docs/wsSubscription.md) | WebSocket subscriptions |
 | [docs/wildcard-permissions.md](docs/wildcard-permissions.md) | Wildcard permission handling |
+| [docs/darkMode.md](docs/darkMode.md) | Dark mode / color scheme remote hook for consuming apps |
 
 ## Project Structure
 
@@ -152,6 +153,6 @@ npm run analyze      # Bundle analyzer
 
 - **GitHub Actions** (`.github/workflows/test.yml`): lint, unit tests, Cypress, build, Playwright
 - **Konflux/Tekton** (`.tekton/`): container builds, SBOM, enterprise contract checks
-- Node version: `22.19.0`
+- Node version: see `.nvmrc`
 - PR images expire after 5 days
 - Default branch: `master`

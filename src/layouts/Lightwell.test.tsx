@@ -28,6 +28,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
@@ -171,5 +172,12 @@ describe('Lightwell', () => {
     expect(store.get(layoutLightwellHeaderAtom)).toBe(true);
     unmount();
     expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
+  });
+
+  it('should set activeModuleAtom to contentSources on mount and clear on unmount', () => {
+    const { store, unmount } = renderLightwell();
+    expect(store.get(activeModuleAtom)).toBe('contentSources');
+    unmount();
+    expect(store.get(activeModuleAtom)).toBeUndefined();
   });
 });

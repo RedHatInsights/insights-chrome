@@ -54,7 +54,7 @@ Use `ChromeAuthContextValue` for auth operations:
 
 - `src/auth/setCookie.ts` sets `cs_jwt` cookie for specific API paths (`/wss`, `/ws`, `/api/tasks/v1`, `/api/automation-hub`, etc.)
 - Cookies use `secure=true` with expiry matching the JWT TTL
-- Cross-account cookies: `src/auth/initializeAccessRequestCookies.ts` validates `CROSS_ACCESS_ACCOUNT_NUMBER` cookie expiry
+- Cross-account cookies: `src/auth/initializeAccessRequestCookies.ts` validates `CROSS_ACCESS_ORG_ID` cookie expiry (migrated from `CROSS_ACCESS_ACCOUNT_NUMBER` on 2026-06-03)
 
 ### Global Auth Header Injection
 
