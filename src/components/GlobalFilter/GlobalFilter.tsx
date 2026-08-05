@@ -177,6 +177,7 @@ const GlobalFilterWrapper = () => {
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
   const isRbacV2 = useFlag('platform.rbac.workspaces');
+  const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
@@ -184,12 +185,12 @@ const GlobalFilterWrapper = () => {
 
   const isGlobalFilterDisabled = useAtomValue(isGlobalFilterDisabledAtom);
   const isGlobalFilterEnabled = useMemo(() => {
-    if (isGlobalFilterDisabled) {
+    if (hideGlobalFilterFlag || isGlobalFilterDisabled) {
       return false;
     }
     const globalFilterAllowed = isAllowed || globalFilterRemoved;
     return !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
-  }, [isLanding, isAllowed, isGlobalFilterDisabled]);
+  }, [isLanding, isAllowed, isGlobalFilterDisabled, hideGlobalFilterFlag, globalFilterRemoved]);
 
   useEffect(() => {
     if (isRbacV2) {
