@@ -84,7 +84,12 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     title: 'Other Services',
     navItems: [
       { id: 'redhatProductTrials', title: 'Red Hat Product Trials', href: 'https://www.redhat.com/en/products/trials', isExternal: true },
-      { id: 'trustedArtifactSigner', title: 'Trusted Artifact Signer', href: 'https://developers.redhat.com/learn/install-sign-verify-using-red-hat-trusted-artifact-signer', isExternal: true },
+      {
+        id: 'trustedArtifactSigner',
+        title: 'Trusted Artifact Signer',
+        href: 'https://developers.redhat.com/learn/install-sign-verify-using-red-hat-trusted-artifact-signer',
+        isExternal: true,
+      },
       { id: 'trustedAnalyzer', title: 'Trusted Profile Analyzer', href: 'https://trust.rhcloud.com', isExternal: true },
     ],
   };
