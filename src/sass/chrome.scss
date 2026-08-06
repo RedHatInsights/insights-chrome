@@ -15,7 +15,7 @@
 // Override PF5 global link colors with PF6 dark-mode-aware design tokens.
 // PF5 patternfly.scss sets :where(a) { color: var(--pf-v5-global--link--Color) }
 // which has no dark-mode override under .pf-v6-theme-dark.
-:where(a) {
+:where(a):not(.pf-v6-c-button) {
   color: var(--pf-t--global--text--color--link--default);
 
   &:hover {
