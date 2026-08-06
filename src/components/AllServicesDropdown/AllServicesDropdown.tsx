@@ -1,19 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAtomValue } from 'jotai';
 import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
-import ThIcon from '@patternfly/react-icons/dist/dynamic/icons/th-icon';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
 import { useLocation } from 'react-router-dom';
 import useAllServices from '../../hooks/useAllServices';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
-import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -26,7 +23,6 @@ const AllServicesDropdown = () => {
   const { pathname } = useLocation();
   const { linkSections, ready } = useAllServices();
   const favoritedServices = useFavoritedServices();
-  const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
 
   useEffect(() => {
     setIsOpen(false);
@@ -71,12 +67,6 @@ const AllServicesDropdown = () => {
     });
   };
 
-  const toggleIcon = isLightwellHeader ? (
-    <ThIcon className="chr-c-link-service-toggle__icon--lightwell" />
-  ) : (
-    <img className="chr-c-link-service-toggle__logomark" src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" width="24" height="24" />
-  );
-
   const toggle = (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
@@ -86,7 +76,7 @@ const AllServicesDropdown = () => {
       isExpanded={isOpen}
       variant="plain"
     >
-      {toggleIcon}
+      <img className="chr-c-link-service-toggle__logomark" src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" width="24" height="24" />
     </MenuToggle>
   );
 
