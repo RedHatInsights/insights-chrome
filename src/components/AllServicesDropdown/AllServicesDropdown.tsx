@@ -70,6 +70,7 @@ const AllServicesDropdown = () => {
   const toggle = (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
+      aria-label="All services"
       className="chr-c-link-service-toggle"
       ref={toggleRef}
       onClick={onToggleClick}
