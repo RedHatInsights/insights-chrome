@@ -34,7 +34,7 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     }
 
     // 4. Open the All Services drop-down menu
-    await page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' }).click();
+    await page.getByRole('button', { name: 'All services' }).click();
 
     // 5. Confirm that the favorite service appears in the dropdown
     const sidebar = page.locator('.pf-v6-c-sidebar__content');
@@ -58,7 +58,7 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible();
 
     // 7. Close the drop-down menu
-    await page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' }).click();
+    await page.getByRole('button', { name: 'All services' }).click();
 
     // 8. On the all-services page, confirm the service is no longer favorite
     await expect(page.getByLabel(`Favorite ${serviceToTest}`)).not.toHaveClass(/chr-c-icon-favorited/);
