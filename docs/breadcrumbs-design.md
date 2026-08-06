@@ -21,6 +21,58 @@ Chrome renders breadcrumbs to the last link available in the navigation files. A
 
 The chrome breadcrumbs will stay the same. There will be two separate data sets of breadcrumbs. One for Chrome and the other for applications. The application's data will reset every time Chrome switches between active applications.
 
+## When to Use Which Hook
+
+### Use `useBreadcrumbs` (Incremental Mode)
+
+**Characteristics:**
+- Each route registers its own breadcrumb independently
+- Breadcrumbs build up incrementally as user navigates deeper
+- Multiple routes call the hook without coordination
+- Best for standard hierarchical navigation
+
+**Example:**
+```tsx
+// Route: /systems
+useBreadcrumbs('/insights/advisor/systems', 'Systems');
+
+// Route: /systems/:id
+useBreadcrumbs(`/insights/advisor/systems/${id}`, systemName);
+
+// Route: /systems/:id/details
+useBreadcrumbs(`/insights/advisor/systems/${id}/details`, 'Details');
+```
+
+### Use `useReplaceBreadcrumbs` (Replace Mode)
+
+**Characteristics:**
+- You build the full breadcrumb array yourself
+- Single source of truth for breadcrumb logic
+- Breadcrumbs computed from external data (API, Redux, URL params)
+- Full control over array structure
+
+**Example:**
+```tsx
+// Build entire breadcrumb array from entity relationships
+const breadcrumbs = useMemo(() => {
+  const crumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
+  
+  if (systemId) {
+    crumbs.push({ pathname: `/insights/advisor/systems/${systemId}`, title: systemName });
+  }
+  
+  if (entityPath) {
+    crumbs.push({ pathname: entityPath, title: entityTitle });
+  }
+  
+  return crumbs;
+}, [systemId, systemName, entityPath, entityTitle]);
+
+useReplaceBreadcrumbs(breadcrumbs);
+```
+
+**Rule of thumb:** If each route knows its own title → use `useBreadcrumbs`. If you compute the full array → use `useReplaceBreadcrumbs`.
+
 ## Accessing application breadcrumbs API
 
 The application will populate the application section via a hook. This hook will be available in the current Chrome API. A shortcut can be created that directly returns the hook from the chrome API.
@@ -119,8 +171,44 @@ There will be a single point of management in an application. It does not mean i
 
 The source code API example:
 
-| declare function replaceBreadcrumbs(pathname: string, title: string): void; //Replace the entire node array replaceBreadcrumbs(\[   { pathname: '/application/path', title: 'A parent title' },   { pathname: '/application/path/leaf', title: 'A leaf title' }, \]); |
+| declare function replaceBreadcrumbs(pathname: string, title: string): void; //Replace the entire node array replaceBreadcrumbs(\[   { pathname: ‘/application/path’, title: ‘A parent title’ },   { pathname: ‘/application/path/leaf’, title: ‘A leaf title’ }, \]); |
 | :---- |
+
+## Consumption Constraint
+
+**CRITICAL:** These hooks MUST be consumed via Scalprum’s `useRemoteHook` to write to Chrome’s global Jotai store.
+
+### Correct Usage
+
+```tsx
+import { useRemoteHook } from ‘@scalprum/react-core’;
+
+function SystemDetailPage() {
+  const { id } = useParams();
+  
+  useRemoteHook({
+    scope: ‘chrome’,
+    module: ‘./breadcrumbs/useBreadcrumbs’,
+    args: [`/insights/advisor/systems/${id}`, `System ${id}`],
+  });
+  
+  return <div>...</div>;
+}
+```
+
+### Incorrect Usage (Silent Failure)
+
+```tsx
+// ❌ DO NOT DO THIS
+import useBreadcrumbs from ‘@redhat-cloud-services/insights-chrome/hooks/useBreadcrumbs’;
+
+function SystemDetailPage() {
+  useBreadcrumbs(‘/insights/advisor/systems/123’, ‘System 123’);
+  // Writes to disconnected Jotai store — breadcrumbs never appear in Chrome UI
+}
+```
+
+**Why:** Module Federation ensures hooks execute in Chrome’s context, sharing the same Jotai store instance. Direct imports create a separate store, so state updates are isolated and never reach Chrome’s breadcrumb renderer.
 
 ## Sanitize pathname
 

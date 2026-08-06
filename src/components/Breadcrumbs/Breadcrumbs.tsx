@@ -2,7 +2,7 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core/dist/dynamic/
 import { PageBreadcrumb } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useLocation } from 'react-router-dom';
@@ -13,7 +13,13 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
-import { appBreadcrumbOverrideAtom, appBreadcrumbSegmentsAtom, breadcrumbPathnameAtom, breadcrumbReplaceModeAtom } from '../../state/atoms/breadcrumbAtom';
+import {
+  appBreadcrumbOverrideAtom,
+  appBreadcrumbSegmentsAtom,
+  appMountPathnameAtom,
+  breadcrumbPathnameAtom,
+  breadcrumbReplaceModeAtom,
+} from '../../state/atoms/breadcrumbAtom';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -33,11 +39,14 @@ const Breadcrumbs = () => {
   const appSegments = useAtomValue(appBreadcrumbSegmentsAtom);
   const appOverride = useAtomValue(appBreadcrumbOverrideAtom);
   const isReplaceMode = useAtomValue(breadcrumbReplaceModeAtom);
+  const appMountPathname = useAtomValue(appMountPathnameAtom);
   const setPathname = useSetAtom(breadcrumbPathnameAtom);
   const { pathname } = useLocation();
   const { favoritePages, favoritePage, unfavoritePage } = useFavoritePagesWrapper();
 
-  useEffect(() => {
+  // Use useLayoutEffect instead of useEffect to sync pathname before paint
+  // This prevents breadcrumb flicker on navigation (pathname was 1 render behind)
+  useLayoutEffect(() => {
     setPathname(pathname);
   }, [pathname, setPathname]);
 
@@ -53,22 +62,10 @@ const Breadcrumbs = () => {
       }));
     }
 
-    // Get app mount pathname from first app segment (should include bundle + app, e.g., "/insights/advisor")
-    // Extract app mount by taking pathname up to app level (remove everything after app name)
-    const firstAppSegment = finalAppSegments[0]?.pathname;
-    let appMountPathname: string | undefined;
-
-    if (firstAppSegment) {
-      const parts = firstAppSegment.split('/').filter(Boolean);
-      // App mount is /{bundle}/{app} — first 2 non-empty parts
-      if (parts.length >= 2) {
-        appMountPathname = `/${parts[0]}/${parts[1]}`;
-      }
-    }
-
     // Omit last chrome segment if:
     // 1. App breadcrumbs exist
     // 2. Last chrome segment is NOT the app mount pathname (design requirement)
+    // appMountPathname is set by ChromeRoute from the route path (e.g., '/settings', '/insights/advisor')
     const lastChromeSegment = chromeSegments[chromeSegments.length - 1];
     const chromeToUse =
       chromeSegments.length > 1 && appMountPathname && lastChromeSegment?.href !== appMountPathname ? chromeSegments.slice(0, -1) : chromeSegments;
@@ -86,7 +83,7 @@ const Breadcrumbs = () => {
         options: seg.options,
       })),
     ];
-  }, [chromeSegments, isAppBreadcrumbsEnabled, isReplaceMode, appOverride, appSegments]);
+  }, [chromeSegments, isAppBreadcrumbsEnabled, isReplaceMode, appOverride, appSegments, appMountPathname]);
 
   const leafHref = segments[segments.length - 1]?.href;
   const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);

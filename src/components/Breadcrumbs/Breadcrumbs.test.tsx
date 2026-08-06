@@ -3,7 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Breadcrumbs from './Breadcrumbs';
-import { appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, breadcrumbPathnameAtom, breadcrumbReplaceModeAtom } from '../../state/atoms/breadcrumbAtom';
+import {
+  appBreadcrumbOverrideAtom,
+  appBreadcrumbStorageAtom,
+  appMountPathnameAtom,
+  breadcrumbPathnameAtom,
+  breadcrumbReplaceModeAtom,
+} from '../../state/atoms/breadcrumbAtom';
 import { useFlag } from '@unleash/proxy-client-react';
 
 // Mock dependencies
@@ -82,6 +88,7 @@ describe('Breadcrumbs', () => {
     // Use replace mode to set app breadcrumbs
     store.set(breadcrumbReplaceModeAtom, true);
     store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }]);
+    store.set(appMountPathnameAtom, '/insights/advisor'); // Set app mount to /insights/advisor
 
     renderBreadcrumbs();
 
@@ -207,5 +214,59 @@ describe('Breadcrumbs', () => {
 
     // Reset mock
     jest.mocked(useFlag).mockReturnValue(true);
+  });
+
+  it('should handle single-segment app mount paths like /settings', () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'Settings', href: '/settings' }]);
+
+    // Simulate app registering breadcrumb at /settings
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/settings/users', title: 'Users' }]);
+    store.set(appMountPathnameAtom, '/settings');
+
+    renderBreadcrumbs();
+
+    // Should NOT duplicate 'Settings'
+    const settingsLinks = screen.getAllByText('Settings');
+    expect(settingsLinks).toHaveLength(1);
+    expect(screen.getByText('Users')).toBeInTheDocument();
+  });
+
+  it('should handle single-segment nested paths like /settings/users/123', () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'Settings', href: '/settings' }]);
+
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [
+      { pathname: '/settings/users', title: 'Users' },
+      { pathname: '/settings/users/123', title: 'User 123' },
+    ]);
+    store.set(appMountPathnameAtom, '/settings');
+
+    renderBreadcrumbs();
+
+    expect(screen.getByText('Settings')).toBeInTheDocument();
+    expect(screen.getByText('Users')).toBeInTheDocument();
+    expect(screen.getByText('User 123')).toBeInTheDocument();
+
+    // Should NOT have duplicate 'Settings'
+    const settingsLinks = screen.getAllByText('Settings');
+    expect(settingsLinks).toHaveLength(1);
+  });
+
+  it('should still work for standard two-segment apps like /insights/advisor', () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([
+      { title: 'Insights', href: '/insights' },
+      { title: 'Advisor', href: '/insights/advisor' },
+    ]);
+
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems', title: 'Systems' }]);
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderBreadcrumbs();
+
+    expect(screen.getByText('Insights')).toBeInTheDocument();
+    expect(screen.getByText('Advisor')).toBeInTheDocument();
+    expect(screen.getByText('Systems')).toBeInTheDocument();
   });
 });

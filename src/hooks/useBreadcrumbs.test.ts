@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
-import { appBreadcrumbStorageAtom } from '../state/atoms/breadcrumbAtom';
+import { appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 import useBreadcrumbs from './useBreadcrumbs';
 import { useFlag } from '@unleash/proxy-client-react';
 import React from 'react';
@@ -122,5 +122,70 @@ describe('useBreadcrumbs', () => {
     expect(storage.size).toBe(0);
 
     jest.mocked(useFlag).mockReturnValue(true);
+  });
+
+  it('should warn when replace mode is active (dev mode)', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    store.set(breadcrumbReplaceModeAtom, true);
+
+    renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems'), { wrapper });
+
+    expect(console.warn).toHaveBeenCalledWith('[useBreadcrumbs] Replace mode is active — incremental entries will be ignored. Use only one hook type per app.');
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn when replace mode is active in production', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    store.set(breadcrumbReplaceModeAtom, true);
+
+    renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems'), { wrapper });
+
+    expect(console.warn).not.toHaveBeenCalledWith(
+      '[useBreadcrumbs] Replace mode is active — incremental entries will be ignored. Use only one hook type per app.'
+    );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should handle circular references in options.state gracefully (dev mode)', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Create circular reference
+    const circularState: any = { foo: 'bar' };
+    circularState.self = circularState;
+
+    renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems', { state: circularState }), { wrapper });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      '[useBreadcrumbs] options.state contains circular references — using object reference for comparison. This may cause extra re-renders.'
+    );
+
+    // Should still add breadcrumb despite circular ref
+    const storage = store.get(appBreadcrumbStorageAtom);
+    expect(storage.has('/insights/advisor/systems')).toBe(true);
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn about circular refs in production', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    const circularState: any = { foo: 'bar' };
+    circularState.self = circularState;
+
+    renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems', { state: circularState }), { wrapper });
+
+    expect(console.warn).not.toHaveBeenCalledWith(
+      '[useBreadcrumbs] options.state contains circular references — using object reference for comparison. This may cause extra re-renders.'
+    );
+
+    process.env.NODE_ENV = originalEnv;
   });
 });

@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { matchPath } from 'react-router-dom';
 import type { NavigateOptions } from 'react-router-dom';
+import { normalizePathname } from '../../utils/breadcrumbUtils';
 
 export type BreadcrumbEntry = {
   title: string;
@@ -36,21 +37,29 @@ export const appBreadcrumbOverrideAtom = atom<AppBreadcrumbSegment[]>([]);
  */
 export const breadcrumbPathnameAtom = atom<string>('/');
 
+/**
+ * App mount pathname set by ChromeRoute when switching applications.
+ * Examples: '/settings', '/insights/advisor', '/openshift/clusters'
+ * Used to determine which Chrome breadcrumb segment to drop when app breadcrumbs are present.
+ */
+export const appMountPathnameAtom = atom<string | undefined>(undefined);
+
 export function buildBreadcrumbSegments(storage: Map<string, BreadcrumbEntry>, currentPathname: string): AppBreadcrumbSegment[] {
   if (storage.size === 0) {
     return [];
   }
 
-  const sortedPathnames = Array.from(storage.keys()).sort((a, b) => {
-    const cleanA = a.replace(/\/$/, '').replace(/\/\*$/, '');
-    const cleanB = b.replace(/\/$/, '').replace(/\/\*$/, '');
+  // Sort once — reuse for both match finding and segment building
+  const sortedStorageEntries = Array.from(storage.entries()).sort((a, b) => {
+    const cleanA = normalizePathname(a[0]);
+    const cleanB = normalizePathname(b[0]);
     return cleanB.length - cleanA.length;
   });
 
   let matchedPathname: string | null = null;
 
-  for (const storedPathname of sortedPathnames) {
-    const cleanedPath = storedPathname.replace(/\/$/, '').replace(/\/\*$/, '');
+  for (const [storedPathname] of sortedStorageEntries) {
+    const cleanedPath = normalizePathname(storedPathname);
 
     if (currentPathname === cleanedPath || currentPathname.startsWith(cleanedPath + '/')) {
       matchedPathname = storedPathname;
@@ -69,20 +78,14 @@ export function buildBreadcrumbSegments(storage: Map<string, BreadcrumbEntry>, c
   }
 
   const segments: AppBreadcrumbSegment[] = [];
-  const cleanedMatchedPath = matchedPathname.replace(/\/$/, '').replace(/\/\*$/, '');
+  const cleanedMatchedPath = normalizePathname(matchedPathname);
   const pathParts = cleanedMatchedPath.split('/').filter((part) => part.length > 0);
-
-  const sortedStorageEntries = Array.from(storage.entries()).sort((a, b) => {
-    const cleanA = a[0].replace(/\/$/, '').replace(/\/\*$/, '');
-    const cleanB = b[0].replace(/\/$/, '').replace(/\/\*$/, '');
-    return cleanB.length - cleanA.length;
-  });
 
   for (let i = 0; i < pathParts.length; i++) {
     const segmentPath = '/' + pathParts.slice(0, i + 1).join('/');
 
     for (const [storedPathname, entry] of sortedStorageEntries) {
-      const cleanedStoredPath = storedPathname.replace(/\/$/, '').replace(/\/\*$/, '');
+      const cleanedStoredPath = normalizePathname(storedPathname);
 
       if (cleanedStoredPath === segmentPath) {
         segments.push({

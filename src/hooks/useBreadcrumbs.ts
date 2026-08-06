@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import type { NavigateOptions } from 'react-router-dom';
-import { appBreadcrumbStorageAtom } from '../state/atoms/breadcrumbAtom';
+import { appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { normalizePathname } from '../utils/breadcrumbUtils';
 
 /**
  * Hook for incrementally adding breadcrumb entries to the app breadcrumb storage.
@@ -39,9 +40,21 @@ import { appBreadcrumbStorageAtom } from '../state/atoms/breadcrumbAtom';
  */
 function useBreadcrumbs(pathname: string, title: string, options?: NavigateOptions): void {
   const setStorage = useSetAtom(appBreadcrumbStorageAtom);
+  const isReplaceMode = useAtomValue(breadcrumbReplaceModeAtom);
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
   const optionsRef = useRef(options);
-  const optionsKey = JSON.stringify(options);
+
+  // Stabilize options via JSON.stringify, with fallback for circular refs
+  let optionsKey: string;
+  try {
+    optionsKey = JSON.stringify(options);
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[useBreadcrumbs] options.state contains circular references — using object reference for comparison. This may cause extra re-renders.');
+    }
+    // Force re-run on every call when circular refs present
+    optionsKey = String(Math.random());
+  }
 
   useEffect(() => {
     optionsRef.current = options;
@@ -57,7 +70,12 @@ function useBreadcrumbs(pathname: string, title: string, options?: NavigateOptio
       return;
     }
 
-    const cleanedPathname = pathname.replace(/\/$/, '').replace(/\/\*$/, '');
+    // Warn in dev mode if replace mode is active — incremental entries will be ignored
+    if (process.env.NODE_ENV !== 'production' && isReplaceMode) {
+      console.warn('[useBreadcrumbs] Replace mode is active — incremental entries will be ignored. Use only one hook type per app.');
+    }
+
+    const cleanedPathname = normalizePathname(pathname);
 
     setStorage((prev) => {
       const next = new Map(prev);

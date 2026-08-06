@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
-import { appBreadcrumbOverrideAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 import useReplaceBreadcrumbs from './useReplaceBreadcrumbs';
 import { useFlag } from '@unleash/proxy-client-react';
 import React from 'react';
@@ -15,6 +15,11 @@ describe('useReplaceBreadcrumbs', () => {
 
   beforeEach(() => {
     store = createStore();
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should enable replace mode', () => {
@@ -122,5 +127,105 @@ describe('useReplaceBreadcrumbs', () => {
     expect(store.get(appBreadcrumbOverrideAtom)).toEqual([]);
 
     jest.mocked(useFlag).mockReturnValue(true);
+  });
+
+  it('should warn when incremental storage exists (dev mode)', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Simulate incremental breadcrumbs storage
+    store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
+
+    const breadcrumbs = [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }];
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      '[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.'
+    );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn when incremental storage exists in production', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
+
+    const breadcrumbs = [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }];
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    expect(console.warn).not.toHaveBeenCalledWith(
+      '[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.'
+    );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn when storage is empty', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    expect(console.warn).not.toHaveBeenCalledWith(
+      '[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.'
+    );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should handle circular references in breadcrumbs gracefully (dev mode)', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Create circular reference in options.state
+    const circularState: any = { foo: 'bar' };
+    circularState.self = circularState;
+
+    const breadcrumbs = [
+      {
+        pathname: '/insights/advisor/systems',
+        title: 'Systems',
+        options: { state: circularState },
+      },
+    ];
+
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      '[useReplaceBreadcrumbs] breadcrumbs array contains circular references — using object reference for comparison. This may cause extra re-renders.'
+    );
+
+    // Should still set breadcrumbs despite circular ref
+    expect(store.get(breadcrumbReplaceModeAtom)).toBe(true);
+    expect(store.get(appBreadcrumbOverrideAtom)).toEqual(breadcrumbs);
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn about circular refs in production', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    const circularState: any = { foo: 'bar' };
+    circularState.self = circularState;
+
+    const breadcrumbs = [
+      {
+        pathname: '/insights/advisor/systems',
+        title: 'Systems',
+        options: { state: circularState },
+      },
+    ];
+
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    expect(console.warn).not.toHaveBeenCalledWith(
+      '[useReplaceBreadcrumbs] breadcrumbs array contains circular references — using object reference for comparison. This may cause extra re-renders.'
+    );
+
+    process.env.NODE_ENV = originalEnv;
   });
 });

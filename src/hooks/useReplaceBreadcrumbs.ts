@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
-import { type AppBreadcrumbSegment, appBreadcrumbOverrideAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { type AppBreadcrumbSegment, appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 
 /**
  * Hook for replacing the entire app breadcrumb array
@@ -34,9 +34,23 @@ import { type AppBreadcrumbSegment, appBreadcrumbOverrideAtom, breadcrumbReplace
 function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
   const setReplaceMode = useSetAtom(breadcrumbReplaceModeAtom);
   const setOverride = useSetAtom(appBreadcrumbOverrideAtom);
+  const storage = useAtomValue(appBreadcrumbStorageAtom);
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
   const breadcrumbsRef = useRef(breadcrumbs);
-  const breadcrumbsKey = JSON.stringify(breadcrumbs);
+
+  // Stabilize breadcrumbs via JSON.stringify, with fallback for circular refs
+  let breadcrumbsKey: string;
+  try {
+    breadcrumbsKey = JSON.stringify(breadcrumbs);
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[useReplaceBreadcrumbs] breadcrumbs array contains circular references — using object reference for comparison. This may cause extra re-renders.'
+      );
+    }
+    // Force re-run on every call when circular refs present
+    breadcrumbsKey = String(Math.random());
+  }
 
   useEffect(() => {
     breadcrumbsRef.current = breadcrumbs;
@@ -45,6 +59,11 @@ function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
   useEffect(() => {
     if (!isEnabled) {
       return;
+    }
+
+    // Warn in dev mode if incremental storage exists — it will be ignored
+    if (process.env.NODE_ENV !== 'production' && storage.size > 0) {
+      console.warn('[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.');
     }
 
     setReplaceMode(true);
