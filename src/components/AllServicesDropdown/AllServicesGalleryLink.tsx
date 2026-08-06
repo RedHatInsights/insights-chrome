@@ -28,7 +28,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, category
       isExternalLink={isExternal}
       description={description}
       onClick={onLinkClick}
-      component={(props) => <ChromeLink {...props} href={href} isExternal={isExternal} />}
+      component={(props) => <ChromeLink {...props} href={href} isExternal={isExternal} onClickCapture={onLinkClick} />}
       data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-Link`}
       actions={
         !isExternal ? (

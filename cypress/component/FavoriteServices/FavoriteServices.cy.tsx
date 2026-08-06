@@ -6,7 +6,7 @@ import SegmentContext from '../../../src/analytics/SegmentContext';
 import ServiceTile from '../../../src/components/FavoriteServices/ServiceTile';
 import FavoriteServicesGallery from '../../../src/components/FavoriteServices/ServicesGallery';
 
-function createChromeContextValue(favoritePages: { pathname: string; favorite: boolean }[] = []) {
+function createChromeContextValue(favoritePages: { pathname: string; favorite: boolean }[] = []): React.ContextType<typeof ChromeContext> {
   return {
     update: () => undefined,
     setLastVisited: () => undefined,
@@ -17,7 +17,6 @@ function createChromeContextValue(favoritePages: { pathname: string; favorite: b
     setVisitedBundles: () => undefined,
     getState: () => ({
       lastVisitedPages: [],
-      subscribtions: {},
       favoritePages,
       visitedBundles: {},
       initialized: true,
@@ -28,7 +27,7 @@ function createChromeContextValue(favoritePages: { pathname: string; favorite: b
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <IntlProvider locale="en">
     <SegmentContext.Provider value={{ ready: false }}>
-      <ChromeContext.Provider value={createChromeContextValue() as any}>
+      <ChromeContext.Provider value={createChromeContextValue()}>
         <MemoryRouter>{children}</MemoryRouter>
       </ChromeContext.Provider>
     </SegmentContext.Provider>
@@ -98,11 +97,13 @@ describe('FavoriteServicesGallery', () => {
         />
       </Wrapper>
     );
-    cy.contains('Dashboard').should('exist');
-    cy.contains('Advisor').should('exist');
-    cy.contains('Clusters').should('exist');
-    cy.contains('RHEL').should('exist');
-    cy.contains('OpenShift').should('exist');
+    cy.contains('.pf-v6-c-menu__group', 'RHEL').within(() => {
+      cy.contains('Dashboard').should('exist');
+      cy.contains('Advisor').should('exist');
+    });
+    cy.contains('.pf-v6-c-menu__group', 'OpenShift').within(() => {
+      cy.contains('Clusters').should('exist');
+    });
   });
 
   it('should render dividers between bundle groups', () => {
@@ -140,5 +141,6 @@ describe('FavoriteServicesGallery', () => {
       </Wrapper>
     );
     cy.contains('Want to add more favorites?').should('exist');
+    cy.contains('a', 'View all services').should('have.attr', 'href', '/allservices');
   });
 });

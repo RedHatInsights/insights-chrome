@@ -9,7 +9,7 @@ import AllServicesGalleryLink from '../../../src/components/AllServicesDropdown/
 import AllServicesGallerySection from '../../../src/components/AllServicesDropdown/AllServicesGallerySection';
 import type { AllServicesSection } from '../../../src/components/AllServices/allServicesLinks';
 
-const chromeContextValue = {
+const chromeContextValue: React.ContextType<typeof ChromeContext> = {
   update: () => undefined,
   setLastVisited: () => undefined,
   setFavoritePages: () => undefined,
@@ -19,7 +19,6 @@ const chromeContextValue = {
   setVisitedBundles: () => undefined,
   getState: () => ({
     lastVisitedPages: [],
-    subscribtions: {},
     favoritePages: [],
     visitedBundles: {},
     initialized: true,
@@ -29,7 +28,7 @@ const chromeContextValue = {
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <IntlProvider locale="en">
     <SegmentContext.Provider value={{ ready: false }}>
-      <ChromeContext.Provider value={chromeContextValue as any}>
+      <ChromeContext.Provider value={chromeContextValue}>
         <MemoryRouter>
           <AllServicesDropdownContext.Provider value={{ onLinkClick: () => undefined }}>{children}</AllServicesDropdownContext.Provider>
         </MemoryRouter>
@@ -125,6 +124,8 @@ describe('AllServicesGallerySection', () => {
       </Wrapper>
     );
     cy.contains('Empty').should('not.exist');
+    cy.get('hr').should('not.exist');
+    cy.get('.pf-v6-c-menu__group').should('not.exist');
   });
 
   it('should set labelHeadingLevel to h4 on the menu group', () => {
