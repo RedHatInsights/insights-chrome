@@ -4,7 +4,7 @@ import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
-import { generateRoutesList } from '../../utils/common';
+import { ITLess, generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
@@ -139,7 +139,18 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     initializeAccessRequestCookies();
 
     if (!hasAuthParams() && !auth.activeNavigator && !auth.isLoading && !auth.isAuthenticated) {
-      login(auth, initialModuleConfig?.ssoScopes);
+      // With in-memory token storage, persisted user state is lost on page
+      // refresh. Attempt a silent SSO re-auth via iframe first to avoid a
+      // full-page redirect when the SSO session is still valid.
+      // Request the same base + module scopes that login() would use so the
+      // refreshed token is not downgraded to the default "openid" scope.
+      const baseScopes = ITLess() ? ['openid'] : ['openid', 'api.console', 'api.ask_red_hat'];
+      const silentScope = Array.from(new Set([...baseScopes, ...(initialModuleConfig?.ssoScopes || [])])).join(' ');
+      try {
+        await auth.signinSilent({ scope: silentScope });
+      } catch {
+        login(auth, initialModuleConfig?.ssoScopes);
+      }
     }
   };
 
@@ -219,7 +230,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     if (auth.error && !recoveryAttemptedRef.current) {
       recoveryAttemptedRef.current = true;
       log(`Auth error detected, attempting silent recovery: ${auth.error.message}`);
-      auth.signinSilent().catch(() => {
+      const recoveryScope = ITLess() ? 'openid' : 'openid api.console api.ask_red_hat';
+      auth.signinSilent({ scope: recoveryScope }).catch(() => {
         log('Silent recovery failed, redirecting to SSO');
         login(auth);
       });
