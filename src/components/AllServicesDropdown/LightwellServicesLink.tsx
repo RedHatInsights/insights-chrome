@@ -3,14 +3,9 @@ import ChromeLink from '../ChromeLink';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 
 /**
- * Lightwell icon using themed SVGs from frontend-assets.
- * Selects lightwell-dark.svg or lightwell-light.svg based on the current theme.
+ * Lightwell icon using the official logomark from frontend-assets.
  */
-const LightwellIcon = () => {
-  const isDark = document.documentElement.classList.contains('pf-v6-theme-dark');
-  const src = isDark ? '/apps/frontend-assets/partners-icons/lightwell-dark.svg' : '/apps/frontend-assets/partners-icons/lightwell-light.svg';
-  return <img src={src} alt="" width="22" height="22" />;
-};
+const LightwellIcon = () => <img src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" width="22" height="22" />;
 
 const LightwellServicesLink = () => {
   return (

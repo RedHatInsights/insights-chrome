@@ -112,7 +112,7 @@ test.describe('Navigation rendering stability', () => {
     await expect(page.getByRole('button', { name: /User Avatar/ })).toBeVisible({ timeout: 30000 });
 
     // Open the services dropdown — exercises the AllServicesDropdown and useFavoritedServices
-    const servicesToggle = page.getByRole('button', { name: 'All services' });
+    const servicesToggle = page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' });
     await servicesToggle.click();
 
     // Verify dropdown rendered with navigation links

@@ -5,12 +5,15 @@ import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuT
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import ThIcon from '@patternfly/react-icons/dist/dynamic/icons/th-icon';
+import { useAtomValue } from 'jotai';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
 import { useLocation } from 'react-router-dom';
 import useAllServices from '../../hooks/useAllServices';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
+import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -21,6 +24,7 @@ const AllServicesDropdown = () => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
+  const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
   const { linkSections, ready } = useAllServices();
   const favoritedServices = useFavoritedServices();
 
@@ -67,7 +71,7 @@ const AllServicesDropdown = () => {
     });
   };
 
-  const toggle = (
+  const toggle = isLightwellHeader ? (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
       aria-label="All services"
@@ -77,7 +81,19 @@ const AllServicesDropdown = () => {
       isExpanded={isOpen}
       variant="plain"
     >
-      <img className="chr-c-link-service-toggle__logomark" src="/apps/frontend-assets/partners-icons/lightwell-logomark.svg" alt="" width="24" height="24" />
+      <ThIcon />
+    </MenuToggle>
+  ) : (
+    <MenuToggle
+      ouiaId="AllServices-DropdownToggle"
+      className="chr-c-link-service-toggle pf-v6-u-pr-sm"
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      isFullHeight
+    >
+      <ThIcon className="pf-v6-u-mr-sm" />
+      Red Hat Hybrid Cloud Console
     </MenuToggle>
   );
 

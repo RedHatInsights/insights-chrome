@@ -4,12 +4,16 @@
   // Use minimal z-index to work above search but below dropdown menu
   position: relative;
   z-index: 1100;
-  // Ensure it doesn't shrink
-  flex-shrink: 0;
+  // Add margin to prevent overlap with search input
+  margin-right: var(--pf-t--global--spacer--xl);
 
-  &__logomark {
-    display: block;
+  @media(min-width: $pf-v6-global--breakpoint--2xl) {
+    margin-right: 0;
   }
+  // Limit max width to prevent overlap with search field
+  max-width: 240px;
+  // Ensure it doesn't shrink too much
+  flex-shrink: 0;
 }
 
 .platform-icon {

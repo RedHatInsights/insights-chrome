@@ -51,11 +51,11 @@ describe('LightwellServicesLink', () => {
     expect(link).toHaveAttribute('data-ouia-component-id', 'AllServices-Dropdown-Lightwell');
   });
 
-  it('should render the Lightwell icon as a themed static image', () => {
+  it('should render the Lightwell icon using the logomark', () => {
     const { container } = renderWithProviders();
-    const icon = container.querySelector('img[src*="lightwell-light"]');
+    const icon = container.querySelector('img[src*="lightwell-logomark"]');
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-light.svg');
+    expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
     expect(icon).toHaveAttribute('width', '22');
     expect(icon).toHaveAttribute('height', '22');
   });

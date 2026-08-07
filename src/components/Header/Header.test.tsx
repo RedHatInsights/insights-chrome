@@ -99,17 +99,14 @@ const renderHeader = (lightwellHeader = false) => {
 };
 
 describe('Header Lightwell mode', () => {
-  it('should render lightwell-logomark toggle icon in AllServicesDropdown', () => {
-    const { container } = renderHeader(false);
-    expect(screen.queryByText('Red Hat Hybrid Cloud Console')).toBeFalsy();
-    const logomark = container.querySelector('img[src*="lightwell-logomark"]');
-    expect(logomark).toBeTruthy();
+  it('should render AllServicesDropdown with "Red Hat Hybrid Cloud Console" when not in Lightwell mode', () => {
+    renderHeader(false);
+    expect(screen.getByText('Red Hat Hybrid Cloud Console')).toBeTruthy();
   });
 
-  it('should render lightwell-logomark toggle icon in Lightwell mode too', () => {
-    const { container } = renderHeader(true);
-    const logomark = container.querySelector('img[src*="lightwell-logomark"]');
-    expect(logomark).toBeTruthy();
+  it('should render AllServicesDropdown with ThIcon toggle in Lightwell mode', () => {
+    renderHeader(true);
+    expect(screen.queryByText('Red Hat Hybrid Cloud Console')).toBeFalsy();
   });
 
   it('should render Lightwell logo in masthead when in Lightwell mode', () => {
