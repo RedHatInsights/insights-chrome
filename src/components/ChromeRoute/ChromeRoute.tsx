@@ -13,6 +13,7 @@ import { NavItemPermission } from '../../@types/types';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
 import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
+import { appMountPathnameAtom, clearAppBreadcrumbsAtom } from '../../state/atoms/breadcrumbAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -34,6 +35,8 @@ const ChromeRoute = memo(
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
     const currentActiveModule = useAtomValue(activeModuleAtom);
     const setActiveModule = useSetAtom(activeModuleAtom);
+    const clearAppBreadcrumbs = useSetAtom(clearAppBreadcrumbsAtom);
+    const setAppMountPathname = useSetAtom(appMountPathnameAtom);
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {
@@ -58,6 +61,12 @@ const ChromeRoute = memo(
       // This prevents unnecessary updates while still allowing navigation between apps
       if (currentActiveModule !== scope) {
         setActiveModule(scope);
+        // Clear app breadcrumbs when switching to different application
+        clearAppBreadcrumbs();
+        // Set app mount pathname from route path (e.g., '/settings', '/insights/advisor')
+        // Remove trailing /* if present
+        const mountPath = path.replace(/\/\*$/, '');
+        setAppMountPathname(mountPath);
       }
       /**
        * TODO: Discuss default close feature of topics
