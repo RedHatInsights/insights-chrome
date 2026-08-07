@@ -24,6 +24,7 @@ module.exports = {
       'title-case',
       '@faker-js/faker',
       '@orama/orama',
+      'sanitize-html',
     ].join('|')}).+(js|jsx)$`,
   ],
   transform: {
