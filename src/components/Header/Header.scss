@@ -77,6 +77,11 @@
   }
 }
 
+.chr-c-masthead__lightwell-title {
+  padding: 0 !important;
+  margin-top: var(--pf-t--global--spacer--md);
+}
+
 .chr-c-menu-settings .pf-v6-c-menu__group:first-of-type > .pf-v6-c-menu__group-title {
   display: none;
 }

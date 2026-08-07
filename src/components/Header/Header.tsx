@@ -71,7 +71,6 @@ const MemoizedHeader = memo(
         <MastheadMain>
           {!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}
           <MastheadBrand data-codemods>
-            {isLightwellHeader && !(!md && searchOpen) && <AllServicesDropdown />}
             <MastheadLogo
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
