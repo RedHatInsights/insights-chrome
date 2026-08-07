@@ -53,10 +53,12 @@ test.describe('Browser Titles - Settings Navigation', () => {
     test(`should display "${expectedTitle}" for ${label}`, async ({ page }) => {
       // Navigate directly to the Settings page URL
       await page.goto(url);
-      await page.waitForLoadState('domcontentloaded');
+      await page.waitForLoadState('load');
 
-      // Verify the browser title contains the expected text (full title includes a platform suffix)
-      await expect(page).toHaveTitle(new RegExp(expectedTitle.replaceAll('|', '\\|')));
+      // Verify the browser title contains the expected text (full title includes a platform suffix).
+      // Use explicit timeout: title depends on async navigation data from chrome-service,
+      // which may take longer than the default 5s assertion timeout in CI.
+      await expect(page).toHaveTitle(new RegExp(expectedTitle.replaceAll('|', '\\|')), { timeout: 15000 });
     });
   }
 });
