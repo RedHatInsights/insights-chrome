@@ -34,6 +34,7 @@ export type UserMenuConfig = {
   showMyProfile?: boolean;
   showMyUserAccess?: boolean;
   showUserPreferences?: boolean;
+  showInternal?: boolean;
   showLogout?: boolean;
 };
 

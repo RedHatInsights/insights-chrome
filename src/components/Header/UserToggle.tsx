@@ -23,6 +23,7 @@ import { DescriptionList } from '@patternfly/react-core/dist/dynamic/components/
 import { DescriptionListGroup } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
 import { DescriptionListTerm } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
 import { DescriptionListDescription } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import type { UserMenuConfig } from './Header';
 
 const DropdownItems = ({
   username = '',
@@ -130,7 +131,7 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="internal wrapper">
-      {isInternal && isProd && (
+      {isInternal && isProd && (!userMenu || userMenu.showInternal) && (
         <DropdownItem
           key="Internal"
           component={({ className }) => (
@@ -151,8 +152,6 @@ const DropdownItems = ({
     extraItems,
   ];
 };
-
-import type { UserMenuConfig } from './Header';
 
 export type UserToggleProps = {
   isSmall?: boolean;

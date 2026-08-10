@@ -110,6 +110,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
                 showMyProfile: true,
                 showMyUserAccess: true,
                 showUserPreferences: true,
+                showInternal: true,
                 showLogout: true,
               },
             }}

@@ -6,31 +6,18 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { useHydrateAtoms } from 'jotai/utils';
 import { IntlProvider } from 'react-intl';
 import { describe, expect, it, jest } from '@jest/globals';
 
-import UserToggle from '../UserToggle';
-import ChromeAuthContext from '../../../auth/ChromeAuthContext';
-import { activeModuleAtom } from '../../../state/atoms/activeModuleAtom';
-import { moduleRoutesAtom } from '../../../state/atoms/chromeModuleAtom';
-import { triggerNavListenersAtom } from '../../../state/atoms/activeAppAtom';
-import type { UserMenuConfig } from '../Header';
-
-const HydrateAtoms = ({ initialValues, children }: { initialValues: [any, any][]; children: React.ReactNode }) => {
-  useHydrateAtoms(initialValues);
-  return children;
-};
-
-const defaultAtomValues: [any, any][] = [
-  [activeModuleAtom, 'testModule'],
-  [moduleRoutesAtom, []],
-  [triggerNavListenersAtom, jest.fn()],
-];
+import UserToggle from './UserToggle';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import type { UserMenuConfig } from './Header';
 
 const mockUser = {
+  entitlements: {},
   identity: {
     account_number: '123456',
+    org_id: 'org123',
     type: 'User',
     internal: { org_id: 'org123' },
     user: {
@@ -43,9 +30,27 @@ const mockUser = {
   },
 };
 
-const contextValue = {
+const noopAsync = jest.fn<() => Promise<never>>().mockResolvedValue(undefined as never);
+
+const contextValue: ChromeAuthContextValue = {
+  ssoUrl: 'https://sso.test.redhat.com',
+  ready: true,
   user: mockUser,
+  getUser: jest.fn<() => Promise<typeof mockUser>>().mockResolvedValue(mockUser),
+  token: 'test-token',
+  refreshToken: 'test-refresh-token',
+  logoutAllTabs: jest.fn(),
+  loginAllTabs: jest.fn(),
   logout: jest.fn(),
+  login: jest.fn(),
+  tokenExpires: Date.now() + 3600000,
+  getToken: jest.fn<() => Promise<string>>().mockResolvedValue('test-token'),
+  getRefreshToken: jest.fn<() => Promise<string>>().mockResolvedValue('test-refresh-token'),
+  getOfflineToken: noopAsync,
+  doOffline: noopAsync,
+  reAuthWithScopes: noopAsync,
+  forceRefresh: noopAsync,
+  loginSilent: noopAsync,
 };
 
 const renderUserToggle = (userMenu?: UserMenuConfig) => {
@@ -53,12 +58,9 @@ const renderUserToggle = (userMenu?: UserMenuConfig) => {
     <MemoryRouter>
       <IntlProvider locale="en">
         <JotaiProvider>
-          <HydrateAtoms initialValues={defaultAtomValues}>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <ChromeAuthContext.Provider value={contextValue as any}>
-              <UserToggle userMenu={userMenu} />
-            </ChromeAuthContext.Provider>
-          </HydrateAtoms>
+          <ChromeAuthContext.Provider value={contextValue}>
+            <UserToggle userMenu={userMenu} />
+          </ChromeAuthContext.Provider>
         </JotaiProvider>
       </IntlProvider>
     </MemoryRouter>
