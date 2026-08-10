@@ -22,12 +22,12 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuth
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
 export type SettingsGroupConfig = {
-  hidePreview?: boolean;
-  hideSettingsGroup?: boolean;
-  hideIAM?: boolean;
-  hideTheme?: boolean;
-  hideColorScheme?: boolean;
-  hideContrastMode?: boolean;
+  showPreview?: boolean;
+  showSettingsGroup?: boolean;
+  showIAM?: boolean;
+  showTheme?: boolean;
+  showColorScheme?: boolean;
+  showContrastMode?: boolean;
 };
 
 export type ToolbarConfig = {

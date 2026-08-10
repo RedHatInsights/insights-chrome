@@ -81,11 +81,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
                 hideNotifications: true,
                 hideHelp: true,
                 settingsGroups: {
-                  hidePreview: true,
-                  hideSettingsGroup: true,
-                  hideIAM: true,
-                  hideTheme: true,
-                  hideContrastMode: true,
+                  showColorScheme: true,
                 },
               }}
             />

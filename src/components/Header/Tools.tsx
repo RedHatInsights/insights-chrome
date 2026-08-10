@@ -137,7 +137,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const settingsGroups = toolbarConfig?.settingsGroups;
   const settingsMenuDropdownGroups = [
     {
-      groupKey: 'hidePreview' satisfies keyof SettingsGroupConfig,
+      groupKey: 'showPreview' satisfies keyof SettingsGroupConfig,
       items: [
         {
           ouiaId: 'PreviewSwitcher',
@@ -147,7 +147,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
-      groupKey: 'hideSettingsGroup' satisfies keyof SettingsGroupConfig,
+      groupKey: 'showSettingsGroup' satisfies keyof SettingsGroupConfig,
       title: 'Settings',
       items: [
         {
@@ -174,7 +174,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
-      groupKey: 'hideIAM' satisfies keyof SettingsGroupConfig,
+      groupKey: 'showIAM' satisfies keyof SettingsGroupConfig,
       title: 'Identity and Access Management',
       items: [
         {
@@ -208,7 +208,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
-      groupKey: 'hideTheme' satisfies keyof SettingsGroupConfig,
+      groupKey: 'showTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
       isHidden: !isFeltThemeEnabled,
       customContent: (
@@ -232,7 +232,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ),
     },
     {
-      groupKey: 'hideColorScheme' satisfies keyof SettingsGroupConfig,
+      groupKey: 'showColorScheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.colorScheme),
       isHidden: !isDarkModeEnabled,
       customContent: (
@@ -264,7 +264,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ),
     },
     {
-      groupKey: 'hideContrastMode' satisfies keyof SettingsGroupConfig,
+      groupKey: 'showContrastMode' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.contrastMode),
       isHidden: !isHighContrastEnabled && !isGlassModeEnabled,
       customContent: (
@@ -307,7 +307,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         </ToggleGroup>
       ),
     },
-  ].filter(({ groupKey }) => !settingsGroups?.[groupKey as keyof SettingsGroupConfig]);
+  ].filter(({ groupKey }) => !settingsGroups || settingsGroups[groupKey as keyof SettingsGroupConfig]);
 
   useEffect(() => {
     if (user) {
@@ -402,23 +402,23 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const settingsMobileItems = toolbarConfig?.hideSettings
     ? []
     : [
-        ...(settingsGroups?.hideSettingsGroup
-          ? []
-          : [
+        ...(!settingsGroups || settingsGroups.showSettingsGroup
+          ? [
               {
                 url: settingsPath,
                 title: 'Settings',
                 target: '_self',
               },
-            ]),
-        ...(settingsGroups?.hidePreview
-          ? []
-          : [
+            ]
+          : []),
+        ...(!settingsGroups || settingsGroups.showPreview
+          ? [
               {
                 title: betaSwitcherTitle,
                 onClick: () => togglePreviewWithCheck(),
               },
-            ]),
+            ]
+          : []),
       ];
   const helpMobileItems = helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems;
 
