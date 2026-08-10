@@ -16,18 +16,17 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
-      # cache node modules for all jobs to use
+      # npm ci always reinstalls node_modules from scratch, so only cache the Cypress binary download
       - uses: actions/cache@v5
-        id: node_modules-cache
+        id: cypress-cache
         with:
           path: |
-            **/node_modules
             /home/runner/.cache/Cypress
             .cypress-cache
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i # use cached modules
+      - run: npm ci
   # unit testing job
   test-unit:
     runs-on: ubuntu-latest
@@ -38,14 +37,9 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
-      - uses: actions/cache@v5
-        id: node_modules-cache
-        with:
-          path: "**/node_modules"
-          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - run: npm run test -- --coverage
       - uses: codecov/codecov-action@v6
         with:
@@ -60,14 +54,9 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
-      - uses: actions/cache@v5
-        id: node_modules-cache
-        with:
-          path: "**/node_modules"
-          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - run: npm run lint
   # cypress component testing
   cypress-component:
@@ -79,18 +68,17 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
-          cache: 'npm'      
-      # consume installed modules and webpack cache
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      # npm ci always reinstalls node_modules from scratch, so only cache the Cypress binary download
       - uses: actions/cache@v5
-        id: node_modules-cache
+        id: cypress-cache
         with:
           path: |
-            **/node_modules
             /home/runner/.cache/Cypress
             .cypress-cache
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - uses: cypress-io/github-action@v6
         with:
             component: true
@@ -106,12 +94,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v6
         with:
-          node-version: 24.16.0
+          node-version-file: '.nvmrc'
           cache: 'npm'
-      - uses: actions/cache@v5
-        id: node_modules-cache
-        with:
-          path: "**/node_modules"
-          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      - run: npm i
+      - run: npm ci
       - run: npm run build

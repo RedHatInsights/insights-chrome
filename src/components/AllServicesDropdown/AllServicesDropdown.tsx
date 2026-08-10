@@ -6,12 +6,14 @@ import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 import ThIcon from '@patternfly/react-icons/dist/dynamic/icons/th-icon';
+import { useAtomValue } from 'jotai';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
 import { useLocation } from 'react-router-dom';
 import useAllServices from '../../hooks/useAllServices';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
+import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -22,6 +24,7 @@ const AllServicesDropdown = () => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
+  const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
   const { linkSections, ready } = useAllServices();
   const favoritedServices = useFavoritedServices();
 
@@ -68,13 +71,26 @@ const AllServicesDropdown = () => {
     });
   };
 
-  const toggle = (
+  const toggle = isLightwellHeader ? (
+    <MenuToggle
+      ouiaId="AllServices-DropdownToggle"
+      aria-label="All services"
+      className="chr-c-link-service-toggle"
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      variant="plain"
+    >
+      <ThIcon />
+    </MenuToggle>
+  ) : (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
       className="chr-c-link-service-toggle pf-v6-u-pr-sm"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
+      isFullHeight
     >
       <ThIcon className="pf-v6-u-mr-sm" />
       Red Hat Hybrid Cloud Console

@@ -1,10 +1,10 @@
-import { PluginManifest } from '@openshift/dynamic-plugin-sdk';
+import { RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
 import transformScalprumManifest from './transformScalprumManifest';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 
 describe('transformScalprumManifest', () => {
   it('should not make any changes to manifest', () => {
-    const manifest: PluginManifest = {
+    const manifest: RemotePluginManifest = {
       version: '1.0.0',
       baseURL: '/',
       name: 'foo',
@@ -19,7 +19,7 @@ describe('transformScalprumManifest', () => {
   });
 
   it('should remote load scripts from manifest for chrome app', () => {
-    const manifest: PluginManifest = {
+    const manifest: RemotePluginManifest = {
       version: '1.0.0',
       baseURL: '/',
       name: 'chrome',
@@ -36,7 +36,7 @@ describe('transformScalprumManifest', () => {
   });
 
   it('should prefix baseURL with /api/plugins/ for hac- plugins manifest', () => {
-    const manifest: PluginManifest = {
+    const manifest: RemotePluginManifest = {
       version: '1.0.0',
       baseURL: '',
       name: 'hac-foo',
@@ -54,7 +54,7 @@ describe('transformScalprumManifest', () => {
   });
 
   it('should log error if baseURL is auto and cdnPath is not provided', () => {
-    const manifest: PluginManifest = {
+    const manifest: RemotePluginManifest = {
       version: '1.0.0',
       baseURL: 'auto',
       name: 'foo',
@@ -76,7 +76,7 @@ describe('transformScalprumManifest', () => {
   });
 
   it('should prefix baseURL with cdnPath for auto baseURL', () => {
-    const manifest: PluginManifest = {
+    const manifest: RemotePluginManifest = {
       version: '1.0.0',
       baseURL: 'auto',
       name: 'foo',
@@ -102,7 +102,7 @@ describe('transformScalprumManifest', () => {
   });
 
   it('should append / to cdnPath if it does not end with /', () => {
-    const manifest: PluginManifest = {
+    const manifest: RemotePluginManifest = {
       version: '1.0.0',
       baseURL: 'auto',
       name: 'foo',
