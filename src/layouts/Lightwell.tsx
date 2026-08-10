@@ -83,6 +83,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
                 settingsGroups: {
                   showColorScheme: true,
                 },
+                userMenu: {},
               }}
             />
           </Masthead>

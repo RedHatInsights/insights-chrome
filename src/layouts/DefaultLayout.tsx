@@ -106,6 +106,12 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
                 showColorScheme: true,
                 showContrastMode: true,
               },
+              userMenu: {
+                showMyProfile: true,
+                showMyUserAccess: true,
+                showUserPreferences: true,
+                showLogout: true,
+              },
             }}
           />
         </Masthead>

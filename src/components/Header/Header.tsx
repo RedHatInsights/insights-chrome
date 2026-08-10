@@ -30,11 +30,19 @@ export type SettingsGroupConfig = {
   showContrastMode?: boolean;
 };
 
+export type UserMenuConfig = {
+  showMyProfile?: boolean;
+  showMyUserAccess?: boolean;
+  showUserPreferences?: boolean;
+  showLogout?: boolean;
+};
+
 export type ToolbarConfig = {
   hideNotifications?: boolean;
   hideHelp?: boolean;
   hideSettings?: boolean;
   settingsGroups?: SettingsGroupConfig;
+  userMenu?: UserMenuConfig;
 };
 
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
