@@ -21,10 +21,20 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
+export type SettingsGroupConfig = {
+  showPreview?: boolean;
+  showSettingsGroup?: boolean;
+  showIAM?: boolean;
+  showTheme?: boolean;
+  showColorScheme?: boolean;
+  showContrastMode?: boolean;
+};
+
 export type ToolbarConfig = {
   hideNotifications?: boolean;
   hideHelp?: boolean;
   hideSettings?: boolean;
+  settingsGroups?: SettingsGroupConfig;
 };
 
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
