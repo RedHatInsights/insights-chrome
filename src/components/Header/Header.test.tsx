@@ -133,9 +133,17 @@ describe('Header Lightwell mode', () => {
     expect(logoLink.getAttribute('href')).toBe('/');
   });
 
-  it('should render masthead logo without a link when in Lightwell mode', () => {
+  it('should render masthead logo as a link to /lightwell when in Lightwell mode', () => {
     renderHeader(true);
-    const logoLinks = screen.queryAllByRole('link', { name: /logo/i });
-    expect(logoLinks.length).toBe(0);
+    const logoLink = screen.getByRole('link', { name: /logo/i });
+    expect(logoLink).toBeTruthy();
+    expect(logoLink.getAttribute('href')).toBe('/lightwell');
+  });
+
+  it('should render Lightwell title as a link to /lightwell when in Lightwell mode', () => {
+    renderHeader(true);
+    const titleLink = screen.getByRole('link', { name: 'Lightwell' });
+    expect(titleLink).toBeTruthy();
+    expect(titleLink.getAttribute('href')).toBe('/lightwell');
   });
 });
