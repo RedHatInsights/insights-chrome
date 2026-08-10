@@ -33,7 +33,7 @@ import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { useFeltTheme } from '../../hooks/useFeltTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
-import type { ToolbarConfig } from './Header';
+import type { SettingsGroupConfig, ToolbarConfig } from './Header';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -134,8 +134,10 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   };
 
   /* list out the items for the settings menu */
+  const settingsGroups = toolbarConfig?.settingsGroups;
   const settingsMenuDropdownGroups = [
     {
+      groupKey: 'hidePreview' satisfies keyof SettingsGroupConfig,
       items: [
         {
           ouiaId: 'PreviewSwitcher',
@@ -145,6 +147,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
+      groupKey: 'hideSettingsGroup' satisfies keyof SettingsGroupConfig,
       title: 'Settings',
       items: [
         {
@@ -171,6 +174,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
+      groupKey: 'hideIAM' satisfies keyof SettingsGroupConfig,
       title: 'Identity and Access Management',
       items: [
         {
@@ -204,6 +208,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
+      groupKey: 'hideTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
       isHidden: !isFeltThemeEnabled,
       customContent: (
@@ -227,6 +232,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ),
     },
     {
+      groupKey: 'hideColorScheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.colorScheme),
       isHidden: !isDarkModeEnabled,
       customContent: (
@@ -258,6 +264,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ),
     },
     {
+      groupKey: 'hideContrastMode' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.contrastMode),
       isHidden: !isHighContrastEnabled && !isGlassModeEnabled,
       customContent: (
@@ -300,7 +307,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         </ToggleGroup>
       ),
     },
-  ];
+  ].filter(({ groupKey }) => !settingsGroups?.[groupKey as keyof SettingsGroupConfig]);
 
   useEffect(() => {
     if (user) {
@@ -395,15 +402,23 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const settingsMobileItems = toolbarConfig?.hideSettings
     ? []
     : [
-        {
-          url: settingsPath,
-          title: 'Settings',
-          target: '_self',
-        },
-        {
-          title: betaSwitcherTitle,
-          onClick: () => togglePreviewWithCheck(),
-        },
+        ...(settingsGroups?.hideSettingsGroup
+          ? []
+          : [
+              {
+                url: settingsPath,
+                title: 'Settings',
+                target: '_self',
+              },
+            ]),
+        ...(settingsGroups?.hidePreview
+          ? []
+          : [
+              {
+                title: betaSwitcherTitle,
+                onClick: () => togglePreviewWithCheck(),
+              },
+            ]),
       ];
   const helpMobileItems = helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems;
 

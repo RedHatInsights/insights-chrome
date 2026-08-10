@@ -395,6 +395,91 @@ describe('Tools - toolbarConfig visibility', () => {
   });
 });
 
+describe('Tools - settingsGroups config', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('should hide preview group when settingsGroups.hidePreview is true', () => {
+    renderTools({}, { settingsGroups: { hidePreview: true } });
+    expect(screen.queryByTestId('PreviewSwitcher')).not.toBeInTheDocument();
+  });
+
+  it('should hide Settings group when settingsGroups.hideSettingsGroup is true', () => {
+    renderTools({}, { settingsGroups: { hideSettingsGroup: true } });
+    expect(screen.queryByText('Integrations')).not.toBeInTheDocument();
+    expect(screen.queryByText('Notifications')).not.toBeInTheDocument();
+  });
+
+  it('should hide IAM group when settingsGroups.hideIAM is true', () => {
+    renderTools({}, { settingsGroups: { hideIAM: true } });
+    expect(screen.queryByText('Identity and Access Management')).not.toBeInTheDocument();
+  });
+
+  it('should hide theme group when settingsGroups.hideTheme is true', () => {
+    renderTools({ 'platform.chrome.felt-theme': true }, { settingsGroups: { hideTheme: true } });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should hide color scheme group when settingsGroups.hideColorScheme is true', () => {
+    renderTools({ 'platform.chrome.dark-mode': true }, { settingsGroups: { hideColorScheme: true } });
+    expect(screen.queryByText('Color scheme')).not.toBeInTheDocument();
+  });
+
+  it('should hide contrast mode group when settingsGroups.hideContrastMode is true', () => {
+    renderTools({ 'platform.chrome.high-contrast': true }, { settingsGroups: { hideContrastMode: true } });
+    expect(screen.queryByText('Contrast mode')).not.toBeInTheDocument();
+  });
+
+  it('should still show preview when only IAM is hidden', () => {
+    renderTools({}, { settingsGroups: { hideIAM: true } });
+    expect(screen.getByTestId('PreviewSwitcher')).toBeInTheDocument();
+    expect(screen.queryByText('Identity and Access Management')).not.toBeInTheDocument();
+  });
+
+  it('should show all groups by default', () => {
+    renderTools({ 'platform.chrome.dark-mode': true, 'platform.chrome.high-contrast': true, 'platform.chrome.felt-theme': true });
+    expect(screen.getByTestId('PreviewSwitcher')).toBeInTheDocument();
+    expect(screen.getByText('Identity and Access Management')).toBeInTheDocument();
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(screen.getByText('Color scheme')).toBeInTheDocument();
+    expect(screen.getByText('Contrast mode')).toBeInTheDocument();
+  });
+
+  it('should hide preview from mobile dropdown when settingsGroups.hidePreview is true', () => {
+    renderTools({}, { settingsGroups: { hidePreview: true } });
+    expect(screen.queryByText(/Preview/)).not.toBeInTheDocument();
+  });
+
+  it('should hide settings link from mobile dropdown when settingsGroups.hideSettingsGroup is true', () => {
+    renderTools({}, { settingsGroups: { hideSettingsGroup: true } });
+    // Desktop settings group title still absent, mobile "Settings" link also absent
+    // Only the desktop group heading "Settings" should remain (from dropdown groups)
+    const settingsElements = screen.queryAllByText('Settings');
+    // With hideSettingsGroup, the desktop group is filtered out AND the mobile link is filtered out
+    expect(settingsElements).toHaveLength(0);
+  });
+
+  it('should only show color scheme when Lightwell config is used', () => {
+    const lightwellConfig = {
+      settingsGroups: {
+        hidePreview: true,
+        hideSettingsGroup: true,
+        hideIAM: true,
+        hideTheme: true,
+        hideContrastMode: true,
+      },
+    };
+    renderTools({ 'platform.chrome.dark-mode': true, 'platform.chrome.high-contrast': true, 'platform.chrome.felt-theme': true }, lightwellConfig);
+
+    expect(screen.queryByTestId('PreviewSwitcher')).not.toBeInTheDocument();
+    expect(screen.queryByText('Integrations')).not.toBeInTheDocument();
+    expect(screen.queryByText('Identity and Access Management')).not.toBeInTheDocument();
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+    expect(screen.queryByText('Contrast mode')).not.toBeInTheDocument();
+
+    expect(screen.getByText('Color scheme')).toBeInTheDocument();
+  });
+});
+
 describe('Tools - high contrast feature flag', () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -549,5 +634,30 @@ describe('Tools - glass ↔ high contrast mutual exclusivity', () => {
     fireEvent.click(defaultBtn!);
     expect(mockDisableGlass).toHaveBeenCalled();
     expect(mockSetDefaultContrast).toHaveBeenCalled();
+  });
+});
+
+describe('Tools - about menu items', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('should render about menu items when help-panel flag is disabled', () => {
+    renderTools({ 'platform.chrome.help-panel': false });
+    expect(screen.getByText('Support options')).toBeInTheDocument();
+    expect(screen.getByText('Status page')).toBeInTheDocument();
+  });
+
+  it('should render ask-redhat item when flag is enabled', () => {
+    renderTools({ 'platform.chrome.ask-redhat-help': true });
+    expect(screen.getByText('Ask Red Hat')).toBeInTheDocument();
+  });
+
+  it('should render ITLess support URL in mobile dropdown', () => {
+    renderTools({ 'platform.chrome.itless': true });
+    expect(screen.getByText('Support options')).toBeInTheDocument();
+  });
+
+  it('should render learning resources link when flag is enabled', () => {
+    renderTools({ 'platform.learning-resources.global-learning-resources': true });
+    expect(screen.getByText('All learning resources')).toBeInTheDocument();
   });
 });
