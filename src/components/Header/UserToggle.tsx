@@ -94,7 +94,7 @@ const DropdownItems = ({
     </Panel>,
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
-      {!isITLessEnv && (!userMenu || userMenu.showMyProfile) && (
+      {!isITLessEnv && userMenu?.showMyProfile && (
         <DropdownItem
           key="My Profile"
           to={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
@@ -107,7 +107,7 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="My user access wrapper">
-      {(!userMenu || userMenu.showMyUserAccess) && (
+      {userMenu?.showMyUserAccess && (
         <DropdownItem
           component={({ className }) => (
             <ChromeLink className={className} href={myAccessPath} appId="rbac">
@@ -119,7 +119,7 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="user prefs wrapper">
-      {(!userMenu || userMenu.showUserPreferences) && (
+      {userMenu?.showUserPreferences && (
         <DropdownItem
           component={({ className }) => (
             <ChromeLink className={className} href="/settings/notifications/user-preferences" appId="userPreferences">
@@ -131,7 +131,7 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="internal wrapper">
-      {isInternal && isProd && (!userMenu || userMenu.showInternal) && (
+      {isInternal && isProd && userMenu?.showInternal && (
         <DropdownItem
           key="Internal"
           component={({ className }) => (
@@ -143,7 +143,7 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="logout wrapper">
-      {(!userMenu || userMenu.showLogout) && (
+      {userMenu?.showLogout && (
         <DropdownItem key="logout" component="button" onClick={logout}>
           {intl.formatMessage(messages.logout)}
         </DropdownItem>

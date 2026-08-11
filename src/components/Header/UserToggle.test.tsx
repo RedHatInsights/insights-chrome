@@ -70,12 +70,12 @@ const renderUserToggle = (userMenu?: UserMenuConfig) => {
 };
 
 describe('UserToggle - userMenu config', () => {
-  it('should show all menu items when no userMenu provided', () => {
+  it('should hide all menu items when no userMenu provided', () => {
     renderUserToggle();
-    expect(screen.getByText('My profile')).toBeInTheDocument();
-    expect(screen.getByText('My User Access')).toBeInTheDocument();
-    expect(screen.getByText('User Preferences')).toBeInTheDocument();
-    expect(screen.getByText('Log out')).toBeInTheDocument();
+    expect(screen.queryByText('My profile')).not.toBeInTheDocument();
+    expect(screen.queryByText('My User Access')).not.toBeInTheDocument();
+    expect(screen.queryByText('User Preferences')).not.toBeInTheDocument();
+    expect(screen.queryByText('Log out')).not.toBeInTheDocument();
   });
 
   it('should hide all menu items when empty userMenu provided', () => {
@@ -84,6 +84,14 @@ describe('UserToggle - userMenu config', () => {
     expect(screen.queryByText('My User Access')).not.toBeInTheDocument();
     expect(screen.queryByText('User Preferences')).not.toBeInTheDocument();
     expect(screen.queryByText('Log out')).not.toBeInTheDocument();
+  });
+
+  it('should show all menu items when all flags are true', () => {
+    renderUserToggle({ showMyProfile: true, showMyUserAccess: true, showUserPreferences: true, showLogout: true });
+    expect(screen.getByText('My profile')).toBeInTheDocument();
+    expect(screen.getByText('My User Access')).toBeInTheDocument();
+    expect(screen.getByText('User Preferences')).toBeInTheDocument();
+    expect(screen.getByText('Log out')).toBeInTheDocument();
   });
 
   it('should show only My Profile when showMyProfile is true', () => {
