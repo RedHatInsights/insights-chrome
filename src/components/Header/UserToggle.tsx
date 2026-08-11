@@ -23,6 +23,7 @@ import { DescriptionList } from '@patternfly/react-core/dist/dynamic/components/
 import { DescriptionListGroup } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
 import { DescriptionListTerm } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
 import { DescriptionListDescription } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import type { UserMenuConfig } from './Header';
 
 const DropdownItems = ({
   username = '',
@@ -31,6 +32,7 @@ const DropdownItems = ({
   orgId,
   isInternal,
   extraItems = [],
+  userMenu,
 }: {
   username?: string;
   isOrgAdmin?: boolean;
@@ -38,6 +40,7 @@ const DropdownItems = ({
   orgId?: string;
   isInternal?: boolean;
   extraItems?: React.ReactNode[];
+  userMenu?: UserMenuConfig;
 }) => {
   const env = getEnv();
   const isProd = isProdEnv();
@@ -91,7 +94,7 @@ const DropdownItems = ({
     </Panel>,
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
-      {!isITLessEnv && (
+      {!isITLessEnv && userMenu?.showMyProfile && (
         <DropdownItem
           key="My Profile"
           to={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
@@ -104,27 +107,31 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="My user access wrapper">
-      <DropdownItem
-        component={({ className }) => (
-          <ChromeLink className={className} href={myAccessPath} appId="rbac">
-            {v2WorkspacesEnabled ? intl.formatMessage(messages.myAccess) : intl.formatMessage(messages.myUserAccess)}
-          </ChromeLink>
-        )}
-        key="My user access"
-      />
+      {userMenu?.showMyUserAccess && (
+        <DropdownItem
+          component={({ className }) => (
+            <ChromeLink className={className} href={myAccessPath} appId="rbac">
+              {v2WorkspacesEnabled ? intl.formatMessage(messages.myAccess) : intl.formatMessage(messages.myUserAccess)}
+            </ChromeLink>
+          )}
+          key="My user access"
+        />
+      )}
     </React.Fragment>,
     <React.Fragment key="user prefs wrapper">
-      <DropdownItem
-        component={({ className }) => (
-          <ChromeLink className={className} href="/settings/notifications/user-preferences" appId="userPreferences">
-            {intl.formatMessage(messages.userPreferences)}
-          </ChromeLink>
-        )}
-        key="User preferences"
-      />
+      {userMenu?.showUserPreferences && (
+        <DropdownItem
+          component={({ className }) => (
+            <ChromeLink className={className} href="/settings/notifications/user-preferences" appId="userPreferences">
+              {intl.formatMessage(messages.userPreferences)}
+            </ChromeLink>
+          )}
+          key="User preferences"
+        />
+      )}
     </React.Fragment>,
     <React.Fragment key="internal wrapper">
-      {isInternal && isProd && (
+      {isInternal && isProd && userMenu?.showInternal && (
         <DropdownItem
           key="Internal"
           component={({ className }) => (
@@ -135,9 +142,13 @@ const DropdownItems = ({
         />
       )}
     </React.Fragment>,
-    <DropdownItem key="logout" component="button" onClick={logout}>
-      {intl.formatMessage(messages.logout)}
-    </DropdownItem>,
+    <React.Fragment key="logout wrapper">
+      {userMenu?.showLogout && (
+        <DropdownItem key="logout" component="button" onClick={logout}>
+          {intl.formatMessage(messages.logout)}
+        </DropdownItem>
+      )}
+    </React.Fragment>,
     extraItems,
   ];
 };
@@ -145,9 +156,10 @@ const DropdownItems = ({
 export type UserToggleProps = {
   isSmall?: boolean;
   extraItems?: React.ReactNode[];
+  userMenu?: UserMenuConfig;
 };
 
-const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
+const UserToggle = ({ isSmall = false, extraItems = [], userMenu }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     user: {
@@ -207,6 +219,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
           orgId={internal?.org_id}
           isInternal={user?.is_internal}
           extraItems={extraItems}
+          userMenu={userMenu}
         />
       </DropdownList>
     </Dropdown>
