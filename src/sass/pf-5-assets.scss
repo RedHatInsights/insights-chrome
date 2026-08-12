@@ -1,5 +1,9 @@
-$pf-global--enable-reset: 'true';
-
+// PatternFly 5 styles must use @import (not @use) because PF5's internal
+// SCSS files share variables through the global scope (e.g. accessibility.scss
+// references $pf-v5-global--breakpoint-map defined in patternfly.scss).
+// PF5 5.4.2 is the latest release and won't be updated for Dart Sass 3.0.
+// The @import deprecation warnings are silenced in webpack.config.js via
+// silenceDeprecations and quietDeps options.
 @import '~pf-5-styles/patternfly.scss';
 @import '~pf-5-styles/patternfly-addons.scss';
 @import '~pf-5-styles/utilities/Accessibility/accessibility.scss';

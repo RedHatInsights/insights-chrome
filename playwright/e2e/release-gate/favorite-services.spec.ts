@@ -1,4 +1,9 @@
-import { test, expect } from '../../setup/test-setup';
+import { expect, test } from '../../setup/test-setup';
+
+// Timeout constants for CI environment stability
+const SERVICES_LOAD_TIMEOUT = 45000; // Bundle visibility can be slow in CI
+const BUTTON_STABILITY_TIMEOUT = 5000; // Wait for button to stabilize before click
+const BUTTON_CLICK_TIMEOUT = 10000; // Allow extra time for click in slow CI
 
 test.describe('Favorite Services (E2E User Flow)', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,8 +19,8 @@ test.describe('Favorite Services (E2E User Flow)', () => {
 
     await page.goto('/allservices');
     await page.waitForLoadState('load');
-    // Wait for all services to render — bundle visibility evaluation can be slow in CI
-    await expect(page.getByRole('heading', { name: 'All Services', level: 2 })).toBeVisible({ timeout: 45000 });
+    // Wait for all services to render
+    await expect(page.getByRole('heading', { name: 'All Services', level: 2 })).toBeVisible({ timeout: SERVICES_LOAD_TIMEOUT });
     await page.getByText(serviceToTest).scrollIntoViewIfNeeded();
 
     // 3. Favorite a specific service on the page (if not already favorited)
@@ -36,13 +41,15 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     await expect(sidebar).toBeVisible();
 
     // Occasionally the test finds two instances because the ID isn't unique; choose the first as a work-around
-    const favoriteItem = await page.locator(`${quickstartIdSelector}:visible`).all();
-    for (const item of favoriteItem) {
+    const favoriteItems = await page.locator(`${quickstartIdSelector}:visible`).all();
+    for (const item of favoriteItems) {
       // unfavorite the item
       // ugly logic because quickstart id is duplicated; can't track down unique element that has a button sub-element
-      const rightButton = await item.getByRole('button').isVisible();
-      if (rightButton) {
-        await item.getByRole('button').click();
+      const button = item.getByRole('button');
+      // Use count() instead of isVisible() to avoid race condition between check and click
+      if ((await button.count()) > 0) {
+        await button.waitFor({ state: 'visible', timeout: BUTTON_STABILITY_TIMEOUT });
+        await button.click({ timeout: BUTTON_CLICK_TIMEOUT });
       }
     }
 

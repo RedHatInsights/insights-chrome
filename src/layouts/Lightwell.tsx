@@ -2,16 +2,19 @@ import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
+import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
@@ -24,6 +27,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
   const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
+  const setActiveModule = useSetAtom(activeModuleAtom);
 
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
@@ -33,6 +37,13 @@ const Lightwell = ({ Footer }: LightwellProps) => {
       setLayoutLightwellHeader(false);
     };
   }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
+
+  useEffect(() => {
+    setActiveModule('contentSources');
+    return () => {
+      setActiveModule(undefined);
+    };
+  }, [setActiveModule]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -64,7 +75,17 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         onPageResize={null}
         masthead={
           <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
-            <Header breadcrumbsProps={{ hideNav: true }} toolbarConfig={{ hideNotifications: true, hideHelp: true, hideSettings: true }} />
+            <Header
+              breadcrumbsProps={{ hideNav: true }}
+              toolbarConfig={{
+                hideNotifications: true,
+                hideHelp: true,
+                settingsGroups: {
+                  showColorScheme: true,
+                },
+                userMenu: {},
+              }}
+            />
           </Masthead>
         }
         {...(isDrawerEnabled && {
@@ -73,6 +94,9 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
         })}
       >
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs />
+        </ToolbarGroup>
         <RedirectBanner />
         <ScalprumComponent
           scope="contentSources"
