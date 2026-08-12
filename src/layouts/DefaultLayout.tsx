@@ -97,6 +97,23 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
               setIsNavOpen,
               hideNav,
             }}
+            toolbarConfig={{
+              settingsGroups: {
+                showPreview: true,
+                showSettingsGroup: true,
+                showIAM: true,
+                showTheme: true,
+                showColorScheme: true,
+                showContrastMode: true,
+              },
+              userMenu: {
+                showMyProfile: true,
+                showMyUserAccess: true,
+                showUserPreferences: true,
+                showInternal: true,
+                showLogout: true,
+              },
+            }}
           />
         </Masthead>
       }

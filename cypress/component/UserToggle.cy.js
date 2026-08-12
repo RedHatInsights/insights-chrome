@@ -59,7 +59,7 @@ const Wrapper = ({ children }) => (
   </IntlProvider>
 );
 
-describe('<UserToggle />', () => {
+describe('<UserToggle userMenu={{ showMyProfile: true, showMyUserAccess: true, showUserPreferences: true, showInternal: true, showLogout: true }} />', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
@@ -78,7 +78,7 @@ describe('<UserToggle />', () => {
     const elem = cy
       .mount(
         <Wrapper>
-          <UserToggle />
+          <UserToggle userMenu={{ showMyProfile: true, showMyUserAccess: true, showUserPreferences: true, showInternal: true, showLogout: true }} />
         </Wrapper>
       )
       .get('html');
@@ -89,7 +89,7 @@ describe('<UserToggle />', () => {
     cy.viewport(1280, 720);
     cy.mount(
       <Wrapper>
-        <UserToggle />
+        <UserToggle userMenu={{ showMyProfile: true, showMyUserAccess: true, showUserPreferences: true, showInternal: true, showLogout: true }} />
       </Wrapper>
     ).get('html');
     cy.contains('Log out').should('not.exist');
