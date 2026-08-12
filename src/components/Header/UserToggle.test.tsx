@@ -133,4 +133,12 @@ describe('UserToggle - userMenu config', () => {
     expect(screen.queryByText('User Preferences')).not.toBeInTheDocument();
     expect(screen.getByText('Log out')).toBeInTheDocument();
   });
+
+  it('should show only logout when Lightwell config is used', () => {
+    renderUserToggle({ showLogout: true });
+    expect(screen.queryByText('My profile')).not.toBeInTheDocument();
+    expect(screen.queryByText('My User Access')).not.toBeInTheDocument();
+    expect(screen.queryByText('User Preferences')).not.toBeInTheDocument();
+    expect(screen.getByText('Log out')).toBeInTheDocument();
+  });
 });
