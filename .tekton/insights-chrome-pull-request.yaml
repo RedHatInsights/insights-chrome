@@ -316,7 +316,7 @@ spec:
             limits:
               cpu: "4"
               memory: "8Gi"
-          image: mcr.microsoft.com/playwright:v1.60.0-jammy
+          image: mcr.microsoft.com/playwright:v1.62.1-jammy
           name: e2e-tests
           env:
           - name: CHROME_ACCOUNT
