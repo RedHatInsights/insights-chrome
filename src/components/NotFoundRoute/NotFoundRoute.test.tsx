@@ -26,9 +26,13 @@ jest.mock('@redhat-cloud-services/frontend-components/InvalidObject', () => ({
 describe('NotFoundRoute', () => {
   const useFlag = unleashReact.useFlag as jest.MockedFunction<typeof unleashReact.useFlag>;
 
+  const setFlagMock = (flags: Record<string, boolean>) => {
+    useFlag.mockImplementation((flag: string) => flags[flag] ?? false);
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    useFlag.mockReturnValue(false);
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
   });
 
   it('should render the 404 empty state', () => {
@@ -42,7 +46,7 @@ describe('NotFoundRoute', () => {
   });
 
   it('should hide the VA button when platform.va.environment.enabled flag is disabled', () => {
-    useFlag.mockReturnValue(false);
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
 
     render(
       <JotaiProvider>
@@ -53,8 +57,8 @@ describe('NotFoundRoute', () => {
     expect(screen.queryByText(/Contact your org admin with the Virtual Assistant/)).not.toBeInTheDocument();
   });
 
-  it('should show the VA button when platform.va.environment.enabled flag is enabled', () => {
-    useFlag.mockReturnValue(true);
+  it('should show the VA button when VA flag is enabled and chatbot tab is disabled', () => {
+    setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': false });
 
     render(
       <JotaiProvider>
@@ -65,8 +69,20 @@ describe('NotFoundRoute', () => {
     expect(screen.getByText(/Contact your org admin with the Virtual Assistant/)).toBeInTheDocument();
   });
 
-  it('should check the correct feature flag name', () => {
-    useFlag.mockReturnValue(false);
+  it('should hide the VA button when chatbot tab is enabled', () => {
+    setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': true });
+
+    render(
+      <JotaiProvider>
+        <NotFoundRoute />
+      </JotaiProvider>
+    );
+
+    expect(screen.queryByText(/Contact your org admin with the Virtual Assistant/)).not.toBeInTheDocument();
+  });
+
+  it('should check the correct feature flag names', () => {
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
 
     render(
       <JotaiProvider>
@@ -75,5 +91,6 @@ describe('NotFoundRoute', () => {
     );
 
     expect(useFlag).toHaveBeenCalledWith('platform.va.environment.enabled');
+    expect(useFlag).toHaveBeenCalledWith('platform.chrome.help-panel_chatbot');
   });
 });
