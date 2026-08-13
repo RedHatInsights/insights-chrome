@@ -31,6 +31,7 @@
     "playwright:headed": "playwright test --headed",
     "playwright:ui": "playwright test --ui",
     "playwright:debug": "playwright test --debug",
+    "playwright:platform-infra": "playwright test playwright/e2e/platform-infra/",
     "playwright:report": "playwright show-report",
     "test:playwright": "playwright test",
     "translations": "npm-run-all translations:*",
