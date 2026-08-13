@@ -63,6 +63,7 @@ const EmptySearchVALink = () => {
 
 const EmptySearchState = () => {
   const isVAEnabled = useFlag('platform.va.environment.enabled');
+  const isChatbotTabEnabled = useFlag('platform.chrome.help-panel_chatbot');
 
   return (
     <EmptyState
@@ -80,7 +81,7 @@ const EmptySearchState = () => {
           <Content component="p" className="pf-v6-u-text-color-subtle pf-v6-u-mb-0">
             No results match your criteria.
           </Content>
-          {isVAEnabled ? (
+          {isVAEnabled && !isChatbotTabEnabled ? (
             <EmptySearchVALink />
           ) : (
             <Content component="p" className="pf-v6-u-text-color-subtle">
