@@ -245,4 +245,28 @@ describe('OIDCProvider', () => {
     // PKCE should be enabled (disablePKCE must not be true)
     expect(userManagerConfig.disablePKCE).not.toBe(true);
   });
+
+  it('should set base scopes on UserManager so automaticSilentRenew uses them', async () => {
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
+    mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
+    mockLoadFedModules.mockResolvedValue({
+      data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
+    });
+
+    render(
+      <OIDCProvider>
+        <div>Content</div>
+      </OIDCProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+
+    const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
+    // Must include base scopes so implicit signinSilent calls (automaticSilentRenew,
+    // forceRefresh, BroadcastChannel refresh) don't downgrade to "openid" only
+    expect(userManagerConfig.scope).toBe('openid api.console api.ask_red_hat');
+  });
 });

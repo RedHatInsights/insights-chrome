@@ -58,6 +58,11 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           check_session_iframe: `https://${window.location.host}/apps/chrome/js/silent-check-sso.html`,
           revocation_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/revoke`,
         },
+        // Default scope used by automaticSilentRenew and any signinSilent()
+        // call that does not pass an explicit scope override.  Without this,
+        // oidc-client-ts falls back to "openid" only, which can downgrade
+        // tokens when the SSO server honours the requested scope strictly.
+        scope: ITLess() ? 'openid' : 'openid api.console api.ask_red_hat',
         response_type: 'code',
         response_mode: 'fragment',
         userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
