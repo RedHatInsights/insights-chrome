@@ -1,3 +1,6 @@
+import chromeStore from '../state/chromeStore';
+import { setUserPersonalizationDegradedAtom } from '../state/atoms/degradedStateAtom';
+
 const functionBuilder = (key: string, value: boolean | number | string) => {
   if (window.localStorage) {
     window.localStorage.setItem(key, value.toString());
@@ -25,6 +28,14 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
+  degradedStateBanner: () => {
+    chromeStore.set(setUserPersonalizationDegradedAtom, true);
+    console.log('✓ Degraded state banner triggered (user personalization degraded)');
+    return () => {
+      chromeStore.set(setUserPersonalizationDegradedAtom, false);
+      console.log('✓ Degraded state banner cleared');
+    };
+  },
 };
 
 export default debugFunctions;

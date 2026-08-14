@@ -246,3 +246,7 @@ export type BundleNav = {
   title?: string;
   links: NavItem[];
 };
+
+// Service Health API types for Module Federation exposure
+export type { ServiceHealthStatus } from '../state/atoms/degradedStateAtom';
+export type { DegradedStateAPI } from '../hooks/useDegradedState';
