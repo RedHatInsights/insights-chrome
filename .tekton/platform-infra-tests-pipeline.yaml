@@ -1,0 +1,42 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: chrome-platform-infra-tests
+spec:
+  description: |
+    Platform infrastructure tests for insights-chrome.
+    Currently a smoke test to validate the scheduled trigger infrastructure.
+    Will be extended with real test commands once the pipeline is proven.
+  params:
+    - name: SNAPSHOT
+      description: "The Konflux snapshot being tested"
+      type: string
+  results:
+    - name: TEST_OUTPUT
+      description: "Test result summary"
+      value: $(tasks.smoke-test.results.TEST_OUTPUT)
+  tasks:
+    - name: smoke-test
+      taskSpec:
+        results:
+          - name: TEST_OUTPUT
+            description: "Test output in Konflux standardized format"
+        steps:
+          - name: smoke-test
+            image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+            script: |
+              #!/bin/bash
+              set -euo pipefail
+
+              TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+              echo "========================================="
+              echo "Platform infra test pipeline - smoke test"
+              echo "Timestamp: ${TIMESTAMP}"
+              echo "Pipeline executed successfully"
+              echo "========================================="
+
+              cat > $(results.TEST_OUTPUT.path) <<RESULT
+              {"result":"SUCCESS","timestamp":"${TIMESTAMP}","successes":1,"failures":0,"warnings":0,"note":"Smoke test passed"}
+              RESULT
