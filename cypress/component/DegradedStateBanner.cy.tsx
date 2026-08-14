@@ -2,16 +2,44 @@ import React from 'react';
 import DegradedStateBanner from '../../src/components/DegradedStateBanner/DegradedStateBanner';
 import { Provider } from 'jotai';
 import { createStore } from 'jotai';
+import { FlagProvider } from '@unleash/proxy-client-react';
 import { degradedStateAtom } from '../../src/state/atoms/degradedStateAtom';
 
+// Mock Unleash config for testing
+const mockUnleashConfig = {
+  url: 'http://localhost:4242/api/frontend',
+  clientKey: 'test-key',
+  appName: 'test-app',
+  refreshInterval: 0,
+  disableRefresh: true,
+  bootstrap: [
+    {
+      name: 'platform.chrome.degraded-state-banner',
+      enabled: true,
+      variant: { name: 'enabled', enabled: true },
+      impressionData: false,
+    },
+  ],
+};
+
 describe('DegradedStateBanner', () => {
+  beforeEach(() => {
+    // Mock Unleash API calls to prevent real requests
+    cy.intercept('GET', '**/api/frontend**', {
+      statusCode: 200,
+      body: { toggles: [] },
+    });
+    cy.intercept('POST', '**/api/frontend**', { statusCode: 200 });
+  });
   it('should not render when all services healthy', () => {
     const store = createStore();
 
     cy.mount(
-      <Provider store={store}>
-        <DegradedStateBanner />
-      </Provider>
+      <FlagProvider config={mockUnleashConfig}>
+        <Provider store={store}>
+          <DegradedStateBanner />
+        </Provider>
+      </FlagProvider>
     );
 
     cy.contains(/some services are currently limited/i).should('not.exist');
@@ -27,9 +55,11 @@ describe('DegradedStateBanner', () => {
     });
 
     cy.mount(
-      <Provider store={store}>
-        <DegradedStateBanner />
-      </Provider>
+      <FlagProvider config={mockUnleashConfig}>
+        <Provider store={store}>
+          <DegradedStateBanner />
+        </Provider>
+      </FlagProvider>
     );
 
     cy.contains(/user preferences/i).should('be.visible');
@@ -46,9 +76,11 @@ describe('DegradedStateBanner', () => {
     });
 
     cy.mount(
-      <Provider store={store}>
-        <DegradedStateBanner />
-      </Provider>
+      <FlagProvider config={mockUnleashConfig}>
+        <Provider store={store}>
+          <DegradedStateBanner />
+        </Provider>
+      </FlagProvider>
     );
 
     cy.contains(/user preferences/i).should('be.visible');
@@ -65,9 +97,11 @@ describe('DegradedStateBanner', () => {
     });
 
     cy.mount(
-      <Provider store={store}>
-        <DegradedStateBanner />
-      </Provider>
+      <FlagProvider config={mockUnleashConfig}>
+        <Provider store={store}>
+          <DegradedStateBanner />
+        </Provider>
+      </FlagProvider>
     );
 
     cy.get('.pf-m-warning').should('exist');
@@ -83,9 +117,11 @@ describe('DegradedStateBanner', () => {
     });
 
     cy.mount(
-      <Provider store={store}>
-        <DegradedStateBanner />
-      </Provider>
+      <FlagProvider config={mockUnleashConfig}>
+        <Provider store={store}>
+          <DegradedStateBanner />
+        </Provider>
+      </FlagProvider>
     );
 
     cy.contains(/user preferences/i).should('be.visible');
