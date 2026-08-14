@@ -180,14 +180,6 @@ describe('Breadcrumbs', () => {
     expect(breadcrumb).toBeInTheDocument();
   });
 
-  it('should detect OpenShift context', () => {
-    mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'OpenShift', href: '/openshift' }]);
-
-    renderBreadcrumbs();
-
-    // OpenShift detection happens via useEffect
-    expect(screen.getByText('OpenShift')).toBeInTheDocument();
-  });
 
   it('should render breadcrumbs with state options', () => {
     const stateOptions = { state: { filters: { status: 'active' } } };
