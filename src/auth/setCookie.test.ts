@@ -6,10 +6,7 @@ describe('setCookie', () => {
     await setCookie('token+token+token', 123, mockWriter);
     expect(mockWriter).toHaveBeenCalledTimes(COOKIE_PATHS.length);
     COOKIE_PATHS.forEach((path, index) => {
-      expect(mockWriter).toHaveBeenNthCalledWith(
-        index + 1,
-        buildCookieString('cs_jwt', 'token+token+token', path, 123)
-      );
+      expect(mockWriter).toHaveBeenNthCalledWith(index + 1, buildCookieString('cs_jwt', 'token+token+token', path, 123));
     });
   });
 
