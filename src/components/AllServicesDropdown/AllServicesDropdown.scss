@@ -58,6 +58,11 @@
   .chr-c-empty-state-favorites {
     padding-top: var(--pf-t--global--spacer--md);
   }
+
+  .pf-v6-c-menu {
+    background: transparent;
+    border: none;
+  }
 }
 
 @media (max-width: $pf-v6-global--breakpoint--md) {
@@ -107,29 +112,6 @@
           flex-grow: 1;
         }
       }
-      .pf-v6-c-card {
-        --pf-v6-c-card--first-child--PaddingTop: var(--pf-t--global--spacer--md);
-      }
-    }
-  }
-}
-
-.chr-c-favorite-service__tile {
-  display: block;
-  text-decoration: none !important;
-  &:hover {
-    background: var(--pf-t--global--background--color--primary--hover);
-  }
-
-  :hover {
-    .chr-c-icon-star {
-      visibility: visible;
-    }
-  }
-
-  .chr-c-favorite-button {
-    :hover {
-      background-color: none;
     }
   }
 }
