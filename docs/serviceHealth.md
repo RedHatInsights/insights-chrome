@@ -21,6 +21,16 @@ const MyApp = () => {
     module: './serviceHealth/useDegradedState'
   });
 
+  // Hook BEFORE early returns
+  useEffect(() => {
+    if (!hookResult?.setEntitlementsDegraded) return;
+    
+    fetchEntitlements().catch(() => {
+      hookResult.setEntitlementsDegraded(true);
+    });
+  }, [hookResult]);
+
+  // Early returns AFTER hooks
   if (loading) return <Spinner />;
   if (error) return <div>Error loading service health</div>;
 
@@ -28,15 +38,7 @@ const MyApp = () => {
     serviceHealth, 
     isAnyServiceDegraded, 
     isBannerEnabled,
-    setEntitlementsDegraded 
   } = hookResult;
-
-  // Mark entitlements as degraded on API error
-  useEffect(() => {
-    fetchEntitlements().catch(() => {
-      setEntitlementsDegraded(true);
-    });
-  }, []);
 
   return <div>...</div>;
 };
@@ -69,10 +71,10 @@ type ServiceHealthStatus = {
 ## Banner Behavior
 
 - **Visibility:** Shows when `isBannerEnabled` AND `isAnyServiceDegraded`
-- **Dismissal:** Session-based (reappears on refresh)
-- **Variant:** 
-  - 1-2 degraded services → info (blue)
-  - 3+ degraded services → warning (yellow)
+- **Variant:** Always warning (yellow)
+- **Icon:** Exclamation triangle icon
+- **Dismissal:** Not dismissible - persists until services recover
+- **Placement:** Above header, below preview banner
 
 ## Use Cases
 

@@ -1,15 +1,14 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useFlag } from '@unleash/proxy-client-react';
-import { createStore } from 'jotai';
-import { Provider } from 'jotai';
+import { Provider, createStore } from 'jotai';
 import React from 'react';
 import { useDegradedState } from './useDegradedState';
 import {
   degradedStateAtom,
-  setUserPersonalizationDegradedAtom,
-  setEntitlementsDegradedAtom,
   setConfigFromCacheDegradedAtom,
+  setEntitlementsDegradedAtom,
   setFeatureFlagsDegradedAtom,
+  setUserPersonalizationDegradedAtom,
 } from '../state/atoms/degradedStateAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({

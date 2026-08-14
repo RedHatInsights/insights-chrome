@@ -14,7 +14,7 @@ describe('DegradedStateBanner', () => {
       </Provider>
     );
 
-    cy.get('div[class*="pf-"]').should('not.exist');
+    cy.contains(/some services are currently limited/i).should('not.exist');
   });
 
   it('should render banner with single degraded service', () => {
@@ -32,8 +32,8 @@ describe('DegradedStateBanner', () => {
       </Provider>
     );
 
-    cy.contains('user preferences').should('be.visible');
-    cy.contains('Core functionality is available').should('be.visible');
+    cy.contains(/user preferences/i).should('be.visible');
+    cy.contains(/core functionality is available/i).should('be.visible');
   });
 
   it('should render banner with multiple degraded services', () => {
@@ -51,8 +51,8 @@ describe('DegradedStateBanner', () => {
       </Provider>
     );
 
-    cy.contains('user preferences').should('be.visible');
-    cy.contains('entitlements').should('be.visible');
+    cy.contains(/user preferences/i).should('be.visible');
+    cy.contains(/entitlements/i).should('be.visible');
   });
 
   it('should always show warning variant', () => {
@@ -88,9 +88,9 @@ describe('DegradedStateBanner', () => {
       </Provider>
     );
 
-    cy.contains('user preferences').should('be.visible');
-    cy.contains('entitlements').should('be.visible');
-    cy.contains('navigation configuration').should('be.visible');
-    cy.contains('feature flags').should('be.visible');
+    cy.contains(/user preferences/i).should('be.visible');
+    cy.contains(/entitlements/i).should('be.visible');
+    cy.contains(/navigation configuration/i).should('be.visible');
+    cy.contains(/feature flags/i).should('be.visible');
   });
 });

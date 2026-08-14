@@ -2,13 +2,15 @@ import React from 'react';
 import { Banner } from '@patternfly/react-core/dist/dynamic/components/Banner';
 import ExclamationTriangleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-triangle-icon';
 import { useAtomValue } from 'jotai';
+import { useFlag } from '@unleash/proxy-client-react';
 import { degradedStateAtom, isAnyServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 
-const DegradedStateBanner: React.FC = () => {
+const DegradedStateBanner = () => {
   const isDegraded = useAtomValue(isAnyServiceDegradedAtom);
+  const bannerEnabled = useFlag('platform.chrome.degraded-state-banner');
   const serviceHealth = useAtomValue(degradedStateAtom);
 
-  if (!isDegraded) {
+  if (!isDegraded || !bannerEnabled) {
     return null;
   }
 
@@ -22,7 +24,7 @@ const DegradedStateBanner: React.FC = () => {
 
   return (
     <Banner status="warning" screenReaderText="Warning banner">
-      <div style={{ textAlign: 'center' }}>
+      <div className="pf-v6-u-text-align-center">
         <ExclamationTriangleIcon /> {message}
       </div>
     </Banner>
