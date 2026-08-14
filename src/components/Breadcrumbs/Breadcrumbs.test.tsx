@@ -180,7 +180,6 @@ describe('Breadcrumbs', () => {
     expect(breadcrumb).toBeInTheDocument();
   });
 
-
   it('should render breadcrumbs with state options', () => {
     const stateOptions = { state: { filters: { status: 'active' } } };
     store.set(breadcrumbReplaceModeAtom, true);
