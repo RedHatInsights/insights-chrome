@@ -11,5 +11,9 @@
  * normalizePathname('/path/to/resource') // '/path/to/resource'
  */
 export function normalizePathname(pathname: string): string {
+  // Preserve root path
+  if (pathname === '/' || pathname === '/*') {
+    return '/';
+  }
   return pathname.replace(/\/$/, '').replace(/\/\*$/, '');
 }

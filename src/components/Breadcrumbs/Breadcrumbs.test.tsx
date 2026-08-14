@@ -180,8 +180,7 @@ describe('Breadcrumbs', () => {
     expect(breadcrumb).toBeInTheDocument();
   });
 
-  it.skip('should detect OpenShift context', () => {
-    // TODO: Fix ResizeObserver not defined in jsdom
+  it('should detect OpenShift context', () => {
     mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'OpenShift', href: '/openshift' }]);
 
     renderBreadcrumbs();

@@ -21,8 +21,8 @@ describe('normalizePathname', () => {
   });
 
   it('should handle root path', () => {
-    expect(normalizePathname('/')).toBe('');
-    expect(normalizePathname('/*')).toBe('');
+    expect(normalizePathname('/')).toBe('/');
+    expect(normalizePathname('/*')).toBe('/');
   });
 
   it('should handle nested paths with wildcards', () => {

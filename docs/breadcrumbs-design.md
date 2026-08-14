@@ -13,8 +13,6 @@ Currently, chrome creates breadcrumbs only for routes that it “knows”. The k
 
 Chrome renders breadcrumbs to the last link available in the navigation files. Anything after that is a “black box” and Chrome can no longer guess the breadcrumbs titles or pathnames. It does not know what is eligible for routing and what is not.
 
-![][image1]
-
 # Breadcrumbs API
 
 ## Chrome vs. module breadcrumbs
@@ -33,14 +31,28 @@ The chrome breadcrumbs will stay the same. There will be two separate data sets 
 
 **Example:**
 ```tsx
+import { useRemoteHook } from '@scalprum/react-core';
+
 // Route: /systems
-useBreadcrumbs('/insights/advisor/systems', 'Systems');
+useRemoteHook({
+  scope: 'chrome',
+  module: './breadcrumbs/useBreadcrumbs',
+  args: ['/insights/advisor/systems', 'Systems'],
+});
 
 // Route: /systems/:id
-useBreadcrumbs(`/insights/advisor/systems/${id}`, systemName);
+useRemoteHook({
+  scope: 'chrome',
+  module: './breadcrumbs/useBreadcrumbs',
+  args: [`/insights/advisor/systems/${id}`, systemName],
+});
 
 // Route: /systems/:id/details
-useBreadcrumbs(`/insights/advisor/systems/${id}/details`, 'Details');
+useRemoteHook({
+  scope: 'chrome',
+  module: './breadcrumbs/useBreadcrumbs',
+  args: [`/insights/advisor/systems/${id}/details`, 'Details'],
+});
 ```
 
 ### Use `useReplaceBreadcrumbs` (Replace Mode)
@@ -53,6 +65,8 @@ useBreadcrumbs(`/insights/advisor/systems/${id}/details`, 'Details');
 
 **Example:**
 ```tsx
+import { useRemoteHook } from '@scalprum/react-core';
+
 // Build entire breadcrumb array from entity relationships
 const breadcrumbs = useMemo(() => {
   const crumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
@@ -68,7 +82,11 @@ const breadcrumbs = useMemo(() => {
   return crumbs;
 }, [systemId, systemName, entityPath, entityTitle]);
 
-useReplaceBreadcrumbs(breadcrumbs);
+useRemoteHook({
+  scope: 'chrome',
+  module: './breadcrumbs/useReplaceBreadcrumbs',
+  args: [breadcrumbs],
+});
 ```
 
 **Rule of thumb:** If each route knows its own title → use `useBreadcrumbs`. If you compute the full array → use `useReplaceBreadcrumbs`.
@@ -171,7 +189,7 @@ There will be a single point of management in an application. It does not mean i
 
 The source code API example:
 
-| declare function replaceBreadcrumbs(pathname: string, title: string): void; //Replace the entire node array replaceBreadcrumbs(\[   { pathname: ‘/application/path’, title: ‘A parent title’ },   { pathname: ‘/application/path/leaf’, title: ‘A leaf title’ }, \]); |
+| declare function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void; //Replace the entire node array where AppBreadcrumbSegment = { pathname: string; title: string; options?: NavigateOptions } useReplaceBreadcrumbs(\[   { pathname: ‘/application/path’, title: ‘A parent title’ },   { pathname: ‘/application/path/leaf’, title: ‘A leaf title’ }, \]); |
 | :---- |
 
 ## Consumption Constraint
