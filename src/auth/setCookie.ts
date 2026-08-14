@@ -2,13 +2,21 @@ import logger from './logger';
 
 const log = logger('auth/setCookie.ts');
 
-export function setCookieWrapper(str: string) {
+export function setCookieWrapper(str: string): void {
   window.document.cookie = str;
 }
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
-export const COOKIE_PATHS = ['/wss', '/ws', '/api/tasks/v1', '/api/automation-hub', '/api/remediations/v1', '/api/edge/v1', '/api/crc-pdf-generator/v2/create'];
+export const COOKIE_PATHS = Object.freeze([
+  '/wss',
+  '/ws',
+  '/api/tasks/v1',
+  '/api/automation-hub',
+  '/api/remediations/v1',
+  '/api/edge/v1',
+  '/api/crc-pdf-generator/v2/create',
+]);
 
 function getCookieExpires(exp: number) {
   // we want the cookie to expire at the same time as the JWT session
@@ -22,7 +30,7 @@ export function buildCookieString(cookieName: string, token: string, path: strin
   return `${cookieName}=${token};path=${path};secure=true;SameSite=Lax;expires=${getCookieExpires(expiresAt)}`;
 }
 
-export async function setCookie(token: string, expiresAt: number, writer: (str: string) => void = setCookieWrapper) {
+export async function setCookie(token: string, expiresAt: number, writer: (str: string) => void = setCookieWrapper): Promise<void> {
   log('Setting the cs_jwt cookie');
   if (token && token.length > 10) {
     const cookieName = DEFAULT_COOKIE_NAME;

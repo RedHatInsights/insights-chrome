@@ -1,4 +1,4 @@
-import { COOKIE_PATHS, buildCookieString, setCookie } from './setCookie';
+import { COOKIE_PATHS, buildCookieString, setCookie, setCookieWrapper } from './setCookie';
 
 describe('setCookie', () => {
   it('should call writer once for every COOKIE_PATHS entry with correct cookie string', async () => {
@@ -28,6 +28,13 @@ describe('setCookie', () => {
   });
 });
 
+describe('setCookieWrapper', () => {
+  it('should write the cookie string to document.cookie', () => {
+    setCookieWrapper('test_cookie=value;path=/');
+    expect(document.cookie).toContain('test_cookie=value');
+  });
+});
+
 describe('COOKIE_PATHS', () => {
   it('should contain all seven expected API paths', () => {
     expect(COOKIE_PATHS).toEqual([
@@ -39,6 +46,10 @@ describe('COOKIE_PATHS', () => {
       '/api/edge/v1',
       '/api/crc-pdf-generator/v2/create',
     ]);
+  });
+
+  it('should be immutable', () => {
+    expect(Object.isFrozen(COOKIE_PATHS)).toBe(true);
   });
 });
 
