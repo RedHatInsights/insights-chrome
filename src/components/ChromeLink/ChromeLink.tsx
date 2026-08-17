@@ -20,6 +20,9 @@ interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   currAppId?: string;
   target?: string;
   rel?: string;
+  state?: Record<string, unknown>;
+  replace?: boolean;
+  preventScrollReset?: boolean;
 }
 
 export interface LinkWrapperProps extends RefreshLinkProps {
@@ -28,7 +31,7 @@ export interface LinkWrapperProps extends RefreshLinkProps {
 }
 
 const LinkWrapper: React.FC<LinkWrapperProps> = memo(
-  ({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex, isExternal, ...props }) => {
+  ({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex, isExternal, state, replace, preventScrollReset, ...props }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const moduleRoutes = useAtomValue(moduleRoutesAtom);
     const triggerNavListener = useSetAtom(triggerNavListenersAtom);
@@ -109,6 +112,9 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(
         data-testid="router-link"
         onClick={onClick}
         to={href}
+        state={state}
+        replace={replace}
+        preventScrollReset={preventScrollReset}
         className={className}
         data-quickstart-id={quickStartHighlightId}
       >
@@ -122,7 +128,7 @@ LinkWrapper.displayName = 'MemoizedLinkWrapper';
 
 const basepath = document.baseURI;
 
-const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
+const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, state, replace, preventScrollReset, ...rest }: RefreshLinkProps) => rest;
 
 const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
   const { href, isExternal, onLinkClick, isBeta, ...rest } = cleanRefreshLinkProps(props);
