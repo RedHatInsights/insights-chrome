@@ -83,7 +83,13 @@ describe('GlobalFilterWrapper', () => {
   });
 
   it('should skip getUserPermissions when rbac.workspaces flag is enabled', async () => {
-    mockedUseFlag.mockReturnValue(true);
+    mockedUseFlag.mockImplementation((flag: string) => flag === 'platform.rbac.workspaces');
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should skip getUserPermissions when hbi.rbac-v2 flag is enabled', async () => {
+    mockedUseFlag.mockImplementation((flag: string) => flag === 'hbi.rbac-v2');
     render(<GlobalFilterWrapper />, { wrapper: Wrapper });
     await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
   });
