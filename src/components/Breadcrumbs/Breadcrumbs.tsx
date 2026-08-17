@@ -20,6 +20,7 @@ import {
   breadcrumbPathnameAtom,
   breadcrumbReplaceModeAtom,
 } from '../../state/atoms/breadcrumbAtom';
+import { normalizePathname } from '../../utils/breadcrumbUtils';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -65,13 +66,35 @@ const Breadcrumbs = () => {
     // Omit last chrome segment if:
     // 1. App breadcrumbs exist
     // 2. Last chrome segment is NOT the app mount pathname (design requirement)
+    // 3. App's first breadcrumb matches or extends the last chrome segment (prevents gaps)
     // appMountPathname is set by ChromeRoute from the route path (e.g., '/settings', '/insights/advisor')
     const lastChromeSegment = chromeSegments[chromeSegments.length - 1];
-    const chromeToUse =
-      chromeSegments.length > 1 && appMountPathname && lastChromeSegment?.href !== appMountPathname ? chromeSegments.slice(0, -1) : chromeSegments;
+    const firstAppSegment = finalAppSegments[0];
+
+    // Check if app's first breadcrumb matches or extends (immediate child only) the last Chrome segment
+    let shouldDropLastChromeSegment = false;
+    if (chromeSegments.length > 1 && appMountPathname && lastChromeSegment?.href !== appMountPathname && firstAppSegment && lastChromeSegment?.href) {
+      const normalizedAppFirst = normalizePathname(firstAppSegment.pathname);
+      const normalizedChromeLast = normalizePathname(lastChromeSegment.href);
+
+      // Exact match
+      if (normalizedAppFirst === normalizedChromeLast) {
+        shouldDropLastChromeSegment = true;
+      }
+      // Immediate child (extends by exactly one segment)
+      else if (normalizedAppFirst.startsWith(normalizedChromeLast + '/')) {
+        const remaining = normalizedAppFirst.slice(normalizedChromeLast.length + 1);
+        // Check if there's only one more segment (no additional slashes)
+        if (!remaining.includes('/')) {
+          shouldDropLastChromeSegment = true;
+        }
+      }
+    }
+
+    const chromeToUse = shouldDropLastChromeSegment ? chromeSegments.slice(0, -1) : chromeSegments;
 
     // Merge chrome + app segments
-    return [
+    const mergedSegments = [
       ...chromeToUse.map((seg) => ({
         title: seg.title,
         href: seg.href,
@@ -83,6 +106,30 @@ const Breadcrumbs = () => {
         options: seg.options,
       })),
     ];
+
+    // Warn about duplicate hrefs with conflicting titles in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      const hrefToTitles = new Map<string, string[]>();
+      for (const segment of mergedSegments) {
+        if (segment.href) {
+          const titles = hrefToTitles.get(segment.href) || [];
+          if (segment.title && !titles.includes(segment.title)) {
+            titles.push(segment.title);
+          }
+          hrefToTitles.set(segment.href, titles);
+        }
+      }
+
+      for (const [href, titles] of hrefToTitles.entries()) {
+        if (titles.length > 1) {
+          console.warn(
+            `[Breadcrumbs] Duplicate breadcrumb href "${href}" with conflicting titles: "${titles.join('", "')}" - app breadcrumb may conflict with Chrome segment`
+          );
+        }
+      }
+    }
+
+    return mergedSegments;
   }, [chromeSegments, isAppBreadcrumbsEnabled, isReplaceMode, appOverride, appSegments, appMountPathname]);
 
   const leafHref = segments[segments.length - 1]?.href;

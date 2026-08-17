@@ -259,4 +259,94 @@ describe('Breadcrumbs', () => {
     expect(screen.getByText('Advisor')).toBeInTheDocument();
     expect(screen.getByText('Systems')).toBeInTheDocument();
   });
+
+  it("should keep last Chrome segment when app's first breadcrumb doesn't match/extend it (gap prevention)", () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([
+      { title: 'Insights', href: '/insights' },
+      { title: 'Advisor', href: '/insights/advisor' },
+      { title: 'Systems', href: '/insights/advisor/systems' },
+    ]);
+
+    // App only provides deep leaf breadcrumb, skipping intermediate segments
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems/123/details', title: 'Details' }]);
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderBreadcrumbs();
+
+    // All Chrome segments should be kept (no gap)
+    // Expected: Insights > Advisor > Systems > Details
+    expect(screen.getByText('Insights')).toBeInTheDocument();
+    expect(screen.getByText('Advisor')).toBeInTheDocument();
+    expect(screen.getByText('Systems')).toBeInTheDocument();
+    expect(screen.getByText('Details')).toBeInTheDocument();
+  });
+
+  it("should drop last Chrome segment when app's first breadcrumb matches it (existing behavior preserved)", () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([
+      { title: 'Insights', href: '/insights' },
+      { title: 'Advisor', href: '/insights/advisor' },
+      { title: 'Systems', href: '/insights/advisor/systems' },
+    ]);
+
+    // App's first breadcrumb exactly matches last Chrome segment
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems', title: 'All Systems' }]);
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderBreadcrumbs();
+
+    // Last Chrome segment should be dropped and replaced with app's version
+    // Expected: Insights > Advisor > All Systems
+    expect(screen.getByText('Insights')).toBeInTheDocument();
+    expect(screen.getByText('Advisor')).toBeInTheDocument();
+    expect(screen.getByText('All Systems')).toBeInTheDocument();
+    expect(screen.queryByText('Systems')).not.toBeInTheDocument();
+  });
+
+  it("should drop last Chrome segment when app's first breadcrumb extends it (existing behavior preserved)", () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([
+      { title: 'Insights', href: '/insights' },
+      { title: 'Advisor', href: '/insights/advisor' },
+      { title: 'Systems', href: '/insights/advisor/systems' },
+    ]);
+
+    // App's first breadcrumb extends last Chrome segment
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }]);
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderBreadcrumbs();
+
+    // Last Chrome segment should be dropped
+    // Expected: Insights > Advisor > System 123
+    expect(screen.getByText('Insights')).toBeInTheDocument();
+    expect(screen.getByText('Advisor')).toBeInTheDocument();
+    expect(screen.getByText('System 123')).toBeInTheDocument();
+    expect(screen.queryByText('Systems')).not.toBeInTheDocument();
+  });
+
+  it('should warn about duplicate hrefs with conflicting titles in dev mode', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    mockUseBreadcrumbsLinks.mockReturnValue([
+      { title: 'Insights', href: '/insights' },
+      { title: 'Systems', href: '/insights/advisor/systems' },
+    ]);
+
+    // App provides breadcrumb with same href but different title
+    store.set(breadcrumbReplaceModeAtom, true);
+    store.set(appBreadcrumbOverrideAtom, [{ pathname: '/insights/advisor/systems', title: 'All Systems' }]);
+
+    renderBreadcrumbs();
+
+    // Should warn about duplicate href
+    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('[Breadcrumbs] Duplicate breadcrumb href "/insights/advisor/systems"'));
+
+    process.env.NODE_ENV = originalEnv;
+    jest.restoreAllMocks();
+  });
 });

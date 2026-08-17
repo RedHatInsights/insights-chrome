@@ -1,7 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
-import { type AppBreadcrumbSegment, appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import {
+  type AppBreadcrumbSegment,
+  appBreadcrumbOverrideAtom,
+  appBreadcrumbStorageAtom,
+  appMountPathnameAtom,
+  breadcrumbReplaceModeAtom,
+} from '../state/atoms/breadcrumbAtom';
+import { normalizePathname } from '../utils/breadcrumbUtils';
 
 /**
  * Hook for replacing the entire app breadcrumb array
@@ -35,6 +42,7 @@ function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
   const setReplaceMode = useSetAtom(breadcrumbReplaceModeAtom);
   const setOverride = useSetAtom(appBreadcrumbOverrideAtom);
   const storage = useAtomValue(appBreadcrumbStorageAtom);
+  const appMountPathname = useAtomValue(appMountPathnameAtom);
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
   const breadcrumbsRef = useRef(breadcrumbs);
 
@@ -59,6 +67,19 @@ function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
   useEffect(() => {
     if (!isEnabled) {
       return;
+    }
+
+    // Warn in dev mode if any breadcrumb pathname doesn't start with app mount pathname
+    if (process.env.NODE_ENV !== 'production' && appMountPathname) {
+      const normalizedAppMount = normalizePathname(appMountPathname);
+      for (const segment of breadcrumbsRef.current) {
+        const normalizedPathname = normalizePathname(segment.pathname);
+        if (!normalizedPathname.startsWith(normalizedAppMount)) {
+          console.warn(
+            `[useReplaceBreadcrumbs] breadcrumb pathname "${segment.pathname}" does not start with app mount pathname "${appMountPathname}" - breadcrumbs should be scoped to your app's routes`
+          );
+        }
+      }
     }
 
     // Warn in dev mode if incremental storage exists — it will be ignored

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import type { NavigateOptions } from 'react-router-dom';
-import { appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { appBreadcrumbStorageAtom, appMountPathnameAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 import { normalizePathname } from '../utils/breadcrumbUtils';
 
 /**
@@ -41,6 +41,7 @@ import { normalizePathname } from '../utils/breadcrumbUtils';
 function useBreadcrumbs(pathname: string, title: string, options?: NavigateOptions): void {
   const setStorage = useSetAtom(appBreadcrumbStorageAtom);
   const isReplaceMode = useAtomValue(breadcrumbReplaceModeAtom);
+  const appMountPathname = useAtomValue(appMountPathnameAtom);
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
   const optionsRef = useRef(options);
 
@@ -68,6 +69,17 @@ function useBreadcrumbs(pathname: string, title: string, options?: NavigateOptio
     if (!pathname || !pathname.startsWith('/')) {
       console.warn(`[useBreadcrumbs] Invalid pathname "${pathname}" - must be absolute path starting with /`);
       return;
+    }
+
+    // Warn in dev mode if pathname doesn't start with app mount pathname
+    if (process.env.NODE_ENV !== 'production' && appMountPathname) {
+      const normalizedPathname = normalizePathname(pathname);
+      const normalizedAppMount = normalizePathname(appMountPathname);
+      if (!normalizedPathname.startsWith(normalizedAppMount)) {
+        console.warn(
+          `[useBreadcrumbs] pathname "${pathname}" does not start with app mount pathname "${appMountPathname}" - breadcrumbs should be scoped to your app's routes`
+        );
+      }
     }
 
     // Warn in dev mode if replace mode is active — incremental entries will be ignored

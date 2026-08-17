@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
-import { appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { appBreadcrumbStorageAtom, appMountPathnameAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 import useBreadcrumbs from './useBreadcrumbs';
 import { useFlag } from '@unleash/proxy-client-react';
 import React from 'react';
@@ -185,6 +185,69 @@ describe('useBreadcrumbs', () => {
     expect(console.warn).not.toHaveBeenCalledWith(
       '[useBreadcrumbs] options.state contains circular references — using object reference for comparison. This may cause extra re-renders.'
     );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it("should warn when pathname doesn't start with app mount pathname in dev mode", () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Set app mount pathname
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderHook(() => useBreadcrumbs('/settings/rbac', 'RBAC'), { wrapper });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      '[useBreadcrumbs] pathname "/settings/rbac" does not start with app mount pathname "/insights/advisor" - breadcrumbs should be scoped to your app\'s routes'
+    );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn when pathname correctly starts with app mount pathname', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Set app mount pathname
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems'), { wrapper });
+
+    // Should not warn - pathname is correctly scoped
+    const warnCalls = (console.warn as jest.Mock).mock.calls.filter((call) => call[0].includes('does not start with app mount pathname'));
+    expect(warnCalls).toHaveLength(0);
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn when appMountPathnameAtom is undefined', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // appMountPathnameAtom is undefined by default in new store
+
+    renderHook(() => useBreadcrumbs('/insights/advisor/systems', 'Systems'), { wrapper });
+
+    // Should not warn - no app mount means no validation
+    const warnCalls = (console.warn as jest.Mock).mock.calls.filter((call) => call[0].includes('does not start with app mount pathname'));
+    expect(warnCalls).toHaveLength(0);
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn in production mode even if pathname invalid', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    // Set app mount pathname
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    renderHook(() => useBreadcrumbs('/settings/rbac', 'RBAC'), { wrapper });
+
+    // Should not warn in production
+    const warnCalls = (console.warn as jest.Mock).mock.calls.filter((call) => call[0].includes('does not start with app mount pathname'));
+    expect(warnCalls).toHaveLength(0);
 
     process.env.NODE_ENV = originalEnv;
   });

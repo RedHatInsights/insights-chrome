@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
-import { appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, appMountPathnameAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
 import useReplaceBreadcrumbs from './useReplaceBreadcrumbs';
 import { useFlag } from '@unleash/proxy-client-react';
 import React from 'react';
@@ -225,6 +225,45 @@ describe('useReplaceBreadcrumbs', () => {
     expect(console.warn).not.toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] breadcrumbs array contains circular references — using object reference for comparison. This may cause extra re-renders.'
     );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it("should warn when any breadcrumb pathname doesn't start with app mount pathname in dev mode", () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Set app mount pathname
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    const breadcrumbs = [{ pathname: '/settings/rbac', title: 'RBAC' }];
+
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      '[useReplaceBreadcrumbs] breadcrumb pathname "/settings/rbac" does not start with app mount pathname "/insights/advisor" - breadcrumbs should be scoped to your app\'s routes'
+    );
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('should not warn when all pathnames correctly start with app mount pathname', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
+    // Set app mount pathname
+    store.set(appMountPathnameAtom, '/insights/advisor');
+
+    const breadcrumbs = [
+      { pathname: '/insights/advisor/systems', title: 'Systems' },
+      { pathname: '/insights/advisor/systems/123', title: 'System 123' },
+    ];
+
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+
+    // Should not warn - all pathnames are correctly scoped
+    const warnCalls = (console.warn as jest.Mock).mock.calls.filter((call) => call[0].includes('does not start with app mount pathname'));
+    expect(warnCalls).toHaveLength(0);
 
     process.env.NODE_ENV = originalEnv;
   });
