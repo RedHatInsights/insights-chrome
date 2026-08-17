@@ -76,6 +76,8 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './analytics/intercom/useOpenShiftIntercomStore': resolve(__dirname, '../src/state/stores/openShiftIntercomStore.ts'),
         './theme/useDarkModeStore': resolve(__dirname, '../src/state/stores/darkModeStore.ts'),
         './serviceHealth/useDegradedState': resolve(__dirname, '../src/hooks/useDegradedState.ts'),
+        './breadcrumbs/useBreadcrumbs': resolve(__dirname, '../src/hooks/useBreadcrumbs.ts'),
+        './breadcrumbs/useReplaceBreadcrumbs': resolve(__dirname, '../src/hooks/useReplaceBreadcrumbs.ts'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
