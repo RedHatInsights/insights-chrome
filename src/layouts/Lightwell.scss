@@ -2,11 +2,19 @@
 
 // At xl+ (≥1200px), PF6 Page switches to a 2-column sidebar+main grid
 // and the masthead uses CSS subgrid. Lightwell has no sidebar, so force
-// single-column layout to prevent the broken 2-column grid.
+// single-column layout with a dedicated "subnav" row to keep the horizontal
+// navigation outside the page card.
+//
+// The --pf-v6-c-page--*--GridArea variable overrides are critical: without
+// them, the drawer references a "sidebar" grid area that doesn't exist in
+// our 1-column template, causing the browser to create implicit columns.
 @media (min-width: $pf-v6-global--breakpoint--xl) {
   .pf-v6-c-page.chr-c-page--lightwell {
-    grid-template-areas: 'header' 'main';
+    grid-template-areas: 'header' 'subnav' 'main';
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    --pf-v6-c-page--masthead--main-container--GridArea: main;
+    --pf-v6-c-page__main-container--GridArea: main;
 
     > .pf-v6-c-masthead {
       // Prevent subgrid — keep inline masthead layout

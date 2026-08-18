@@ -16,6 +16,7 @@ import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import LightwellNavigation from '../components/Navigation/LightwellNavigation';
+import { withHorizontalSubnav } from './layoutUtils';
 import './Lightwell.scss';
 
 export type LightwellProps = {
@@ -77,7 +78,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         className="chr-c-page--lightwell"
         sidebar={null}
         onPageResize={null}
-        masthead={
+        masthead={withHorizontalSubnav(
           <Masthead className="chr-c-masthead" display={{ default: 'inline' }}>
             <Header
               breadcrumbsProps={{ hideNav: true }}
@@ -92,9 +93,9 @@ const Lightwell = ({ Footer }: LightwellProps) => {
                 },
               }}
             />
-          </Masthead>
-        }
-        horizontalSubnav={<LightwellNavigation />}
+          </Masthead>,
+          <LightwellNavigation />
+        )}
         {...(isDrawerEnabled && {
           onNotificationDrawerExpand: focusDrawer,
           notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,

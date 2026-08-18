@@ -56,6 +56,12 @@ aside {
     display: none;
 }
 
+// Shared subnav grid placement — any layout that adds a "subnav" row to its
+// grid-template-areas gets outside-card horizontal navigation automatically.
+.chr-c-page-subnav {
+  grid-area: subnav;
+}
+
 // Page temp styles
 .pf-v6-c-page {
   --pf-m-emphasis--FontSize: var(--pf-t--global--font--size--xl);
