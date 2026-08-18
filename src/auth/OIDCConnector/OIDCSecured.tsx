@@ -4,14 +4,14 @@ import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
-import { ITLess, generateRoutesList } from '../../utils/common';
+import { generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import logger from '../logger';
-import { login, logout } from './utils';
+import { getBaseScopes, login, logout } from './utils';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
@@ -144,10 +144,14 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       // full-page redirect when the SSO session is still valid.
       // Request the same base + module scopes that login() would use so the
       // refreshed token is not downgraded to the default "openid" scope.
-      const baseScopes = ITLess() ? ['openid'] : ['openid', 'api.console', 'api.ask_red_hat'];
-      const silentScope = Array.from(new Set([...baseScopes, ...(initialModuleConfig?.ssoScopes || [])])).join(' ');
+      const silentScope = Array.from(new Set([...getBaseScopes(), ...(initialModuleConfig?.ssoScopes || [])])).join(' ');
       try {
-        await auth.signinSilent({ scope: silentScope });
+        const user = await auth.signinSilent({ scope: silentScope });
+        if (!user) {
+          // signinSilent can resolve null/undefined without throwing when the
+          // SSO session is gone — treat as failure and redirect to login.
+          login(auth, initialModuleConfig?.ssoScopes);
+        }
       } catch {
         login(auth, initialModuleConfig?.ssoScopes);
       }
@@ -230,11 +234,19 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     if (auth.error && !recoveryAttemptedRef.current) {
       recoveryAttemptedRef.current = true;
       log(`Auth error detected, attempting silent recovery: ${auth.error.message}`);
-      const recoveryScope = ITLess() ? 'openid' : 'openid api.console api.ask_red_hat';
-      auth.signinSilent({ scope: recoveryScope }).catch(() => {
-        log('Silent recovery failed, redirecting to SSO');
-        login(auth);
-      });
+      const recoveryScope = getBaseScopes().join(' ');
+      auth
+        .signinSilent({ scope: recoveryScope })
+        .then((user) => {
+          if (!user) {
+            log('Silent recovery returned no user, redirecting to SSO');
+            login(auth);
+          }
+        })
+        .catch(() => {
+          log('Silent recovery failed, redirecting to SSO');
+          login(auth);
+        });
     }
 
     if (!auth.error) {

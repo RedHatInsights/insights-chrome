@@ -6,6 +6,7 @@ import { OIDCSecured } from './OIDCSecured';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
 import OIDCUserManagerErrorBoundary from './OIDCUserManagerErrorBoundary';
+import { getBaseScopes } from './utils';
 
 const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [state, setState] = useState<
@@ -62,7 +63,11 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         // call that does not pass an explicit scope override.  Without this,
         // oidc-client-ts falls back to "openid" only, which can downgrade
         // tokens when the SSO server honours the requested scope strictly.
-        scope: ITLess() ? 'openid' : 'openid api.console api.ask_red_hat',
+        scope: getBaseScopes().join(' '),
+        // Keep silent auth iframe timeout short (default is 10s) so cold loads
+        // without an SSO session are not visibly delayed before falling back to
+        // a full signinRedirect.
+        silentRequestTimeoutInSeconds: 2,
         response_type: 'code',
         response_mode: 'fragment',
         userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),

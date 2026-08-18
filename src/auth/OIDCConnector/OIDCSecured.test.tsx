@@ -23,6 +23,7 @@ jest.mock('react-oidc-context', () => ({
 jest.mock('./utils', () => ({
   login: jest.fn(),
   logout: jest.fn(),
+  getBaseScopes: jest.fn(() => ['openid', 'api.console', 'api.ask_red_hat']),
 }));
 
 jest.mock('../../utils/common', () => ({
@@ -111,6 +112,7 @@ describe('OIDCSecured', () => {
 
   it('renders placeholder instead of throwing when auth.error is set', async () => {
     const { useAuth } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
     const signinSilent = jest.fn().mockResolvedValue(undefined);
     mockAuth.error = new Error('Silent renew failed');
     mockAuth.signinSilent = signinSilent;
@@ -128,6 +130,11 @@ describe('OIDCSecured', () => {
     // Should attempt silent recovery with base scopes
     await waitFor(() => {
       expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: 'openid api.console api.ask_red_hat' }));
+    });
+
+    // signinSilent resolved undefined → must fall back to login redirect
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith(expect.objectContaining({ error: mockAuth.error }));
     });
   });
 
@@ -171,11 +178,12 @@ describe('OIDCSecured', () => {
     });
   });
 
-  it('attempts signinSilent before login redirect when not authenticated', async () => {
+  it('falls back to login when signinSilent resolves null/undefined (no SSO session)', async () => {
     const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
     const { login: mockLogin } = jest.requireMock('./utils');
     hasAuthParams.mockReturnValue(false);
 
+    // signinSilent resolves undefined when there is no SSO session (no throw)
     const signinSilent = jest.fn().mockResolvedValue(undefined);
     mockAuth.isAuthenticated = false;
     mockAuth.isLoading = false;
@@ -190,12 +198,35 @@ describe('OIDCSecured', () => {
     );
 
     await waitFor(() => {
-      // Should try signinSilent first (in-memory storage loses state on refresh)
-      // Must request the same base scopes as login() to avoid token downgrade
+      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
+      // Null/undefined resolution must trigger login redirect
+      expect(mockLogin).toHaveBeenCalled();
+    });
+  });
+
+  it('does not redirect when signinSilent returns a valid user', async () => {
+    const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    hasAuthParams.mockReturnValue(false);
+
+    const signinSilent = jest.fn().mockResolvedValue({ access_token: 'tok', profile: {} });
+    mockAuth.isAuthenticated = false;
+    mockAuth.isLoading = false;
+    mockAuth.activeNavigator = undefined;
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
       expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
     });
 
-    // If signinSilent succeeds, login redirect should NOT be called
+    // Valid user returned → no login redirect
     expect(mockLogin).not.toHaveBeenCalled();
   });
 
