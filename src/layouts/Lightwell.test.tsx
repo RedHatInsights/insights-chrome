@@ -37,7 +37,7 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: (flagName: string) => mockUseFlag(flagName),
 }));
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
@@ -79,7 +79,7 @@ const mockInternalChromeContextValue = {
   },
 };
 
-const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
+const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRoute = '/lightwell') => {
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
@@ -93,7 +93,7 @@ const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
   return {
     store,
     ...render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[initialRoute]}>
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -200,5 +200,50 @@ describe('Lightwell', () => {
     // Verify the Breadcrumbs component renders (uses established breadcrumbs behavior)
     const breadcrumb = container.querySelector('.chr-c-breadcrumbs');
     expect(breadcrumb).toBeTruthy();
+  });
+
+  describe('horizontal navigation', () => {
+    it('should render horizontal subnav with three navigation items', () => {
+      const { container } = renderLightwell();
+      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
+      expect(nav).toBeTruthy();
+      const navItems = nav?.querySelectorAll('.pf-v6-c-nav__link');
+      expect(navItems?.length).toBe(3);
+    });
+
+    it('should render Repositories, Lens, and Beacon links', () => {
+      renderLightwell();
+      expect(screen.getByRole('link', { name: 'Repositories' })).toBeTruthy();
+      expect(screen.getByRole('link', { name: 'Lens' })).toBeTruthy();
+      expect(screen.getByRole('link', { name: 'Beacon' })).toBeTruthy();
+    });
+
+    it('should mark Repositories as active on /lightwell', () => {
+      const { container } = renderLightwell({}, '/lightwell');
+      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
+      const activeItem = nav?.querySelector('.pf-m-current');
+      expect(activeItem?.textContent).toBe('Repositories');
+    });
+
+    it('should mark Lens as active on /lightwell/lens', () => {
+      const { container } = renderLightwell({}, '/lightwell/lens');
+      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
+      const activeItem = nav?.querySelector('.pf-m-current');
+      expect(activeItem?.textContent).toBe('Lens');
+    });
+
+    it('should mark Beacon as active on /lightwell/beacon', () => {
+      const { container } = renderLightwell({}, '/lightwell/beacon');
+      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
+      const activeItem = nav?.querySelector('.pf-m-current');
+      expect(activeItem?.textContent).toBe('Beacon');
+    });
+
+    it('should mark Repositories as active on unknown Lightwell subroute', () => {
+      const { container } = renderLightwell({}, '/lightwell/unknown');
+      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
+      const activeItem = nav?.querySelector('.pf-m-current');
+      expect(activeItem?.textContent).toBe('Repositories');
+    });
   });
 });
