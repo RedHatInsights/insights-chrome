@@ -75,7 +75,19 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         onPageResize={null}
         masthead={
           <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
-            <Header breadcrumbsProps={{ hideNav: true }} toolbarConfig={{ hideNotifications: true, hideHelp: true, hideSettings: true }} />
+            <Header
+              breadcrumbsProps={{ hideNav: true }}
+              toolbarConfig={{
+                hideNotifications: true,
+                hideHelp: true,
+                settingsGroups: {
+                  showColorScheme: true,
+                },
+                userMenu: {
+                  showLogout: true,
+                },
+              }}
+            />
           </Masthead>
         }
         {...(isDrawerEnabled && {
