@@ -61,12 +61,7 @@ const LightwellNavigation = () => {
       <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
         <NavList>
           {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
-            <NavItem
-              key={path}
-              isActive={activeNav === path}
-              to={path}
-              component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}
-            >
+            <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
               {label}
             </NavItem>
           ))}
