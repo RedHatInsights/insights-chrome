@@ -135,14 +135,14 @@
     "@lit/react": "^1.0.8",
     "@openshift/dynamic-plugin-sdk": "^9.1.0",
     "@orama/orama": "^3.1.18",
-    "@patternfly/patternfly": "^6.5.2",
-    "@patternfly/quickstarts": "^6.5.0",
-    "@patternfly/react-charts": "^8.5.0",
-    "@patternfly/react-core": "^6.5.0",
-    "@patternfly/react-drag-drop": "^6.5.0",
-    "@patternfly/react-icons": "^6.5.0",
-    "@patternfly/react-table": "^6.5.0",
-    "@patternfly/react-tokens": "^6.5.0",
+    "@patternfly/patternfly": "6.6.0-prerelease.35",
+    "@patternfly/quickstarts": "6.6.0-prerelease.1",
+    "@patternfly/react-charts": "8.6.1-prerelease.0",
+    "@patternfly/react-core": "6.6.1-prerelease.2",
+    "@patternfly/react-drag-drop": "6.5.0",
+    "@patternfly/react-icons": "6.6.1-prerelease.0",
+    "@patternfly/react-table": "6.6.1-prerelease.2",
+    "@patternfly/react-tokens": "6.6.1-prerelease.0",
     "@redhat-cloud-services/chrome": "^2.4.2",
     "@redhat-cloud-services/entitlements-client": "^4.0.17",
     "@redhat-cloud-services/frontend-components": "^7.10.4",
@@ -192,5 +192,13 @@
   },
   "nyc": {
     "report-dir": "cypress-coverage"
+  },
+  "overrides": {
+    "@patternfly/patternfly": "6.6.0-prerelease.35",
+    "@patternfly/react-core": "6.6.1-prerelease.2",
+    "@patternfly/react-icons": "6.6.1-prerelease.0",
+    "@patternfly/react-table": "6.6.1-prerelease.2",
+    "@patternfly/react-charts": "8.6.1-prerelease.0",
+    "@patternfly/react-tokens": "6.6.1-prerelease.0"
   }
 }
