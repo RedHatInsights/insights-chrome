@@ -27,7 +27,7 @@ const getActiveLightwellNav = (pathname: string): string => {
  * horizontalSubnav prop, which places it inside the main container
  * and ensures proper alignment at all viewport widths.
  */
-const LightwellNavigation = () => {
+const LightwellNavigation = (): React.JSX.Element => {
   const { pathname } = useLocation();
   const activeNav = getActiveLightwellNav(pathname);
 
