@@ -93,4 +93,50 @@ describe('fetchPermissions', () => {
 
     unleashClientExists.mockReturnValue(false);
   });
+
+  it('should skip inventory RBAC call when hbi.rbac-v2 flag is enabled', async () => {
+    unleashClientExists.mockReturnValue(true);
+    getUnleashClient.mockReturnValue({
+      isEnabled: jest.fn((flag) => flag === 'hbi.rbac-v2'),
+    });
+
+    const result = await fetchPermissions('uSeRtOkEn', 'inventory', true);
+
+    expect(result).toEqual([]);
+    expect(global.rbacApiCalled).toEqual(0);
+
+    unleashClientExists.mockReturnValue(false);
+  });
+
+  it('should invalidate cached inventory results when hbi.rbac-v2 becomes enabled', async () => {
+    // First call caches inventory permissions with flag disabled
+    const result1 = await fetchPermissions('uSeRtOkEn', 'inventory');
+    expect(result1).toEqual(mockedRbac.data);
+    expect(global.rbacApiCalled).toEqual(1);
+
+    // Enable hbi.rbac-v2 flag
+    unleashClientExists.mockReturnValue(true);
+    getUnleashClient.mockReturnValue({
+      isEnabled: jest.fn((flag) => flag === 'hbi.rbac-v2'),
+    });
+
+    // Second call should return empty despite cache
+    const result2 = await fetchPermissions('uSeRtOkEn', 'inventory');
+    expect(result2).toEqual([]);
+
+    unleashClientExists.mockReturnValue(false);
+  });
+
+  it('should still allow non-inventory RBAC calls when only hbi.rbac-v2 is enabled', async () => {
+    unleashClientExists.mockReturnValue(true);
+    getUnleashClient.mockReturnValue({
+      isEnabled: jest.fn((flag) => flag === 'hbi.rbac-v2'),
+    });
+
+    await fetchPermissions('uSeRtOkEn', 'sources', true);
+
+    expect(global.rbacApiCalled).toEqual(1);
+
+    unleashClientExists.mockReturnValue(false);
+  });
 });
