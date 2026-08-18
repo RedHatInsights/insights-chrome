@@ -1,0 +1,16 @@
+@use '~@patternfly/patternfly/sass-utilities/scss-variables' as *;
+
+// At xl+ (≥1200px), PF6 Page switches to a 2-column sidebar+main grid
+// and the masthead uses CSS subgrid. Lightwell has no sidebar, so force
+// single-column layout to prevent the broken 2-column grid.
+@media (min-width: $pf-v6-global--breakpoint--xl) {
+  .pf-v6-c-page.chr-c-page--lightwell {
+    grid-template-areas: 'header' 'main';
+    grid-template-columns: 1fr;
+
+    > .pf-v6-c-masthead {
+      // Prevent subgrid — keep inline masthead layout
+      --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: min-content 1fr;
+    }
+  }
+}

@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { LIGHTWELL_PATH } from '../../utils/common';
-import './LightwellNavigation.scss';
 
 // TODO: RHCLOUD-50417 — Temporary hardcoded horizontal navigation for Lightwell.
 // Remove once the generic flat navigation feature is built.
@@ -24,50 +23,24 @@ const getActiveLightwellNav = (pathname: string): string => {
 };
 
 /**
- * Lightwell-specific horizontal navigation rendered between the masthead
- * and the felt-theme white card container.
- *
- * PF6 Page uses CSS grid with named areas "header" and "main". There is no
- * built-in slot between them. This component injects a "subnav" area into
- * the grid template so the nav renders in the gray page background, outside
- * the white card container. Cleanup restores the original grid on unmount.
+ * Lightwell-specific horizontal navigation rendered via PF6 Page's
+ * horizontalSubnav prop, which places it inside the main container
+ * and ensures proper alignment at all viewport widths.
  */
 const LightwellNavigation = () => {
   const { pathname } = useLocation();
   const activeNav = getActiveLightwellNav(pathname);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = wrapperRef.current;
-    if (!el) return;
-    const page = el.closest('.pf-v6-c-page') as HTMLElement | null;
-    if (!page) return;
-
-    const origAreas = page.style.gridTemplateAreas;
-    const origRows = page.style.gridTemplateRows;
-
-    // Insert a "subnav" named area between "header" and "main"
-    page.style.gridTemplateAreas = '"header" "subnav" "main"';
-    page.style.gridTemplateRows = 'auto auto 1fr';
-
-    return () => {
-      page.style.gridTemplateAreas = origAreas;
-      page.style.gridTemplateRows = origRows;
-    };
-  }, []);
 
   return (
-    <div ref={wrapperRef} className="chr-c-lightwell-subnav">
-      <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
-        <NavList>
-          {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
-            <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
-              {label}
-            </NavItem>
-          ))}
-        </NavList>
-      </Nav>
-    </div>
+    <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
+      <NavList>
+        {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
+          <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
+            {label}
+          </NavItem>
+        ))}
+      </NavList>
+    </Nav>
   );
 };
 
