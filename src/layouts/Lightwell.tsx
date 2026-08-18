@@ -36,8 +36,8 @@ const LIGHTWELL_NAV_ITEMS = [
  * Checks specific sub-routes first; falls back to Repositories (root).
  */
 const getActiveLightwellNav = (pathname: string): string => {
-  if (pathname.startsWith(`${LIGHTWELL_PATH}/lens`)) return `${LIGHTWELL_PATH}/lens`;
-  if (pathname.startsWith(`${LIGHTWELL_PATH}/beacon`)) return `${LIGHTWELL_PATH}/beacon`;
+  if (pathname === `${LIGHTWELL_PATH}/lens` || pathname.startsWith(`${LIGHTWELL_PATH}/lens/`)) return `${LIGHTWELL_PATH}/lens`;
+  if (pathname === `${LIGHTWELL_PATH}/beacon` || pathname.startsWith(`${LIGHTWELL_PATH}/beacon/`)) return `${LIGHTWELL_PATH}/beacon`;
   return LIGHTWELL_PATH;
 };
 

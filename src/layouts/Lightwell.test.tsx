@@ -37,7 +37,7 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: (flagName: string) => mockUseFlag(flagName),
 }));
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
@@ -204,46 +204,51 @@ describe('Lightwell', () => {
 
   describe('horizontal navigation', () => {
     it('should render horizontal subnav with three navigation items', () => {
-      const { container } = renderLightwell();
-      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
+      renderLightwell();
+      const nav = screen.getByRole('navigation', { name: 'Lightwell navigation' });
       expect(nav).toBeTruthy();
-      const navItems = nav?.querySelectorAll('.pf-v6-c-nav__link');
-      expect(navItems?.length).toBe(3);
+      const links = within(nav).getAllByRole('link');
+      expect(links).toHaveLength(3);
     });
 
     it('should render Repositories, Lens, and Beacon links', () => {
       renderLightwell();
-      expect(screen.getByRole('link', { name: 'Repositories' })).toBeTruthy();
-      expect(screen.getByRole('link', { name: 'Lens' })).toBeTruthy();
-      expect(screen.getByRole('link', { name: 'Beacon' })).toBeTruthy();
+      const repoLink = screen.getByRole('link', { name: 'Repositories' });
+      const lensLink = screen.getByRole('link', { name: 'Lens' });
+      const beaconLink = screen.getByRole('link', { name: 'Beacon' });
+      expect(repoLink).toHaveAttribute('href', '/lightwell');
+      expect(lensLink).toHaveAttribute('href', '/lightwell/lens');
+      expect(beaconLink).toHaveAttribute('href', '/lightwell/beacon');
     });
 
     it('should mark Repositories as active on /lightwell', () => {
-      const { container } = renderLightwell({}, '/lightwell');
-      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
-      const activeItem = nav?.querySelector('.pf-m-current');
-      expect(activeItem?.textContent).toBe('Repositories');
+      renderLightwell({}, '/lightwell');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
     });
 
     it('should mark Lens as active on /lightwell/lens', () => {
-      const { container } = renderLightwell({}, '/lightwell/lens');
-      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
-      const activeItem = nav?.querySelector('.pf-m-current');
-      expect(activeItem?.textContent).toBe('Lens');
+      renderLightwell({}, '/lightwell/lens');
+      expect(screen.getByRole('link', { name: 'Lens' })).toHaveAttribute('aria-current', 'page');
     });
 
     it('should mark Beacon as active on /lightwell/beacon', () => {
-      const { container } = renderLightwell({}, '/lightwell/beacon');
-      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
-      const activeItem = nav?.querySelector('.pf-m-current');
-      expect(activeItem?.textContent).toBe('Beacon');
+      renderLightwell({}, '/lightwell/beacon');
+      expect(screen.getByRole('link', { name: 'Beacon' })).toHaveAttribute('aria-current', 'page');
     });
 
     it('should mark Repositories as active on unknown Lightwell subroute', () => {
-      const { container } = renderLightwell({}, '/lightwell/unknown');
-      const nav = container.querySelector('nav[aria-label="Lightwell navigation"]');
-      const activeItem = nav?.querySelector('.pf-m-current');
-      expect(activeItem?.textContent).toBe('Repositories');
+      renderLightwell({}, '/lightwell/unknown');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should not match /lightwell/lens-preview as Lens', () => {
+      renderLightwell({}, '/lightwell/lens-preview');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should not match /lightwell/beacon-preview as Beacon', () => {
+      renderLightwell({}, '/lightwell/beacon-preview');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
     });
   });
 });
