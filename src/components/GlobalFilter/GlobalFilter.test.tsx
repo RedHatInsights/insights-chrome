@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider, createStore } from 'jotai';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import GlobalFilterWrapper from './GlobalFilter';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
@@ -11,6 +11,7 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: false })),
 }));
 
 jest.mock('../../utils/common', () => ({
@@ -38,6 +39,7 @@ jest.mock('@redhat-cloud-services/frontend-components/FilterHooks', () => ({
 }));
 
 const mockedUseFlag = useFlag as jest.Mock;
+const mockedUseFlagsStatus = useFlagsStatus as jest.Mock;
 
 const mockGetUserPermissions = jest.fn(() => Promise.resolve([{ permission: 'inventory:hosts:read' }]));
 
@@ -92,6 +94,28 @@ describe('GlobalFilterWrapper', () => {
     mockedUseFlag.mockImplementation((flag: string) => flag === 'hbi.rbac-v2');
     render(<GlobalFilterWrapper />, { wrapper: Wrapper });
     await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should not call getUserPermissions before feature flags are ready', async () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: false });
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should not call getUserPermissions when flags fail to load', async () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: true });
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should call getUserPermissions after feature flags become ready', async () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: false });
+    const { rerender } = render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: false });
+    rerender(<GlobalFilterWrapper />);
+    await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
   });
 
   it('should hide the global filter when platform.chrome.hide.global-filter is enabled', async () => {
