@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatternFly 6.6.x Prerelease Compatibility Report — insights-chrome</title>
+<style>
+  :root { --pf-red: #c9190b; --pf-green: #3e8635; --pf-blue: #06c; --pf-gold: #f0ab00; --pf-bg: #f0f0f0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Red Hat Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #151515; background: #fff; max-width: 960px; margin: 0 auto; padding: 2rem; }
+  h1 { font-size: 1.75rem; border-bottom: 3px solid var(--pf-blue); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+  h2 { font-size: 1.35rem; margin-top: 2rem; margin-bottom: 0.75rem; color: #151515; }
+  h3 { font-size: 1.1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  p, li { margin-bottom: 0.5rem; }
+  .meta { color: #6a6e73; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .summary-card { background: var(--pf-bg); border-radius: 8px; padding: 1.25rem; text-align: center; }
+  .summary-card .number { font-size: 2rem; font-weight: 700; }
+  .summary-card .label { font-size: 0.85rem; color: #6a6e73; }
+  .pass { color: var(--pf-green); }
+  .fail { color: var(--pf-red); }
+  .warn { color: var(--pf-gold); }
+  .skip { color: #6a6e73; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid #d2d2d2; }
+  th { background: var(--pf-bg); font-weight: 600; }
+  tr:hover { background: #f9f9f9; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.85rem; }
+  pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.82rem; line-height: 1.5; margin: 0.75rem 0; }
+  pre .added { color: #6a9955; }
+  pre .removed { color: #f48771; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  .badge-pass { background: #f2faf2; color: var(--pf-green); border: 1px solid var(--pf-green); }
+  .badge-fail { background: #fff5f4; color: var(--pf-red); border: 1px solid var(--pf-red); }
+  .badge-skip { background: #f5f5f5; color: #6a6e73; border: 1px solid #6a6e73; }
+  .badge-warn { background: #fffbec; color: #795600; border: 1px solid var(--pf-gold); }
+  .callout { border-left: 4px solid var(--pf-blue); background: #f0f7ff; padding: 0.75rem 1rem; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+  .callout.warn { border-color: var(--pf-gold); background: #fffbec; }
+  .callout.pass { border-color: var(--pf-green); background: #f2faf2; }
+  img.snapshot { max-width: 100%; border: 1px solid #d2d2d2; border-radius: 6px; margin-top: 0.5rem; }
+  details { border: 1px solid #d2d2d2; border-radius: 6px; margin: 0.75rem 0; }
+  details summary { padding: 0.6rem 1rem; cursor: pointer; font-weight: 600; background: var(--pf-bg); border-radius: 6px; }
+  details[open] summary { border-radius: 6px 6px 0 0; }
+  details .details-body { padding: 1rem; }
+  .verdict { font-size: 1.1rem; font-weight: 700; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; }
+  .verdict.compatible { background: #f2faf2; border: 2px solid var(--pf-green); color: var(--pf-green); }
+</style>
+</head>
+<body>
+
+<h1>PatternFly 6.6.x Prerelease Compatibility Report</h1>
+<p class="meta">
+  Repository: <strong>RedHatInsights/insights-chrome</strong> &nbsp;·&nbsp;
+  Branch: <code>chore/pf-6-6-prerelease-testing</code> &nbsp;·&nbsp;
+  Date: <strong>2026-08-18</strong> &nbsp;·&nbsp;
+  Tester: Evan Wilkins
+</p>
+
+<div class="verdict compatible">✅ Compatible — no breaking changes found</div>
+
+<h2>Phase Summary</h2>
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="number pass">✓</div>
+    <div class="label">Lint<br>0 errors · 134 warnings</div>
+  </div>
+  <div class="summary-card">
+    <div class="number pass">✓</div>
+    <div class="label">Build<br>No TS errors</div>
+  </div>
+  <div class="summary-card">
+    <div class="number pass">✓</div>
+    <div class="label">Jest<br>906/906 passing</div>
+  </div>
+  <div class="summary-card">
+    <div class="number pass">✓</div>
+    <div class="label">Cypress<br>171/171 passing</div>
+  </div>
+  <div class="summary-card">
+    <div class="number skip">—</div>
+    <div class="label">Visual (manual)<br>Requires VPN</div>
+  </div>
+</div>
+
+<h2>Version Table</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Package</th>
+      <th>Before</th>
+      <th>After (prerelease)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>@patternfly/patternfly</code></td>
+      <td><code>6.5.2</code></td>
+      <td><code>6.6.0-prerelease.35</code></td>
+    </tr>
+    <tr>
+      <td><code>@patternfly/react-core</code></td>
+      <td><code>6.5.0</code></td>
+      <td><code>6.6.1-prerelease.2</code></td>
+    </tr>
+    <tr>
+      <td><code>@patternfly/react-icons</code></td>
+      <td><code>6.5.0</code></td>
+      <td><code>6.6.1-prerelease.0</code></td>
+    </tr>
+    <tr>
+      <td><code>@patternfly/react-table</code></td>
+      <td><code>6.5.0</code></td>
+      <td><code>6.6.1-prerelease.2</code></td>
+    </tr>
+    <tr>
+      <td><code>@patternfly/react-charts</code></td>
+      <td><code>8.5.0</code></td>
+      <td><code>8.6.1-prerelease.0</code></td>
+    </tr>
+    <tr>
+      <td><code>@patternfly/react-tokens</code></td>
+      <td><code>6.5.0</code></td>
+      <td><code>6.6.1-prerelease.0</code></td>
+    </tr>
+    <tr>
+      <td><code>@patternfly/quickstarts</code></td>
+      <td><code>6.5.0</code></td>
+      <td><code>6.6.0-prerelease.1</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Phase 3: Lint</h2>
+<p><span class="badge badge-pass">PASS</span> &nbsp; 0 errors · 134 warnings (all pre-existing <code>@typescript-eslint/no-explicit-any</code> warnings, unchanged from baseline).</p>
+<p>No PF import path changes, no new restricted import violations.</p>
+
+<h2>Phase 4: Build</h2>
+<p><span class="badge badge-pass">PASS</span> &nbsp; Production webpack build succeeded with no TypeScript errors.</p>
+<p>No breaking API changes detected — no renamed props, no removed exports, no type signature changes affecting insights-chrome source files.</p>
+<div class="callout pass">Expected Sass deprecation warnings from <code>pf-5-styles</code> (pre-existing, unrelated to this bump) were present and ignored.</div>
+
+<h2>Phase 5: Unit Tests (Jest)</h2>
+<p><span class="badge badge-pass">PASS</span> &nbsp; 906 tests passing · 92 suites · 2 snapshots updated</p>
+
+<h3>Snapshot Changes</h3>
+<p>Two snapshots in <code>src/components/Header/HeaderTests/__snapshots__/UserToggle.test.js.snap</code> required updating.</p>
+
+<details>
+  <summary>View snapshot diff — UserToggle (MenuToggle aria-haspopup)</summary>
+  <div class="details-body">
+    <p><strong>File:</strong> <code>src/components/Header/HeaderTests/__snapshots__/UserToggle.test.js.snap</code><br>
+    <strong>Tests affected:</strong> <code>should render user toggle</code>, <code>should render user toggle for small screens</code></p>
+    <p><strong>Change:</strong> PF's <code>MenuToggle</code> component now adds <code>aria-haspopup="menu"</code> to its root <code>&lt;button&gt;</code> element. This is an intentional accessibility improvement — the ARIA spec requires <code>aria-haspopup="menu"</code> on toggle buttons that open menus.</p>
+<pre><code>  &lt;button
+    aria-expanded="false"
+<span class="added">+   aria-haspopup="menu"</span>
+    class="pf-v6-c-menu-toggle data-hj-suppress sentry-mask"
+    data-ouia-component-id="OUIA-Generated-MenuToggle-:r3:"
+    ...
+  &gt;</code></pre>
+    <p><strong>Verdict:</strong> Safe to accept. No functional regression. Snapshots updated with <code>npm run test:update</code>.</p>
+  </div>
+</details>
+
+<h2>Phase 6: Cypress Component Tests</h2>
+<p><span class="badge badge-pass">PASS</span> &nbsp; 171/171 tests passing · 23 specs · ~40s</p>
+<p>No visual regression failures. No snapshot updates required.</p>
+
+<h3>New Visual Baseline — UserToggle</h3>
+<p>A new Cypress visual baseline was captured for the <code>UserToggle</code> component (no prior baseline existed on this test run). Shown below for reference.</p>
+<img class="snapshot" src="data:image/png;base64,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" alt="UserToggle render correctly baseline">
+
+<h2>Phase 7: Visual Testing (Manual)</h2>
+<p><span class="badge badge-skip">SKIPPED</span> &nbsp; Requires Red Hat VPN + <code>/etc/hosts</code> entry + stage account.</p>
+<p>Spot-check manually by running <code>npm run dev</code> and visiting <code>https://stage.foo.redhat.com:1337</code>.</p>
+<p>Checklist for manual verification:</p>
+<ul>
+  <li>Header (logo, user menu, bell icon)</li>
+  <li>Left nav expands/collapses, icons visible</li>
+  <li>All Services page — card grid loads</li>
+  <li>Global search works</li>
+  <li>Dark mode toggle works</li>
+  <li>Notification drawer opens</li>
+  <li>No PF-related console errors</li>
+</ul>
+
+<h2>Breaking Changes Found</h2>
+<p>None.</p>
+
+<h2>Fixes Applied</h2>
+<p>None required — no source code changes were needed.</p>
+
+<h2>npm Install Notes</h2>
+<div class="callout warn">
+  <strong>Heads-up for the skill runbook:</strong> The ERESOLVE guidance ("add conflicting package to overrides") did not resolve the peer dep conflict in this run. Both flat and nested overrides triggered the same error because npm 8's ERESOLVE fires even when an override violates a peer dep spec. <code>--legacy-peer-deps</code> was required as a fallback. The runbook should document this as a known npm 8 behavior when prerelease version strings don't satisfy upstream peer dep semver ranges.
+  <br><br>
+  <strong>Conflicting peer:</strong> <code>@redhat-cloud-services/frontend-components</code> requires <code>@patternfly/react-icons@"^6.0.0"</code> — satisfied by the prerelease but npm still rejects it.
+</div>
+
+<h2>Recommendations</h2>
+<ul>
+  <li>✅ No blockers for shipping PF 6.6.x stable to insights-chrome consumers</li>
+  <li>ℹ️ Update Jest snapshot baselines before merge: <code>aria-haspopup="menu"</code> on <code>MenuToggle</code> is intentional and correct</li>
+  <li>ℹ️ Document <code>--legacy-peer-deps</code> as fallback in skill runbook when overrides fail for prerelease peer deps</li>
+</ul>
+
+<hr style="margin: 2rem 0; border-color: #d2d2d2;">
+<p class="meta">Generated 2026-08-18 · insights-chrome prerelease validation · Branch: <code>chore/pf-6-6-prerelease-testing</code></p>
+
+</body>
+</html>
