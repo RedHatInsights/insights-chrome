@@ -113,6 +113,27 @@ const Lightwell = ({ Footer }: LightwellProps) => {
             />
           </Masthead>
         }
+        horizontalSubnav={
+          // TODO: RHCLOUD-50417 — Temporary Lightwell-specific horizontal subnav. Remove when generic flat nav is available.
+          <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
+            <NavList>
+              {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
+                <NavItem
+                  key={path}
+                  isActive={activeNav === path}
+                  to={path}
+                  component={({ className: navClassName, children, ...rest }) => (
+                    <NavLink to={path} className={navClassName} {...rest}>
+                      {children}
+                    </NavLink>
+                  )}
+                >
+                  {label}
+                </NavItem>
+              ))}
+            </NavList>
+          </Nav>
+        }
         {...(isDrawerEnabled && {
           onNotificationDrawerExpand: focusDrawer,
           notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
@@ -122,25 +143,6 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         <ToolbarGroup className="chr-c-breadcrumbs__group">
           <Breadcrumbs />
         </ToolbarGroup>
-        {/* TODO: RHCLOUD-50417 — Temporary Lightwell-specific horizontal subnav. Remove when generic flat nav is available. */}
-        <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
-          <NavList>
-            {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
-              <NavItem
-                key={path}
-                isActive={activeNav === path}
-                to={path}
-                component={({ className: navClassName, children, ...rest }) => (
-                  <NavLink to={path} className={navClassName} {...rest}>
-                    {children}
-                  </NavLink>
-                )}
-              >
-                {label}
-              </NavItem>
-            ))}
-          </NavList>
-        </Nav>
         <RedirectBanner />
         <ScalprumComponent
           scope="contentSources"
