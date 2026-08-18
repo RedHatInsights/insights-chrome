@@ -120,9 +120,10 @@ describe('fetchPermissions', () => {
       isEnabled: jest.fn((flag) => flag === 'hbi.rbac-v2'),
     });
 
-    // Second call should return empty despite cache
+    // Second call should return empty despite cache, without making another API call
     const result2 = await fetchPermissions('uSeRtOkEn', 'inventory');
     expect(result2).toEqual([]);
+    expect(global.rbacApiCalled).toEqual(1);
 
     unleashClientExists.mockReturnValue(false);
   });
