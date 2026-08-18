@@ -268,5 +268,8 @@ describe('OIDCProvider', () => {
     // Must include base scopes so implicit signinSilent calls (automaticSilentRenew,
     // forceRefresh, BroadcastChannel refresh) don't downgrade to "openid" only
     expect(userManagerConfig.scope).toBe('openid api.console api.ask_red_hat');
+    // Silent auth iframe timeout must be short to avoid delaying cold loads
+    // when no SSO session exists (default is 10s, we cap at 2s)
+    expect(userManagerConfig.silentRequestTimeoutInSeconds).toBe(2);
   });
 });
