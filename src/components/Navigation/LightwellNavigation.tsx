@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { LIGHTWELL_PATH } from '../../utils/common';
+import './LightwellNavigation.scss';
 
 // TODO: RHCLOUD-50417 — Temporary hardcoded horizontal navigation for Lightwell.
 // Remove once the generic flat navigation feature is built.
@@ -55,7 +57,7 @@ const LightwellNavigation = () => {
   }, []);
 
   return (
-    <div ref={wrapperRef} style={{ gridArea: 'subnav' }}>
+    <div ref={wrapperRef} className="chr-c-lightwell-subnav">
       <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
         <NavList>
           {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
@@ -63,11 +65,7 @@ const LightwellNavigation = () => {
               key={path}
               isActive={activeNav === path}
               to={path}
-              component={({ className: navClassName, children, ...rest }) => (
-                <NavLink to={path} className={navClassName} {...rest}>
-                  {children}
-                </NavLink>
-              )}
+              component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}
             >
               {label}
             </NavItem>
