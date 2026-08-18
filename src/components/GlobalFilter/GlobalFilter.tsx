@@ -179,7 +179,7 @@ const GlobalFilterWrapper = () => {
   const isRbacV2 = useFlag('platform.rbac.workspaces');
   const isHbiRbacV2 = useFlag('hbi.rbac-v2');
   const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
-  const { flagsReady, flagsError } = useFlagsStatus();
+  const { flagsReady } = useFlagsStatus();
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
