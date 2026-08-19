@@ -20,12 +20,11 @@ const DegradedStateBanner = () => {
   if (serviceHealth.configFromCache) degradedServices.push('Navigation Configuration');
   if (serviceHealth.featureFlags) degradedServices.push('Feature Flags');
 
-  const message = `Some services are currently limited: ${degradedServices.join(', ')}. Core functionality is available.`;
-
   return (
     <Banner status="warning" screenReaderText="Warning banner">
       <div className="pf-v6-u-text-align-center">
-        <ExclamationTriangleIcon /> {message}
+        <ExclamationTriangleIcon /> Core functionality is available, but some services are degraded: <strong>{degradedServices.join(', ')}</strong>. Try again
+        later.
       </div>
     </Banner>
   );

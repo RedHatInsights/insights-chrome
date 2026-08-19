@@ -42,7 +42,7 @@ describe('DegradedStateBanner', () => {
       </FlagProvider>
     );
 
-    cy.contains(/some services are currently limited/i).should('not.exist');
+    cy.contains(/some services are degraded/i).should('not.exist');
   });
 
   it('should render banner with single degraded service', () => {
@@ -64,6 +64,7 @@ describe('DegradedStateBanner', () => {
 
     cy.contains(/user preferences/i).should('be.visible');
     cy.contains(/core functionality is available/i).should('be.visible');
+    cy.contains(/try again later/i).should('be.visible');
   });
 
   it('should render banner with multiple degraded services', () => {

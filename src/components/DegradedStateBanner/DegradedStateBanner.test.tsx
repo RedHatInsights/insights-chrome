@@ -48,6 +48,7 @@ describe('DegradedStateBanner', () => {
 
     expect(screen.getByText(/user preferences/i)).toBeInTheDocument();
     expect(screen.getByText(/core functionality is available/i)).toBeInTheDocument();
+    expect(screen.getByText(/try again later/i)).toBeInTheDocument();
   });
 
   it('should render banner when entitlements are degraded', () => {
