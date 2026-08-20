@@ -59,7 +59,7 @@ export type NavItem = {
   navItems?: NavItem[];
   active?: boolean;
   isHidden?: boolean;
-  permissions?: NavItemPermission[] | NavItemPermission;
+  permissions?: AnyNavItemPermission[] | AnyNavItemPermission;
   dynamicNav?: string;
   description?: string;
   icon?: FavorableIcons;

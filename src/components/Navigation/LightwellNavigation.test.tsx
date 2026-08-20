@@ -12,7 +12,7 @@ jest.mock('../../utils/isNavItemVisible', () => ({
   isNavItemVisible: (...args: [AnyNavItemPermission[]]) => mockIsNavItemVisible(...args),
 }));
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import LightwellNavigation from './LightwellNavigation';
 import { beforeEach, describe, expect, it } from '@jest/globals';
@@ -75,6 +75,8 @@ describe('LightwellNavigation', () => {
       await waitFor(() => {
         expect(mockIsNavItemVisible).toHaveBeenCalledTimes(3);
       });
+      // Flush remaining state updates from settled promises
+      await act(async () => {});
       expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     });
 
@@ -89,6 +91,8 @@ describe('LightwellNavigation', () => {
       await waitFor(() => {
         expect(mockIsNavItemVisible).toHaveBeenCalledTimes(3);
       });
+      // Flush remaining state updates from settled promises
+      await act(async () => {});
       expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     });
 
@@ -113,6 +117,8 @@ describe('LightwellNavigation', () => {
       await waitFor(() => {
         expect(mockIsNavItemVisible).toHaveBeenCalledTimes(3);
       });
+      // Flush remaining state updates from settled promise rejections
+      await act(async () => {});
       expect(screen.queryByRole('link', { name: 'Repositories' })).not.toBeInTheDocument();
     });
 
@@ -153,6 +159,18 @@ describe('LightwellNavigation', () => {
     it('defaults to Repositories on unknown subroute', () => {
       renderNav('/lightwell/unknown');
       expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('keeps Repositories active on /lightwell/lens-preview (boundary check)', () => {
+      renderNav('/lightwell/lens-preview');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+      expect(screen.getByRole('link', { name: 'Lens' })).not.toHaveAttribute('aria-current', 'page');
+    });
+
+    it('keeps Repositories active on /lightwell/beacon-preview (boundary check)', () => {
+      renderNav('/lightwell/beacon-preview');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+      expect(screen.getByRole('link', { name: 'Beacon' })).not.toHaveAttribute('aria-current', 'page');
     });
   });
 });
