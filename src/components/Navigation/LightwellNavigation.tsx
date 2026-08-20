@@ -1,16 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
-import { LIGHTWELL_PATH } from '../../utils/common';
+import { LIGHTWELL_PATH, isProd } from '../../utils/common';
+import { isNavItemVisible } from '../../utils/isNavItemVisible';
 
-// TODO: RHCLOUD-50417 — Temporary hardcoded horizontal navigation for Lightwell.
-// Remove once the generic flat navigation feature is built.
-const LIGHTWELL_NAV_ITEMS = [
+const CONTENT_SOURCES_FEATURES_URL = '/api/content-sources/v1.0/features/';
+
+interface LightwellNavItemConfig {
+  label: string;
+  path: string;
+  // Typed loosely — NavItemPermission generic defaults to 'isOrgAdmin' which
+  // prevents expressing 'apiRequest' permissions without casts. The runtime
+  // isNavItemVisible handler works with any method string.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  permissions?: Array<{ method: string; args: any[] }>;
+}
+
+/**
+ * Create an apiRequest permission entry for the content-sources features API.
+ * The accessor path extracts the `accessible` boolean from the response.
+ */
+const featuresPermission = (accessor: string): LightwellNavItemConfig['permissions'] => [
+  { method: 'apiRequest', args: [{ url: CONTENT_SOURCES_FEATURES_URL, accessor }] },
+];
+
+/**
+ * Stage/dev: no permissions — all three tabs visible to everyone, no API calls.
+ */
+const STAGE_NAV_ITEMS: LightwellNavItemConfig[] = [
   { label: 'Repositories', path: LIGHTWELL_PATH },
   { label: 'Lens', path: `${LIGHTWELL_PATH}/lens` },
   { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon` },
-] as const;
+];
+
+/**
+ * Production: each item gated behind the content-sources features API.
+ *
+ * | Nav Item       | Feature Key            | Accessor                          |
+ * |----------------|------------------------|-----------------------------------|
+ * | Repositories   | lightwell              | lightwell.accessible              |
+ * | Lens           | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
+ * | Beacon         | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
+ */
+const PROD_NAV_ITEMS: LightwellNavItemConfig[] = [
+  { label: 'Repositories', path: LIGHTWELL_PATH, permissions: featuresPermission('lightwell.accessible') },
+  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
+  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
+];
 
 /**
  * Determine which Lightwell nav item is active based on pathname.
@@ -23,18 +60,62 @@ const getActiveLightwellNav = (pathname: string): string => {
 };
 
 /**
- * Lightwell-specific horizontal navigation rendered via PF6 Page's
- * horizontalSubnav prop, which places it inside the main container
- * and ensures proper alignment at all viewport widths.
+ * Lightwell-specific horizontal navigation. In production, items are gated
+ * behind the content-sources features API (`/api/content-sources/v1.0/features/`)
+ * using the built-in `apiRequest` visibility function with an `accessor` to
+ * extract the `accessible` boolean. In stage/dev, all items are visible
+ * without API calls.
  */
 const LightwellNavigation = (): React.JSX.Element => {
   const { pathname } = useLocation();
+  const isProduction = isProd();
+  const navItems = isProduction ? PROD_NAV_ITEMS : STAGE_NAV_ITEMS;
+
+  // Stage items have no permissions → show immediately.
+  // Prod items require API verification → start empty, populate after check.
+  const [visibleItems, setVisibleItems] = useState<LightwellNavItemConfig[]>(() => (isProduction ? [] : navItems));
+
+  useEffect(() => {
+    if (!isProduction) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const evaluatePermissions = async () => {
+      const results = await Promise.all(
+        navItems.map(async (item) => {
+          if (!item.permissions) {
+            return { item, visible: true };
+          }
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const visible = await isNavItemVisible(item.permissions as any);
+            return { item, visible };
+          } catch {
+            return { item, visible: false };
+          }
+        })
+      );
+
+      if (!cancelled) {
+        setVisibleItems(results.filter(({ visible }) => visible).map(({ item }) => item));
+      }
+    };
+
+    evaluatePermissions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isProduction]);
+
   const activeNav = getActiveLightwellNav(pathname);
 
   return (
     <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
       <NavList>
-        {LIGHTWELL_NAV_ITEMS.map(({ label, path }) => (
+        {visibleItems.map(({ label, path }) => (
           <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
             {label}
           </NavItem>
