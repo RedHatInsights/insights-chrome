@@ -18,6 +18,7 @@
     > .pf-v6-c-masthead {
       // Prevent subgrid — keep inline masthead layout
       --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: min-content 1fr;
+      grid-template-columns: min-content 1fr;
     }
   }
 }
