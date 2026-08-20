@@ -4,17 +4,14 @@ import { useLocation } from 'react-router-dom';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { LIGHTWELL_PATH, isProd } from '../../utils/common';
 import { isNavItemVisible } from '../../utils/isNavItemVisible';
+import { NavItemPermission } from '../../@types/types';
 
 const CONTENT_SOURCES_FEATURES_URL = '/api/content-sources/v1.0/features/';
 
 interface LightwellNavItemConfig {
   label: string;
   path: string;
-  // Typed loosely — NavItemPermission generic defaults to 'isOrgAdmin' which
-  // prevents expressing 'apiRequest' permissions without casts. The runtime
-  // isNavItemVisible handler works with any method string.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  permissions?: Array<{ method: string; args: any[] }>;
+  permissions?: NavItemPermission<'apiRequest'>[];
 }
 
 /**
@@ -89,8 +86,7 @@ const LightwellNavigation = (): React.JSX.Element => {
             return { item, visible: true };
           }
           try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const visible = await isNavItemVisible(item.permissions as any);
+            const visible = await isNavItemVisible(item.permissions);
             return { item, visible };
           } catch {
             return { item, visible: false };

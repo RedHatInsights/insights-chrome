@@ -1,6 +1,7 @@
+import type { AnyNavItemPermission } from '../../@types/types';
+
 const mockIsProd = jest.fn(() => false);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockIsNavItemVisible = jest.fn<any>(() => Promise.resolve(true));
+const mockIsNavItemVisible = jest.fn<Promise<boolean>, [AnyNavItemPermission[]]>(() => Promise.resolve(true));
 
 jest.mock('../../utils/common', () => ({
   LIGHTWELL_PATH: '/lightwell',
@@ -8,8 +9,7 @@ jest.mock('../../utils/common', () => ({
 }));
 
 jest.mock('../../utils/isNavItemVisible', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  isNavItemVisible: (...args: any[]) => mockIsNavItemVisible(...args),
+  isNavItemVisible: (...args: [AnyNavItemPermission[]]) => mockIsNavItemVisible(...args),
 }));
 
 import { render, screen, waitFor } from '@testing-library/react';
@@ -74,8 +74,9 @@ describe('LightwellNavigation', () => {
     });
 
     it('shows only Repositories when only lightwell feature is accessible', async () => {
-      mockIsNavItemVisible.mockImplementation((permissions: Array<{ args: Array<{ accessor?: string }> }>) => {
-        const accessor = permissions?.[0]?.args?.[0]?.accessor;
+      mockIsNavItemVisible.mockImplementation((permissions: AnyNavItemPermission[]) => {
+        const perm = permissions?.[0];
+        const accessor = perm?.method === 'apiRequest' ? perm.args[0]?.accessor : undefined;
         if (accessor === 'lightwell.accessible') return Promise.resolve(true);
         return Promise.resolve(false);
       });
@@ -88,8 +89,9 @@ describe('LightwellNavigation', () => {
     });
 
     it('shows Lens and Beacon when only lightwellbeaconandlens is accessible', async () => {
-      mockIsNavItemVisible.mockImplementation((permissions: Array<{ args: Array<{ accessor?: string }> }>) => {
-        const accessor = permissions?.[0]?.args?.[0]?.accessor;
+      mockIsNavItemVisible.mockImplementation((permissions: AnyNavItemPermission[]) => {
+        const perm = permissions?.[0];
+        const accessor = perm?.method === 'apiRequest' ? perm.args[0]?.accessor : undefined;
         if (accessor === 'lightwellbeaconandlens.accessible') return Promise.resolve(true);
         return Promise.resolve(false);
       });

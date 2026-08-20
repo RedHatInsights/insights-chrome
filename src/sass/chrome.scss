@@ -57,9 +57,13 @@ aside {
 }
 
 // Shared subnav grid placement — any layout that adds a "subnav" row to its
-// grid-template-areas gets outside-card horizontal navigation automatically.
-.chr-c-page-subnav {
-  grid-area: subnav;
+// grid-template-areas at xl+ gets outside-card horizontal navigation.
+// Scoped to xl because below xl the Page grid has no "subnav" area and an
+// unscoped grid-area declaration would cause an implicit row.
+@media (min-width: $pf-v6-global--breakpoint--xl) {
+  .chr-c-page-subnav {
+    grid-area: subnav;
+  }
 }
 
 // Page temp styles
