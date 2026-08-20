@@ -63,14 +63,15 @@ const getActiveLightwellNav = (pathname: string): string => {
  * extract the `accessible` boolean. In stage/dev, all items are visible
  * without API calls.
  */
-const LightwellNavigation = (): React.JSX.Element => {
+const LightwellNavigation = (): React.JSX.Element | null => {
   const { pathname } = useLocation();
   const isProduction = isProd();
   const navItems = isProduction ? PROD_NAV_ITEMS : STAGE_NAV_ITEMS;
 
-  // Stage items have no permissions → show immediately.
-  // Prod items require API verification → start empty, populate after check.
+  // Stage items have no permissions → show immediately, not loading.
+  // Prod items require API verification → start empty, loading until resolved.
   const [visibleItems, setVisibleItems] = useState<LightwellNavItemConfig[]>(() => (isProduction ? [] : navItems));
+  const [isLoading, setIsLoading] = useState(isProduction);
 
   useEffect(() => {
     if (!isProduction) {
@@ -96,6 +97,7 @@ const LightwellNavigation = (): React.JSX.Element => {
 
       if (!cancelled) {
         setVisibleItems(results.filter(({ visible }) => visible).map(({ item }) => item));
+        setIsLoading(false);
       }
     };
 
@@ -105,6 +107,11 @@ const LightwellNavigation = (): React.JSX.Element => {
       cancelled = true;
     };
   }, [isProduction]);
+
+  // Hide while loading permissions and when only one item remains (no tabs needed)
+  if (isLoading || visibleItems.length <= 1) {
+    return null;
+  }
 
   const activeNav = getActiveLightwellNav(pathname);
 

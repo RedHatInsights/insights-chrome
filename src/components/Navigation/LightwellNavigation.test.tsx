@@ -52,6 +52,13 @@ describe('LightwellNavigation', () => {
       mockIsProd.mockReturnValue(true);
     });
 
+    it('hides navigation while permissions are loading', () => {
+      // Never-resolving promise simulates loading state
+      mockIsNavItemVisible.mockReturnValue(new Promise(() => {}));
+      renderNav();
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    });
+
     it('renders all items when all features are accessible', async () => {
       mockIsNavItemVisible.mockResolvedValue(true);
       renderNav();
@@ -62,18 +69,16 @@ describe('LightwellNavigation', () => {
       expect(screen.getByRole('link', { name: 'Beacon' })).toBeInTheDocument();
     });
 
-    it('hides all items when no features are accessible', async () => {
+    it('hides navigation when no features are accessible', async () => {
       mockIsNavItemVisible.mockResolvedValue(false);
       renderNav();
       await waitFor(() => {
         expect(mockIsNavItemVisible).toHaveBeenCalledTimes(3);
       });
-      expect(screen.queryByRole('link', { name: 'Repositories' })).not.toBeInTheDocument();
-      expect(screen.queryByRole('link', { name: 'Lens' })).not.toBeInTheDocument();
-      expect(screen.queryByRole('link', { name: 'Beacon' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     });
 
-    it('shows only Repositories when only lightwell feature is accessible', async () => {
+    it('hides navigation when only one item is accessible (no tabs needed)', async () => {
       mockIsNavItemVisible.mockImplementation((permissions: AnyNavItemPermission[]) => {
         const perm = permissions?.[0];
         const accessor = perm?.method === 'apiRequest' ? perm.args[0]?.accessor : undefined;
@@ -82,10 +87,9 @@ describe('LightwellNavigation', () => {
       });
       renderNav();
       await waitFor(() => {
-        expect(screen.getByRole('link', { name: 'Repositories' })).toBeInTheDocument();
+        expect(mockIsNavItemVisible).toHaveBeenCalledTimes(3);
       });
-      expect(screen.queryByRole('link', { name: 'Lens' })).not.toBeInTheDocument();
-      expect(screen.queryByRole('link', { name: 'Beacon' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     });
 
     it('shows Lens and Beacon when only lightwellbeaconandlens is accessible', async () => {
