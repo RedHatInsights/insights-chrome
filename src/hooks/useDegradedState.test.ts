@@ -1,15 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
-import { useFlag } from '@unleash/proxy-client-react';
 import { Provider, createStore } from 'jotai';
 import React from 'react';
+import { useFlag } from '@unleash/proxy-client-react';
 import { useDegradedState } from './useDegradedState';
-import {
-  degradedStateAtom,
-  setConfigFromCacheDegradedAtom,
-  setEntitlementsDegradedAtom,
-  setFeatureFlagsDegradedAtom,
-  setUserPersonalizationDegradedAtom,
-} from '../state/atoms/degradedStateAtom';
+import { degradedStateAtom, setServiceDegradedAtom } from '../state/atoms/degradedStateAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(),
@@ -60,7 +54,7 @@ describe('useDegradedState', () => {
   });
 
   it('should detect degraded user personalization service', () => {
-    store.set(setUserPersonalizationDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
 
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
@@ -69,7 +63,7 @@ describe('useDegradedState', () => {
   });
 
   it('should detect degraded entitlements service', () => {
-    store.set(setEntitlementsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
 
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
@@ -78,7 +72,7 @@ describe('useDegradedState', () => {
   });
 
   it('should detect degraded config service', () => {
-    store.set(setConfigFromCacheDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
 
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
@@ -87,7 +81,7 @@ describe('useDegradedState', () => {
   });
 
   it('should detect degraded feature flags service', () => {
-    store.set(setFeatureFlagsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'featureFlags', degraded: true });
 
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
@@ -95,58 +89,52 @@ describe('useDegradedState', () => {
     expect(result.current.isAnyServiceDegraded).toBe(true);
   });
 
-  it('should provide setter for user personalization degraded state', () => {
+  it('should provide generic setter for user personalization degraded state', () => {
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
-    expect(typeof result.current.setUserPersonalizationDegraded).toBe('function');
+    expect(typeof result.current.setServiceDegraded).toBe('function');
 
     act(() => {
-      result.current.setUserPersonalizationDegraded(true);
+      result.current.setServiceDegraded({ service: 'userPersonalization', degraded: true });
     });
 
     expect(store.get(degradedStateAtom).userPersonalization).toBe(true);
   });
 
-  it('should provide setter for entitlements degraded state', () => {
+  it('should provide generic setter for entitlements degraded state', () => {
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
-    expect(typeof result.current.setEntitlementsDegraded).toBe('function');
-
     act(() => {
-      result.current.setEntitlementsDegraded(true);
+      result.current.setServiceDegraded({ service: 'entitlements', degraded: true });
     });
 
     expect(store.get(degradedStateAtom).entitlements).toBe(true);
   });
 
-  it('should provide setter for config degraded state', () => {
+  it('should provide generic setter for config degraded state', () => {
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
-    expect(typeof result.current.setConfigFromCacheDegraded).toBe('function');
-
     act(() => {
-      result.current.setConfigFromCacheDegraded(true);
+      result.current.setServiceDegraded({ service: 'configFromCache', degraded: true });
     });
 
     expect(store.get(degradedStateAtom).configFromCache).toBe(true);
   });
 
-  it('should provide setter for feature flags degraded state', () => {
+  it('should provide generic setter for feature flags degraded state', () => {
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
-    expect(typeof result.current.setFeatureFlagsDegraded).toBe('function');
-
     act(() => {
-      result.current.setFeatureFlagsDegraded(true);
+      result.current.setServiceDegraded({ service: 'featureFlags', degraded: true });
     });
 
     expect(store.get(degradedStateAtom).featureFlags).toBe(true);
   });
 
   it('should detect when multiple services are degraded', () => {
-    store.set(setUserPersonalizationDegradedAtom, true);
-    store.set(setEntitlementsDegradedAtom, true);
-    store.set(setConfigFromCacheDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
 
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
@@ -160,12 +148,12 @@ describe('useDegradedState', () => {
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
     act(() => {
-      result.current.setEntitlementsDegraded(true);
+      result.current.setServiceDegraded({ service: 'entitlements', degraded: true });
     });
     expect(store.get(degradedStateAtom).entitlements).toBe(true);
 
     act(() => {
-      result.current.setEntitlementsDegraded(false);
+      result.current.setServiceDegraded({ service: 'entitlements', degraded: false });
     });
     expect(store.get(degradedStateAtom).entitlements).toBe(false);
   });
@@ -176,9 +164,6 @@ describe('useDegradedState', () => {
     expect(result.current).toHaveProperty('serviceHealth');
     expect(result.current).toHaveProperty('isAnyServiceDegraded');
     expect(result.current).toHaveProperty('isBannerEnabled');
-    expect(result.current).toHaveProperty('setUserPersonalizationDegraded');
-    expect(result.current).toHaveProperty('setEntitlementsDegraded');
-    expect(result.current).toHaveProperty('setConfigFromCacheDegraded');
-    expect(result.current).toHaveProperty('setFeatureFlagsDegraded');
+    expect(result.current).toHaveProperty('setServiceDegraded');
   });
 });

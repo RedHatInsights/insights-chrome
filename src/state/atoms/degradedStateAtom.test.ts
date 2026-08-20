@@ -1,12 +1,5 @@
 import { createStore } from 'jotai';
-import {
-  degradedStateAtom,
-  isAnyServiceDegradedAtom,
-  setConfigFromCacheDegradedAtom,
-  setEntitlementsDegradedAtom,
-  setFeatureFlagsDegradedAtom,
-  setUserPersonalizationDegradedAtom,
-} from './degradedStateAtom';
+import { degradedStateAtom, isAnyServiceDegradedAtom, setServiceDegradedAtom } from './degradedStateAtom';
 
 describe('degradedStateAtom', () => {
   it('should have initial state with all services healthy', () => {
@@ -22,7 +15,7 @@ describe('degradedStateAtom', () => {
 
   it('should update userPersonalization status', () => {
     const store = createStore();
-    store.set(setUserPersonalizationDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
     const state = store.get(degradedStateAtom);
     expect(state.userPersonalization).toBe(true);
     expect(state.entitlements).toBe(false);
@@ -32,7 +25,7 @@ describe('degradedStateAtom', () => {
 
   it('should update entitlements status', () => {
     const store = createStore();
-    store.set(setEntitlementsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
     const state = store.get(degradedStateAtom);
     expect(state.userPersonalization).toBe(false);
     expect(state.entitlements).toBe(true);
@@ -42,7 +35,7 @@ describe('degradedStateAtom', () => {
 
   it('should update configFromCache status', () => {
     const store = createStore();
-    store.set(setConfigFromCacheDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
     const state = store.get(degradedStateAtom);
     expect(state.userPersonalization).toBe(false);
     expect(state.entitlements).toBe(false);
@@ -52,7 +45,7 @@ describe('degradedStateAtom', () => {
 
   it('should update featureFlags status', () => {
     const store = createStore();
-    store.set(setFeatureFlagsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'featureFlags', degraded: true });
     const state = store.get(degradedStateAtom);
     expect(state.userPersonalization).toBe(false);
     expect(state.entitlements).toBe(false);
@@ -62,8 +55,8 @@ describe('degradedStateAtom', () => {
 
   it('should update multiple services independently', () => {
     const store = createStore();
-    store.set(setUserPersonalizationDegradedAtom, true);
-    store.set(setFeatureFlagsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'featureFlags', degraded: true });
     const state = store.get(degradedStateAtom);
     expect(state.userPersonalization).toBe(true);
     expect(state.entitlements).toBe(false);
@@ -73,10 +66,10 @@ describe('degradedStateAtom', () => {
 
   it('should toggle service status', () => {
     const store = createStore();
-    store.set(setEntitlementsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
     expect(store.get(degradedStateAtom).entitlements).toBe(true);
 
-    store.set(setEntitlementsDegradedAtom, false);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
     expect(store.get(degradedStateAtom).entitlements).toBe(false);
   });
 
@@ -87,32 +80,32 @@ describe('degradedStateAtom', () => {
 
   it('should detect when any service is degraded', () => {
     const store = createStore();
-    store.set(setEntitlementsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
   });
 
   it('should detect when multiple services are degraded', () => {
     const store = createStore();
-    store.set(setUserPersonalizationDegradedAtom, true);
-    store.set(setConfigFromCacheDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
   });
 
   it('should detect when all services are degraded', () => {
     const store = createStore();
-    store.set(setUserPersonalizationDegradedAtom, true);
-    store.set(setEntitlementsDegradedAtom, true);
-    store.set(setConfigFromCacheDegradedAtom, true);
-    store.set(setFeatureFlagsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'featureFlags', degraded: true });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
   });
 
   it('should detect when services recover', () => {
     const store = createStore();
-    store.set(setEntitlementsDegradedAtom, true);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
 
-    store.set(setEntitlementsDegradedAtom, false);
+    store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(false);
   });
 });

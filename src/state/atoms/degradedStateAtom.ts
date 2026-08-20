@@ -16,25 +16,10 @@ const initialState: ServiceHealthStatus = {
 
 export const degradedStateAtom = atom<ServiceHealthStatus>(initialState);
 
-// Write-only atoms for updating individual services
-export const setUserPersonalizationDegradedAtom = atom(null, (get, set, degraded: boolean) => {
+// Generic write-only atom for updating any service
+export const setServiceDegradedAtom = atom(null, (get, set, { service, degraded }: { service: keyof ServiceHealthStatus; degraded: boolean }) => {
   const current = get(degradedStateAtom);
-  set(degradedStateAtom, { ...current, userPersonalization: degraded });
-});
-
-export const setEntitlementsDegradedAtom = atom(null, (get, set, degraded: boolean) => {
-  const current = get(degradedStateAtom);
-  set(degradedStateAtom, { ...current, entitlements: degraded });
-});
-
-export const setConfigFromCacheDegradedAtom = atom(null, (get, set, degraded: boolean) => {
-  const current = get(degradedStateAtom);
-  set(degradedStateAtom, { ...current, configFromCache: degraded });
-});
-
-export const setFeatureFlagsDegradedAtom = atom(null, (get, set, degraded: boolean) => {
-  const current = get(degradedStateAtom);
-  set(degradedStateAtom, { ...current, featureFlags: degraded });
+  set(degradedStateAtom, { ...current, [service]: degraded });
 });
 
 // Helper to check if any service is degraded

@@ -1,5 +1,5 @@
 import chromeStore from '../state/chromeStore';
-import { setUserPersonalizationDegradedAtom } from '../state/atoms/degradedStateAtom';
+import { setServiceDegradedAtom } from '../state/atoms/degradedStateAtom';
 
 const functionBuilder = (key: string, value: boolean | number | string) => {
   if (window.localStorage) {
@@ -29,10 +29,10 @@ const debugFunctions = {
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
   degradedStateBanner: () => {
-    chromeStore.set(setUserPersonalizationDegradedAtom, true);
+    chromeStore.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
     console.log('✓ Degraded state banner triggered (user personalization degraded)');
     return () => {
-      chromeStore.set(setUserPersonalizationDegradedAtom, false);
+      chromeStore.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: false });
       console.log('✓ Degraded state banner cleared');
     };
   },

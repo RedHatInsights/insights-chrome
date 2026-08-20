@@ -23,10 +23,10 @@ const MyApp = () => {
 
   // Hook BEFORE early returns
   useEffect(() => {
-    if (!hookResult?.setEntitlementsDegraded) return;
+    if (!hookResult?.setServiceDegraded) return;
     
     fetchEntitlements().catch(() => {
-      hookResult.setEntitlementsDegraded(true);
+      hookResult.setServiceDegraded({ service: 'entitlements', degraded: true });
     });
   }, [hookResult]);
 
@@ -38,6 +38,7 @@ const MyApp = () => {
     serviceHealth, 
     isAnyServiceDegraded, 
     isBannerEnabled,
+    setServiceDegraded,
   } = hookResult;
 
   return <div>...</div>;
@@ -53,11 +54,8 @@ type DegradedStateAPI = {
   isAnyServiceDegraded: boolean;               // True if any service degraded
   isBannerEnabled: boolean;                    // Feature flag status
   
-  // State setters
-  setUserPersonalizationDegraded: (degraded: boolean) => void;
-  setEntitlementsDegraded: (degraded: boolean) => void;
-  setConfigFromCacheDegraded: (degraded: boolean) => void;
-  setFeatureFlagsDegraded: (degraded: boolean) => void;
+  // Generic state setter
+  setServiceDegraded: (params: { service: keyof ServiceHealthStatus; degraded: boolean }) => void;
 };
 
 type ServiceHealthStatus = {
@@ -84,7 +82,7 @@ type ServiceHealthStatus = {
 try {
   await fetchUserPreferences();
 } catch {
-  setUserPersonalizationDegraded(true);
+  setServiceDegraded({ service: 'userPersonalization', degraded: true });
 }
 ```
 
@@ -92,7 +90,7 @@ try {
 
 ```typescript
 const config = await fetchConfig().catch(() => {
-  setConfigFromCacheDegraded(true);
+  setServiceDegraded({ service: 'configFromCache', degraded: true });
   return getCachedConfig();
 });
 ```
@@ -101,7 +99,7 @@ const config = await fetchConfig().catch(() => {
 
 ```typescript
 if (getFeatureFlagsError()) {
-  setFeatureFlagsDegraded(true);
+  setServiceDegraded({ service: 'featureFlags', degraded: true });
 }
 ```
 
@@ -111,8 +109,8 @@ Mark service as recovered when API succeeds:
 
 ```typescript
 fetchEntitlements()
-  .then(() => setEntitlementsDegraded(false))
-  .catch(() => setEntitlementsDegraded(true));
+  .then(() => setServiceDegraded({ service: 'entitlements', degraded: false }))
+  .catch(() => setServiceDegraded({ service: 'entitlements', degraded: true }));
 ```
 
 ## Testing
