@@ -56,17 +56,23 @@ describe('VirtualAssistant', () => {
   const useFlag = unleashReact.useFlag as jest.MockedFunction<typeof unleashReact.useFlag>;
   const useFlags = unleashReact.useFlags as jest.MockedFunction<typeof unleashReact.useFlags>;
 
+  const mockFlagValues: Record<string, boolean> = {};
+  const setFlagMock = (flags: Record<string, boolean>) => {
+    Object.assign(mockFlagValues, flags);
+    useFlag.mockImplementation((flag: string) => mockFlagValues[flag] ?? false);
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockScalprumComponent.mockClear();
-    // Default mock implementations
-    useFlag.mockReturnValue(false);
+    Object.keys(mockFlagValues).forEach((k) => delete mockFlagValues[k]);
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
     useFlags.mockReturnValue([]);
   });
 
   describe('feature flag gating', () => {
     it('should return null when platform.va.environment.enabled flag is disabled', () => {
-      useFlag.mockReturnValue(false);
+      setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       const { container } = render(
@@ -81,8 +87,8 @@ describe('VirtualAssistant', () => {
       expect(mockScalprumComponent).not.toHaveBeenCalled();
     });
 
-    it('should render the VA component when platform.va.environment.enabled flag is enabled', () => {
-      useFlag.mockReturnValue(true);
+    it('should render the VA component when platform.va.environment.enabled flag is enabled and help panel is disabled', () => {
+      setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': false });
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       const { container } = render(
@@ -96,8 +102,24 @@ describe('VirtualAssistant', () => {
       expect(screen.getByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).toBeInTheDocument();
     });
 
-    it('should check the correct feature flag name', () => {
-      useFlag.mockReturnValue(true);
+    it('should return null when help panel is enabled even if VA flag is enabled', () => {
+      setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': true });
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      const { container } = render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues}>
+          <VirtualAssistant />
+        </TestWrapper>
+      );
+
+      expect(container.firstChild).toBeNull();
+      expect(screen.queryByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).not.toBeInTheDocument();
+      expect(mockScalprumComponent).not.toHaveBeenCalled();
+    });
+
+    it('should check the correct feature flag names', () => {
+      setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': false });
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       render(
@@ -108,12 +130,13 @@ describe('VirtualAssistant', () => {
       );
 
       expect(useFlag).toHaveBeenCalledWith('platform.va.environment.enabled');
+      expect(useFlag).toHaveBeenCalledWith('platform.chrome.help-panel_chatbot');
     });
   });
 
   describe('useEffect gating', () => {
     it('should not set showAssistant atom when VA is disabled even on matching routes', () => {
-      useFlag.mockReturnValue(false);
+      setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
       const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       // Observer component reads atom value for direct assertion
@@ -141,8 +164,7 @@ describe('VirtualAssistant', () => {
 
   describe('showAssistant prop passing', () => {
     beforeEach(() => {
-      // Enable VA for prop-passing tests
-      useFlag.mockReturnValue(true);
+      setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': false });
     });
 
     it('should pass showAssistant=false to ScalprumComponent', () => {
