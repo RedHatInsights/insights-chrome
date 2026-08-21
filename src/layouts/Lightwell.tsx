@@ -15,6 +15,9 @@ import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atom
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
+import LightwellNavigation from '../components/Navigation/LightwellNavigation';
+import { withHorizontalSubnav } from './layoutUtils';
+import './Lightwell.scss';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
@@ -72,9 +75,11 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   return (
     <div id="chrome-app-render-root">
       <Page
+        className="chr-c-page--lightwell"
+        sidebar={null}
         onPageResize={null}
-        masthead={
-          <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
+        masthead={withHorizontalSubnav(
+          <Masthead className="chr-c-masthead" display={{ default: 'inline' }}>
             <Header
               breadcrumbsProps={{ hideNav: true }}
               toolbarConfig={{
@@ -88,8 +93,9 @@ const Lightwell = ({ Footer }: LightwellProps) => {
                 },
               }}
             />
-          </Masthead>
-        }
+          </Masthead>,
+          <LightwellNavigation />
+        )}
         {...(isDrawerEnabled && {
           onNotificationDrawerExpand: focusDrawer,
           notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
