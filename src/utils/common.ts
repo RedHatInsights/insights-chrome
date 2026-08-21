@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
+import { cacheFetch } from './cacheFetch';
 
 /**
  * Base path for the Lightwell route.
@@ -400,15 +401,49 @@ export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
   return sanitizeSsoUrl(ssoConfig.ssoUrl);
 };
 
+// Runtime validator for SSOConfig shape
+function isSSOConfig(data: unknown): data is SSOConfig {
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    !('ssoUrl' in data) ||
+    typeof (data as SSOConfig).ssoUrl !== 'string' ||
+    (data as SSOConfig).ssoUrl.length === 0 ||
+    !('ssoMapping' in data) ||
+    typeof (data as SSOConfig).ssoMapping !== 'object' ||
+    (data as SSOConfig).ssoMapping === null ||
+    Array.isArray((data as SSOConfig).ssoMapping)
+  ) {
+    return false;
+  }
+
+  // Validate that all ssoMapping values are nonempty strings
+  const mapping = (data as SSOConfig).ssoMapping;
+  return Object.values(mapping).every((value) => typeof value === 'string' && value.length > 0);
+}
+
 // Load SSO configuration from operator-generated config with automatic caching
 export const loadSSOConfig = async (): Promise<SSOConfig> => {
   const ssoConfigPath = '/api/chrome-service/v1/static/sso-config-generated.json';
   try {
-    const response = await getSSOConfigAxios().get<SSOConfig>(ssoConfigPath, {
-      headers: fedModulesheaders,
-    });
-
-    return response.data;
+    const { data, fromCache } = await cacheFetch(
+      'sso-config-generated',
+      () =>
+        getSSOConfigAxios()
+          .get<SSOConfig>(ssoConfigPath, { headers: fedModulesheaders })
+          .then((r) => {
+            if (!isSSOConfig(r.data)) {
+              throw new Error('SSO config validation failed: invalid shape or mapping values');
+            }
+            return r.data;
+          }),
+      undefined,
+      isSSOConfig
+    );
+    if (fromCache) {
+      console.warn('[chrome] SSO config loaded from IndexedDB cache (origin unavailable)');
+    }
+    return data;
   } catch (error) {
     console.warn('Unable to load SSO config from operator, using default fallback', error);
 
@@ -430,24 +465,64 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
   }
 };
 
+// Runtime validator for federated modules structure
+function isFedModulesConfig(data: unknown): data is { [key: string]: ChromeModule } {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+
+  // Check that each entry (except $schema) is a valid ChromeModule
+  for (const [key, value] of Object.entries(data)) {
+    // $schema is optional metadata, skip validation
+    if (key === '$schema') {
+      continue;
+    }
+
+    // Each module must be an object with manifestLocation
+    if (typeof value !== 'object' || value === null) {
+      return false;
+    }
+
+    const module = value as Record<string, unknown>;
+    if (!('manifestLocation' in module) || typeof module.manifestLocation !== 'string') {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 // FIXME: Remove once qaprodauth is dealt with
 // can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
 // Always use stable
 const loadCSCFedModules = () =>
-  axios.get(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+  axios.get<{ [key: string]: ChromeModule }>(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
     headers: fedModulesheaders,
   });
 
 export const loadFedModules = async () => {
   const fedModulesPath = '/api/chrome-service/v1/static/fed-modules-generated.json';
-  return Promise.all([
-    axios
-      .get(fedModulesPath, {
-        headers: fedModulesheaders,
-      })
-      .catch(loadCSCFedModules),
-    axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} })),
-  ]).then(([staticConfig, feoConfig]) => {
+
+  // Try chrome-service, then live CSC. IndexedDB is only used after both fail.
+  const fetchLiveFedModules = async (): Promise<{ [key: string]: ChromeModule }> => {
+    try {
+      const { data } = await axios.get<{ [key: string]: ChromeModule }>(fedModulesPath, { headers: fedModulesheaders });
+      return data;
+    } catch {
+      const { data } = await loadCSCFedModules();
+      return data;
+    }
+  };
+
+  const staticConfigPromise = cacheFetch('fed-modules-generated', fetchLiveFedModules, undefined, isFedModulesConfig).then(({ data, fromCache }) => {
+    if (fromCache) {
+      console.warn('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
+    }
+    return { data };
+  });
+
+  const dynamicPathsPromise = axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} }));
+  return Promise.all([staticConfigPromise, dynamicPathsPromise]).then(([staticConfig, feoConfig]) => {
     if (feoConfig?.data?.chrome) {
       staticConfig.data.chrome = feoConfig?.data?.chrome;
     }

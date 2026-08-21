@@ -3,6 +3,7 @@ import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
 import { ITLess, getChromeStaticPathname } from './common';
+import { cacheFetch } from './cacheFetch';
 
 type RawNavItem = Omit<NavItem, 'navItems'> & { routes?: RawNavItem[]; navItems?: RawNavItem[] };
 
@@ -26,7 +27,40 @@ function normalizeBundle(bundle: RawBundleNavigation): BundleNavigation {
 }
 
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
-  return typeof item !== 'undefined';
+  if (
+    typeof item !== 'object' ||
+    item === null ||
+    !('id' in item) ||
+    typeof (item as BundleNavigation).id !== 'string' ||
+    !('title' in item) ||
+    typeof (item as BundleNavigation).title !== 'string'
+  ) {
+    return false;
+  }
+
+  const hasNavItems = 'navItems' in item;
+  const hasRoutes = 'routes' in item;
+
+  // At least one navigation field must be present
+  if (!hasNavItems && !hasRoutes) {
+    return false;
+  }
+
+  // If navItems is present, it must be an array
+  if (hasNavItems && !Array.isArray((item as RawBundleNavigation).navItems)) {
+    return false;
+  }
+
+  // If routes is present, it must be an array
+  if (hasRoutes && !Array.isArray((item as RawBundleNavigation).routes)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isBundleNavigationArray(data: unknown): data is BundleNavigation[] {
+  return Array.isArray(data) && data.every(isBundleNavigation);
 }
 
 export function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
@@ -57,9 +91,26 @@ const filesCache: {
 
 const fetchNavigationFiles = async (feoGenerated = false) => {
   if (feoGenerated) {
-    // aggregate data call
-    const { data: aggregateData } = await axios.get<BundleNavigation[]>('/api/chrome-service/v1/static/bundles-generated.json');
-    const bundleNavigation = aggregateData.filter(isBundleNavigation).map(normalizeBundle);
+    const { data: aggregateData, fromCache } = await cacheFetch(
+      'bundles-generated',
+      // Drop malformed entries on the live path so one bad bundle can't nuke all
+      // navigation. The filtered-and-good array is what gets cached, so the strict
+      // payload guard below validates it as-is and only guards the cached read.
+      () =>
+        axios.get<BundleNavigation[]>('/api/chrome-service/v1/static/bundles-generated.json').then((r) => {
+          if (!Array.isArray(r.data)) {
+            throw new Error('bundles-generated.json: expected array, received non-array payload');
+          }
+          return r.data.filter(isBundleNavigation);
+        }),
+      undefined,
+      isBundleNavigationArray
+    );
+    if (fromCache) {
+      console.warn('[chrome] Bundle navigation loaded from IndexedDB cache (origin unavailable)');
+    }
+    // Entries are guaranteed valid: live data was filtered above, cached data passed the payload guard.
+    const bundleNavigation = aggregateData.map(normalizeBundle);
     return bundleNavigation;
   }
   const bundles = ITLess() ? itLessBundles : requiredBundles;
