@@ -1,13 +1,14 @@
 import React from 'react';
 
 /**
- * Wraps a masthead element with an optional horizontal subnav placed as a
- * sibling — making both direct children of PF6's `.pf-v6-c-page` grid
- * container. This keeps the subnav *outside* the page card (unlike PF6's
- * built-in `horizontalSubnav` prop, which renders inside `.pf-v6-c-page__main`).
+ * Places an optional horizontal subnav as a sibling of the masthead — making
+ * both direct children of PF6's `.pf-v6-c-page` grid container. This keeps the
+ * subnav *outside* the page card (unlike PF6's built-in `horizontalSubnav` prop,
+ * which renders inside `.pf-v6-c-page__main`).
  *
- * The subnav `<div>` uses the `chr-c-page-subnav` class so it can be placed
- * into a named "subnav" grid area defined by the layout's stylesheet.
+ * The subnav itself is responsible for the `chr-c-page-subnav` class (grid
+ * placement). Passing a component that renders `null` therefore leaves no empty
+ * wrapper in the grid.
  */
 export function withHorizontalSubnav(masthead: React.ReactNode, horizontalSubnav?: React.ReactNode): React.ReactNode {
   if (!horizontalSubnav) {
@@ -17,7 +18,7 @@ export function withHorizontalSubnav(masthead: React.ReactNode, horizontalSubnav
   return (
     <>
       {masthead}
-      <div className="chr-c-page-subnav">{horizontalSubnav}</div>
+      {horizontalSubnav}
     </>
   );
 }

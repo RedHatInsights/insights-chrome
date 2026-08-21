@@ -2,48 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
-import { LIGHTWELL_PATH, isProd } from '../../utils/common';
+import { LIGHTWELL_PATH } from '../../utils/common';
 import { isNavItemVisible } from '../../utils/isNavItemVisible';
 import { NavItemPermission } from '../../@types/types';
 
 const CONTENT_SOURCES_FEATURES_URL = '/api/content-sources/v1.0/features/';
+const LENS_PATH = `${LIGHTWELL_PATH}/lens`;
+const BEACON_PATH = `${LIGHTWELL_PATH}/beacon`;
 
-interface LightwellNavItemConfig {
-  label: string;
-  path: string;
-  permissions?: NavItemPermission<'apiRequest'>[];
-}
-
-/**
- * Create an apiRequest permission entry for the content-sources features API.
- * The accessor path extracts the `accessible` boolean from the response.
- */
-const featuresPermission = (accessor: string): LightwellNavItemConfig['permissions'] => [
+const featuresPermission = (accessor: string): NavItemPermission<'apiRequest'>[] => [
   { method: 'apiRequest', args: [{ url: CONTENT_SOURCES_FEATURES_URL, accessor }] },
 ];
 
-/**
- * Stage/dev: no permissions — all three tabs visible to everyone, no API calls.
- */
-const STAGE_NAV_ITEMS: LightwellNavItemConfig[] = [
-  { label: 'Repositories', path: LIGHTWELL_PATH },
-  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens` },
-  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon` },
-];
+const LIGHTWELL_PERMISSION = featuresPermission('lightwell.accessible');
+const LENS_AND_BEACON_PERMISSION = featuresPermission('lightwellbeaconandlens.accessible');
 
-/**
- * Production: each item gated behind the content-sources features API.
- *
- * | Nav Item       | Feature Key            | Accessor                          |
- * |----------------|------------------------|-----------------------------------|
- * | Repositories   | lightwell              | lightwell.accessible              |
- * | Lens           | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
- * | Beacon         | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
- */
-const PROD_NAV_ITEMS: LightwellNavItemConfig[] = [
-  { label: 'Repositories', path: LIGHTWELL_PATH, permissions: featuresPermission('lightwell.accessible') },
-  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
-  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
+const NAV_ITEMS = [
+  { label: 'Repositories', path: LIGHTWELL_PATH },
+  { label: 'Lens', path: LENS_PATH },
+  { label: 'Beacon', path: BEACON_PATH },
 ];
 
 /**
@@ -51,53 +28,37 @@ const PROD_NAV_ITEMS: LightwellNavItemConfig[] = [
  * Checks specific sub-routes first; falls back to Repositories (root).
  */
 const getActiveLightwellNav = (pathname: string): string => {
-  if (pathname === `${LIGHTWELL_PATH}/lens` || pathname.startsWith(`${LIGHTWELL_PATH}/lens/`)) return `${LIGHTWELL_PATH}/lens`;
-  if (pathname === `${LIGHTWELL_PATH}/beacon` || pathname.startsWith(`${LIGHTWELL_PATH}/beacon/`)) return `${LIGHTWELL_PATH}/beacon`;
+  if (pathname === LENS_PATH || pathname.startsWith(`${LENS_PATH}/`)) return LENS_PATH;
+  if (pathname === BEACON_PATH || pathname.startsWith(`${BEACON_PATH}/`)) return BEACON_PATH;
   return LIGHTWELL_PATH;
 };
 
+const isFeatureAccessible = async (permissions: NavItemPermission<'apiRequest'>[]): Promise<boolean> => {
+  try {
+    return await isNavItemVisible(permissions);
+  } catch {
+    return false;
+  }
+};
+
 /**
- * Lightwell-specific horizontal navigation. In production, items are gated
- * behind the content-sources features API (`/api/content-sources/v1.0/features/`)
- * using the built-in `apiRequest` visibility function with an `accessor` to
- * extract the `accessible` boolean. In stage/dev, all items are visible
- * without API calls.
+ * Lightwell-specific horizontal navigation. Shown only when both content-sources
+ * features are accessible (`/api/content-sources/v1.0/features/`):
+ * `lightwell.accessible` and `lightwellbeaconandlens.accessible`.
+ * Otherwise the bar is omitted (including while permissions load).
  */
 const LightwellNavigation = (): React.JSX.Element | null => {
   const { pathname } = useLocation();
-  const isProduction = isProd();
-  const navItems = isProduction ? PROD_NAV_ITEMS : STAGE_NAV_ITEMS;
-
-  // Stage items have no permissions → show immediately, not loading.
-  // Prod items require API verification → start empty, loading until resolved.
-  const [visibleItems, setVisibleItems] = useState<LightwellNavItemConfig[]>(() => (isProduction ? [] : navItems));
-  const [isLoading, setIsLoading] = useState(isProduction);
+  const [showNav, setShowNav] = useState(false);
 
   useEffect(() => {
-    if (!isProduction) {
-      return;
-    }
-
     let cancelled = false;
 
     const evaluatePermissions = async () => {
-      const results = await Promise.all(
-        navItems.map(async (item) => {
-          if (!item.permissions) {
-            return { item, visible: true };
-          }
-          try {
-            const visible = await isNavItemVisible(item.permissions);
-            return { item, visible };
-          } catch {
-            return { item, visible: false };
-          }
-        })
-      );
+      const [hasLightwell, hasLensAndBeacon] = await Promise.all([isFeatureAccessible(LIGHTWELL_PERMISSION), isFeatureAccessible(LENS_AND_BEACON_PERMISSION)]);
 
       if (!cancelled) {
-        setVisibleItems(results.filter(({ visible }) => visible).map(({ item }) => item));
-        setIsLoading(false);
+        setShowNav(hasLightwell && hasLensAndBeacon);
       }
     };
 
@@ -106,19 +67,18 @@ const LightwellNavigation = (): React.JSX.Element | null => {
     return () => {
       cancelled = true;
     };
-  }, [isProduction]);
+  }, []);
 
-  // Hide while loading permissions and when only one item remains (no tabs needed)
-  if (isLoading || visibleItems.length <= 1) {
+  if (!showNav) {
     return null;
   }
 
   const activeNav = getActiveLightwellNav(pathname);
 
   return (
-    <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
+    <Nav className="chr-c-page-subnav" variant="horizontal-subnav" aria-label="Lightwell navigation">
       <NavList>
-        {visibleItems.map(({ label, path }) => (
+        {NAV_ITEMS.map(({ label, path }) => (
           <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
             {label}
           </NavItem>
