@@ -7,6 +7,15 @@ import createUUID from './createUUID';
 
 const log = logger('auth:utils');
 
+/**
+ * Base OIDC scopes required for all auth flows. This is the single source of
+ * truth — use it everywhere scopes are constructed (UserManager config,
+ * signinSilent, error recovery, login redirect).
+ */
+export function getBaseScopes(): string[] {
+  return ITLess() ? ['openid'] : ['openid', 'api.console', 'api.ask_red_hat'];
+}
+
 enum AllowedPartnerScopes {
   aws = 'aws',
   azure = 'azure',
@@ -64,7 +73,7 @@ export function login(auth: AuthContextProps, requiredScopes: string[] = [], red
   // Redirect to login
   Cookies.set('cs_loggedOut', 'false');
   //FIX ME: Temp fix until scope is added in-boundary
-  let scope = ITLess() ? ['openid', ...requiredScopes] : ['openid', 'api.console', 'api.ask_red_hat', ...requiredScopes];
+  let scope = [...getBaseScopes(), ...requiredScopes];
   const partner = getPartnerScope(window.location.pathname);
   if (partner) {
     scope.push(partner);
