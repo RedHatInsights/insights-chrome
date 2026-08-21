@@ -11,7 +11,7 @@ import { getInitialFilterState } from './getInitialFilterState';
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   globalFilterDataAtom,
@@ -179,6 +179,7 @@ const GlobalFilterWrapper = () => {
   const isRbacV2 = useFlag('platform.rbac.workspaces');
   const isHbiRbacV2 = useFlag('hbi.rbac-v2');
   const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
+  const { flagsReady } = useFlagsStatus();
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
@@ -199,6 +200,10 @@ const GlobalFilterWrapper = () => {
       return;
     }
 
+    if (!flagsReady) {
+      return;
+    }
+
     let mounted = true;
     const fetchPermissions = async () => {
       const permissions = await getUserPermissions?.('inventory');
@@ -214,7 +219,7 @@ const GlobalFilterWrapper = () => {
     return () => {
       mounted = false;
     };
-  }, [isRbacV2, isHbiRbacV2]);
+  }, [isRbacV2, isHbiRbacV2, flagsReady]);
   return isGlobalFilterEnabled && chromeAuth.ready ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 
