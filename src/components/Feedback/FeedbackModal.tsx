@@ -28,14 +28,7 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 
 export type FeedbackPages =
-  | 'feedbackHome'
-  | 'feedbackOne'
-  | 'feedbackSuccess'
-  | 'reportBugOne'
-  | 'informDirection'
-  | 'feedbackError'
-  | 'bugReportSuccess'
-  | 'informDirectionSuccess';
+  'feedbackHome' | 'feedbackOne' | 'feedbackSuccess' | 'reportBugOne' | 'informDirection' | 'feedbackError' | 'bugReportSuccess' | 'informDirectionSuccess';
 
 const FeedbackModal = memo(() => {
   const intl = useIntl();

@@ -31,8 +31,12 @@ describe('useBreadcrumbsLinks', () => {
     const wrapper = createWrapper('/insights/dashboard');
     const { result } = renderHook(() => useBreadcrumbsLinks(), { wrapper });
 
-    expect(result.current).toHaveLength(1);
+    expect(result.current).toHaveLength(2);
     expect(result.current[0]).toEqual({
+      title: 'Red Hat Hybrid Cloud Console',
+      href: '/',
+    });
+    expect(result.current[1]).toEqual({
       title: 'RHEL',
       href: '/insights',
     });
@@ -95,15 +99,20 @@ describe('useBreadcrumbsLinks', () => {
     const wrapper = createWrapper('/insights/advisor', [], navigation);
     const { result } = renderHook(() => useBreadcrumbsLinks(), { wrapper });
 
-    // First segment is the bundle
+    // First segment is the console root
     expect(result.current[0]).toEqual({
+      title: 'Red Hat Hybrid Cloud Console',
+      href: '/',
+    });
+
+    // Second segment is the bundle
+    expect(result.current[1]).toEqual({
       title: 'RHEL',
       href: '/insights',
     });
 
-    // With no routes, only bundle and active item segments are generated
-    // (group segments like "Operations" are not included in breadcrumbs)
-    expect(result.current.length).toBeGreaterThanOrEqual(1);
+    // With no routes, only root, bundle and active item segments are generated
+    expect(result.current.length).toBeGreaterThanOrEqual(2);
     expect(result.current.some((s) => s.title === 'Advisor')).toBe(true);
   });
 
@@ -138,13 +147,17 @@ describe('useBreadcrumbsLinks', () => {
     const wrapper = createWrapper('/insights/advisor', routes, navigation);
     const { result } = renderHook(() => useBreadcrumbsLinks(), { wrapper });
 
-    // Should have bundle + active item = 2 segments
-    expect(result.current).toHaveLength(2);
+    // Should have root + bundle + active item = 3 segments
+    expect(result.current).toHaveLength(3);
     expect(result.current[0]).toEqual({
+      title: 'Red Hat Hybrid Cloud Console',
+      href: '/',
+    });
+    expect(result.current[1]).toEqual({
       title: 'RHEL',
       href: '/insights',
     });
-    expect(result.current[1]).toEqual({
+    expect(result.current[2]).toEqual({
       title: 'Advisor',
       href: '/insights/advisor',
       active: true,

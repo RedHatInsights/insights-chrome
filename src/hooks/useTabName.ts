@@ -14,7 +14,7 @@ const useTabName = () => {
 
   const title = useMemo(() => {
     const fragmentsWithoutBundle = fragments
-      .slice(1) // remove the bundle
+      .slice(2) // remove the root and bundle breadcrumbs
       .slice(-2) // limit to closest link parent
       .map(({ title }) => title);
     // toReversed is not properly supported in all envs we run this code

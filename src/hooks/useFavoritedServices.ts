@@ -3,7 +3,7 @@ import useAllServices from './useAllServices';
 import { useMemo } from 'react';
 import { extractNavItemGroups } from '../utils/fetchNavigationFiles';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
-import { findNavLeafPath } from '../utils/common';
+import { LIGHTWELL_PATH, findNavLeafPath } from '../utils/common';
 import useFavoritePagesWrapper from './useFavoritePagesWrapper';
 import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
 import useAllLinks from './useAllLinks';
@@ -38,6 +38,12 @@ const useFavoritedServices = () => {
         internalLinks.push(item);
       }
     });
+    // Lightwell is a standalone layout with its own route, not part of
+    // navigation bundles or service tiles. Inject it so /lightwell
+    // favorites can be matched against the link catalog.
+    if (!internalLinks.some((link) => link.href === LIGHTWELL_PATH)) {
+      internalLinks.push({ href: LIGHTWELL_PATH, title: 'Lightwell' });
+    }
     return internalLinks.map((link) => {
       let linkLeaf: ReturnType<typeof findNavLeafPath> | undefined;
       // use every to exit early if match was found

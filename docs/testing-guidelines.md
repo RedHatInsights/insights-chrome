@@ -173,6 +173,48 @@ E2E tests need:
 - Stage test account credentials via `E2E_USER` and `E2E_PASSWORD` env vars
 - Account creation: [Ethel](https://account-manager-stage.app.eng.rdu2.redhat.com/#create)
 
+### Best Practices for Playwright/Cypress Tests
+
+**Use symbolic timeout constants** instead of magic numbers for CI stability:
+
+```typescript
+// ❌ BAD - Hard-coded timeout values
+await expect(page.getByRole('button')).toBeVisible({ timeout: 5000 });
+await element.click({ timeout: 10000 });
+
+// ✅ GOOD - Named constants with comments explaining why
+const BUTTON_VISIBILITY_TIMEOUT = 5000; // CI can be slow to render PatternFly buttons
+const BUTTON_CLICK_TIMEOUT = 10000; // Extra time for slow CI environments
+
+await expect(page.getByRole('button')).toBeVisible({ timeout: BUTTON_VISIBILITY_TIMEOUT });
+await element.click({ timeout: BUTTON_CLICK_TIMEOUT });
+```
+
+**Why:** CI environments (especially Konflux/Tekton) can be significantly slower than local development. Named constants make it easy to:
+- Understand why a timeout exists
+- Adjust timeouts globally when CI performance changes
+- Distinguish between different types of waits
+
+**Avoid race conditions** in element checks:
+
+```typescript
+// ❌ BAD - Race condition between check and click
+const isVisible = await button.isVisible();
+if (isVisible) {
+  await button.click(); // Element might detach between check and click
+}
+
+// ✅ GOOD - Atomic operations
+if ((await button.count()) > 0) {
+  await button.waitFor({ state: 'visible' });
+  await button.click();
+}
+```
+
+**Examples from the codebase:**
+- `playwright/e2e/release-gate/landing-page.spec.ts` - `TOOLTIP_TIMEOUT`
+- `playwright/e2e/release-gate/favorite-services.spec.ts` - `SERVICES_LOAD_TIMEOUT`, `BUTTON_STABILITY_TIMEOUT`, `BUTTON_CLICK_TIMEOUT`
+
 ## Pre-PR Verification
 
 Always run the full verification before submitting:

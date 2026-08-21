@@ -1,5 +1,5 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { LOGIN_SCOPES_STORAGE_KEY, isProd } from './common';
+import { ITLess, LOGIN_SCOPES_STORAGE_KEY, isProd } from './common';
 import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
@@ -208,6 +208,29 @@ const initialize = ({
           return false;
         }
         return parsed.includes(requiredScope);
+      } catch {
+        return false;
+      }
+    },
+    isITLess: (expected: boolean) => ITLess() === expected,
+    isKesselEnabled: (expected: boolean) => {
+      if (ITLess() || getFeatureFlagsError()) {
+        return false;
+      }
+
+      try {
+        return getUnleashClient().isEnabled('platform.chrome.kessel') === expected;
+      } catch {
+        return false;
+      }
+    },
+    isKesselOrgOnboarded: (expected: boolean) => {
+      if (ITLess() || getFeatureFlagsError()) {
+        return false;
+      }
+
+      try {
+        return getUnleashClient().isEnabled('platform.rbac.workspaces') === expected;
       } catch {
         return false;
       }

@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react';
 import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
+import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
@@ -79,43 +78,25 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
         onClick={handleClickOutside}
       >
         <Backdrop>
-          <Panel variant="raised" className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
+          <Panel variant="raised" isGlass className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
             <PanelMain>
-              <Sidebar>
-                <SidebarPanel>
-                  <Stack>
-                    <StackItem className="pf-v6-u-w-100">
-                      <AllServicesTabs
-                        activeTabKey={activeTabKey}
-                        handleTabClick={handleTabClick}
-                        isExpanded={isExpanded}
-                        onToggle={onToggle}
-                        linkSections={linkSections}
-                        tabContentRef={tabContentRef}
-                        onTabClick={onTabClick}
-                        activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                        setIsExpanded={setIsOpen}
-                      />
-                    </StackItem>
-                  </Stack>
+              <Sidebar hasBorder>
+                <SidebarPanel backgroundVariant="secondary" tabIndex={0} role="region" aria-label="Service categories">
+                  <AllServicesTabs
+                    activeTabKey={activeTabKey}
+                    handleTabClick={handleTabClick}
+                    isExpanded={isExpanded}
+                    onToggle={onToggle}
+                    linkSections={linkSections}
+                    tabContentRef={tabContentRef}
+                    onTabClick={onTabClick}
+                    activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
+                    setIsExpanded={setIsExpanded}
+                  />
                 </SidebarPanel>
                 <SidebarContent>
-                  <Card isPlain>
-                    <CardHeader
-                      actions={{
-                        actions: [
-                          <Button
-                            className="pf-v6-u-mr-sm"
-                            icon={<TimesIcon />}
-                            key="close"
-                            variant="plain"
-                            aria-label="Close menu"
-                            onClick={() => setIsOpen(!isOpen)}
-                          />,
-                        ],
-                      }}
-                      className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
-                    >
+                  <Split className="pf-v6-u-pl-lg pf-v6-u-pr-md pf-v6-u-py-md pf-v6-u-align-items-center">
+                    <SplitItem isFilled>
                       <Title headingLevel="h3">
                         {activeTabKey === FAVORITE_TAB_ID ? (
                           <>
@@ -125,25 +106,26 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                           <>{selectedService.title}</>
                         )}
                       </Title>
-                    </CardHeader>
-                    <Divider />
-                    <CardBody className="pf-v6-u-p-0">
-                      <TabContent
-                        eventKey={activeTabKey}
-                        id={TAB_CONTENT_ID}
-                        ref={tabContentRef}
-                        aria-label={activeTabKey === FAVORITE_TAB_ID ? 'My Favorite services' : selectedService?.description}
-                      >
-                        {activeTabKey === FAVORITE_TAB_ID ? (
-                          <Fragment>
-                            <FavoriteServicesGallery favoritedServices={favoritedServices} />
-                          </Fragment>
-                        ) : (
-                          <AllServicesGallery selectedService={selectedService} />
-                        )}
-                      </TabContent>
-                    </CardBody>
-                  </Card>
+                    </SplitItem>
+                    <SplitItem>
+                      <Button className="pf-v6-u-mr-sm" icon={<TimesIcon />} variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)} />
+                    </SplitItem>
+                  </Split>
+                  <Divider />
+                  <TabContent
+                    eventKey={activeTabKey}
+                    id={TAB_CONTENT_ID}
+                    ref={tabContentRef}
+                    aria-label={activeTabKey === FAVORITE_TAB_ID ? 'My Favorite services' : selectedService?.description}
+                  >
+                    {activeTabKey === FAVORITE_TAB_ID ? (
+                      <Fragment>
+                        <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                      </Fragment>
+                    ) : (
+                      <AllServicesGallery selectedService={selectedService} />
+                    )}
+                  </TabContent>
                 </SidebarContent>
               </Sidebar>
             </PanelMain>

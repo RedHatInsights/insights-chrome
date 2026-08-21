@@ -1,7 +1,5 @@
-import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
-import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { MenuGroup, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
 
-import React from 'react';
 import { AllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
 import { titleToId } from '../../utils/common';
@@ -13,19 +11,13 @@ const AllServicesGallerySection = ({ title, links, category }: AllServicesGaller
     return null;
   }
   return (
-    <>
-      <div className="pf-v6-u-pb-sm">
-        <Content component="small" className="pf-v6-u-px-lg pf-v6-u-mb-sm pf-v6-u-mt-md">
-          {title}
-        </Content>
-        <div>
-          {links.map((link, index) => (
-            <AllServicesGalleryLink {...link} category={category} group={titleToId(title)} key={index} />
-          ))}
-        </div>
-      </div>
-      <Divider />
-    </>
+    <MenuGroup label={title} labelHeadingLevel="h4">
+      <MenuList>
+        {links.map((link, index) => (
+          <AllServicesGalleryLink {...link} category={category} group={titleToId(title)} key={index} />
+        ))}
+      </MenuList>
+    </MenuGroup>
   );
 };
 
