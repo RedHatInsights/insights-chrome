@@ -1,0 +1,30 @@
+# Build outputs
+dist/
+build/
+.webpack-cache/
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+
+# Generated files
+src/locales/translations.json
+src/locales/data.json
+
+# Cypress
+.cypress-cache/
+cypress/videos/
+cypress/screenshots/
+
+# Playwright
+playwright-report/
+test-results/
+
+# OS files
+.DS_Store

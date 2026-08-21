@@ -19,7 +19,11 @@ interface DarkModeState {
 }
 
 function MyComponent() {
-  const { hookResult: useDarkModeStore, loading, error } = useRemoteHook<() => DarkModeState>({
+  const {
+    hookResult: useDarkModeStore,
+    loading,
+    error,
+  } = useRemoteHook<() => DarkModeState>({
     scope: 'chrome',
     module: './theme/useDarkModeStore',
     importName: 'useDarkModeStore',
@@ -42,11 +46,7 @@ function MyComponent() {
 function ThemeDisplay({ useDarkModeStore }: { useDarkModeStore: () => DarkModeState }) {
   const { isDark } = useDarkModeStore();
 
-  return (
-    <div>
-      Current theme: {isDark ? 'Dark' : 'Light'}
-    </div>
-  );
+  return <div>Current theme: {isDark ? 'Dark' : 'Light'}</div>;
 }
 ```
 
@@ -64,8 +64,8 @@ function ThemeDisplay({ useDarkModeStore }: { useDarkModeStore: () => DarkModeSt
 
 The `useDarkModeStore` hook returns an object with:
 
-| Property | Type | Description |
-|----------|------|-------------|
+| Property | Type      | Description                                                        |
+| -------- | --------- | ------------------------------------------------------------------ |
 | `isDark` | `boolean` | `true` when dark mode is active, `false` when light mode is active |
 
 ## Complete Working Example
@@ -81,7 +81,11 @@ interface DarkModeState {
 }
 
 function ThemeAwareComponent() {
-  const { hookResult: useDarkModeStore, loading, error } = useRemoteHook<() => DarkModeState>({
+  const {
+    hookResult: useDarkModeStore,
+    loading,
+    error,
+  } = useRemoteHook<() => DarkModeState>({
     scope: 'chrome',
     module: './theme/useDarkModeStore',
     importName: 'useDarkModeStore',
@@ -141,19 +145,31 @@ interface DarkModeState {
 }
 
 function MyAppRoot() {
-  const { hookResult: useDarkModeStore, loading, error } = useRemoteHook<() => DarkModeState>({
+  const {
+    hookResult: useDarkModeStore,
+    loading,
+    error,
+  } = useRemoteHook<() => DarkModeState>({
     scope: 'chrome',
     module: './theme/useDarkModeStore',
     importName: 'useDarkModeStore',
   });
 
   if (loading) {
-    return <div className="my-app-light"><MyContent /></div>;
+    return (
+      <div className="my-app-light">
+        <MyContent />
+      </div>
+    );
   }
 
   if (error || !useDarkModeStore) {
     // Fall back to light mode
-    return <div className="my-app-light"><MyContent /></div>;
+    return (
+      <div className="my-app-light">
+        <MyContent />
+      </div>
+    );
   }
 
   // Child component calls useDarkModeStore() unconditionally
@@ -196,13 +212,13 @@ function ThemedAppRoot({ useDarkModeStore }: { useDarkModeStore: () => DarkModeS
 
 ### When to Use CSS vs. the Hook
 
-| Use Case | Approach |
-|----------|----------|
-| Theme-specific colors or styling | Hook + custom class on root element |
-| Simple show/hide of elements | Hook + custom class on root element |
-| Conditional rendering logic | `useDarkModeStore` hook directly |
-| Fetching theme-specific data | `useDarkModeStore` hook directly |
-| Passing theme to third-party libraries | `useDarkModeStore` hook directly |
+| Use Case                               | Approach                            |
+| -------------------------------------- | ----------------------------------- |
+| Theme-specific colors or styling       | Hook + custom class on root element |
+| Simple show/hide of elements           | Hook + custom class on root element |
+| Conditional rendering logic            | `useDarkModeStore` hook directly    |
+| Fetching theme-specific data           | `useDarkModeStore` hook directly    |
+| Passing theme to third-party libraries | `useDarkModeStore` hook directly    |
 
 ## How It Works Internally
 

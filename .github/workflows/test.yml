@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   # prerequisite for all jobs, install node modules only once
@@ -81,9 +81,9 @@ jobs:
       - run: npm ci
       - uses: cypress-io/github-action@v6
         with:
-            component: true
-            install: false
-            browser: chrome
+          component: true
+          install: false
+          browser: chrome
   # build job
   build:
     needs: [install]

@@ -37,33 +37,33 @@
 
 ### Core Properties
 
-| Property | Type | Example | Description |
-|----------|------|---------|-------------|
-| `internal` | boolean | `false` | Red Hat internal user (filter out testing) |
-| `isBeta` | boolean | `false` | Preview/Beta mode enabled |
-| `isOrgAdmin` | boolean | `true` | Organization administrator |
-| `org_id` | string | `"20283813"` | Organization identifier |
+| Property     | Type    | Example      | Description                                |
+| ------------ | ------- | ------------ | ------------------------------------------ |
+| `internal`   | boolean | `false`      | Red Hat internal user (filter out testing) |
+| `isBeta`     | boolean | `false`      | Preview/Beta mode enabled                  |
+| `isOrgAdmin` | boolean | `true`       | Organization administrator                 |
+| `org_id`     | string  | `"20283813"` | Organization identifier                    |
 
 ### Organization Context
 
-| Property | Type | Example | Description |
-|----------|------|---------|-------------|
-| `account_id` | string | `"acct-456789"` | Internal account ID |
-| `account_number` | string | `"12845372"` | EBS account number |
+| Property         | Type   | Example         | Description         |
+| ---------------- | ------ | --------------- | ------------------- |
+| `account_id`     | string | `"acct-456789"` | Internal account ID |
+| `account_number` | string | `"12845372"`    | EBS account number  |
 
 ### User Context
 
-| Property | Type | Example | Description |
-|----------|------|---------|-------------|
-| `locale` | string | `"en"` | User locale |
+| Property       | Type   | Example        | Description           |
+| -------------- | ------ | -------------- | --------------------- |
+| `locale`       | string | `"en"`         | User locale           |
 | `email_domain` | string | `"redhat.com"` | Email domain (no PII) |
 
 ### Application Context
 
-| Property | Type | Example | Description |
-|----------|------|---------|-------------|
-| `current_bundle` | string | `"insights"` | Current bundle |
-| `current_app` | string | `"dashboard"` | Current application |
+| Property         | Type   | Example       | Description         |
+| ---------------- | ------ | ------------- | ------------------- |
+| `current_bundle` | string | `"insights"`  | Current bundle      |
+| `current_app`    | string | `"dashboard"` | Current application |
 
 ### Entitlements
 
@@ -74,28 +74,33 @@ Each service has two properties: `entitlement_{service}` (boolean) and `entitlem
 ## Example Queries
 
 **Trial conversion:**
+
 ```
 WHERE entitlement_*_trial = true
 GROUP BY service
 ```
 
 **Admin vs non-admin:**
+
 ```
 WHERE isOrgAdmin = true vs false
 ```
 
 **Beta validation:**
+
 ```
 WHERE isBeta = true
 ```
 
 **Cross-product journey:**
+
 ```
 WHERE entitlement_insights = true AND entitlement_cost_management = true
 GROUP BY current_app sequence
 ```
 
 **Enterprise segmentation:**
+
 ```
 GROUP BY org_id
 ORDER BY event_count DESC

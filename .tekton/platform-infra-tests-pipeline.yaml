@@ -10,18 +10,18 @@ spec:
     Will be extended with real test commands once the pipeline is proven.
   params:
     - name: SNAPSHOT
-      description: "The Konflux snapshot being tested"
+      description: 'The Konflux snapshot being tested'
       type: string
   results:
     - name: TEST_OUTPUT
-      description: "Test result summary"
+      description: 'Test result summary'
       value: $(tasks.smoke-test.results.TEST_OUTPUT)
   tasks:
     - name: smoke-test
       taskSpec:
         results:
           - name: TEST_OUTPUT
-            description: "Test output in Konflux standardized format"
+            description: 'Test output in Konflux standardized format'
         steps:
           - name: smoke-test
             image: registry.access.redhat.com/ubi9/ubi-minimal:latest
