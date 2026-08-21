@@ -18,6 +18,18 @@ jest.mock('../hooks/useBundle', () => ({
   default: jest.fn(() => ({ bundleTitle: 'Test' })),
 }));
 
+// Mock localforage so cacheFetch does not persist data between tests.
+// ssoConfig tests exercise loadSSOConfig logic, not the caching layer.
+jest.mock('localforage', () => ({
+  INDEXEDDB: 'asyncStorage',
+  WEBSQL: 'webSQLStorage',
+  LOCALSTORAGE: 'localStorageWrapper',
+  createInstance: jest.fn(() => ({
+    setItem: jest.fn().mockResolvedValue(undefined),
+    getItem: jest.fn().mockResolvedValue(null),
+  })),
+}));
+
 describe('resolveSSOUrl', () => {
   afterEach(() => {
     jsdomReset();
@@ -213,6 +225,106 @@ describe('loadSSOConfig', () => {
     const result = await loadFn();
 
     expect(result.ssoUrl).toBe('https://sso.stage.redhat.com/auth/');
+  });
+
+  it('should reject SSO config with array ssoMapping values', async () => {
+    const invalidConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': ['https://sso.redhat.com/auth'] as unknown as string,
+      },
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: invalidConfig });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
+    expect(result.ssoMapping).toBeDefined();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+  });
+
+  it('should reject SSO config with empty string ssoMapping values', async () => {
+    const invalidConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': '',
+      },
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: invalidConfig });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
+    expect(result.ssoMapping).toBeDefined();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+  });
+
+  it('should reject SSO config with non-string ssoMapping values', async () => {
+    const invalidConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': 123 as unknown as string,
+      },
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: invalidConfig });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
+    expect(result.ssoMapping).toBeDefined();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+  });
+
+  it('should reject SSO config with array ssoMapping instead of object', async () => {
+    const invalidConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: [] as unknown as Record<string, string>,
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: invalidConfig });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
+    expect(result.ssoMapping).toBeDefined();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+  });
+
+  it('should accept SSO config when cached data has valid mapping values', async () => {
+    // Simulate a valid cached response
+    const validCachedConfig: SSOConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': 'https://sso.redhat.com/auth',
+        'qa.cloud.redhat.com': 'https://sso.qa.redhat.com/auth',
+      },
+    };
+
+    // Mock the cache to return valid data after network failure
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const localforageMock = require('localforage');
+    localforageMock.createInstance.mockReturnValue({
+      setItem: jest.fn().mockResolvedValue(undefined),
+      getItem: jest.fn().mockResolvedValue({
+        data: validCachedConfig,
+        cachedAt: Date.now(),
+      }),
+    });
+
+    mockAxiosInstance.get.mockRejectedValue(new Error('Network error'));
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    expect(result).toEqual(validCachedConfig);
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] SSO config loaded from IndexedDB cache (origin unavailable)');
   });
 });
 

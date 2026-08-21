@@ -1,4 +1,4 @@
-import { findNavLeafPath, getErrorMessage, isExpandableNav } from './common';
+import { findNavLeafPath, getErrorMessage, isExpandableNav, isFedModulesConfig } from './common';
 import { NavItem } from '../@types/types';
 
 describe('isExpandableNav', () => {
@@ -148,5 +148,133 @@ describe('getErrorMessage', () => {
     expect(getErrorMessage(null, '')).toBe('');
     expect(getErrorMessage(undefined, 'custom')).toBe('custom');
     expect(getErrorMessage({ message: 456 }, 'default')).toBe('default');
+  });
+});
+
+describe('isFedModulesConfig', () => {
+  it('accepts valid fed-modules config map', () => {
+    const validConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json' },
+      app2: { manifestLocation: '/apps/app2/fed-mods.json', ssoUrl: 'https://sso.example.com' },
+    };
+    expect(isFedModulesConfig(validConfig)).toBe(true);
+  });
+
+  it('accepts config with optional $schema field', () => {
+    const configWithSchema = {
+      $schema: 'https://example.com/schema.json',
+      app1: { manifestLocation: '/apps/app1/fed-mods.json' },
+    };
+    expect(isFedModulesConfig(configWithSchema)).toBe(true);
+  });
+
+  it('accepts empty config object', () => {
+    expect(isFedModulesConfig({})).toBe(true);
+  });
+
+  it('rejects null', () => {
+    expect(isFedModulesConfig(null)).toBe(false);
+  });
+
+  it('rejects undefined', () => {
+    expect(isFedModulesConfig(undefined)).toBe(false);
+  });
+
+  it('rejects primitives', () => {
+    expect(isFedModulesConfig('string')).toBe(false);
+    expect(isFedModulesConfig(42)).toBe(false);
+    expect(isFedModulesConfig(true)).toBe(false);
+  });
+
+  it('rejects array inputs before Object.entries iteration', () => {
+    const arrayResponse = [{ manifestLocation: '/apps/app1/fed-mods.json' }, { manifestLocation: '/apps/app2/fed-mods.json' }];
+    expect(isFedModulesConfig(arrayResponse)).toBe(false);
+  });
+
+  it('rejects empty array', () => {
+    expect(isFedModulesConfig([])).toBe(false);
+  });
+
+  it('rejects config with module missing manifestLocation', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json' },
+      app2: { ssoUrl: 'https://sso.example.com' }, // missing manifestLocation
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects config with non-string manifestLocation', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: 123 },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects config with null module value', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json' },
+      app2: null,
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects config with non-object module value', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json' },
+      app2: 'not-an-object',
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('accepts module with valid modules array', () => {
+    const validConfig = {
+      app1: {
+        manifestLocation: '/apps/app1/fed-mods.json',
+        modules: [{ module: 'App', routes: ['/app1', { pathname: '/app1/details' }] }],
+      },
+    };
+    expect(isFedModulesConfig(validConfig)).toBe(true);
+  });
+
+  it('rejects module where modules is not an array', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: 'not-an-array' },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects module with null RemoteModule entry', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: [null] },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects RemoteModule with non-string module name', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: [{ module: 123, routes: [] }] },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects RemoteModule where routes is not an array', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: [{ module: 'App', routes: null }] },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects RemoteModule with malformed route entry', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: [{ module: 'App', routes: [null] }] },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+
+  it('rejects RemoteModule with route object missing pathname', () => {
+    const invalidConfig = {
+      app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: [{ module: 'App', routes: [{ exact: true }] }] },
+    };
+    expect(isFedModulesConfig(invalidConfig)).toBe(false);
   });
 });
