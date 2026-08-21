@@ -93,6 +93,7 @@ git push --no-verify
 ```
 
 The pre-push check runs:
+
 - TypeScript build validation
 - ESLint checks
 - Unit tests
@@ -102,6 +103,7 @@ This prevents CI failures by catching errors locally before pushing.
 ## Running chrome locally
 
 **Prerequisites:**
+
 - **Red Hat VPN:** Required for proxy access to `console.stage.redhat.com`
 - **Staging account:** Authentication requires a staging environment user. Create one at [ethel.rhsm.redhat.com](https://ethel.rhsm.redhat.com/)
 
@@ -174,20 +176,20 @@ Then restart the dev server.
 
 ### From app terminal
 
-The following example will make use of the [frontend-starter-app](https://github.com/RedHatInsights/frontend-starter-app/). 
+The following example will make use of the [frontend-starter-app](https://github.com/RedHatInsights/frontend-starter-app/).
 
-The [frontend-starter-app README](https://github.com/RedHatInsights/frontend-starter-app/#readme) explains how to install, build and run the app. To inject the `frontend-starter-app` into chrome, start by serving its static assets locally using the `npm run static` command. 
+The [frontend-starter-app README](https://github.com/RedHatInsights/frontend-starter-app/#readme) explains how to install, build and run the app. To inject the `frontend-starter-app` into chrome, start by serving its static assets locally using the `npm run static` command.
 
-When visiting [localhost:8003/apps/frontend-starter-app](http://localhost:8003/apps/frontend-starter-app/) in a browser, you should see a listing of its files. The `baseURL` field in [fed-mods.json](http://localhost:8003/apps/frontend-starter-app/fed-mods.json) contains the path where the static assets can be accessed.  
+When visiting [localhost:8003/apps/frontend-starter-app](http://localhost:8003/apps/frontend-starter-app/) in a browser, you should see a listing of its files. The `baseURL` field in [fed-mods.json](http://localhost:8003/apps/frontend-starter-app/fed-mods.json) contains the path where the static assets can be accessed.
 
 ### From chrome terminal
 
-There are two ways to configure chrome to display your local app. 
+There are two ways to configure chrome to display your local app.
 
 #### 1. `LOCAL_APPS` environment variable
 
 ```sh
-LOCAL_APPS=frontend-starter-app:8003 
+LOCAL_APPS=frontend-starter-app:8003
 npm run dev
 ```
 
@@ -206,6 +208,7 @@ Behind the scenes chrome is parsing the `LOCAL_APPS` env var and creating the fo
   }
 }
 ```
+
 which is further manipulated and turned into a [Webpack devServer.proxy config item](https://webpack.js.org/configuration/dev-server/#devserverproxy)
 
 ```js
@@ -227,7 +230,7 @@ For example:
 # Multiple apps
 LOCAL_APPS=app1:8003,app2:8004,app3:8005
 
-# Custom protocol  
+# Custom protocol
 LOCAL_APPS=secure-app:8443~https
 
 # Mixed
@@ -236,7 +239,7 @@ LOCAL_APPS=app1:8003,secure-app:8443~https,app3:8005~http
 
 #### 2. Custom route
 
-Edit [config/webpack.config.js](config/webpack.config.js) and add the following to the `routes` field of the config object passed to the `proxy` function. 
+Edit [config/webpack.config.js](config/webpack.config.js) and add the following to the `routes` field of the config object passed to the `proxy` function.
 
 ```js
 {
@@ -281,18 +284,18 @@ Applications can register their own searchable content:
 // Register a new search entry
 await chrome.search.insert({
   id: 'my-custom-entry',
-  title: 'Custom Documentation', 
+  title: 'Custom Documentation',
   description: 'Helpful documentation for users',
   pathname: '/my-app/docs',
   bundleTitle: 'My Application',
-  type: 'documentation' // Custom type
+  type: 'documentation', // Custom type
 });
 ```
 
 ### Supported Search Types
 
 - **services**: Application services and tools (predefined)
-- **quickstarts**: Interactive getting-started guides (predefined) 
+- **quickstarts**: Interactive getting-started guides (predefined)
 - **custom types**: Applications can define their own search categories
 
 ### Using Search as a Remote Hook
@@ -374,4 +377,3 @@ If you want the bot to ignore your issue or PR, please add one of the following 
 - blocked
 - wip
 - dependencies
-

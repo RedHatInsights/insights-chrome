@@ -14,9 +14,9 @@ This module provides a clickable icon component that integrates OpenShift suppor
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Optional CSS class name for styling |
+| Prop        | Type     | Default | Description                         |
+| ----------- | -------- | ------- | ----------------------------------- |
+| `className` | `string` | -       | Optional CSS class name for styling |
 
 ## Feature Flag
 
@@ -80,7 +80,10 @@ return (
    - Default: Corporate blue
    - Hover: Blue background appears
    - Expanded: Darker blue background
-ponents */}
-  </>
-);
+     ponents */}
+     </>
+     );
+
+```
+
 ```
