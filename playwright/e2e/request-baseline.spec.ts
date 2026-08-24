@@ -83,7 +83,6 @@ test.describe("Akamai Request Baseline", () => {
   for (const landing of LANDING_PAGES) {
     test(`${landing.name} — request count baseline`, async ({ page }) => {
       const requests: CapturedRequest[] = [];
-      const origin = new URL(page.url() || "https://stage.foo.redhat.com:1337").origin;
 
       page.on("request", (req) => {
         requests.push({
@@ -94,6 +93,7 @@ test.describe("Akamai Request Baseline", () => {
       });
 
       await page.goto(landing.url, { waitUntil: "load" });
+      const origin = new URL(page.url()).origin;
       // Wait for Chrome shell to render (header is present on all pages),
       // then allow late API calls (kessel, analytics) to settle.
       // Avoid networkidle — it's flaky with WebSocket, Unleash polling, and analytics.
