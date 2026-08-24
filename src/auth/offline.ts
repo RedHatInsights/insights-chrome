@@ -1,4 +1,4 @@
-import { OFFLINE_REDIRECT_STORAGE_KEY, noAuthParam, offlineToken } from '../utils/consts';
+import { OFFLINE_REDIRECT_STORAGE_KEY, OIDC_RESERVED_PARAMS, noAuthParam, offlineToken } from '../utils/consts';
 import axios, { AxiosResponse } from 'axios';
 
 export type OfflineTokenResponse = {
@@ -116,6 +116,8 @@ export function postbackUrlSetup() {
 export function prepareOfflineRedirect(base = window.location.href) {
   const url = new URL(base);
   url.hash = '';
+  // strip OIDC-reserved params so they are not forwarded to SSO in the redirect_uri
+  OIDC_RESERVED_PARAMS.forEach((param) => url.searchParams.delete(param));
   url.searchParams.delete(noAuthParam);
   url.searchParams.append(noAuthParam, offlineToken);
   const redirectUri = url.toString().replace('/?', '?');

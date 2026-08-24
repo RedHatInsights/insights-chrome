@@ -1,6 +1,6 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { ITLess, LOGIN_SCOPES_STORAGE_KEY, deleteLocalStorageItems } from '../../utils/common';
-import { GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
+import { GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY, OIDC_RESERVED_PARAMS } from '../../utils/consts';
 import Cookies from 'js-cookie';
 import logger from '../logger';
 import createUUID from './createUUID';
@@ -59,6 +59,36 @@ export async function logout(auth: AuthContextProps, bounce?: boolean) {
   }
 }
 
+/**
+ * Removes OIDC-reserved parameters from a URL so they are never forwarded to Red Hat
+ * SSO inside an outgoing `redirect_uri`. SSO rejects authorization requests whose
+ * redirect_uri contains any of these (see {@link OIDC_RESERVED_PARAMS}); they leak in
+ * via the back button, a copy-pasted URL, or an interrupted auth cycle.
+ *
+ * Only the reserved params are stripped — legitimate params survive the login
+ * round-trip: query params (e.g. `noauth`, `from-aws`) and fragment content
+ * (e.g. global-filter `workloads`/`tags`, or a plain `#anchor`).
+ */
+export function sanitizeRedirectUri(href: string = location.href): string {
+  const url = new URL(href);
+  const reserved: readonly string[] = OIDC_RESERVED_PARAMS;
+
+  // strip reserved params from the query string
+  reserved.forEach((param) => url.searchParams.delete(param));
+
+  // strip reserved params from the fragment while keeping legit fragment content
+  // (e.g. global-filter `workloads`/`tags`) and plain `#anchor` values intact
+  if (url.hash) {
+    const kept = url.hash
+      .replace(/^#/, '')
+      .split('&')
+      .filter((entry) => entry.length > 0 && !reserved.includes(entry.split('=')[0]));
+    url.hash = kept.join('&');
+  }
+
+  return url.toString();
+}
+
 export function login(auth: AuthContextProps, requiredScopes: string[] = [], redirectUri = location.href) {
   log('Logging in');
   // Redirect to login
@@ -74,7 +104,9 @@ export function login(auth: AuthContextProps, requiredScopes: string[] = [], red
   localStorage.setItem(LOGIN_SCOPES_STORAGE_KEY, JSON.stringify(scope));
   // KC scopes are delimited by a space character, hence the join(' ')
   return auth.signinRedirect({
-    redirect_uri: redirectUri,
+    // sanitize here so both the default (location.href) and any explicitly-passed
+    // redirectUri are stripped of OIDC-reserved params before reaching SSO
+    redirect_uri: sanitizeRedirectUri(redirectUri),
     scope: scope.join(' '),
     nonce: createUUID(),
   });
