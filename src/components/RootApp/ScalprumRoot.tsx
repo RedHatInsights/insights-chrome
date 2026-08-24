@@ -120,9 +120,9 @@ const ScalprumRoot = memo(
   () => {
     return (
       <ChromeProvider>
+        <QuickstartsRuntimeMount>
         <BetaSwitcher />
         <DegradedStateBanner />
-        <QuickstartsRuntimeMount>
         <Routes>
           <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
           <Route
