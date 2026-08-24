@@ -4,5 +4,6 @@
 @use '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
 @use '~@patternfly/patternfly/patternfly-charts.scss';
 
-// Quick starts
+// Keep in Chrome's pf-v6 bundle. Federated CSS chunks 404 through the Chrome proxy.
+// Help Panel also imports this file; do not drop the global link.
 @use '~@patternfly/quickstarts/dist/quickstarts.min';

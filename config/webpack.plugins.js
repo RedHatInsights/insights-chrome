@@ -85,7 +85,10 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { 'react-intl': { singleton: true, eager: true, requiredVersion: deps['react-intl'] } },
         { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
-        { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
+        // FEC remotes consume this with import:false (no fallback). Chrome must
+        // actually initialize the share; declaring it is not enough. eager so it
+        // is in the host chunk before learning-resources Help Panel / QuickstartsRuntime load.
+        { '@patternfly/quickstarts': { singleton: true, eager: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
         { '@scalprum/core': { singleton: true, requiredVersion: deps['@scalprum/core'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
