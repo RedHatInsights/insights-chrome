@@ -14,8 +14,8 @@
  *   E2E_USER=you@redhat.com E2E_PASSWORD=... npx playwright test request-baseline
  */
 
-import { test, expect } from '../setup/test-setup';
-import { PAGE_RENDER_TIMEOUT } from './constants';
+import { expect, test } from "../setup/test-setup";
+import { PAGE_RENDER_TIMEOUT } from "./constants";
 
 /**
  * Thresholds — baselined 2026-08-23 against console.stage.redhat.com.
@@ -45,21 +45,21 @@ interface CapturedRequest {
 
 function classifyRequest(req: CapturedRequest): string {
   const url = req.url;
-  if (/\/api\/kessel\/.*checkselfbulk/.test(url)) return 'Kessel checkselfbulk';
-  if (/\/api\/kessel\/.*checkself/.test(url)) return 'Kessel checkself';
-  if (/\/api\/kessel\//.test(url)) return 'Kessel (other)';
-  if (/\/api\/rbac\//.test(url)) return 'RBAC API';
-  if (/\/api\/chrome-service\//.test(url)) return 'Chrome Service API';
-  if (/\/api\/entitlements\//.test(url)) return 'Entitlements API';
-  if (/\/api\/featureflags\//.test(url)) return 'Feature Flags';
-  if (/\/api\//.test(url)) return 'Other API';
-  if (/sso\.|\/auth\/realms\//.test(url)) return 'Auth (SSO)';
-  if (/segment|amplitude|pendo|sentry/.test(url)) return 'Analytics';
-  if (/trustarc|teconsent|consent/.test(url)) return 'Consent';
-  if (/fed-mod|remoteEntry/.test(url)) return 'Module Federation';
-  if (/\/connections\//.test(url)) return 'Analytics Proxy';
-  if (['script', 'stylesheet', 'font', 'image'].includes(req.resourceType)) return 'Static Asset';
-  return 'Other';
+  if (/\/api\/kessel\/.*checkselfbulk/.test(url)) return "Kessel checkselfbulk";
+  if (/\/api\/kessel\/.*checkself/.test(url)) return "Kessel checkself";
+  if (/\/api\/kessel\//.test(url)) return "Kessel (other)";
+  if (/\/api\/rbac\//.test(url)) return "RBAC API";
+  if (/\/api\/chrome-service\//.test(url)) return "Chrome Service API";
+  if (/\/api\/entitlements\//.test(url)) return "Entitlements API";
+  if (/\/api\/featureflags\//.test(url)) return "Feature Flags";
+  if (/\/api\//.test(url)) return "Other API";
+  if (/sso\.|\/auth\/realms\//.test(url)) return "Auth (SSO)";
+  if (/segment|amplitude|pendo|sentry/.test(url)) return "Analytics";
+  if (/trustarc|teconsent|consent/.test(url)) return "Consent";
+  if (/fed-mod|remoteEntry/.test(url)) return "Module Federation";
+  if (/\/connections\//.test(url)) return "Analytics Proxy";
+  if (["script", "stylesheet", "font", "image"].includes(req.resourceType)) return "Static Asset";
+  return "Other";
 }
 
 /**
@@ -69,22 +69,23 @@ function classifyRequest(req: CapturedRequest): string {
  * bundle. Add more bundles here as needed.
  */
 const LANDING_PAGES = [
-  { name: 'RHEL Insights',      url: '/insights/dashboard' },
-  { name: 'OpenShift',          url: '/openshift' },
-  { name: 'Settings',           url: '/settings/integrations' },
-  { name: 'IAM (User Access)',  url: '/iam/user-access/overview' },
-  { name: 'IAM (My Access)',    url: '/iam/my-user-access' },
+  { name: "RHEL Insights", url: "/insights/dashboard" },
+  { name: "OpenShift", url: "/openshift" },
+  { name: "Settings", url: "/settings/integrations" },
+  { name: "IAM (User Access)", url: "/iam/user-access/overview" },
+  { name: "IAM (My Access)", url: "/iam/my-user-access" },
 ];
 
-test.describe('Akamai Request Baseline', () => {
+test.describe("Akamai Request Baseline", () => {
   // Run all pages even if one fails — we want the full baseline, not early exit.
-  test.describe.configure({ mode: 'parallel' });
+  test.describe.configure({ mode: "parallel" });
 
   for (const landing of LANDING_PAGES) {
     test(`${landing.name} — request count baseline`, async ({ page }) => {
       const requests: CapturedRequest[] = [];
+      const origin = new URL(page.url() || "https://stage.foo.redhat.com:1337").origin;
 
-      page.on('request', (req) => {
+      page.on("request", (req) => {
         requests.push({
           url: req.url(),
           method: req.method(),
@@ -92,12 +93,14 @@ test.describe('Akamai Request Baseline', () => {
         });
       });
 
-      await page.goto(landing.url, { waitUntil: 'load' });
+      await page.goto(landing.url, { waitUntil: "load" });
       // Wait for Chrome shell to render (header is present on all pages),
       // then allow late API calls (kessel, analytics) to settle.
       // Avoid networkidle — it's flaky with WebSocket, Unleash polling, and analytics.
-      await page.locator('header').waitFor({ timeout: PAGE_RENDER_TIMEOUT });
+      await page.locator("header").waitFor({ timeout: PAGE_RENDER_TIMEOUT });
       await page.waitForTimeout(3000);
+
+      const isSameOriginApi = (url: string) => url.startsWith(`${origin}/api/`);
 
       // Classify all requests
       const buckets: Record<string, CapturedRequest[]> = {};
@@ -106,19 +109,17 @@ test.describe('Akamai Request Baseline', () => {
         (buckets[cat] ??= []).push(req);
       }
 
-      const kesselRequests = requests.filter((r) => /\/api\/kessel\//.test(r.url));
-      // Count only same-origin API calls — analytics proxied through /connections/
-      // and external analytics/consent domains don't go through Akamai's rate limiter.
-      const apiRequests = requests.filter((r) => /\/api\//.test(r.url));
+      const kesselRequests = requests.filter((r) => isSameOriginApi(r.url) && /\/kessel\//.test(r.url));
+      const apiRequests = requests.filter((r) => isSameOriginApi(r.url));
 
       // Report
-      console.log(`\n${'='.repeat(70)}`);
+      console.log(`\n${"=".repeat(70)}`);
       console.log(`  ${landing.name} — ${landing.url}`);
-      console.log(`${'='.repeat(70)}`);
+      console.log(`${"=".repeat(70)}`);
       console.log(`  Total requests:   ${requests.length}`);
       console.log(`  API requests:     ${apiRequests.length} (threshold: ${API_THRESHOLD})`);
       console.log(`  Kessel requests:  ${kesselRequests.length} (threshold: ${KESSEL_THRESHOLD})`);
-      console.log(`${'─'.repeat(70)}`);
+      console.log(`${"─".repeat(70)}`);
 
       for (const [cat, reqs] of Object.entries(buckets).sort((a, b) => b[1].length - a[1].length)) {
         console.log(`  ${cat.padEnd(25)} ${String(reqs.length).padStart(4)}`);
@@ -126,20 +127,20 @@ test.describe('Akamai Request Baseline', () => {
 
       // Log kessel call detail
       if (kesselRequests.length > 0) {
-        console.log(`${'─'.repeat(70)}`);
+        console.log(`${"─".repeat(70)}`);
         console.log(`  Kessel call detail:`);
         for (const r of kesselRequests) {
-          const shortUrl = r.url.replace(/https?:\/\/[^/]+/, '');
+          const shortUrl = r.url.replace(/https?:\/\/[^/]+/, "");
           console.log(`    ${r.method.padEnd(5)} ${shortUrl}`);
         }
       }
 
       // Log all API endpoints
       if (apiRequests.length > 0) {
-        console.log(`${'─'.repeat(70)}`);
+        console.log(`${"─".repeat(70)}`);
         console.log(`  All API calls:`);
         for (const r of apiRequests) {
-          const shortUrl = r.url.replace(/https?:\/\/[^/]+/, '').slice(0, 90);
+          const shortUrl = r.url.replace(/https?:\/\/[^/]+/, "").slice(0, 90);
           console.log(`    ${r.method.padEnd(5)} ${shortUrl}`);
         }
       }
@@ -157,23 +158,19 @@ test.describe('Akamai Request Baseline', () => {
           console.log(`    ${count}x ${key}`);
         }
       }
-      console.log(`${'='.repeat(70)}\n`);
+      console.log(`${"=".repeat(70)}\n`);
 
       // Attach machine-readable annotation for CI/reports
       test.info().annotations.push({
-        type: 'request-baseline',
+        type: "request-baseline",
         description: JSON.stringify({
           page: landing.name,
           url: landing.url,
           totalRequests: requests.length,
           apiRequests: apiRequests.length,
           kesselRequests: kesselRequests.length,
-          breakdown: Object.fromEntries(
-            Object.entries(buckets).map(([cat, reqs]) => [cat, reqs.length]),
-          ),
-          kesselEndpoints: kesselRequests.map((r) =>
-            `${r.method} ${r.url.replace(/https?:\/\/[^/]+/, '')}`,
-          ),
+          breakdown: Object.fromEntries(Object.entries(buckets).map(([cat, reqs]) => [cat, reqs.length])),
+          kesselEndpoints: kesselRequests.map((r) => `${r.method} ${r.url.replace(/https?:\/\/[^/]+/, "")}`),
           duplicateKesselCalls: duplicates.map(([key, count]) => ({ call: key, count })),
         }),
       });
@@ -182,14 +179,11 @@ test.describe('Akamai Request Baseline', () => {
       expect(
         kesselRequests.length,
         `${landing.name}: ${kesselRequests.length} Kessel API calls exceeded threshold of ${KESSEL_THRESHOLD}. ` +
-        `This endpoint triggered the Akamai DDoS false positive.`,
+          `This endpoint triggered the Akamai DDoS false positive.`
       ).toBeLessThanOrEqual(KESSEL_THRESHOLD);
 
       // Total API calls
-      expect(
-        apiRequests.length,
-        `${landing.name}: ${apiRequests.length} API calls exceeded threshold of ${API_THRESHOLD}.`,
-      ).toBeLessThanOrEqual(API_THRESHOLD);
+      expect(apiRequests.length, `${landing.name}: ${apiRequests.length} API calls exceeded threshold of ${API_THRESHOLD}.`).toBeLessThanOrEqual(API_THRESHOLD);
     });
   }
 });
