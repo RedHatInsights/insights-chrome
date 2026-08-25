@@ -4,6 +4,30 @@ import { Listener } from '@redhat-cloud-services/frontend-components-utilities/M
 
 export const noAuthParam = 'noauth';
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
+
+/**
+ * OIDC-reserved parameters that must never be forwarded to Red Hat SSO inside an
+ * outgoing `redirect_uri`. SSO rejects authorization requests whose redirect_uri
+ * contains any of these (they are meant to appear only on the callback URL SSO
+ * returns to us). They can leak into `location.href` via the back button, a
+ * copy-pasted URL, or an interrupted auth cycle, so we strip them before building
+ * a redirect_uri. See `sanitizeRedirectUri` in src/auth/OIDCConnector/utils.ts.
+ */
+export const OIDC_RESERVED_PARAMS = [
+  'access_token',
+  'code',
+  'error',
+  'error_description',
+  'expires_in',
+  'id_token',
+  'iss',
+  'kc_action',
+  'kc_action_status',
+  'response',
+  'session_state',
+  'state',
+  'token_type',
+] as const;
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const GLOBAL_FILTER_UPDATE = 'GLOBAL_FILTER_UPDATE';
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
