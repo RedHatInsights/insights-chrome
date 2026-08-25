@@ -32,6 +32,7 @@ import useTabName from '../../hooks/useTabName';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
+import DegradedStateBanner from '../DegradedStateBanner';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
@@ -61,6 +62,7 @@ const ScalprumRoot = memo(
     return (
       <ChromeProvider>
         <BetaSwitcher />
+        <DegradedStateBanner />
         <Routes>
           <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
           <Route

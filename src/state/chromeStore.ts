@@ -12,6 +12,7 @@ import { drawerPanelContentAtom } from './atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
 import { segmentPageOptionsAtom } from './atoms/segmentPageOptionsAtom';
 import { virtualAssistantShowAssistantAtom } from './atoms/virtualAssistantAtom';
+import { degradedStateAtom } from './atoms/degradedStateAtom';
 
 const chromeStore = createStore();
 
@@ -37,6 +38,14 @@ chromeStore.set(virtualAssistantShowAssistantAtom, false);
 
 // analytics data
 chromeStore.set(segmentPageOptionsAtom, {});
+
+// service health state
+chromeStore.set(degradedStateAtom, {
+  userPersonalization: false,
+  entitlements: false,
+  configFromCache: false,
+  featureFlags: false,
+});
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
