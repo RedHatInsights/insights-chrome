@@ -17,7 +17,7 @@ const flaggedRoutes: { [flagName: string]: string } = {
 
 const VirtualAssistant = () => {
   const isVAEnabled = useFlag('platform.va.environment.enabled');
-  const isChatbotTabEnabled = useFlag('platform.chrome.help-panel_chatbot');
+  const isHelpPanelEnabled = useFlag('platform.chrome.help-panel_chatbot');
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
@@ -30,7 +30,7 @@ const VirtualAssistant = () => {
 
   const flags = useFlags();
   useEffect(() => {
-    if (!isVAEnabled) {
+    if (!isVAEnabled || isHelpPanelEnabled) {
       return;
     }
 
@@ -48,7 +48,7 @@ const VirtualAssistant = () => {
     if (match != null) {
       setShowAssistant(true);
     }
-  }, [flags, pathname, viableRoutes, setShowAssistant, isVAEnabled]);
+  }, [flags, pathname, viableRoutes, setShowAssistant, isVAEnabled, isHelpPanelEnabled]);
 
   if (!isVAEnabled || isHelpPanelEnabled) {
     return null;

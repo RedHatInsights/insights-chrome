@@ -160,6 +160,31 @@ describe('VirtualAssistant', () => {
       // Atom state remains false — VA did not mutate it
       expect(observedAtomValue).toBe(false);
     });
+
+    it('should not set showAssistant atom when help-panel chatbot flag is enabled even on matching routes', () => {
+      setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': true });
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
+
+      let observedAtomValue: boolean | undefined;
+      const AtomObserver = () => {
+        const value = useAtomValue(virtualAssistantShowAssistantAtom);
+        observedAtomValue = value;
+        return null;
+      };
+
+      render(
+        // @ts-ignore
+        <TestWrapper initialValues={atomValues} initialEntries={['/insights/dashboard']}>
+          <VirtualAssistant />
+          <AtomObserver />
+        </TestWrapper>
+      );
+
+      // Help-panel chatbot enabled → useEffect skips route matching → ScalprumComponent never renders
+      expect(mockScalprumComponent).not.toHaveBeenCalled();
+      // Atom state remains false — effect did not mutate it
+      expect(observedAtomValue).toBe(false);
+    });
   });
 
   describe('showAssistant prop passing', () => {
