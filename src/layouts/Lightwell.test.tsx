@@ -12,6 +12,20 @@ jest.mock('../components/ErrorComponents/DefaultErrorComponent', () => ({
   default: () => <div data-testid="mock-error-component" />,
 }));
 
+jest.mock('../hooks/useBreadcrumbsLinks', () => ({
+  __esModule: true,
+  default: () => [{ title: 'Lightwell', href: '/lightwell' }],
+}));
+
+jest.mock('../hooks/useFavoritePagesWrapper', () => ({
+  __esModule: true,
+  default: () => ({
+    favoritePages: [],
+    favoritePage: jest.fn(),
+    unfavoritePage: jest.fn(),
+  }),
+}));
+
 jest.unmock('../components/NotificationsDrawer/DrawerPanelContent');
 
 // jest.mock does not intercept @scalprum/* in this project's SWC/Jest setup,
@@ -23,11 +37,12 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: (flagName: string) => mockUseFlag(flagName),
 }));
 
-import { render } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
@@ -64,7 +79,7 @@ const mockInternalChromeContextValue = {
   },
 };
 
-const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
+const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRoute = '/lightwell') => {
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
@@ -78,7 +93,7 @@ const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
   return {
     store,
     ...render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[initialRoute]}>
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -171,5 +186,69 @@ describe('Lightwell', () => {
     expect(store.get(layoutLightwellHeaderAtom)).toBe(true);
     unmount();
     expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
+  });
+
+  it('should set activeModuleAtom to contentSources on mount and clear on unmount', () => {
+    const { store, unmount } = renderLightwell();
+    expect(store.get(activeModuleAtom)).toBe('contentSources');
+    unmount();
+    expect(store.get(activeModuleAtom)).toBeUndefined();
+  });
+
+  it('should render the established Breadcrumbs component with favorites support', () => {
+    const { container } = renderLightwell();
+    // Verify the Breadcrumbs component renders (uses established breadcrumbs behavior)
+    const breadcrumb = container.querySelector('.chr-c-breadcrumbs');
+    expect(breadcrumb).toBeTruthy();
+  });
+
+  describe('horizontal navigation', () => {
+    it('should render horizontal subnav with three navigation items', () => {
+      renderLightwell();
+      const nav = screen.getByRole('navigation', { name: 'Lightwell navigation' });
+      expect(nav).toBeTruthy();
+      const links = within(nav).getAllByRole('link');
+      expect(links).toHaveLength(3);
+    });
+
+    it('should render Repositories, Lens, and Beacon links', () => {
+      renderLightwell();
+      const repoLink = screen.getByRole('link', { name: 'Repositories' });
+      const lensLink = screen.getByRole('link', { name: 'Lens' });
+      const beaconLink = screen.getByRole('link', { name: 'Beacon' });
+      expect(repoLink).toHaveAttribute('href', '/lightwell');
+      expect(lensLink).toHaveAttribute('href', '/lightwell/lens');
+      expect(beaconLink).toHaveAttribute('href', '/lightwell/beacon');
+    });
+
+    it('should mark Repositories as active on /lightwell', () => {
+      renderLightwell({}, '/lightwell');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should mark Lens as active on /lightwell/lens', () => {
+      renderLightwell({}, '/lightwell/lens');
+      expect(screen.getByRole('link', { name: 'Lens' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should mark Beacon as active on /lightwell/beacon', () => {
+      renderLightwell({}, '/lightwell/beacon');
+      expect(screen.getByRole('link', { name: 'Beacon' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should mark Repositories as active on unknown Lightwell subroute', () => {
+      renderLightwell({}, '/lightwell/unknown');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should not match /lightwell/lens-preview as Lens', () => {
+      renderLightwell({}, '/lightwell/lens-preview');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
+
+    it('should not match /lightwell/beacon-preview as Beacon', () => {
+      renderLightwell({}, '/lightwell/beacon-preview');
+      expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+    });
   });
 });

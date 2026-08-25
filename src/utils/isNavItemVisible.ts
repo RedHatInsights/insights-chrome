@@ -1,8 +1,8 @@
 import flatMap from 'lodash/flatMap';
-import { NavItem, NavItemPermission } from '../@types/types';
+import { AnyNavItemPermission, NavItem } from '../@types/types';
 import { getVisibilityFunctions } from './VisibilitySingleton';
 
-const visibilityHandler = async ({ method, args }: NavItemPermission) => {
+const visibilityHandler = async ({ method, args }: AnyNavItemPermission) => {
   const visibilityFunctions = getVisibilityFunctions();
   // (null, undefined, true) !== false
   if (!visibilityFunctions[method]) {
@@ -11,16 +11,15 @@ const visibilityHandler = async ({ method, args }: NavItemPermission) => {
   return (await visibilityFunctions[method]?.(...(args || []))) !== false;
 };
 
-export const isNavItemVisible = (permissions: NavItemPermission | NavItemPermission[]) =>
+export const isNavItemVisible = (permissions: AnyNavItemPermission | AnyNavItemPermission[]) =>
   Promise.all(flatMap(Array.isArray(permissions) ? permissions : [permissions], visibilityHandler)).then((visibility) => visibility.every(Boolean));
 
 export type ItemWithPermissionsConfig<T> = T & {
-  permissions?: NavItemPermission | NavItemPermission[];
+  permissions?: AnyNavItemPermission | AnyNavItemPermission[];
   isHidden?: boolean;
   groupId?: string;
   navItems?: ItemWithPermissionsConfig<NavItem>[];
   expandable?: boolean;
-  routes?: ItemWithPermissionsConfig<NavItem>[];
 };
 
 export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T>) => {
@@ -49,18 +48,8 @@ export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T
     }
   }
 
-  if (typeof result.groupId !== 'undefined' && Array.isArray(result.navItems)) {
-    /**
-     * Evalute group items
-     */
+  if (Array.isArray(result.navItems)) {
     result.navItems = await Promise.all(result.navItems.map(evaluateVisibility));
-  }
-
-  if (result.expandable === true && Array.isArray(result.routes)) {
-    /**
-     * Evaluate sub routes
-     */
-    result.routes = await Promise.all(result.routes.map(evaluateVisibility));
   }
 
   return result;

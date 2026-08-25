@@ -102,13 +102,18 @@ describe('Header Lightwell mode', () => {
   it('should render AllServicesDropdown with "Red Hat Hybrid Cloud Console" when not in Lightwell mode', () => {
     renderHeader(false);
     expect(screen.getByText('Red Hat Hybrid Cloud Console')).toBeTruthy();
-    expect(screen.queryByText('Red Hat Lightwell')).toBeFalsy();
   });
 
-  it('should render "Red Hat Lightwell" text instead of AllServicesDropdown when in Lightwell mode', () => {
+  it('should render Lightwell title text instead of AllServicesDropdown in Lightwell mode', () => {
     renderHeader(true);
-    expect(screen.getByText('Red Hat Lightwell')).toBeTruthy();
     expect(screen.queryByText('Red Hat Hybrid Cloud Console')).toBeFalsy();
+    expect(screen.getByText('Lightwell')).toBeTruthy();
+  });
+
+  it('should render Lightwell logo in masthead when in Lightwell mode', () => {
+    const { container } = renderHeader(true);
+    const lightwellLogo = container.querySelector('img[alt="Lightwell Logo"]');
+    expect(lightwellLogo).toBeTruthy();
   });
 
   it('should render search toolbar group when not in Lightwell mode', () => {
@@ -128,9 +133,17 @@ describe('Header Lightwell mode', () => {
     expect(logoLink.getAttribute('href')).toBe('/');
   });
 
-  it('should render masthead logo without a link when in Lightwell mode', () => {
+  it('should render masthead logo as a link to /lightwell when in Lightwell mode', () => {
     renderHeader(true);
-    const logoLinks = screen.queryAllByRole('link', { name: /logo/i });
-    expect(logoLinks.length).toBe(0);
+    const logoLink = screen.getByRole('link', { name: /logo/i });
+    expect(logoLink).toBeTruthy();
+    expect(logoLink.getAttribute('href')).toBe('/lightwell');
+  });
+
+  it('should render Lightwell title as a link to /lightwell when in Lightwell mode', () => {
+    renderHeader(true);
+    const titleLink = screen.getByRole('link', { name: 'Lightwell' });
+    expect(titleLink).toBeTruthy();
+    expect(titleLink.getAttribute('href')).toBe('/lightwell');
   });
 });

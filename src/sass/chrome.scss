@@ -15,7 +15,7 @@
 // Override PF5 global link colors with PF6 dark-mode-aware design tokens.
 // PF5 patternfly.scss sets :where(a) { color: var(--pf-v5-global--link--Color) }
 // which has no dark-mode override under .pf-v6-theme-dark.
-:where(a) {
+:where(a):not(.pf-v6-c-button) {
   color: var(--pf-t--global--text--color--link--default);
 
   &:hover {
@@ -54,6 +54,16 @@ aside {
 
 #no-access.pf-v6-c-page__main {
     display: none;
+}
+
+// Shared subnav grid placement — any layout that adds a "subnav" row to its
+// grid-template-areas at xl+ gets outside-card horizontal navigation.
+// Scoped to xl because below xl the Page grid has no "subnav" area and an
+// unscoped grid-area declaration would cause an implicit row.
+@media (min-width: $pf-v6-global--breakpoint--xl) {
+  .chr-c-page-subnav {
+    grid-area: subnav;
+  }
 }
 
 // Page temp styles
@@ -222,6 +232,7 @@ aside {
 }
 
 .chr-m-plain {
+  color: inherit;
   text-decoration: none;
 }
 

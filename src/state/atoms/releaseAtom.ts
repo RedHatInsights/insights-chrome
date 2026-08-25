@@ -82,10 +82,10 @@ export const layoutForceFeltThemeAtom = atom(isLightwellPath);
 
 /**
  * Atom for layouts to signal a simplified header for Lightwell.
- * When true, the AllServicesDropdown is replaced with a static "Red Hat Lightwell"
+ * When true, the AllServicesDropdown is replaced with a static "Lightwell"
  * header and the Search input is hidden.
  */
-export const layoutLightwellHeaderAtom = atom(false);
+export const layoutLightwellHeaderAtom = atom(isLightwellPath);
 
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {

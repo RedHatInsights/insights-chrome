@@ -145,7 +145,7 @@ describe('useAppFilter', () => {
       {
         id: TEST_ID,
         title: TEST_TITLE,
-        navItems: [{ title: 'title', expandable: true, routes: [{ href: '/foo/bar/baz/quaxx', appId: 'foo', title: 'Nested' }] }],
+        navItems: [{ title: 'title', expandable: true, navItems: [{ href: '/foo/bar/baz/quaxx', appId: 'foo', title: 'Nested' }] }],
       },
     ]);
     let result;
@@ -170,7 +170,7 @@ describe('useAppFilter', () => {
           {
             title: 'title',
             expandable: true,
-            routes: [
+            navItems: [
               { href: '/openshift/cost-management/foo', appId: 'foo', title: 'cost-nested' },
               { href: '/openshift/subscriptions/foo', appId: 'foo', title: 'subs-nested-ins' },
               { href: '/insights/subscriptions/foo', appId: 'foo', title: 'subs-nested-o' },
@@ -211,12 +211,12 @@ describe('useAppFilter', () => {
       {
         id: TEST_ID,
         title: TEST_TITLE,
-        navItems: [{ title: 'title', expandable: true, routes: [{ href: '/openshift/cost-management/foo', appId: 'foo', title: 'cost-nested' }] }],
+        navItems: [{ title: 'title', expandable: true, navItems: [{ href: '/openshift/cost-management/foo', appId: 'foo', title: 'cost-nested' }] }],
       },
       {
         id: 'duplicate',
         title: 'Duplicate',
-        navItems: [{ title: 'title', expandable: true, routes: [{ href: '/openshift/cost-management/foo', appId: 'foo', title: 'cost-nested' }] }],
+        navItems: [{ title: 'title', expandable: true, navItems: [{ href: '/openshift/cost-management/foo', appId: 'foo', title: 'cost-nested' }] }],
       },
     ]);
     let result;

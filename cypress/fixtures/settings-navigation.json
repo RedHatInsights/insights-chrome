@@ -53,7 +53,7 @@
             "id": "notifications",
             "description": "A standardized way of notifying users of events for supported services on the Hybrid Cloud Console.",
             "expandable": true,
-            "routes": [
+            "navItems": [
                 {
                     "id": "notificationOverview",
                     "appId": "notifications",

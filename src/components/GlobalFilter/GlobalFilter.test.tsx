@@ -1,15 +1,17 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { Provider as JotaiProvider } from 'jotai';
-import { useFlag } from '@unleash/proxy-client-react';
+import { Provider as JotaiProvider, createStore } from 'jotai';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import GlobalFilterWrapper from './GlobalFilter';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { ChromeAPI } from '@redhat-cloud-services/types';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: false })),
 }));
 
 jest.mock('../../utils/common', () => ({
@@ -17,7 +19,27 @@ jest.mock('../../utils/common', () => ({
   isGlobalFilterAllowed: jest.fn(() => true),
 }));
 
+jest.mock('./GlobalFilterMenu', () => ({
+  GlobalFilterDropdown: () => <div data-testid="global-filter-dropdown" />,
+}));
+
+jest.mock('./tagsApi', () => ({
+  getAllTags: jest.fn(() => Promise.resolve()),
+  getAllWorkloads: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('@redhat-cloud-services/frontend-components/FilterHooks', () => ({
+  useTagsFilter: jest.fn(() => ({
+    filter: {},
+    chips: [],
+    selectedTags: {},
+    setValue: jest.fn(),
+    filterTagsBy: '',
+  })),
+}));
+
 const mockedUseFlag = useFlag as jest.Mock;
+const mockedUseFlagsStatus = useFlagsStatus as jest.Mock;
 
 const mockGetUserPermissions = jest.fn(() => Promise.resolve([{ permission: 'inventory:hosts:read' }]));
 
@@ -32,8 +54,17 @@ const mockChromeAuth = {
   },
 } as unknown as typeof ChromeAuthContext extends React.Context<infer T> ? T : never;
 
+const makeStore = () => {
+  const store = createStore();
+  // activeModuleAtom defaults to undefined, which makes isGlobalFilterDisabledAtom true
+  // and causes the wrapper to return null regardless of any feature flag. Seed a valid
+  // module so that path is open and only the flag determines visibility.
+  store.set(activeModuleAtom, 'insights-dashboard');
+  return store;
+};
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <JotaiProvider>
+  <JotaiProvider store={makeStore()}>
     <ChromeAuthContext.Provider value={mockChromeAuth}>
       <InternalChromeContext.Provider value={{ getUserPermissions: mockGetUserPermissions } as unknown as ChromeAPI}>
         <MemoryRouter initialEntries={['/insights/dashboard']}>{children}</MemoryRouter>
@@ -49,14 +80,54 @@ describe('GlobalFilterWrapper', () => {
   });
 
   it('should call getUserPermissions when rbac.workspaces flag is disabled', async () => {
-    mockedUseFlag.mockReturnValue(false);
     render(<GlobalFilterWrapper />, { wrapper: Wrapper });
     await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
   });
 
   it('should skip getUserPermissions when rbac.workspaces flag is enabled', async () => {
-    mockedUseFlag.mockReturnValue(true);
+    mockedUseFlag.mockImplementation((flag: string) => flag === 'platform.rbac.workspaces');
     render(<GlobalFilterWrapper />, { wrapper: Wrapper });
     await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should skip getUserPermissions when hbi.rbac-v2 flag is enabled', async () => {
+    mockedUseFlag.mockImplementation((flag: string) => flag === 'hbi.rbac-v2');
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should not call getUserPermissions before feature flags are ready', async () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: false });
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should not call getUserPermissions when flags fail to load', async () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: true });
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should call getUserPermissions after feature flags become ready', async () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: false });
+    const { rerender } = render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: false });
+    rerender(<GlobalFilterWrapper />);
+    await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
+  });
+
+  it('should hide the global filter when platform.chrome.hide.global-filter is enabled', async () => {
+    // First establish that the dropdown renders when the flag is off, proving the test
+    // setup (auth, active module, allowed URL) is sufficient to show the component.
+    const { unmount } = render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(screen.getByTestId('global-filter-dropdown')).toBeInTheDocument());
+    unmount();
+
+    // Now enable only the hide flag and verify the flag alone causes the dropdown to disappear.
+    mockedUseFlag.mockImplementation((flag: string) => flag === 'platform.chrome.hide.global-filter');
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(screen.queryByTestId('global-filter-dropdown')).not.toBeInTheDocument());
   });
 });

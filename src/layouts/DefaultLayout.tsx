@@ -19,7 +19,7 @@ import { useAtom } from 'jotai';
 
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
-import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
+import { CROSS_ACCESS_ORG_ID } from '../utils/consts';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
@@ -96,6 +96,23 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
               isNavOpen,
               setIsNavOpen,
               hideNav,
+            }}
+            toolbarConfig={{
+              settingsGroups: {
+                showPreview: true,
+                showSettingsGroup: true,
+                showIAM: true,
+                showTheme: true,
+                showColorScheme: true,
+                showContrastMode: true,
+              },
+              userMenu: {
+                showMyProfile: true,
+                showMyUserAccess: true,
+                showUserPreferences: true,
+                showInternal: true,
+                showLogout: true,
+              },
             }}
           />
         </Masthead>
@@ -178,7 +195,7 @@ const ShieldedRoot = memo(
       return null;
     }
 
-    const selectedAccountNumber = Cookie.get(CROSS_ACCESS_ACCOUNT_NUMBER);
+    const selectedAccountNumber = Cookie.get(CROSS_ACCESS_ORG_ID);
     const hasBanner = false; // Update this later when we use feature flags
 
     return (

@@ -33,7 +33,7 @@ import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { useFeltTheme } from '../../hooks/useFeltTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
-import type { ToolbarConfig } from './Header';
+import type { SettingsGroupConfig, ToolbarConfig } from './Header';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -134,8 +134,10 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   };
 
   /* list out the items for the settings menu */
+  const settingsGroups = toolbarConfig?.settingsGroups;
   const settingsMenuDropdownGroups = [
     {
+      groupKey: 'showPreview' satisfies keyof SettingsGroupConfig,
       items: [
         {
           ouiaId: 'PreviewSwitcher',
@@ -145,6 +147,68 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ],
     },
     {
+      groupKey: 'showSettingsGroup' satisfies keyof SettingsGroupConfig,
+      title: 'Settings',
+      items: [
+        {
+          ouiaId: 'settings-menu-integrations',
+          url: '/settings/integrations',
+          title: 'Integrations',
+          isHidden: isITLessEnv,
+        },
+        {
+          ouiaId: 'settings-menu-notifications',
+          url: '/settings/notifications',
+          title: 'Notifications',
+        },
+        {
+          ouiaId: 'settings-menu-scheduler',
+          title: 'Scheduler',
+          isHidden: !schedulerDrawerEnabled,
+          onClick: () =>
+            toggleDrawerContent({
+              scope: 'schedulerUi',
+              module: './SchedulerPanelContent',
+            }),
+        },
+      ],
+    },
+    {
+      groupKey: 'showIAM' satisfies keyof SettingsGroupConfig,
+      title: 'Identity and Access Management',
+      items: [
+        {
+          ouiaId: 'UserAccess',
+          url: identityAndAccessManagmentPath,
+          title: isOrgAdmin ? (workspacesEnabled ? 'Access management' : 'User Access') : 'My User Access',
+          description: workspacesEnabled ? (
+            <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
+              Workspaces model available
+            </Label>
+          ) : null,
+        },
+        {
+          ouiaId: 'settings-menu-identity-provider',
+          url: '/iam/authentication-policy/identity-provider-integration',
+          title: 'Identity Provider Integration',
+          isHidden: isITLessEnv,
+        },
+        {
+          ouiaId: 'settings-menu-auth-factors',
+          url: '/iam/authentication-policy/authentication-factors',
+          title: 'Authentication Factors',
+          isHidden: isITLessEnv,
+        },
+        {
+          ouiaId: 'settings-menu-service-accounts',
+          url: '/iam/service-accounts',
+          title: 'Service Accounts',
+          isHidden: isITLessEnv,
+        },
+      ],
+    },
+    {
+      groupKey: 'showTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
       isHidden: !isFeltThemeEnabled,
       customContent: (
@@ -168,6 +232,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ),
     },
     {
+      groupKey: 'showColorScheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.colorScheme),
       isHidden: !isDarkModeEnabled,
       customContent: (
@@ -199,6 +264,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
       ),
     },
     {
+      groupKey: 'showContrastMode' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.contrastMode),
       isHidden: !isHighContrastEnabled && !isGlassModeEnabled,
       customContent: (
@@ -241,66 +307,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         </ToggleGroup>
       ),
     },
-    {
-      title: 'Settings',
-      items: [
-        {
-          ouiaId: 'settings-menu-integrations',
-          url: '/settings/integrations',
-          title: 'Integrations',
-          isHidden: isITLessEnv,
-        },
-        {
-          ouiaId: 'settings-menu-notifications',
-          url: '/settings/notifications',
-          title: 'Notifications',
-        },
-        {
-          ouiaId: 'settings-menu-scheduler',
-          title: 'Scheduler',
-          isHidden: !schedulerDrawerEnabled,
-          onClick: () =>
-            toggleDrawerContent({
-              scope: 'schedulerUi',
-              module: './SchedulerPanelContent',
-            }),
-        },
-      ],
-    },
-    {
-      title: 'Identity and Access Management',
-      items: [
-        {
-          ouiaId: 'UserAccess',
-          url: identityAndAccessManagmentPath,
-          title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
-          description: workspacesEnabled ? (
-            <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
-              Workspaces model available
-            </Label>
-          ) : null,
-        },
-        {
-          ouiaId: 'settings-menu-identity-provider',
-          url: '/iam/authentication-policy/identity-provider-integration',
-          title: 'Identity Provider Integration',
-          isHidden: isITLessEnv,
-        },
-        {
-          ouiaId: 'settings-menu-auth-factors',
-          url: '/iam/authentication-policy/authentication-factors',
-          title: 'Authentication Factors',
-          isHidden: isITLessEnv,
-        },
-        {
-          ouiaId: 'settings-menu-service-accounts',
-          url: '/iam/service-accounts',
-          title: 'Service Accounts',
-          isHidden: isITLessEnv,
-        },
-      ],
-    },
-  ];
+  ].filter(({ groupKey }) => !settingsGroups || settingsGroups[groupKey as keyof SettingsGroupConfig]);
 
   useEffect(() => {
     if (user) {
@@ -395,15 +402,23 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const settingsMobileItems = toolbarConfig?.hideSettings
     ? []
     : [
-        {
-          url: settingsPath,
-          title: 'Settings',
-          target: '_self',
-        },
-        {
-          title: betaSwitcherTitle,
-          onClick: () => togglePreviewWithCheck(),
-        },
+        ...(!settingsGroups || settingsGroups.showSettingsGroup
+          ? [
+              {
+                url: settingsPath,
+                title: 'Settings',
+                target: '_self',
+              },
+            ]
+          : []),
+        ...(!settingsGroups || settingsGroups.showPreview
+          ? [
+              {
+                title: betaSwitcherTitle,
+                onClick: () => togglePreviewWithCheck(),
+              },
+            ]
+          : []),
       ];
   const helpMobileItems = helpPanelEnabled || toolbarConfig?.hideHelp ? [] : aboutMenuDropdownItems;
 
@@ -447,7 +462,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           aria-label="Toggle help panel"
           onClick={handleToggle}
           isExpanded={isHelpPanelOpen}
-          className="tooltip-button-help-cy chr-c-help-panel-toggle"
+          className="chr-c-toolbar-toggle tooltip-button-help-cy chr-c-help-panel-toggle"
         >
           Help
         </MenuToggle>
@@ -466,7 +481,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         ariaLabel="Help menu"
         hasToggleIndicator={null}
         dropdownItems={aboutMenuDropdownItems}
-        className="tooltip-button-help-cy"
+        className="tooltip-button-help-cy chr-c-help-toggle"
       />
     </Tooltip>
   );
@@ -513,13 +528,14 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         </ToolbarItem>
       )}
       <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
-        <UserToggle />
+        <UserToggle userMenu={toolbarConfig?.userMenu} />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
 
       <ToolbarItem visibility={{ lg: 'hidden' }}>
         <Tooltip aria="none" aria-live="polite" content={'More options'} flipBehavior={['bottom']}>
           <UserToggle
+            userMenu={toolbarConfig?.userMenu}
             extraItems={mobileDropdownItems.map((action, key) => (
               <React.Fragment key={key}>
                 {action.title === 'separator' ? (

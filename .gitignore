@@ -62,6 +62,12 @@ cypress/downloads
 .env
 .env.local
 
+# Claude Code
+.claude.json
+.claude/
+
+# npm
+.npm/
 
 .hypothesis
 

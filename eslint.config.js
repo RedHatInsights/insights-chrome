@@ -98,6 +98,34 @@ module.exports = defineConfig(
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-restricted-imports': 'off',
+      // Note: no-magic-numbers rule is not enabled to avoid false positives on viewport sizes, test data, etc.
+      // Convention: Use named constants for timeouts in E2E tests for CI environment compatibility
+      // Example: const BUTTON_CLICK_TIMEOUT = 5000; await button.click({ timeout: BUTTON_CLICK_TIMEOUT });
+    },
+  },
+
+  // Playwright-specific configuration
+  {
+    name: 'insights-chrome/playwright',
+    files: ['playwright/**/*.ts', 'playwright/**/*.tsx', 'playwright/**/*.js'],
+    languageOptions: {
+      parser: typescriptParser,
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    rules: {
+      ...typescriptEslint.configs.recommended.rules,
+      'react/prop-types': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-restricted-imports': 'off',
+      // Note: no-magic-numbers rule is not enabled to avoid false positives on viewport sizes, test data, etc.
+      // Convention: Use named constants for timeouts in E2E tests for CI environment compatibility
+      // Example: const TOOLTIP_TIMEOUT = 10000; await expect(tooltip).toBeVisible({ timeout: TOOLTIP_TIMEOUT });
     },
   },
 

@@ -11,7 +11,7 @@ import { getInitialFilterState } from './getInitialFilterState';
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   globalFilterDataAtom,
@@ -177,6 +177,9 @@ const GlobalFilterWrapper = () => {
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
   const isRbacV2 = useFlag('platform.rbac.workspaces');
+  const isHbiRbacV2 = useFlag('hbi.rbac-v2');
+  const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
+  const { flagsReady } = useFlagsStatus();
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
@@ -184,16 +187,20 @@ const GlobalFilterWrapper = () => {
 
   const isGlobalFilterDisabled = useAtomValue(isGlobalFilterDisabledAtom);
   const isGlobalFilterEnabled = useMemo(() => {
-    if (isGlobalFilterDisabled) {
+    if (hideGlobalFilterFlag || isGlobalFilterDisabled) {
       return false;
     }
     const globalFilterAllowed = isAllowed || globalFilterRemoved;
     return !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
-  }, [isLanding, isAllowed, isGlobalFilterDisabled]);
+  }, [isLanding, isAllowed, isGlobalFilterDisabled, hideGlobalFilterFlag, globalFilterRemoved]);
 
   useEffect(() => {
-    if (isRbacV2) {
+    if (isRbacV2 || isHbiRbacV2) {
       setHasAccess(false);
+      return;
+    }
+
+    if (!flagsReady) {
       return;
     }
 
@@ -212,7 +219,7 @@ const GlobalFilterWrapper = () => {
     return () => {
       mounted = false;
     };
-  }, [isRbacV2]);
+  }, [isRbacV2, isHbiRbacV2, flagsReady]);
   return isGlobalFilterEnabled && chromeAuth.ready ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 

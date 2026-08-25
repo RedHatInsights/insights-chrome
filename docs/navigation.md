@@ -33,6 +33,9 @@ List of available permissions methods:
     * `isEmpty` uses [lodash isEmpty](https://lodash.com/docs/4.17.15#isEmpty) to evaluate api response.
     * `isNotEmpty` is a negation of `isEmpty`
 * `featureFlag` - test if feature flag name is enabled. First argument is name of the featureFlag and second is the expected value (`true` or `false`)
+* `isITLess` - test if current environment is ITLess (FedRAMP/Commercial). First argument is the expected value (`true` or `false`)
+* `isKesselEnabled` - test if Kessel is deployed in the current environment. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.chrome.kessel` feature flag. First argument is the expected value (`true` or `false`)
+* `isKesselOrgOnboarded` - test if the current user's org is onboarded to the Kessel V2 experience. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.rbac.workspaces` feature flag. First argument is the expected value (`true` or `false`). Use to gate V2-only nav items (e.g. Access Management vs User Access)
 
 #### apiRequest example
 

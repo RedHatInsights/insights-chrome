@@ -21,6 +21,10 @@ const useBreadcrumbsLinks = () => {
   useEffect(() => {
     const segments: Required<NavItem, 'href'>[] = [
       {
+        title: 'Red Hat Hybrid Cloud Console',
+        href: '/',
+      },
+      {
         title: bundleTitle,
         href: `/${bundleId}`,
       },

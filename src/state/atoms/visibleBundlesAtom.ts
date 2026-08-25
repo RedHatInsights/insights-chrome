@@ -22,7 +22,6 @@ export const filterHiddenItems = (navItems: NavItem[]): NavItem[] => {
     .map((item) => ({
       ...item,
       ...(item.navItems ? { navItems: filterHiddenItems(item.navItems) } : {}),
-      ...(item.routes ? { routes: filterHiddenItems(item.routes) } : {}),
     }));
 };
 

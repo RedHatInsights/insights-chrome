@@ -1,4 +1,6 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Menu, MenuContent, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
 import AllServicesGallerySection from './AllServicesGallerySection';
@@ -19,14 +21,23 @@ const AllServicesGallery = ({ selectedService }: AllServicesGalleryProps) => {
     }
   });
   return (
-    <Fragment>
-      {links.map((link, index) => (
-        <AllServicesGalleryLink key={index} category={titleToId(selectedService.title)} {...link} />
-      ))}
-      {sections.map((section, index) => (
-        <AllServicesGallerySection key={index} category={titleToId(selectedService.title)} {...section} />
-      ))}
-    </Fragment>
+    <Menu isPlain>
+      <MenuContent>
+        {links.length > 0 && (
+          <MenuList>
+            {links.map((link, index) => (
+              <AllServicesGalleryLink key={index} category={titleToId(selectedService.title)} {...link} />
+            ))}
+          </MenuList>
+        )}
+        {sections.map((section, index) => (
+          <React.Fragment key={index}>
+            {(index > 0 || links.length > 0) && <Divider />}
+            <AllServicesGallerySection category={titleToId(selectedService.title)} {...section} />
+          </React.Fragment>
+        ))}
+      </MenuContent>
+    </Menu>
   );
 };
 

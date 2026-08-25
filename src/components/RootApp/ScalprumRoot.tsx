@@ -1,5 +1,6 @@
-import React, { Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
+import { Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import { PluginManifest, RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
+import { ScalprumProvider, ScalprumProviderConfigurableProps } from '@scalprum/react-core';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
@@ -31,6 +32,7 @@ import useTabName from '../../hooks/useTabName';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
+import DegradedStateBanner from '../DegradedStateBanner';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
@@ -42,6 +44,8 @@ import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
+
+const isRemotePluginManifest = (manifest: PluginManifest): manifest is RemotePluginManifest => manifest.registrationMethod !== 'local';
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
@@ -58,6 +62,7 @@ const ScalprumRoot = memo(
     return (
       <ChromeProvider>
         <BetaSwitcher />
+        <DegradedStateBanner />
         <Routes>
           <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
           <Route
@@ -223,7 +228,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
     return null;
   }
 
-  const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
+  const scalprumProviderProps: ScalprumProviderConfigurableProps<{ chrome: ChromeAPI }> = useMemo(() => {
     if (!mutableChromeApi.current) {
       throw new Error('Chrome API failed to initialize.');
     }
@@ -238,7 +243,9 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       pluginSDKOptions: {
         pluginLoaderOptions: {
           // sharedScope: scope,
-          transformPluginManifest: (manifest) => transformScalprumManifest(manifest, config),
+          // Chrome only ever loads remote plugin manifests (fed-mods.json); pass through anything else untouched.
+          transformPluginManifest: (manifest) =>
+            isRemotePluginManifest(manifest) ? (transformScalprumManifest(manifest, config) as typeof manifest) : manifest,
         },
       },
     };
@@ -246,7 +253,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>
-      <ScalprumProvider config={scalprumProviderProps.config} api={scalprumProviderProps.api} pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}>
+      <ScalprumProvider {...scalprumProviderProps}>
         <ScalprumRoot />
       </ScalprumProvider>
     </InternalChromeContext.Provider>

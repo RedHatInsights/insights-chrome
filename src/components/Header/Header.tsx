@@ -21,10 +21,29 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 
+export type SettingsGroupConfig = {
+  showPreview?: boolean;
+  showSettingsGroup?: boolean;
+  showIAM?: boolean;
+  showTheme?: boolean;
+  showColorScheme?: boolean;
+  showContrastMode?: boolean;
+};
+
+export type UserMenuConfig = {
+  showMyProfile?: boolean;
+  showMyUserAccess?: boolean;
+  showUserPreferences?: boolean;
+  showInternal?: boolean;
+  showLogout?: boolean;
+};
+
 export type ToolbarConfig = {
   hideNotifications?: boolean;
   hideHelp?: boolean;
   hideSettings?: boolean;
+  settingsGroups?: SettingsGroupConfig;
+  userMenu?: UserMenuConfig;
 };
 
 function hasUser(user: { orgId?: string; username?: string; accountNumber?: string; email?: string }): user is Required<typeof user> {
@@ -71,15 +90,20 @@ const MemoizedHeader = memo(
         <MastheadMain>
           {!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}
           <MastheadBrand data-codemods>
+            {isLightwellHeader && !(!md && searchOpen) && <AllServicesDropdown />}
             <MastheadLogo
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
-              {...(!isLightwellHeader && { component: (props: LinkWrapperProps) => <ChromeLink {...props} appId="landing" href="/" /> })}
+              component={(props: LinkWrapperProps) => (
+                <ChromeLink {...props} {...(isLightwellHeader ? { href: '/lightwell' } : { appId: 'landing', href: '/' })} />
+              )}
             >
               <Logo theme={theme} />
             </MastheadLogo>
             {isLightwellHeader ? (
-              <span className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-pl-sm">Red Hat Lightwell</span>
+              <ChromeLink href="/lightwell" className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-mt-xs chr-m-plain">
+                Lightwell
+              </ChromeLink>
             ) : (
               !(!md && searchOpen) && <AllServicesDropdown />
             )}
@@ -101,7 +125,7 @@ const MemoizedHeader = memo(
               <ToolbarGroup variant="filter-group">
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
-                    <ContextSwitcher accountNumber={accountNumber} orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
+                    <ContextSwitcher orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
