@@ -17,7 +17,7 @@ const flaggedRoutes: { [flagName: string]: string } = {
 
 const VirtualAssistant = () => {
   const isVAEnabled = useFlag('platform.va.environment.enabled');
-  const isHelpPanelEnabled = useFlag('platform.chrome.help-panel_chatbot');
+  const isChatbotTabEnabled = useFlag('platform.chrome.help-panel_chatbot');
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
