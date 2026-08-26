@@ -19,7 +19,7 @@ This document outlines the effort and steps required to add a new platform to th
 
 - **Location**: Bundle/routing configuration
 - **Effort**: 2-4 hours
-- **Details**: 
+- **Details**:
   - Register the new platform as a bundle
   - Define URL routes (`/openshift/*`, etc.)
   - Configure Module Federation manifest path
@@ -79,11 +79,11 @@ This document outlines the effort and steps required to add a new platform to th
 
 ## Rough Timeline
 
-| Scenario | Estimated Time |
-|----------|---------------|
-| Just navigation config (apps already exist) | 1-2 days |
-| New platform with new apps | 3-5 days |
-| With full E2E testing and docs | +1-2 days |
+| Scenario                                    | Estimated Time |
+| ------------------------------------------- | -------------- |
+| Just navigation config (apps already exist) | 1-2 days       |
+| New platform with new apps                  | 3-5 days       |
+| With full E2E testing and docs              | +1-2 days      |
 
 ## Files You'd Touch
 
