@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import NavContext from '../Navigation/navContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
+import { _resetDarkModeStore, getDarkModeStore } from '../../state/stores/darkModeStore';
 import LightwellServicesLink from './LightwellServicesLink';
 
 const renderWithProviders = () => {
@@ -34,6 +35,10 @@ const renderWithProviders = () => {
 };
 
 describe('LightwellServicesLink', () => {
+  beforeEach(() => {
+    _resetDarkModeStore();
+  });
+
   it('should render the Lightwell label', () => {
     renderWithProviders();
     expect(screen.getByText('Lightwell')).toBeInTheDocument();
@@ -51,13 +56,30 @@ describe('LightwellServicesLink', () => {
     expect(link).toHaveAttribute('data-ouia-component-id', 'AllServices-Dropdown-Lightwell');
   });
 
-  it('should render the Lightwell icon using the logomark', () => {
+  it('should render the light Lightwell icon by default', () => {
     const { container } = renderWithProviders();
     const icon = container.querySelector('img[src*="lightwell-logomark"]');
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark.svg');
+    expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
     expect(icon).toHaveAttribute('width', '22');
     expect(icon).toHaveAttribute('height', '22');
+  });
+
+  it('should switch Lightwell icon when the dark mode store updates', () => {
+    const { container } = renderWithProviders();
+    expect(container.querySelector('img')).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
+
+    act(() => {
+      getDarkModeStore().updateState('SET_DARK');
+    });
+
+    expect(container.querySelector('img')).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-dark.svg');
+
+    act(() => {
+      getDarkModeStore().updateState('SET_LIGHT');
+    });
+
+    expect(container.querySelector('img')).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
   });
 
   it('should make the entire content clickable as a single link', () => {
