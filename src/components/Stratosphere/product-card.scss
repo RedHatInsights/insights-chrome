@@ -34,9 +34,9 @@ $cards: 0, 1, 2, 3;
     @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
       @each $card in $cards {
         &.title-#{$card} {
-            margin-top: var(--pf-t--global--spacer--lg);
-            grid-column: 1;
-            grid-row: ($card * 3) + 1;
+          margin-top: var(--pf-t--global--spacer--lg);
+          grid-column: 1;
+          grid-row: ($card * 3) + 1;
         }
       }
     }
@@ -66,8 +66,8 @@ $cards: 0, 1, 2, 3;
     @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
       @each $card in $cards {
         &.body-#{$card} {
-            grid-column: 1;
-            grid-row: ($card * 3) + 2;
+          grid-column: 1;
+          grid-row: ($card * 3) + 2;
         }
       }
     }
@@ -96,8 +96,8 @@ $cards: 0, 1, 2, 3;
     @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
       @each $card in $cards {
         &.footer-#{$card} {
-            grid-column: 1;
-            grid-row: ($card * 3) + 3;
+          grid-column: 1;
+          grid-row: ($card * 3) + 3;
         }
       }
     }

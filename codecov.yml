@@ -5,13 +5,13 @@ codecov:
 coverage:
   precision: 2
   round: down
-  range: "60...80"
+  range: '60...80'
   status:
     project:
       default:
         target: 60
         threshold: 1
-        base: auto 
+        base: auto
     patch: yes
     changes: no
 
@@ -24,7 +24,6 @@ parsers:
       macro: no
 
 comment:
-  layout: "reach,diff,flags,tree"
+  layout: 'reach,diff,flags,tree'
   behavior: default
   require_changes: no
-  

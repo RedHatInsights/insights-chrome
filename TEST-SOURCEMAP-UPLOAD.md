@@ -43,7 +43,8 @@ npm run build
 ### Expected Output
 
 Look for lines like:
-```
+
+```text
 > Uploading sourcemaps to Sentry...
 ✓ Successfully uploaded source maps to advisor-rhel
 ✓ Successfully uploaded source maps to compliance-rhel
@@ -66,6 +67,7 @@ After deploying Chrome with source maps, test that stack traces are readable:
 ### Trigger a Test Error
 
 1. **In Inventory App**:
+
    ```javascript
    // Add this to a Chrome component temporarily
    console.error('Test error from Chrome code');
@@ -82,14 +84,16 @@ After deploying Chrome with source maps, test that stack traces are readable:
 ### What Success Looks Like
 
 **❌ Before Fix (Minified)**:
-```
+
+```text
 Error: Chrome source map test error
   at e.render (chrome-root.abc123.js:1:2345)
   at t.componentDidMount (chrome-root.abc123.js:5:6789)
 ```
 
 **✅ After Fix (Readable)**:
-```
+
+```text
 Error: Chrome source map test error
   at ChromeComponent.render (src/components/ChromeComponent.tsx:42:10)
   at ChromeApp.componentDidMount (src/App.tsx:128:5)
@@ -100,7 +104,7 @@ Error: Chrome source map test error
 Repeat Test 2 for multiple apps to ensure source maps work everywhere:
 
 - [ ] inventory-rhel
-- [ ] compliance-rhel  
+- [ ] compliance-rhel
 - [ ] vulnerability-rhel
 - [ ] advisor-rhel
 
@@ -201,6 +205,7 @@ Ensure `SENTRY_ORG`, `SENTRY_PROJECT`, and `SENTRY_RELEASE` are set in CI the sa
 ## Questions?
 
 If you encounter issues or have questions, check:
+
 - Sentry documentation: https://docs.sentry.io/platforms/javascript/sourcemaps/
 - Webpack plugin docs: https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/webpack/
 - Team Slack: #forum-insights-chrome

@@ -18,18 +18,18 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-import '../../src/sass/chrome.scss'
-import '../../src/sass/pf-5-assets.scss'
-import '../../src/sass/pf-6-assets.scss'
-import { mount } from 'cypress/react'
-import '@cypress/code-coverage/support'
+import './commands';
+import '../../src/sass/chrome.scss';
+import '../../src/sass/pf-5-assets.scss';
+import '../../src/sass/pf-6-assets.scss';
+import { mount } from 'cypress/react';
+import '@cypress/code-coverage/support';
 import 'cypress-localstorage-commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-const { addMatchImageSnapshotCommand,  } = require('@simonsmith/cypress-image-snapshot/command');
+const { addMatchImageSnapshotCommand } = require('@simonsmith/cypress-image-snapshot/command');
 
 // configure the matcher to be less precise to adjust between the headless and normal browser rendering differences
 addMatchImageSnapshotCommand({
@@ -50,13 +50,13 @@ declare global {
   }
   namespace Cypress {
     interface Chainable {
-      mount: typeof mount
-      matchImageSnapshot: () => void
+      mount: typeof mount;
+      matchImageSnapshot: () => void;
     }
   }
 }
 
-Cypress.Commands.add('mount', mount)
+Cypress.Commands.add('mount', mount);
 // Example use:
 // cy.mount(<MyComponent />)
 
