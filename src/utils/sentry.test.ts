@@ -1,6 +1,14 @@
 import type { Event } from '@sentry/react';
 import * as Sentry from '@sentry/react';
-import { filterAdobeAlloySentryEvent, getAppDetails, isAdobeAlloyError, recordAdobeAlloyError, resetAdobeAlloyErrorTracking } from './sentry';
+import type { ConfiguredApps } from './sentry';
+import {
+  applySentryEventRouting,
+  filterAdobeAlloySentryEvent,
+  getAppDetails,
+  isAdobeAlloyError,
+  recordAdobeAlloyError,
+  resetAdobeAlloyErrorTracking,
+} from './sentry';
 
 jest.mock('@sentry/react', () => ({
   ...jest.requireActual('@sentry/react'),
@@ -11,6 +19,41 @@ const captureMessageMock = Sentry.captureMessage as jest.MockedFunction<typeof S
 
 const adobeAlloyEvent = (message = 'TypeError: [alloy] sendEvent failed'): Event => ({
   message,
+});
+
+const testConfiguredApps: ConfiguredApps = {
+  insights: [
+    {
+      appName: 'inventory',
+      dsn: 'https://f6f21a635c05b0f91875de6a557f8c34@o490301.ingest.us.sentry.io/4507454722211840',
+      project: 'inventory-rhel',
+    },
+    {
+      appName: 'dashboard',
+      dsn: 'https://cf3d9690738f2e4beb92e5c32b92aeb4@o490301.ingest.us.sentry.io/4508683243028485',
+      project: 'dashboard-rhel',
+    },
+  ],
+  openshift: [
+    {
+      appName: 'advisor',
+      dsn: 'https://27daee0fa0238ac7f7d5389b8ac8f825@o490301.ingest.us.sentry.io/4508683272454144',
+      project: 'ocp-advisor',
+    },
+  ],
+};
+
+const eventWithFrames = (appName?: string): Event => ({
+  tags: appName ? { app_name: appName } : undefined,
+  exception: {
+    values: [
+      {
+        stacktrace: {
+          frames: [{ filename: '/apps/foo/bundle.js', lineno: 1 }],
+        },
+      },
+    ],
+  },
 });
 
 describe('getAppDetails function', () => {
@@ -56,6 +99,30 @@ describe('getAppDetails function', () => {
     const result = getAppDetails();
     expect(result.app.group).toBe('openshift');
     expect(result.app.name).toBe('advisor');
+  });
+
+  it('should return an empty group and undefined name for the root URL', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/' });
+
+    const result = getAppDetails();
+    expect(result.app.group).toBe('');
+    expect(result.app.name).toBeUndefined();
+  });
+
+  it('should return an unknown group for non-configured app paths', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/settings' });
+
+    const result = getAppDetails();
+    expect(result.app.group).toBe('settings');
+    expect(result.app.name).toBeUndefined();
+  });
+
+  it('should return ansible group and app name for ansible paths', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/ansible/automation-hub' });
+
+    const result = getAppDetails();
+    expect(result.app.group).toBe('ansible');
+    expect(result.app.name).toBe('automation-hub');
   });
 });
 
@@ -277,5 +344,97 @@ describe('filterAdobeAlloySentryEvent function', () => {
     }
 
     expect(captureMessageMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('applySentryEventRouting function', () => {
+  afterEach(() => {
+    jsdomReset();
+  });
+
+  it('should not throw when app.group is missing from configuredApps', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/settings' });
+    const appDetails = getAppDetails();
+    const event = eventWithFrames('inventory');
+
+    expect(() => applySentryEventRouting(event, appDetails, testConfiguredApps)).not.toThrow();
+    expect(applySentryEventRouting(event, appDetails, testConfiguredApps).extra?.ROUTE_TO).toBeUndefined();
+  });
+
+  it('should not throw when app.group is empty on the root URL', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/' });
+    const appDetails = getAppDetails();
+    const event = eventWithFrames('dashboard');
+
+    expect(() => applySentryEventRouting(event, appDetails, testConfiguredApps)).not.toThrow();
+    expect(applySentryEventRouting(event, appDetails, testConfiguredApps).extra?.ROUTE_TO).toBeUndefined();
+  });
+
+  it('should route known insights apps via configuredApps fallback', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/inventory' });
+    const appDetails = getAppDetails();
+    const event = eventWithFrames('inventory');
+
+    const result = applySentryEventRouting(event, appDetails, testConfiguredApps);
+
+    expect(result.extra?.ROUTE_TO).toEqual([
+      {
+        ...testConfiguredApps.insights[0],
+        org: 'red-hat-it',
+        configuredApp: true,
+      },
+    ]);
+  });
+
+  it('should route via configuredApps fallback when stack frames are absent', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/inventory' });
+    const appDetails = getAppDetails();
+    const event: Event = {
+      tags: { app_name: 'inventory' },
+      exception: {
+        values: [{ value: 'Something went wrong' }],
+      },
+    };
+
+    const result = applySentryEventRouting(event, appDetails, testConfiguredApps);
+
+    expect(result.extra?.ROUTE_TO).toEqual([
+      {
+        ...testConfiguredApps.insights[0],
+        org: 'red-hat-it',
+        configuredApp: true,
+      },
+    ]);
+  });
+
+  it('should not set ROUTE_TO when app_name does not match any configured app', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/inventory' });
+    const appDetails = getAppDetails();
+    const event = eventWithFrames('nonexistent-app');
+
+    const result = applySentryEventRouting(event, appDetails, testConfiguredApps);
+
+    expect(result.extra?.ROUTE_TO).toBeUndefined();
+  });
+
+  it('should use module_metadata DSN when present, even on unknown app group', () => {
+    jsdomReconfigure({ url: 'https://console.redhat.com/settings' });
+    const appDetails = getAppDetails();
+    const dsn = 'https://example@sentry.io/123';
+    const event: Event = {
+      exception: {
+        values: [
+          {
+            stacktrace: {
+              frames: [{ module_metadata: { dsn }, filename: 'app.js' }],
+            },
+          },
+        ],
+      },
+    };
+
+    const result = applySentryEventRouting(event, appDetails, testConfiguredApps);
+
+    expect(result.extra?.ROUTE_TO).toEqual([{ dsn }]);
   });
 });

@@ -13,6 +13,8 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
+import useBreadcrumbs from '../../hooks/useBreadcrumbs';
+import useReplaceBreadcrumbs from '../../hooks/useReplaceBreadcrumbs';
 import {
   appBreadcrumbOverrideAtom,
   appBreadcrumbSegmentsAtom,
@@ -21,6 +23,11 @@ import {
   breadcrumbReplaceModeAtom,
 } from '../../state/atoms/breadcrumbAtom';
 import { normalizePathname } from '../../utils/breadcrumbUtils';
+
+// Force webpack to treat breadcrumb hooks as used exports so the module cache
+// includes them when remote modules load them via Module Federation.
+void useBreadcrumbs;
+void useReplaceBreadcrumbs;
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;

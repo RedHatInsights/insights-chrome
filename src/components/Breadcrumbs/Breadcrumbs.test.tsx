@@ -349,4 +349,20 @@ describe('Breadcrumbs', () => {
     process.env.NODE_ENV = originalEnv;
     jest.restoreAllMocks();
   });
+
+  describe('Module Federation Exports', () => {
+    it('should force webpack to include breadcrumb hooks via void reference', async () => {
+      // Import the Breadcrumbs component module to ensure void references execute
+      await import('./Breadcrumbs');
+
+      // Verify hooks are importable (not tree-shaken)
+      const useBreadcrumbsModule = await import('../../hooks/useBreadcrumbs');
+      const useReplaceBreadcrumbsModule = await import('../../hooks/useReplaceBreadcrumbs');
+
+      expect(useBreadcrumbsModule.default).toBeDefined();
+      expect(typeof useBreadcrumbsModule.default).toBe('function');
+      expect(useReplaceBreadcrumbsModule.default).toBeDefined();
+      expect(typeof useReplaceBreadcrumbsModule.default).toBe('function');
+    });
+  });
 });

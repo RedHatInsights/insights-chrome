@@ -36,6 +36,14 @@ export type NavItemPermission<T extends keyof VisibilityFunctions = 'isOrgAdmin'
 };
 
 /**
+ * Discriminated union of all concrete NavItemPermission variants.
+ * Each variant pairs the correct `method` key with its matching `args` tuple.
+ * Use this as a parameter type when the visibility method is not known statically
+ * (e.g. dynamic dispatch inside `isNavItemVisible`).
+ */
+export type AnyNavItemPermission = { [K in keyof VisibilityFunctions]: NavItemPermission<K> }[keyof VisibilityFunctions];
+
+/**
  * TODO: Move to the component once it is migrated to TS
  */
 export type NavItem = {
@@ -51,7 +59,7 @@ export type NavItem = {
   navItems?: NavItem[];
   active?: boolean;
   isHidden?: boolean;
-  permissions?: NavItemPermission[] | NavItemPermission;
+  permissions?: AnyNavItemPermission[] | AnyNavItemPermission;
   dynamicNav?: string;
   description?: string;
   icon?: FavorableIcons;
@@ -246,3 +254,7 @@ export type BundleNav = {
   title?: string;
   links: NavItem[];
 };
+
+// Service Health API types for Module Federation exposure
+export type { ServiceHealthStatus } from '../state/atoms/degradedStateAtom';
+export type { DegradedStateAPI } from '../hooks/useDegradedState';
