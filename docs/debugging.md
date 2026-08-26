@@ -4,11 +4,11 @@ There are some localStorage values for you to enable debuging information or ena
 
 ## Available functions
 
-* `iqe` - to enable some iqe functions for QE purposes
-* `invTags` - to enable experimental tags in inventory
-* `jwtDebug` - to enable debugging of JWT
-* `remediationsDebug` - to enable debug buttons in remediations app
-* `shortSession` - to enable short session in order to test automatic logouts
-* `forcePendo` - to force Pendo initializtion
-* `segmentDev` - force usage of common segment dev API key
-* `intlDebug` - show missing translation keys
+- `iqe` - to enable some iqe functions for QE purposes
+- `invTags` - to enable experimental tags in inventory
+- `jwtDebug` - to enable debugging of JWT
+- `remediationsDebug` - to enable debug buttons in remediations app
+- `shortSession` - to enable short session in order to test automatic logouts
+- `forcePendo` - to force Pendo initialization
+- `segmentDev` - force usage of common segment dev API key
+- `intlDebug` - show missing translation keys

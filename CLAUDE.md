@@ -33,6 +33,7 @@
 ## Architecture & Key Technologies
 
 ### Core Stack
+
 - **React 18.3** with TypeScript 5.9 (strict mode)
 - **Webpack 5** with Module Federation
 - **SWC** for fast TypeScript/JavaScript transpilation
@@ -42,6 +43,7 @@
 - **Scalprum** (Module Federation wrapper)
 
 ### Entry Point Flow
+
 ```
 src/index.ts
   ↓
@@ -53,12 +55,14 @@ src/components/RootApp/ScalprumRoot.tsx (Module Federation setup)
 ```
 
 ### State Management Pattern
+
 - **Jotai atoms** for fine-grained state (not Redux)
 - Central store: [src/state/chromeStore.ts](src/state/chromeStore.ts)
 - Atom definitions: [src/state/atoms/](src/state/atoms/)
 - Use `useAtomValue`, `useSetAtom`, `useAtom` from Jotai
 
 ### Authentication
+
 - **OIDC connector** using `oidc-client-ts` and `react-oidc-context`
 - **ChromeAuthContext** abstraction layer (use this, NOT direct OIDC imports)
 - ⚠️ ESLint enforces: Do NOT import directly from `react-oidc-context` or `oidc-client-ts` outside [src/auth/OIDCConnector/](src/auth/OIDCConnector/)
@@ -69,6 +73,7 @@ src/components/RootApp/ScalprumRoot.tsx (Module Federation setup)
 ## Mandatory Development Requirements
 
 ### 1. TypeScript Only
+
 - ✅ **ALL new features MUST be written in TypeScript**
 - ❌ **NO JavaScript files** for new code
 - Use strict types: `noImplicitAny: true`, `strict: true`
@@ -78,12 +83,14 @@ src/components/RootApp/ScalprumRoot.tsx (Module Federation setup)
 ### 2. Testing Requirements
 
 #### Unit Tests (Jest + @swc/jest)
+
 - **Target: 60% minimum code coverage** (enforced by codecov)
 - Place test files next to source: `ComponentName.test.ts` or `ComponentName.test.tsx`
 - Use `@testing-library/react` for React component testing
 - Mock setup: [config/setupTests.js](config/setupTests.js)
 
 **Example test pattern:**
+
 ```typescript
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, jest } from '@jest/globals';
@@ -106,18 +113,21 @@ describe('MyComponent', () => {
 ```
 
 **Run tests:**
+
 ```bash
 npm test                    # Run all unit tests
 npm run test:update         # Update snapshots
 ```
 
 #### Cypress Component Tests
+
 - **Focus on integration testing** with Cypress component tests
 - Place in: [cypress/component/](cypress/component/)
 - File pattern: `*.cy.tsx`
 - Uses webpack dev server for component rendering
 
 **Example Cypress component test:**
+
 ```typescript
 describe('MyComponent', () => {
   it('should render and interact', () => {
@@ -129,6 +139,7 @@ describe('MyComponent', () => {
 ```
 
 **Run Cypress tests:**
+
 ```bash
 npm run test:ct             # Component tests
 npm run test:e2e            # E2E tests
@@ -145,6 +156,7 @@ This is the PREFERRED method for writing and debugging e2e tests with AI assista
 **Available MCP Tools:**
 
 **Visual Inspection & Debugging:**
+
 - `browser_navigate(url)` - Navigate to application URLs
 - `browser_snapshot()` - **Capture accessibility tree (PREFERRED for interactions)**
 - `browser_take_screenshot()` - Take visual screenshots (for documentation/debugging only)
@@ -152,6 +164,7 @@ This is the PREFERRED method for writing and debugging e2e tests with AI assista
 - `browser_network_requests(includeStatic)` - Debug API calls and network activity
 
 **User Interactions:**
+
 - `browser_click(ref, element)` - Click buttons, links, elements
 - `browser_type(ref, text, slowly, submit)` - Type into input fields
 - `browser_hover(ref, element)` - Hover over elements (for tooltips, menus)
@@ -160,6 +173,7 @@ This is the PREFERRED method for writing and debugging e2e tests with AI assista
 - `browser_press_key(key)` - Press keyboard keys (Enter, Escape, Arrow keys)
 
 **Advanced Operations:**
+
 - `browser_evaluate(function, ref, element)` - Run JavaScript in page context
 - `browser_run_code(code)` - Run Playwright code snippets directly
 - `browser_wait_for(text/textGone/time)` - Wait for conditions
@@ -180,6 +194,7 @@ browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
 **Best Practices with Playwright MCP:**
 
 1. **Standard E2E Test Development Workflow:**
+
    ```
    Step 1: Navigate    → browser_navigate('https://stage.foo.redhat.com:1337')
    Step 2: Snapshot    → browser_snapshot() to see accessibility tree & get refs
@@ -190,6 +205,7 @@ browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
    ```
 
 2. **Example: Testing Login Flow with MCP**
+
    ```javascript
    // AI Assistant uses MCP tools to develop the test:
 
@@ -238,6 +254,7 @@ browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
    - ✅ Complex form submissions
 
 4. **Debugging Failed Tests with MCP:**
+
    ```javascript
    // When a test fails, AI can investigate:
 
@@ -265,6 +282,7 @@ browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
    ```
 
 5. **Network & API Testing:**
+
    ```javascript
    // Navigate to page that makes API calls
    await browser_navigate('https://stage.foo.redhat.com:1337/insights/dashboard');
@@ -292,8 +310,8 @@ browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
      fields: [
        { name: 'Username', type: 'textbox', ref: 'ref-123', value: 'user@redhat.com' },
        { name: 'Password', type: 'textbox', ref: 'ref-456', value: 'password' },
-       { name: 'Remember me', type: 'checkbox', ref: 'ref-789', value: 'true' }
-     ]
+       { name: 'Remember me', type: 'checkbox', ref: 'ref-789', value: 'true' },
+     ],
    });
    ```
 
@@ -329,6 +347,7 @@ test('should login successfully', async ({ page }) => {
 - Workers: 1 on CI (to avoid flakiness)
 
 **Example Playwright test:**
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
@@ -339,6 +358,7 @@ test('should navigate to application', async ({ page }) => {
 ```
 
 **Run Playwright tests:**
+
 ```bash
 npm run playwright          # Run all e2e tests
 npm run playwright:headed   # Run with browser visible
@@ -350,6 +370,7 @@ npm run playwright:report   # View HTML report
 ### 3. Code Quality Standards
 
 #### ESLint Configuration
+
 - Config: [eslint.config.js](eslint.config.js)
 - Base: `@redhat-cloud-services/eslint-config-redhat-cloud-services`
 - TypeScript: `@typescript-eslint` plugin
@@ -359,12 +380,14 @@ npm run playwright:report   # View HTML report
   - Exception: [src/auth/OIDCConnector/](src/auth/OIDCConnector/) directory
 
 **Run linting:**
+
 ```bash
 npm run lint                # Check all files
 npm run lint:js:fix         # Auto-fix issues
 ```
 
 #### Naming Conventions
+
 - **Components:** PascalCase directories and files (`Navigation`, `Header`, `GlobalFilter`)
 - **Hooks:** camelCase with `use` prefix (`useChrome`, `useBundle`, `useSearch`)
 - **Utilities:** camelCase (`getEnv`, `flatTags`)
@@ -373,6 +396,7 @@ npm run lint:js:fix         # Auto-fix issues
 - **Test files:** `*.test.ts`, `*.test.tsx`, `*.cy.tsx`
 
 #### File Organization
+
 - Feature-based folders with `index.ts` exports
 - Components: [src/components/](src/components/)
 - Hooks: [src/hooks/](src/hooks/)
@@ -385,6 +409,7 @@ npm run lint:js:fix         # Auto-fix issues
 ## Critical Patterns & Best Practices
 
 ### 1. Chrome API Usage
+
 Applications interact with Chrome through the `useChrome` hook:
 
 ```typescript
@@ -409,9 +434,11 @@ const MyComponent = () => {
 **See:** [docs/api.md](docs/api.md) for full Chrome API documentation
 
 ### 2. Module Federation Patterns
+
 Chrome exposes modules for other applications:
 
 **Exposed modules:**
+
 - `./LandingNavFavorites` - Favorite services component
 - `./DashboardFavorites` - Dashboard favorites widget
 - `./SatelliteToken` - Satellite token layout
@@ -422,12 +449,14 @@ Chrome exposes modules for other applications:
 - `./theme/useDarkModeStore` - Dark mode / color scheme hook ([docs](docs/darkMode.md))
 
 **Register modules:**
+
 ```typescript
 const chrome = useChrome();
 chrome.registerModule('my-app');
 ```
 
 ### 3. State Management with Jotai
+
 ```typescript
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 
@@ -445,6 +474,7 @@ const MyComponent = () => {
 ```
 
 ### 4. Authentication Patterns
+
 ```typescript
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
@@ -465,11 +495,13 @@ const MyComponent = () => {
 ```
 
 ### 5. Navigation Patterns
+
 - Navigation config: [docs/navigation.md](docs/navigation.md)
 - Dynamic navigation based on permissions
 - Use `ChromeLink` component for internal links
 
 ### 6. Analytics Integration
+
 ```typescript
 import { useSegment } from './analytics/SegmentProvider';
 
@@ -492,6 +524,7 @@ const MyComponent = () => {
 ## Development Workflow
 
 ### Local Development
+
 ```bash
 # Install dependencies
 npm install
@@ -508,6 +541,7 @@ npm run dev
 ```
 
 ### Working with Local Apps
+
 Set environment variable to proxy to local applications:
 
 ```bash
@@ -522,6 +556,7 @@ LOCAL_APPS=secure-app:8443~https npm run dev
 ```
 
 ### Build Commands
+
 ```bash
 npm run build               # Production build
 npm run build:beta          # Beta environment build
@@ -530,6 +565,7 @@ npm run analyze             # Bundle analyzer
 ```
 
 ### Verification Before Commit
+
 ```bash
 npm run verify              # Runs: lint + build + test
 ```
@@ -539,6 +575,7 @@ npm run verify              # Runs: lint + build + test
 ## CI/CD Pipeline
 
 ### GitHub Actions ([.github/workflows/test.yml](.github/workflows/test.yml))
+
 1. **Install** - Cache npm modules
 2. **Unit Tests** - Jest with coverage → Codecov
 3. **Lint** - ESLint validation
@@ -557,18 +594,22 @@ Konflux uses Tekton pipelines for building and deploying container images to Ope
 **Pipeline Files:**
 
 **Production Pipelines:**
+
 - [insights-chrome-push.yaml](.tekton/insights-chrome-push.yaml) - Triggers on push to `master` branch
 - [insights-chrome-pull-request.yaml](.tekton/insights-chrome-pull-request.yaml) - Triggers on PRs to `master`
 
 **Development Pipelines:**
+
 - [insights-chrome-dev-push.yaml](.tekton/insights-chrome-dev-push.yaml) - Dev environment deployments
 - [insights-chrome-dev-pull-request.yaml](.tekton/insights-chrome-dev-pull-request.yaml) - Dev PR builds
 
 **Stage Pipelines:**
+
 - [insights-chrome-sc-push.yaml](.tekton/insights-chrome-sc-push.yaml) - Stage environment on push
 - [insights-chrome-sc-pull-request.yaml](.tekton/insights-chrome-sc-pull-request.yaml) - Stage PR builds
 
 **Custom Tasks:**
+
 - [run-tests-task.yml](.tekton/run-tests-task.yml) - Custom test execution task for ephemeral environments
 - [stage-access-poc.yml](.tekton/stage-access-poc.yml) - Stage access proof-of-concept
 
@@ -591,22 +632,26 @@ Konflux uses Tekton pipelines for building and deploying container images to Ope
 6. **Ephemeral environments** - Test deployments with dedicated URLs and credentials
 
 **Konflux Catalog Tasks:**
+
 - `git-clone-oci-ta` - Clone repository with OCI trusted artifacts
 - `buildah` - Build container images
 - `show-sbom` - Display software bill of materials
 - `summary` - Pipeline execution summary
 
 **Image Tagging:**
+
 - **Push builds:** `:{{revision}}` (git commit SHA)
 - **PR builds:** `:on-pr-{{revision}}` (expires after 5 days)
 
 **When modifying pipelines:**
+
 - Tekton YAML follows `tekton.dev/v1` API
 - Tasks reference bundles from `quay.io/konflux-ci/tekton-catalog`
 - Pipeline triggers use CEL expressions (e.g., `event == "push" && target_branch == "master"`)
 - Changes to `.tekton/` files require understanding of Tekton/Konflux architecture
 
 ### Coverage Requirements
+
 - **Minimum:** 60% code coverage
 - **Range:** 60-80%
 - **Threshold:** 1% delta allowed
@@ -649,17 +694,20 @@ The repository uses **CodeRabbit AI** for automated code reviews with strict qua
    - Warns about exposed module modifications
 
 **Excluded from Reviews:**
+
 - `dependabot[bot]` - Dependency updates
 - `renovate[bot]` - Dependency updates
 - `github-actions[bot]` - Automated workflows
 
 **Path-Specific Instructions:**
+
 - TypeScript files: Enforce strict types, proper imports, Jotai usage
 - Test files: Verify quality, mocking, assertions
 - Auth files: Extra scrutiny for security
 - Tekton files: Pipeline syntax validation
 
 **Commands:**
+
 ```bash
 # Test a custom check before committing
 @coderabbitai evaluate custom pre-merge check --name "Tests Required" --mode error
@@ -672,6 +720,7 @@ The repository uses **CodeRabbit AI** for automated code reviews with strict qua
 ```
 
 **Configuration Documentation:**
+
 - [CodeRabbit Configuration Reference](https://docs.coderabbit.ai/reference/configuration)
 - [Pre-Merge Checks](https://docs.coderabbit.ai/pr-reviews/pre-merge-checks)
 - [Custom Checks](https://www.coderabbit.ai/blog/pre-merge-checks-built-in-and-custom-pr-enforced)
@@ -681,6 +730,7 @@ The repository uses **CodeRabbit AI** for automated code reviews with strict qua
 ## Common Tasks
 
 ### Adding a New Component
+
 1. Create TypeScript file: [src/components/MyComponent/MyComponent.tsx](src/components/MyComponent/)
 2. Create index export: [src/components/MyComponent/index.ts](src/components/MyComponent/)
 3. Write unit tests: [src/components/MyComponent/MyComponent.test.tsx](src/components/MyComponent/)
@@ -688,29 +738,33 @@ The repository uses **CodeRabbit AI** for automated code reviews with strict qua
 5. Ensure >60% coverage
 
 ### Adding a New Hook
+
 1. Create hook: [src/hooks/useMyHook.ts](src/hooks/)
 2. Write unit tests: [src/hooks/useMyHook.test.ts](src/hooks/)
 3. Export from [src/hooks/index.ts](src/hooks/)
 
 ### Adding a New Atom
+
 1. Create atom: [src/state/atoms/myAtom.ts](src/state/atoms/)
 2. Write unit tests: [src/state/atoms/myAtom.test.ts](src/state/atoms/)
 3. Add to store if needed: [src/state/chromeStore.ts](src/state/chromeStore.ts)
 
 ### Adding Analytics Tracking
+
 1. Use existing Segment provider: [src/analytics/SegmentProvider.tsx](src/analytics/SegmentProvider.tsx)
 2. Track events with `analytics.track(eventName, properties)`
 3. Document events: [docs/analytics.md](docs/analytics.md)
 
 ### Debugging
+
 Use localStorage flags (enable via Chrome console):
 
 ```javascript
 // Enable debug features
-insights.chrome.enable.iqe()          // QE functions
-insights.chrome.enable.jwtDebug()     // JWT debugging
-insights.chrome.enable.forcePendo()   // Force Pendo
-insights.chrome.enable.appFilter()    // App filter
+insights.chrome.enable.iqe(); // QE functions
+insights.chrome.enable.jwtDebug(); // JWT debugging
+insights.chrome.enable.forcePendo(); // Force Pendo
+insights.chrome.enable.appFilter(); // App filter
 ```
 
 See: [docs/debugging.md](docs/debugging.md)
@@ -720,6 +774,7 @@ See: [docs/debugging.md](docs/debugging.md)
 ## What to Avoid
 
 ### ❌ Never Do This:
+
 1. **JavaScript files for new features** - TypeScript only
 2. **Skip tests** - 60% coverage minimum required
 3. **Direct OIDC imports** - Use ChromeAuthContext abstraction
@@ -732,6 +787,7 @@ See: [docs/debugging.md](docs/debugging.md)
 10. **Bypass auth layer** - Always use ChromeAuthContext
 
 ### ⚠️ Be Careful With:
+
 1. **Module Federation shared dependencies** - Version mismatches cause silent failures
 2. **Cross-tab communication** - Uses broadcast-channel, test thoroughly
 3. **localStorage** - Heavy usage for feature flags, may deprecate
@@ -745,6 +801,7 @@ See: [docs/debugging.md](docs/debugging.md)
 ## Dependencies & Integration Points
 
 ### Critical External APIs
+
 - **Keycloak/SSO** - Authentication (sso.redhat.com, sso.stage.redhat.com)
 - **RBAC API** - Role-based access control
 - **Entitlements API** - User entitlements
@@ -757,9 +814,11 @@ See: [docs/debugging.md](docs/debugging.md)
 - **Unleash** - Feature flags
 
 ### Module Federation Consumers
+
 Many applications depend on Chrome's exposed modules. Breaking changes cascade.
 
 ### PatternFly Components
+
 - Prefer **PatternFly 6** for new components
 - Use **@patternfly/react-core** for React components
 - Use PatternFly design tokens for theming
@@ -772,21 +831,25 @@ Many applications depend on Chrome's exposed modules. Breaking changes cascade.
 ### Common Issues
 
 **Module Federation Errors:**
+
 - Check manifest at `/apps/chrome/fed-mods.json`
 - Verify shared dependency versions match
 - Check browser console for loading errors
 
 **Authentication Issues:**
+
 - Check localStorage for tokens
 - Enable `jwtDebug` flag
 - Verify SSO endpoint for environment
 
 **Build Errors:**
+
 - Clear `.webpack-cache/` directory
 - Run `npm install` again
 - Check TypeScript errors
 
 **Test Failures:**
+
 - Update snapshots: `npm run test:update`
 - Check mock setup: [config/setupTests.js](config/setupTests.js)
 - Ensure jsdom environment
@@ -796,6 +859,7 @@ Many applications depend on Chrome's exposed modules. Breaking changes cascade.
 ## Performance Considerations
 
 ### Bundle Optimization
+
 - Module Federation shares React, PatternFly as singletons
 - Code splitting via React.lazy + Suspense
 - Hash filenames for long-term caching
@@ -803,6 +867,7 @@ Many applications depend on Chrome's exposed modules. Breaking changes cascade.
 - Source maps hidden in production
 
 ### Loading Performance
+
 - Lazy load routes
 - Async chunk loading with error recovery
 - 10-second timeout for chunk refresh flags
@@ -812,6 +877,7 @@ Many applications depend on Chrome's exposed modules. Breaking changes cascade.
 ## Documentation References
 
 Essential reading:
+
 - [Chrome API](docs/api.md) - Full JavaScript API specification
 - [Navigation](docs/navigation.md) - Navigation configuration
 - [Authentication](docs/auth.md) - Auth architecture

@@ -28,16 +28,7 @@ test.describe('Platform Search', () => {
    */
   test.describe('Identity & Access Management searches', () => {
     const expectedPage = 'Identity & Access Management';
-    const keywords = [
-      'Authentication Factors',
-      'Identity',
-      'IAM',
-      'User Access',
-      'User Management',
-      'access management',
-      'rbac',
-      'RBAC',
-    ];
+    const keywords = ['Authentication Factors', 'Identity', 'IAM', 'User Access', 'User Management', 'access management', 'rbac', 'RBAC'];
 
     for (const keyword of keywords) {
       test(`should find "${expectedPage}" when searching for "${keyword}"`, async ({ page }) => {

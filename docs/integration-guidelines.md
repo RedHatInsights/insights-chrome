@@ -14,16 +14,16 @@ insights-chrome is the **host application** for the entire Hybrid Cloud Console.
 
 Chrome exposes these modules for consuming apps:
 
-| Module Path | Source File | Purpose |
-|-------------|-----------|---------|
-| `./LandingNavFavorites` | `src/components/FavoriteServices/LandingNavFavorites.tsx` | Landing page favorites |
-| `./DashboardFavorites` | `src/components/FavoriteServices/DashboardFavorites.tsx` | Dashboard favorites widget |
-| `./SatelliteToken` | `src/layouts/SatelliteToken.tsx` | Satellite token layout |
-| `./ModularInventory` | `src/inventoryPoc/index.ts` | Modular inventory POC |
-| `./search/useSearch` | `src/hooks/useSearch.ts` | Search hook for apps |
-| `./analytics/intercom/OpenShiftItercom` | `src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx` | Intercom module component |
-| `./analytics/intercom/useOpenShiftIntercomStore` | `src/state/stores/openShiftIntercomStore.ts` | Intercom state store |
-| `./theme/useDarkModeStore` | `src/state/stores/darkModeStore.ts` | Dark mode / color scheme hook ([docs](./darkMode.md)) |
+| Module Path                                      | Source File                                                    | Purpose                                               |
+| ------------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------- |
+| `./LandingNavFavorites`                          | `src/components/FavoriteServices/LandingNavFavorites.tsx`      | Landing page favorites                                |
+| `./DashboardFavorites`                           | `src/components/FavoriteServices/DashboardFavorites.tsx`       | Dashboard favorites widget                            |
+| `./SatelliteToken`                               | `src/layouts/SatelliteToken.tsx`                               | Satellite token layout                                |
+| `./ModularInventory`                             | `src/inventoryPoc/index.ts`                                    | Modular inventory POC                                 |
+| `./search/useSearch`                             | `src/hooks/useSearch.ts`                                       | Search hook for apps                                  |
+| `./analytics/intercom/OpenShiftItercom`          | `src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx` | Intercom module component                             |
+| `./analytics/intercom/useOpenShiftIntercomStore` | `src/state/stores/openShiftIntercomStore.ts`                   | Intercom state store                                  |
+| `./theme/useDarkModeStore`                       | `src/state/stores/darkModeStore.ts`                            | Dark mode / color scheme hook ([docs](./darkMode.md)) |
 
 ### Shared Dependencies (Singletons)
 
@@ -127,14 +127,14 @@ The Frontend Operator manages service discovery and routing in OpenShift:
 
 Multiple analytics services are integrated:
 
-| Service | Purpose | Module |
-|---------|---------|--------|
-| Segment | Event tracking | `src/analytics/SegmentProvider.tsx` |
-| Amplitude | Product analytics | `src/analytics/useAmplitude.ts` |
-| Pendo | Product guidance | Initialized via Chrome |
-| Sentry | Error tracking | Webpack plugin + runtime |
-| DPAL | Data analytics | `src/analytics/useDpal.ts` |
-| Intercom | Support chat | `src/components/OpenShiftIntercom/` |
+| Service   | Purpose           | Module                              |
+| --------- | ----------------- | ----------------------------------- |
+| Segment   | Event tracking    | `src/analytics/SegmentProvider.tsx` |
+| Amplitude | Product analytics | `src/analytics/useAmplitude.ts`     |
+| Pendo     | Product guidance  | Initialized via Chrome              |
+| Sentry    | Error tracking    | Webpack plugin + runtime            |
+| DPAL      | Data analytics    | `src/analytics/useDpal.ts`          |
+| Intercom  | Support chat      | `src/components/OpenShiftIntercom/` |
 
 ### Rules
 

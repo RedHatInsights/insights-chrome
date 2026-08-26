@@ -125,8 +125,8 @@ test.describe('Progressive Profile', () => {
 
       // Check for profile-related content
       // This could be a form or a link to complete the profile
-      const hasProfileForm = await page.locator('form, [role="form"]').count() > 0;
-      const hasProfileLink = await page.getByText(/complete.*profile|update.*profile/i).count() > 0;
+      const hasProfileForm = (await page.locator('form, [role="form"]').count()) > 0;
+      const hasProfileLink = (await page.getByText(/complete.*profile|update.*profile/i).count()) > 0;
 
       // At least one of these should be present
       expect(hasProfileForm || hasProfileLink).toBeTruthy();

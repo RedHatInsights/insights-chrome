@@ -6,7 +6,7 @@ Out of the box, we capture all fatal errors. We also provide Sentry to developer
 
 ## Sentry object spec
 
-``` js
+```js
 
     Sentry.init({
         dsn: API_KEY, // API key

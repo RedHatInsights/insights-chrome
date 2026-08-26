@@ -254,7 +254,7 @@ export class ChromeTopbar {
    * Checks if the services menu is open
    */
   async isServicesMenuOpen(): Promise<boolean> {
-    return await this.servicesButton.getAttribute('aria-expanded') === 'true';
+    return (await this.servicesButton.getAttribute('aria-expanded')) === 'true';
   }
 
   /**
@@ -265,7 +265,7 @@ export class ChromeTopbar {
       await this.servicesButton.click();
       await this.page.locator('.pf-v6-c-sidebar__content').waitFor({
         state: 'visible',
-        timeout: ChromeTopbar.MENU_TIMEOUT
+        timeout: ChromeTopbar.MENU_TIMEOUT,
       });
     }
   }
@@ -278,7 +278,7 @@ export class ChromeTopbar {
       await this.servicesButton.click();
       await this.page.locator('.pf-v6-c-sidebar__content').waitFor({
         state: 'hidden',
-        timeout: ChromeTopbar.MENU_TIMEOUT
+        timeout: ChromeTopbar.MENU_TIMEOUT,
       });
     }
   }
