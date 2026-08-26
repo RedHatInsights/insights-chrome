@@ -114,9 +114,7 @@
       "name": "poc-topic-part-1",
       "content": {
         "name": "poc-topic-part-1",
-        "tags": [
-          "page-1"
-        ],
+        "tags": ["page-1"],
         "links": [
           "[Creating quick starts](https://docs.openshift.com/container-platform/4.9/web_console/creating-quick-start-tutorials.html)",
           "[Redhat Console](https://console.redhat.com/)"
@@ -134,11 +132,7 @@
       "name": "workspace",
       "content": {
         "name": "workspace",
-        "tags": [
-          "page-1",
-          "page-2",
-          "page-3"
-        ],
+        "tags": ["page-1", "page-2", "page-3"],
         "links": [
           "[Creating quick starts](https://docs.openshift.com/container-platform/4.9/web_console/creating-quick-start-tutorials.html)",
           "[Redhat Console](https://console.redhat.com/)"

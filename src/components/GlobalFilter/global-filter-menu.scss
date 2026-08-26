@@ -1,8 +1,12 @@
 .chr-c-global-filter {
   padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg) !important;
   background: var(--pf-t--global--background--color--primary--default);
-  .pf-v6-c-label-group { margin-right: var(--pf-t--global--spacer--xs); }
-  .chr-c-chip { background: var(--pf-t--global--background--color--action--plain--default); }
+  .pf-v6-c-label-group {
+    margin-right: var(--pf-t--global--spacer--xs);
+  }
+  .chr-c-chip {
+    background: var(--pf-t--global--background--color--action--plain--default);
+  }
 }
 
 .chr-c-menu-global-filter {
@@ -17,7 +21,8 @@
   input {
     border: 0;
   }
-  &.expanded, &.pf-m-expanded {
+  &.expanded,
+  &.pf-m-expanded {
     width: 450px;
     .pf-v6-c-menu-toggle__text {
       width: 390px;
@@ -40,8 +45,8 @@
       overflow: hidden;
     }
     .pf-v6-c-badge {
-        margin-left: 8px;
-        padding-top: 3px;
+      margin-left: 8px;
+      padding-top: 3px;
     }
-}
+  }
 }
