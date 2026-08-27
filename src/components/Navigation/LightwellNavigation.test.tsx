@@ -96,11 +96,11 @@ describe('LightwellNavigation', () => {
       expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     });
 
-    it('shows Lens and Beacon when only lightwellbeaconandlens is accessible', async () => {
+    it('shows Lens and Beacon when only lightwelllens and lightwellbeacon are accessible', async () => {
       mockIsNavItemVisible.mockImplementation((permissions: AnyNavItemPermission[]) => {
         const perm = permissions?.[0];
         const accessor = perm?.method === 'apiRequest' ? perm.args[0]?.accessor : undefined;
-        if (accessor === 'lightwellbeaconandlens.accessible') return Promise.resolve(true);
+        if (accessor === 'lightwelllens.accessible' || accessor === 'lightwellbeacon.accessible') return Promise.resolve(true);
         return Promise.resolve(false);
       });
       renderNav();
@@ -133,10 +133,10 @@ describe('LightwellNavigation', () => {
       const featuresUrl = '/api/content-sources/v1.0/features/';
       // Repositories -> lightwell.accessible
       expect(calls[0][0]).toEqual([{ method: 'apiRequest', args: [{ url: featuresUrl, accessor: 'lightwell.accessible' }] }]);
-      // Lens -> lightwellbeaconandlens.accessible
-      expect(calls[1][0]).toEqual([{ method: 'apiRequest', args: [{ url: featuresUrl, accessor: 'lightwellbeaconandlens.accessible' }] }]);
-      // Beacon -> lightwellbeaconandlens.accessible
-      expect(calls[2][0]).toEqual([{ method: 'apiRequest', args: [{ url: featuresUrl, accessor: 'lightwellbeaconandlens.accessible' }] }]);
+      // Lens -> lightwelllens.accessible
+      expect(calls[1][0]).toEqual([{ method: 'apiRequest', args: [{ url: featuresUrl, accessor: 'lightwelllens.accessible' }] }]);
+      // Beacon -> lightwellbeacon.accessible
+      expect(calls[2][0]).toEqual([{ method: 'apiRequest', args: [{ url: featuresUrl, accessor: 'lightwellbeacon.accessible' }] }]);
     });
   });
 

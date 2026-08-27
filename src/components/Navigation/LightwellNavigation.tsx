@@ -34,16 +34,16 @@ const STAGE_NAV_ITEMS: LightwellNavItemConfig[] = [
 /**
  * Production: each item gated behind the content-sources features API.
  *
- * | Nav Item       | Feature Key            | Accessor                          |
- * |----------------|------------------------|-----------------------------------|
- * | Repositories   | lightwell              | lightwell.accessible              |
- * | Lens           | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
- * | Beacon         | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
+ * | Nav Item       | Feature Key     | Accessor                     |
+ * |----------------|-----------------|------------------------------|
+ * | Repositories   | lightwell       | lightwell.accessible         |
+ * | Lens           | lightwelllens   | lightwelllens.accessible     |
+ * | Beacon         | lightwellbeacon | lightwellbeacon.accessible   |
  */
 const PROD_NAV_ITEMS: LightwellNavItemConfig[] = [
   { label: 'Repositories', path: LIGHTWELL_PATH, permissions: featuresPermission('lightwell.accessible') },
-  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
-  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
+  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwelllens.accessible') },
+  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeacon.accessible') },
 ];
 
 /**
