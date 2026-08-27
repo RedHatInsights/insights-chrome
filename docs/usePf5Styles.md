@@ -40,6 +40,7 @@ The `platform.chrome.pf5` feature flag controls the default behavior:
 ### Preparing for PF5 Cutoff
 
 **Test your module without PF5 styles:**
+
 ```javascript
 localStorage.setItem('@chrome/pf-5-enabled', 'false');
 // Refresh page - you're now seeing the future state (PF6 only)
@@ -47,6 +48,7 @@ localStorage.setItem('@chrome/pf-5-enabled', 'false');
 ```
 
 **Compare with current state:**
+
 ```javascript
 localStorage.setItem('@chrome/pf-5-enabled', 'true');
 // Refresh page - you're now seeing current state (PF6 + PF5)

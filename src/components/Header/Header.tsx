@@ -82,9 +82,6 @@ const MemoizedHeader = memo(
 
     const { hideNav, isNavOpen, setIsNavOpen } = breadcrumbsProps || {};
 
-    const rootElementClasses = Array.from(document?.documentElement?.classList);
-    const theme = rootElementClasses.includes('pf-v6-theme-dark') ? 'dark' : 'light';
-
     return (
       <Fragment>
         <MastheadMain>
@@ -98,7 +95,7 @@ const MemoizedHeader = memo(
                 <ChromeLink {...props} {...(isLightwellHeader ? { href: '/lightwell' } : { appId: 'landing', href: '/' })} />
               )}
             >
-              <Logo theme={theme} />
+              <Logo />
             </MastheadLogo>
             {isLightwellHeader ? (
               <ChromeLink href="/lightwell" className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-mt-xs chr-m-plain">

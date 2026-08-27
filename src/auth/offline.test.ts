@@ -84,6 +84,14 @@ describe('offline', () => {
     expect(localStorage.getItem(OFFLINE_REDIRECT_STORAGE_KEY)).toEqual(redirectUri);
   });
 
+  it('strips OIDC-reserved params from the offline redirect but keeps the noauth token', () => {
+    const base = 'https://console.redhat.com/insights?state=abc&code=xyz&from-aws=1';
+    const offlineRedirectUrl = prepareOfflineRedirect(base);
+    expect(offlineRedirectUrl).toEqual(`https://console.redhat.com/insights?from-aws=1&noauth=${offlineToken}`);
+    expect(offlineRedirectUrl).not.toContain('state=');
+    expect(offlineRedirectUrl).not.toContain('code=');
+  });
+
   it('postbackUrlSetup does nothing if URL does not contain offline token', () => {
     postbackUrlSetup();
     expect(pushStateSpy).not.toHaveBeenCalled();

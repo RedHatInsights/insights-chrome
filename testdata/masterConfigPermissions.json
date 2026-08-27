@@ -1,136 +1,141 @@
 {
-    "appA": {
-        "top_level": "someotherstuff",
-        "routes": "fakeroutes",
-        "permissions": {
-            "method": "isEntitled",
-            "apps": [ "subid1" ],
-            "args": [ "something" ]
-        },
-        "frontend": {
-            "sub_apps": [
-                {
-                    "id": "subid1",
-                    "title": "subtitle1"
-                },
-                {
-                    "id": "subid2",
-                    "title": "subtitle1"
-                }
-            ]},
-        "title": "appA"
+  "appA": {
+    "top_level": "someotherstuff",
+    "routes": "fakeroutes",
+    "permissions": {
+      "method": "isEntitled",
+      "apps": ["subid1"],
+      "args": ["something"]
     },
-    "appB": {
-        "top_level": "someotherstuff",
-        "routes": "fakeroutes",
-        "permissions": {
-            "method": "isEntitled",
-            "apps": [ "subid1" ],
-            "args": [ "insights" ]
+    "frontend": {
+      "sub_apps": [
+        {
+          "id": "subid1",
+          "title": "subtitle1"
         },
-        "frontend": {
-            "sub_apps": [
-                {
-                    "id": "subid1",
-                    "title": "subtitle1"
-                }
-            ]},
-        "title": "appB"
+        {
+          "id": "subid2",
+          "title": "subtitle1"
+        }
+      ]
     },
-    "appC": {
-        "top_level": "someotherstuff",
-        "routes": "fakeroutes",
-        "permissions": {
-            "method": "isEntitled",
-            "apps": [ "subid1" ],
-            "args": [ "something" ]
+    "title": "appA"
+  },
+  "appB": {
+    "top_level": "someotherstuff",
+    "routes": "fakeroutes",
+    "permissions": {
+      "method": "isEntitled",
+      "apps": ["subid1"],
+      "args": ["insights"]
+    },
+    "frontend": {
+      "sub_apps": [
+        {
+          "id": "subid1",
+          "title": "subtitle1"
+        }
+      ]
+    },
+    "title": "appB"
+  },
+  "appC": {
+    "top_level": "someotherstuff",
+    "routes": "fakeroutes",
+    "permissions": {
+      "method": "isEntitled",
+      "apps": ["subid1"],
+      "args": ["something"]
+    },
+    "frontend": {
+      "sub_apps": [
+        {
+          "id": "subid1",
+          "title": "subtitle1"
         },
-        "frontend": {
-            "sub_apps": [
-                {
-                    "id": "subid1",
-                    "title": "subtitle1"
-                },
-                {
-                    "id": "subid2",
-                    "title": "subtitle1"
-                },
-                {
-                    "id": "subid2",
-                    "title": "subtitle1",
-                    "permissions": {
-                        "method": "isEntitled",
-                        "args": [ "something" ]
-                    }
-                }
-            ]},
-        "title": "appC"
-    },
-    "appD": {
-        "top_level": "someotherstuff",
-        "routes": "fakeroutes",
-        "frontend": {
-            "sub_apps": [
-                {
-                    "id": "subid1",
-                    "title": "subtitle1"
-                },
-                {
-                    "id": "appE"
-                },
-                {
-                    "id": "insights"
-                },
-                {
-                    "id": "not_visible"
-                }
-            ]},
-        "title": "appD"
-    },
-    "appE": {
-        "permissions": {
-            "method": "isEntitled",
-            "args": [ "something" ]
+        {
+          "id": "subid2",
+          "title": "subtitle1"
         },
-        "title": "appE"
-    },
-    "appF": {
-      "top_level": "someotherstuff",
-      "routes": "fakeroutes",
-      "frontend": {
-          "sub_apps": [
-              {
-                  "id": "not_visible"
-              }
-          ]},
-      "title": "appD"
-    },
-    "appG": {
-        "top_level": "hue",
-        "routes": "fakeroutes",
-        "permissions": {
-            "method": "hasPermissions",
-            "args": [ ["something:terrible:happened"] ]
-        },
-        "title": "appG"
-    },
-    "insights": {
-        "frontend": {
-            "title": "Bla"
-        },
-        "permissions": {
-            "method": "isEntitled"
-        },
-        "title": "appF"
-    },
-    "not_visible": {
-        "frontend": {
-            "title": "Bla"
-        },
-        "permissions": {
+        {
+          "id": "subid2",
+          "title": "subtitle1",
+          "permissions": {
             "method": "isEntitled",
             "args": ["something"]
+          }
+        }
+      ]
+    },
+    "title": "appC"
+  },
+  "appD": {
+    "top_level": "someotherstuff",
+    "routes": "fakeroutes",
+    "frontend": {
+      "sub_apps": [
+        {
+          "id": "subid1",
+          "title": "subtitle1"
         },
-        "title": "appF"
-    }
+        {
+          "id": "appE"
+        },
+        {
+          "id": "insights"
+        },
+        {
+          "id": "not_visible"
+        }
+      ]
+    },
+    "title": "appD"
+  },
+  "appE": {
+    "permissions": {
+      "method": "isEntitled",
+      "args": ["something"]
+    },
+    "title": "appE"
+  },
+  "appF": {
+    "top_level": "someotherstuff",
+    "routes": "fakeroutes",
+    "frontend": {
+      "sub_apps": [
+        {
+          "id": "not_visible"
+        }
+      ]
+    },
+    "title": "appD"
+  },
+  "appG": {
+    "top_level": "hue",
+    "routes": "fakeroutes",
+    "permissions": {
+      "method": "hasPermissions",
+      "args": [["something:terrible:happened"]]
+    },
+    "title": "appG"
+  },
+  "insights": {
+    "frontend": {
+      "title": "Bla"
+    },
+    "permissions": {
+      "method": "isEntitled"
+    },
+    "title": "appF"
+  },
+  "not_visible": {
+    "frontend": {
+      "title": "Bla"
+    },
+    "permissions": {
+      "method": "isEntitled",
+      "args": ["something"]
+    },
+    "title": "appF"
+  }
 }

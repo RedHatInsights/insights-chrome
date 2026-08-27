@@ -21,6 +21,7 @@ playwright/
 ## Prerequisites
 
 1. Install Playwright browsers (first time only):
+
    ```bash
    npx playwright install
    ```
@@ -35,31 +36,37 @@ playwright/
 ## Running Tests
 
 Run all Playwright tests:
+
 ```bash
 npm run playwright
 ```
 
 Run with headed browser (see the browser):
+
 ```bash
 npm run playwright:headed
 ```
 
 Run with UI mode (interactive):
+
 ```bash
 npm run playwright:ui
 ```
 
 Run in debug mode:
+
 ```bash
 npm run playwright:debug
 ```
 
 Run a specific test file:
+
 ```bash
 npx playwright test playwright/e2e/release-gate/navigation.spec.ts
 ```
 
 View test report:
+
 ```bash
 npm run playwright:report
 ```
@@ -67,6 +74,7 @@ npm run playwright:report
 ## Authentication
 
 Each test performs a full login using the `login()` helper function from `playwright/helpers/auth.ts`. This ensures:
+
 - No browser state is stored between test runs
 - Each test has a clean authentication state
 - Full user flow is tested including authentication
@@ -98,24 +106,29 @@ The login helper uses environment variables `E2E_USER` and `E2E_PASSWORD` to per
 ## Test Conversion Notes
 
 ### last-visited-pages.spec.ts
+
 - Converted API interception from `cy.intercept()` to `page.route()`
 - Replaced custom `cy.clock()` and `cy.tick()` with `page.waitForTimeout()`
 - Tests involving long waits (3 minutes) may be slow
 
 ### navigation.spec.ts
+
 - Simple conversion with straightforward locator updates
 - Added explicit visibility checks for dropdowns
 
 ### landing-page.spec.ts
+
 - Converted hover interactions from `trigger('mouseenter')` to `.hover()`
 - Uses `toContainText()` for partial text matching
 
 ### favorite-services.spec.ts
+
 - Converted complex user flow with multiple interactions
 - Uses XPath for ancestor navigation (finding parent containers)
 - Route handling captures both POST and GET requests
 
 ### refresh-token.spec.ts
+
 - Accesses internal chrome API via `page.evaluate()`
 - Tracks token refresh requests with route interception
 - Test is skipped (same as Cypress version)
@@ -123,6 +136,7 @@ The login helper uses environment variables `E2E_USER` and `E2E_PASSWORD` to per
 ## CI Integration
 
 The CI script is available as:
+
 ```bash
 npm run ci:playwright-release-gate-tests
 ```
@@ -130,6 +144,7 @@ npm run ci:playwright-release-gate-tests
 ## Configuration
 
 See `playwright.config.ts` in the root directory for configuration options including:
+
 - Base URL
 - Timeouts
 - Retries

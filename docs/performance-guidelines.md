@@ -79,11 +79,11 @@ Shared Module Federation singletons (`react`, `react-dom`, `react-intl`, etc.) a
 
 The repo uses consistent debouncing for expensive operations:
 
-| Location | Delay | Purpose |
-|----------|-------|---------|
-| `src/components/Search/SearchInput.tsx` | 1000ms | Analytics tracking for search queries |
-| `src/analytics/usePageEvent.ts` | 500ms | Segment page event tracking |
-| `src/components/GlobalFilter/GlobalFilter.tsx` | 600ms | Tag loading API calls |
+| Location                                       | Delay  | Purpose                               |
+| ---------------------------------------------- | ------ | ------------------------------------- |
+| `src/components/Search/SearchInput.tsx`        | 1000ms | Analytics tracking for search queries |
+| `src/analytics/usePageEvent.ts`                | 500ms  | Segment page event tracking           |
+| `src/components/GlobalFilter/GlobalFilter.tsx` | 600ms  | Tag loading API calls                 |
 
 Follow the same pattern — debounce analytics and API calls, not UI interactions.
 

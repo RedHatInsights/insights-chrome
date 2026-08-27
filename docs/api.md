@@ -8,12 +8,10 @@ The API is available via the `useChrome` hook exposed from the frontend componen
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 const Component = () => {
-    const chrome = useChrome()
-    // use the API
-    return (
-        <div>...</div>
-    )
-}
+  const chrome = useChrome();
+  // use the API
+  return <div>...</div>;
+};
 ```
 
 ## Full list of chrome functions
@@ -47,29 +45,33 @@ chrome: {
 Please do not update title directly via `document.title`. Use one of following options.
 
 ### While identifying app
+
 This is prefered way if the document title stays the same on each app page.
+
 ```js
 chrome.identifyApp('advisor', 'App title');
 ```
 
 ### Using updateDocumentTitle function
+
 Can be used for changing app title in different app pages with a ` | console.redhat.com` suffix added automatically if not disabled by a second param.
+
 ```js
-chrome.updateDocumentTitle('New title without suffix', true)
+chrome.updateDocumentTitle('New title without suffix', true);
 ```
 
 ## Global events
 
 The following events can be observed:
 
-* `APP_NAVIGATION` - fired when the application navigation option is selected. `event.domEvent.href` can be used to access navigation link href and compute application route.
-* `GLOBAL_FILTER_UPDATE` - fired when user selects anything in global filter. Object with all selected tags is returned. Tags are groupped together under namespace in which there is another object with keys as tag key and additional meta information.
+- `APP_NAVIGATION` - fired when the application navigation option is selected. `event.domEvent.href` can be used to access navigation link href and compute application route.
+- `GLOBAL_FILTER_UPDATE` - fired when user selects anything in global filter. Object with all selected tags is returned. Tags are groupped together under namespace in which there is another object with keys as tag key and additional meta information.
 
 ## Global actions
 
-* You can also use Chrome to update a page action and object ID for OUIA. Functions are available from the `useChrome` hook. You can use `appAction('action')` to activate a certain action, and `appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `appAction('edit-name')` and then `appObjectId(5)`. Once the user is done editing, you have to call `appAction()` and `appObjectId()` in order to indicate that the action is done.
+- You can also use Chrome to update a page action and object ID for OUIA. Functions are available from the `useChrome` hook. You can use `appAction('action')` to activate a certain action, and `appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `appAction('edit-name')` and then `appObjectId(5)`. Once the user is done editing, you have to call `appAction()` and `appObjectId()` in order to indicate that the action is done.
 
-* If you want to scope global filter to specific source you can do that by firing `globalFilterScope('insights')` (this will populate global filter with tags for systems only from insights source).
+- If you want to scope global filter to specific source you can do that by firing `globalFilterScope('insights')` (this will populate global filter with tags for systems only from insights source).
 
 ## Global filter
 
@@ -84,9 +86,9 @@ By default subscribing to `GLOBAL_FILTER_UPDATE` will return you an object with 
 Usefull if you know the partials and want to deal with the RAW data.
 
 ```js
-const chrome = useChrome()
+const chrome = useChrome();
 chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-    /*
+  /*
     do something with data object, the shape of this object is
     { 'namespace with spaces': { val: { isSelected: true, value: 'something' } } }
     if uses selects SAP the object will contain
@@ -94,8 +96,8 @@ chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
     is user selects SID the object will contain
     { 'SAP ID (SID)': { AAA: { isSelected: true } } }
     */
-   // if you want to break the data object to its parts you can do that with desctrucor
-   const { 'SAP ID (SID)': SID, Workloads, ...tags } = data;
+  // if you want to break the data object to its parts you can do that with desctrucor
+  const { 'SAP ID (SID)': SID, Workloads, ...tags } = data;
 });
 ```
 
@@ -104,10 +106,10 @@ chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
 If you simply want to filter systems based on these values we provide a helper function `mapGlobalFilter` from the `useChrome` hook, which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
 
 ```js
-const chrome = useChrome()
+const chrome = useChrome();
 chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-    const selectedTags = chrome.mapGlobalFilter?.(data);
-    // [namespace with spaces/val=something] if you are using axios, this is the correct shape
+  const selectedTags = chrome.mapGlobalFilter?.(data);
+  // [namespace with spaces/val=something] if you are using axios, this is the correct shape
 });
 ```
 
@@ -147,9 +149,9 @@ If you wish to hide the global filter on any route simply call `hideGlobalFilter
 If you want to hide it on certain screens call `hideGlobalFilter()` on them (preferably in `useEffect` after component mounts) and on screens you want to show it call `hideGlobalFilter(false)`.
 
 ```js
-const chrome = ueChrome()
+const chrome = useChrome();
 
-chrome.hideGlobalFilter()
+chrome.hideGlobalFilter();
 ```
 
 ## Creating Support Cases
@@ -157,9 +159,9 @@ chrome.hideGlobalFilter()
 You can access the ability to create support cases by calling a function from the `useChrome` hook.
 
 ```js
-const chrome = ueChrome()
+const chrome = useChrome();
 
-chrome.createCase()
+chrome.createCase();
 ```
 
 By default, the fields that are sent are:
@@ -172,18 +174,18 @@ By default, the fields that are sent are:
 
 You have the ability to add a few custom fields with the following API:
 
-``` js
-const chrome = useChrome()
+```js
+const chrome = useChrome();
 
 chrome.createCase({
-    caseFields: {
-        key: 'any case specific values'
-    },
-    // anything not inside of "caseFields" will be sent to sentry
-    foo: {
-        key: 'additional value'
-    }
-})
+  caseFields: {
+    key: 'any case specific values',
+  },
+  // anything not inside of "caseFields" will be sent to sentry
+  foo: {
+    key: 'additional value',
+  },
+});
 ```
 
 You can also configure the version and product of the support cases:
@@ -203,7 +205,7 @@ chrome.createCase({
 
 ## Deprecated functions
 
-* `chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
+- `chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
 
 ## Register custom module
 
@@ -216,7 +218,6 @@ Where the `module` is name of the application that exposes fed-mods.json for loa
 If you are going to use chrome async component, make sure that you register the module before using it. If the module is not registered it will throw an error upon loading, you can safely register all modules you wish to use either on app render or conditionally check if user has rights for such screen partial and register right before calling the async component loader.
 
 Once you register the module you can use [AsyncComponent](https://github.com/RedHatInsights/frontend-components/blob/master/packages/components/src/AsyncComponent/index.js) from frontend-components.
-
 
 ```JSX
 import { React } from 'react'
@@ -259,16 +260,20 @@ Drawer actions are available through the `drawerActions` property of the chrome 
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 const Component = () => {
-    const { drawerActions } = useChrome();
+  const { drawerActions } = useChrome();
 
-    return (
-        <button onClick={() => drawerActions.toggleDrawerContent({
-            scope: 'myApp',
-            module: './MyDrawerPanel'
-        })}>
-            Toggle My Panel
-        </button>
-    );
+  return (
+    <button
+      onClick={() =>
+        drawerActions.toggleDrawerContent({
+          scope: 'myApp',
+          module: './MyDrawerPanel',
+        })
+      }
+    >
+      Toggle My Panel
+    </button>
+  );
 };
 ```
 
@@ -279,27 +284,29 @@ const Component = () => {
 Toggles the drawer content intelligently. If the drawer is closed or contains different content, it will open with the new content. If the drawer is already open with the same content, it will close.
 
 **Parameters:**
+
 - `data` (Object): ScalprumComponentProps object with the following properties:
   - `scope` (string, required): The HCC module scope name
   - `module` (string, required): The module path (e.g., './MyComponent')
   - Any additional props are passed directly to the component (not wrapped in a `props` object)
 
 **Example:**
+
 ```jsx
 const { drawerActions } = useChrome();
 
 // Open help panel
 drawerActions.toggleDrawerContent({
-    scope: 'learningResources',
-    module: './HelpPanel'
+  scope: 'learningResources',
+  module: './HelpPanel',
 });
 
 // Open custom panel with direct props
 drawerActions.toggleDrawerContent({
-    scope: 'myApp',
-    module: './UserDetails',
-    userId: 123,
-    onClose: () => console.log('Panel closed')
+  scope: 'myApp',
+  module: './UserDetails',
+  userId: 123,
+  onClose: () => console.log('Panel closed'),
 });
 ```
 
@@ -308,18 +315,20 @@ drawerActions.toggleDrawerContent({
 Directly sets the drawer content without toggling the drawer state.
 
 **Parameters:**
+
 - `data` (Object): Same as `toggleDrawerContent`, or `undefined` to clear content
 
 **Example:**
+
 ```jsx
 const { drawerActions } = useChrome();
 
 // Set content with props
 drawerActions.setDrawerPanelContent({
-    scope: 'notifications',
-    module: './NotificationPanel',
-    userId: 123,
-    showCount: true
+  scope: 'notifications',
+  module: './NotificationPanel',
+  userId: 123,
+  showCount: true,
 });
 
 // Clear content
@@ -331,6 +340,7 @@ drawerActions.setDrawerPanelContent(undefined);
 Toggles the drawer open/closed state without changing the content.
 
 **Example:**
+
 ```jsx
 const { drawerActions } = useChrome();
 
@@ -388,39 +398,37 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { Button } from '@patternfly/react-core';
 
 const MyComponent = () => {
-    const { drawerActions } = useChrome();
-    const [selectedUser, setSelectedUser] = useState(null);
+  const { drawerActions } = useChrome();
+  const [selectedUser, setSelectedUser] = useState(null);
 
-    const openUserDetails = (user) => {
-        setSelectedUser(user);
-        drawerActions.toggleDrawerContent({
-            scope: 'userManagement',
-            module: './UserDetailsPanel',
-            user,
-            onUserUpdated: (updatedUser) => {
-                setSelectedUser(updatedUser);
-                // Refresh your data...
-            }
-        });
-    };
+  const openUserDetails = (user) => {
+    setSelectedUser(user);
+    drawerActions.toggleDrawerContent({
+      scope: 'userManagement',
+      module: './UserDetailsPanel',
+      user,
+      onUserUpdated: (updatedUser) => {
+        setSelectedUser(updatedUser);
+        // Refresh your data...
+      },
+    });
+  };
 
-    const closeDrawer = () => {
-        drawerActions.setDrawerPanelContent(undefined);
-        setSelectedUser(null);
-    };
+  const closeDrawer = () => {
+    drawerActions.setDrawerPanelContent(undefined);
+    setSelectedUser(null);
+  };
 
-    return (
-        <div>
-            <Button onClick={() => openUserDetails({ id: 1, name: 'John Doe' })}>
-                View User Details
-            </Button>
-            {selectedUser && (
-                <Button variant="secondary" onClick={closeDrawer}>
-                    Close Details
-                </Button>
-            )}
-        </div>
-    );
+  return (
+    <div>
+      <Button onClick={() => openUserDetails({ id: 1, name: 'John Doe' })}>View User Details</Button>
+      {selectedUser && (
+        <Button variant="secondary" onClick={closeDrawer}>
+          Close Details
+        </Button>
+      )}
+    </div>
+  );
 };
 
 export default MyComponent;
