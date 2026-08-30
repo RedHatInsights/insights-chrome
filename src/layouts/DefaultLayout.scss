@@ -25,18 +25,52 @@
   }
 }
 
+html:has(.pf-v6-c-drawer.pf-m-expanded .learningResources),
+html:has(.pf-v6-c-drawer.pf-m-expanded .virtualAssistant) {
+  overflow: hidden;
+
+  body {
+    overflow: hidden;
+  }
+
+  .pf-v6-c-page {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
 .pf-v6-c-page__drawer {
   .pf-v6-c-drawer__content {
     background-color: transparent;
   }
 
-  .pf-v6-c-drawer__panel:not(.pf-m-resizable):has(> .learningResources) {
+  .pf-v6-c-drawer__panel:not(.pf-m-resizable):has(> .learningResources),
+  .pf-v6-c-drawer__panel:not(.pf-m-resizable):has(> .virtualAssistant) {
     padding-block: 0;
     row-gap: 0;
   }
 
-  .learningResources {
+  .learningResources,
+  .virtualAssistant {
     display: contents;
+
+    .va-embed {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+
+      #ai-chatbot {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pf-chatbot--embedded {
+        height: 100%;
+      }
+    }
 
     > .pf-v6-c-drawer__body {
       flex: 1 1 0;
