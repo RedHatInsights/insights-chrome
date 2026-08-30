@@ -11,24 +11,22 @@
 
 .pf-v6-c-page.chr-c-page__account-banner {
   grid-template-areas:
-    "header header"
-    "banner banner"
-    "nav main";
+    'header header'
+    'banner banner'
+    'nav main';
   grid-template-rows: max-content max-content 1fr;
 }
 
 @media screen and (max-width: 1200px) {
   .pf-v6-c-page.chr-c-page__account-banner {
     grid-template-areas:
-      "header header"
-      "main main";
+      'header header'
+      'main main';
   }
 }
-
 
 .pf-v6-c-page__drawer {
   .pf-v6-c-drawer__content {
     background-color: transparent;
   }
 }
-

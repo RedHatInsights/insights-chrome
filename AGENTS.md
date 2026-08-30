@@ -11,27 +11,27 @@ insights-chrome is the micro-frontend platform shell for the Hybrid Cloud Consol
 
 Detailed domain-specific guidelines for AI agents:
 
-| File | Domain |
-|------|--------|
-| [docs/security-guidelines.md](docs/security-guidelines.md) | Authentication, authorization, token handling, RBAC, feature flags |
-| [docs/testing-guidelines.md](docs/testing-guidelines.md) | Jest, Cypress, Playwright, coverage requirements, mocking patterns |
-| [docs/error-handling-guidelines.md](docs/error-handling-guidelines.md) | Error boundaries, Sentry, chunk loading, graceful degradation |
-| [docs/integration-guidelines.md](docs/integration-guidelines.md) | Module Federation, Scalprum, Chrome API, WebSocket, analytics |
-| [docs/performance-guidelines.md](docs/performance-guidelines.md) | Code splitting, caching, bundle optimization, Jotai patterns |
+| File                                                                   | Domain                                                             |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [docs/security-guidelines.md](docs/security-guidelines.md)             | Authentication, authorization, token handling, RBAC, feature flags |
+| [docs/testing-guidelines.md](docs/testing-guidelines.md)               | Jest, Cypress, Playwright, coverage requirements, mocking patterns |
+| [docs/error-handling-guidelines.md](docs/error-handling-guidelines.md) | Error boundaries, Sentry, chunk loading, graceful degradation      |
+| [docs/integration-guidelines.md](docs/integration-guidelines.md)       | Module Federation, Scalprum, Chrome API, WebSocket, analytics      |
+| [docs/performance-guidelines.md](docs/performance-guidelines.md)       | Code splitting, caching, bundle optimization, Jotai patterns       |
 
 Existing documentation for deeper reference:
 
-| File | Topic |
-|------|-------|
-| [docs/api.md](docs/api.md) | Chrome JavaScript API specification |
-| [docs/navigation.md](docs/navigation.md) | Navigation configuration system |
-| [docs/auth.md](docs/auth.md) | Authentication architecture |
-| [docs/analytics.md](docs/analytics.md) | Analytics integration |
-| [docs/errorHandling.md](docs/errorHandling.md) | Sentry error handling |
-| [docs/localSearchDevelopment.md](docs/localSearchDevelopment.md) | Search implementation |
-| [docs/wsSubscription.md](docs/wsSubscription.md) | WebSocket subscriptions |
-| [docs/wildcard-permissions.md](docs/wildcard-permissions.md) | Wildcard permission handling |
-| [docs/darkMode.md](docs/darkMode.md) | Dark mode / color scheme remote hook for consuming apps |
+| File                                                             | Topic                                                   |
+| ---------------------------------------------------------------- | ------------------------------------------------------- |
+| [docs/api.md](docs/api.md)                                       | Chrome JavaScript API specification                     |
+| [docs/navigation.md](docs/navigation.md)                         | Navigation configuration system                         |
+| [docs/auth.md](docs/auth.md)                                     | Authentication architecture                             |
+| [docs/analytics.md](docs/analytics.md)                           | Analytics integration                                   |
+| [docs/errorHandling.md](docs/errorHandling.md)                   | Sentry error handling                                   |
+| [docs/localSearchDevelopment.md](docs/localSearchDevelopment.md) | Search implementation                                   |
+| [docs/wsSubscription.md](docs/wsSubscription.md)                 | WebSocket subscriptions                                 |
+| [docs/wildcard-permissions.md](docs/wildcard-permissions.md)     | Wildcard permission handling                            |
+| [docs/darkMode.md](docs/darkMode.md)                             | Dark mode / color scheme remote hook for consuming apps |
 
 ## Project Structure
 
@@ -88,14 +88,14 @@ docs/              # Documentation (you are here)
 
 ### Naming Conventions
 
-| Kind | Convention | Example |
-|------|-----------|---------|
-| Components | PascalCase directory + file | `Navigation/Navigation.tsx` |
-| Hooks | camelCase with `use` prefix | `useChrome`, `useBundle` |
-| Utilities | camelCase | `getEnv`, `flatTags` |
-| Jotai atoms | camelCase with `Atom` suffix | `activeModuleAtom`, `globalFilterAtom` |
-| Constants | UPPER_SNAKE_CASE | `DEFAULT_SSO_ROUTES`, `LOGIN_SCOPES_STORAGE_KEY` |
-| Test files | Same name + `.test.ts(x)` or `.cy.tsx` | `Navigation.test.tsx`, `Navigation.cy.tsx` |
+| Kind        | Convention                             | Example                                          |
+| ----------- | -------------------------------------- | ------------------------------------------------ |
+| Components  | PascalCase directory + file            | `Navigation/Navigation.tsx`                      |
+| Hooks       | camelCase with `use` prefix            | `useChrome`, `useBundle`                         |
+| Utilities   | camelCase                              | `getEnv`, `flatTags`                             |
+| Jotai atoms | camelCase with `Atom` suffix           | `activeModuleAtom`, `globalFilterAtom`           |
+| Constants   | UPPER_SNAKE_CASE                       | `DEFAULT_SSO_ROUTES`, `LOGIN_SCOPES_STORAGE_KEY` |
+| Test files  | Same name + `.test.ts(x)` or `.cy.tsx` | `Navigation.test.tsx`, `Navigation.cy.tsx`       |
 
 ### File Organization
 

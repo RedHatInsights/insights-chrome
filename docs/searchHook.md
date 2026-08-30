@@ -22,7 +22,7 @@ function SearchComponent() {
 
   const { hookResult, loading, error } = useRemoteHook<ChromeSearchAPI>({
     scope: 'chrome',
-    module: './search/useSearch'
+    module: './search/useSearch',
   });
 
   const handleSearch = async () => {
@@ -36,13 +36,9 @@ function SearchComponent() {
 
   return (
     <div>
-      <input
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search services..."
-      />
+      <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search services..." />
       <button onClick={handleSearch}>Search</button>
-      
+
       <ul>
         {searchResults.map((result) => (
           <li key={result.id}>
@@ -65,16 +61,18 @@ function SearchComponent() {
 Search the database for entries matching the search term.
 
 **Parameters:**
+
 - `term` - The search term to query
 - `type` - Type of data to search (`'services'`, `'documentation'`, or custom types)
 - `env` - Optional environment (`ReleaseEnv.STABLE` or `ReleaseEnv.PREVIEW`, defaults to `STABLE`)
 
 **Returns:** Promise with array of `ResultItem` objects:
+
 ```typescript
 {
   id: string;
-  title: string;        
-  description: string;  
+  title: string;
+  description: string;
   bundleTitle: string;
   pathname: string;
 }
@@ -85,7 +83,9 @@ Search the database for entries matching the search term.
 Insert a new entry into the search database.
 
 **Parameters:**
+
 - `data` - SearchEntry object:
+
 ```typescript
 {
   id: string;
@@ -99,6 +99,7 @@ Insert a new entry into the search database.
 ```
 
 **Example:**
+
 ```tsx
 await hookResult.insert({
   id: 'my-page',
@@ -106,7 +107,7 @@ await hookResult.insert({
   bundleTitle: 'My Bundle',
   pathname: '/my-bundle/dashboard',
   description: 'A custom dashboard',
-  type: 'services'
+  type: 'services',
 });
 ```
 
@@ -121,7 +122,7 @@ function useChromeSearch() {
 
   const { hookResult, loading, error } = useRemoteHook<ChromeSearchAPI>({
     scope: 'chrome',
-    module: './search/useSearch'
+    module: './search/useSearch',
   });
 
   const search = async (term: string) => {
@@ -144,11 +145,8 @@ function useChromeSearch() {
 ```tsx
 const searchAll = async (term: string) => {
   if (!hookResult) return;
-  
-  const [serviceResults, docResults] = await Promise.all([
-    hookResult.query(term, 'services'),
-    hookResult.query(term, 'documentation')
-  ]);
+
+  const [serviceResults, docResults] = await Promise.all([hookResult.query(term, 'services'), hookResult.query(term, 'documentation')]);
 
   return { services: serviceResults, documentation: docResults };
 };
@@ -159,6 +157,7 @@ const searchAll = async (term: string) => {
 **Highlighted Results:** The `title` and `description` fields contain HTML with highlighted search matches. Render using `dangerouslySetInnerHTML` or sanitize with DOMPurify.
 
 **Error Handling:** Always check for loading and error states:
+
 ```tsx
 if (loading) return <div>Loading...</div>;
 if (error) return <div>Error: {error.message}</div>;
@@ -166,11 +165,13 @@ if (!hookResult) return null;
 ```
 
 **Performance:**
+
 - Search queries are cached internally
 - Results are limited to 10 items per query
 - Consider debouncing search input
 
 **TypeScript:** Import types from `@redhat-cloud-services/types`:
+
 ```tsx
 import type { ChromeSearchAPI, SearchEntry, ResultItem } from '@redhat-cloud-services/types';
 ```
@@ -182,25 +183,28 @@ import type { ChromeSearchAPI, SearchEntry, ResultItem } from '@redhat-cloud-ser
 **Empty results:** The search database may not be initialized yet, or the search term doesn't match any entries.
 
 **Module Federation errors:** Ensure your webpack config includes:
+
 ```javascript
 remotes: {
-  chrome: 'chrome@/apps/chrome/js/chrome.js'
+  chrome: 'chrome@/apps/chrome/js/chrome.js';
 }
 ```
 
 ## Migration from useChrome
 
 **Before:**
+
 ```tsx
 const { search } = useChrome();
 const results = await search.query('term', 'services');
 ```
 
 **After:**
+
 ```tsx
 const { hookResult } = useRemoteHook<ChromeSearchAPI>({
   scope: 'chrome',
-  module: './useSearch'
+  module: './search/useSearch',
 });
 if (hookResult) {
   const results = await hookResult.query('term', 'services');
