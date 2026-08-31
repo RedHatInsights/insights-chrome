@@ -86,6 +86,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
           name: 'TestApp',
           manifestLocation: '/foo/bar.json',
         },
+        learningResources: {
+          name: 'learningResources',
+          manifestLocation: '/foo/bar.json',
+        },
       },
     })
   );
@@ -103,6 +107,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
     scalprum.current.exposedModules['TestApp#TestApp'] = {
       default: () => <div id="test-app">Test App</div>,
+    };
+
+    scalprum.current.exposedModules['learningResources#QuickstartsRuntime'] = {
+      default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
     };
 
     setIsReady(true);
@@ -234,6 +242,9 @@ describe('HelpTopicManager', () => {
         entry: ['/foo/bar.js'],
       },
       virtualAssistant: {
+        entry: ['/foo/bar.js'],
+      },
+      learningResources: {
         entry: ['/foo/bar.js'],
       },
     }).as('manifest');

@@ -1,9 +1,8 @@
 import { ScalprumComponent } from '@scalprum/react-core';
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import classNames from 'classnames';
-import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
@@ -30,7 +29,6 @@ const ChromeRoute = memo(
   ({ scope, module, scopeClass, path, props, permissions }: ChromeRouteProps) => {
     const isPreview = useAtomValue(isPreviewAtom);
     const setGlobalFilterHidden = useSetAtom(globalFilterHiddenAtom);
-    const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const gatewayError = useAtomValue(gatewayErrorAtom);
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
     const currentActiveModule = useAtomValue(activeModuleAtom);
@@ -68,11 +66,8 @@ const ChromeRoute = memo(
         const mountPath = path.replace(/\/\*$/, '');
         setAppMountPathname(mountPath);
       }
-      /**
-       * TODO: Discuss default close feature of topics
-       * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.
-       */
-      setActiveHelpTopicByName?.('');
+      // Help topic clearing: QuickstartsRuntime ApiPublisher calls setActiveTopic('')
+      // when activeModule (this atom) changes. Do not read HelpTopicContext here.
 
       // reset visibility function
       setIsHidden(null);

@@ -21,6 +21,7 @@ jest.mock('@scalprum/react-core', () => {
       mockScalprumProviderProps = props;
       return actual.ScalprumProvider(props);
     },
+    ScalprumComponent: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
   };
 });
 
@@ -232,19 +233,6 @@ describe('ScalprumRoot', () => {
   const initialProps = {
     cookieElement: null,
     setCookieElement: () => undefined,
-    helpTopicsAPI: {
-      addHelpTopics: jest.fn(),
-      disableTopics: jest.fn(),
-      enableTopics: jest.fn(),
-    },
-    quickstartsAPI: {
-      version: 1,
-      set: jest.fn(),
-      toggle: jest.fn(),
-
-      Catalog: () => <div></div>,
-      activateQuickstart: jest.fn(),
-    },
   };
 
   beforeAll(() => {
