@@ -44,15 +44,24 @@ html:has(.pf-v6-c-drawer.pf-m-expanded .virtualAssistant) {
     background-color: transparent;
   }
 
-  .pf-v6-c-drawer__panel:not(.pf-m-resizable):has(> .learningResources),
-  .pf-v6-c-drawer__panel:not(.pf-m-resizable):has(> .virtualAssistant) {
+  &:has(.pf-m-expanded .learningResources),
+  &:has(.pf-m-expanded .virtualAssistant) {
+    overflow: hidden;
+  }
+
+  .pf-v6-c-drawer__panel:has(> .learningResources),
+  .pf-v6-c-drawer__panel:has(> .virtualAssistant) {
+    background-color: var(--pf-t--global--background--color--primary--default);
     padding-block: 0;
-    row-gap: 0;
   }
 
   .learningResources,
   .virtualAssistant {
-    display: contents;
+    flex: 1 1 0;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 
     .va-embed {
       flex: 1 1 0;
@@ -75,54 +84,30 @@ html:has(.pf-v6-c-drawer.pf-m-expanded .virtualAssistant) {
     > .pf-v6-c-drawer__body {
       flex: 1 1 0;
       min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
 
-    .pf-v6-c-tab-content:not([hidden]) > .lr-c-help-panel-tab-content {
-      display: flex !important;
-      flex-direction: column;
+    .lr-c-help-panel-tab-content {
       flex: 1 1 0;
       min-height: 0;
+      display: flex !important;
+      flex-direction: column;
     }
 
     [data-ouia-component-id="help-panel-content-container"] {
       flex: 1 1 0;
       min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
 
-      &:has(> .pf-v6-l-stack) {
+      > .pf-v6-u-h-100 {
+        flex: 1 1 0;
+        min-height: 0;
         display: flex;
         flex-direction: column;
-        padding: 0 !important;
-
-        > .pf-v6-l-stack {
-          flex: 1 1 0;
-          min-height: 0;
-
-          > .pf-m-fill {
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-
-            > div {
-              flex: 1 1 0;
-              min-height: 0;
-              display: flex;
-              flex-direction: column;
-
-              > * {
-                flex: 1 1 0;
-                min-height: 0;
-                display: flex;
-                flex-direction: column;
-              }
-            }
-          }
-        }
       }
-    }
-
-    .pf-chatbot--embedded {
-      flex: 1 1 0 !important;
-      min-height: 0;
     }
   }
 }
