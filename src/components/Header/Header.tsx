@@ -20,6 +20,7 @@ import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+import WorkspaceSelector from '../WorkspaceSelector';
 
 export type SettingsGroupConfig = {
   showPreview?: boolean;
@@ -123,6 +124,11 @@ const MemoizedHeader = memo(
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
                     <ContextSwitcher orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
+                  </ToolbarItem>
+                )}
+                {userReady && !isITLess && (
+                  <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
+                    <WorkspaceSelector />
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
