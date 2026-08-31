@@ -1,4 +1,4 @@
-import React, { Component, Fragment, ReactNode, Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { Component, ReactNode, Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { PluginManifest, RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { ScalprumComponent, ScalprumProvider, ScalprumProviderConfigurableProps } from '@scalprum/react-core';
 import { Route, Routes } from 'react-router-dom';
@@ -40,7 +40,7 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
-import { liveQuickstartsAPIRef, liveHelpTopicsAPIRef, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
+import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
 
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
@@ -57,10 +57,7 @@ const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   return callback(selectedTags);
 };
 
-class QuickstartsRuntimeBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
-  { hasError: boolean }
-> {
+class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
   static getDerivedStateFromError() {
     return { hasError: true };
@@ -83,13 +80,10 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   const activeModule = useAtomValue(activeModuleAtom);
   const setRemoteActiveQSID = useSetAtom(remoteActiveQuickStartIDAtom);
 
-  const handleApiReady = useCallback(
-    (api: { quickstartsAPI: ChromeAPI['quickStarts']; helpTopicsAPI: ChromeAPI['helpTopics'] }) => {
-      liveQuickstartsAPIRef.current = api.quickstartsAPI;
-      liveHelpTopicsAPIRef.current = api.helpTopicsAPI;
-    },
-    []
-  );
+  const handleApiReady = useCallback((api: { quickstartsAPI: LiveQuickstartsAPI; helpTopicsAPI: ChromeAPI['helpTopics'] }) => {
+    liveQuickstartsAPIRef.current = api.quickstartsAPI;
+    liveHelpTopicsAPIRef.current = api.helpTopicsAPI;
+  }, []);
 
   const handleActiveQSChanged = useCallback(
     (id: string) => {
@@ -121,47 +115,47 @@ const ScalprumRoot = memo(
     return (
       <ChromeProvider>
         <QuickstartsRuntimeMount>
-        <BetaSwitcher />
-        <DegradedStateBanner />
-        <Routes>
-          <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
-          <Route
-            path="/connect/products"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <ProductSelection />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/allservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<ChromeFooter />} />
-              </Suspense>
-            }
-          />
-          {!ITLess() && (
+          <BetaSwitcher />
+          <DegradedStateBanner />
+          <Routes>
+            <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
             <Route
-              path="/favoritedservices"
+              path="/connect/products"
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <FavoritedServices Footer={<ChromeFooter />} />
+                  <ProductSelection />
                 </Suspense>
               }
             />
-          )}
-          <Route path="/security" element={<DefaultLayout />} />
-          <Route
-            path={`${LIGHTWELL_PATH}/*`}
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <Lightwell />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
-        </Routes>
+            <Route
+              path="/allservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <AllServices Footer={<ChromeFooter />} />
+                </Suspense>
+              }
+            />
+            {!ITLess() && (
+              <Route
+                path="/favoritedservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <FavoritedServices Footer={<ChromeFooter />} />
+                  </Suspense>
+                }
+              />
+            )}
+            <Route path="/security" element={<DefaultLayout />} />
+            <Route
+              path={`${LIGHTWELL_PATH}/*`}
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <Lightwell />
+                </Suspense>
+              }
+            />
+            <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
+          </Routes>
         </QuickstartsRuntimeMount>
       </ChromeProvider>
     );
@@ -176,7 +170,7 @@ export type ChromeApiRootProps = {
   config: ScalprumConfig;
 };
 
-const delegatedQuickstartsAPI = {
+const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
   version: 1,
   set: (...args: Parameters<ChromeAPI['quickStarts']['set']>) => liveQuickstartsAPIRef.current?.set(...args),
   activateQuickstart: (name: string) => liveQuickstartsAPIRef.current?.activateQuickstart(name) ?? Promise.resolve(),
@@ -185,16 +179,14 @@ const delegatedQuickstartsAPI = {
     const Catalog = liveQuickstartsAPIRef.current?.Catalog;
     return Catalog ? <Catalog {...props} /> : null;
   }) as ChromeAPI['quickStarts']['Catalog'],
-  updateQuickStarts: (key: string, quickstarts: unknown[]) =>
-    (liveQuickstartsAPIRef.current as any)?.updateQuickStarts(key, quickstarts),
-  add: (key: string, qs: unknown) =>
-    (liveQuickstartsAPIRef.current as any)?.add?.(key, qs) ?? false,
-} as ChromeAPI['quickStarts'];
+  updateQuickStarts: (key: string, quickstarts: unknown[]) => liveQuickstartsAPIRef.current?.updateQuickStarts?.(key, quickstarts),
+  add: (key: string, qs: unknown) => liveQuickstartsAPIRef.current?.add?.(key, qs) ?? false,
+};
 
 const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
   addHelpTopics: (...args) => liveHelpTopicsAPIRef.current?.addHelpTopics(...args),
   disableTopics: (...args) => liveHelpTopicsAPIRef.current?.disableTopics(...args),
-  enableTopics: (...args: any[]) => liveHelpTopicsAPIRef.current?.enableTopics(...args) ?? Promise.resolve([]),
+  enableTopics: (...args: Parameters<ChromeAPI['helpTopics']['enableTopics']>) => liveHelpTopicsAPIRef.current?.enableTopics(...args) ?? Promise.resolve([]),
   setActiveTopic: (...args) => liveHelpTopicsAPIRef.current?.setActiveTopic(...args) ?? Promise.resolve(),
   closeHelpTopic: () => liveHelpTopicsAPIRef.current?.closeHelpTopic(),
 };
