@@ -18,6 +18,11 @@ jest.mock('axios-cache-interceptor', () => ({
   setupCache: jest.fn((axiosInstance) => axiosInstance),
 }));
 
+const mockCaptureException = jest.fn();
+jest.mock('@sentry/react', () => ({
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+}));
+
 jest.mock('../hooks/useBundle', () => ({
   getUrl: jest.fn(),
   __esModule: true,
@@ -47,6 +52,7 @@ describe('loadFedModules', () => {
       .mockClear()
       .mockReturnValue({ setItem: mockSetItem, getItem: mockGetItem } as unknown as LocalForage);
     jest.mocked(axios.get).mockReset();
+    mockCaptureException.mockReset();
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
   });
 
@@ -74,7 +80,7 @@ describe('loadFedModules', () => {
   }
 
   it('returns primary chrome-service data and writes IndexedDB cache', async () => {
-    const primaryData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: ['primary'] } };
+    const primaryData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'primary', routes: [] }] } };
     mockAxiosByUrl({
       primary: () => Promise.resolve({ data: primaryData }),
     });
@@ -89,14 +95,14 @@ describe('loadFedModules', () => {
   });
 
   it('falls back to live CSC when primary fails and caches CSC data', async () => {
-    const cscData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: ['csc'] } };
+    const cscData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'csc', routes: [] }] } };
     mockAxiosByUrl({
       primary: () => Promise.reject(new Error('chrome-service 503')),
       csc: () => Promise.resolve({ data: cscData }),
     });
     // Warm IndexedDB must not short-circuit CSC while the live fallback works
     mockGetItem.mockResolvedValue({
-      data: { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: ['stale-idb'] } },
+      data: { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'stale-idb', routes: [] }] } },
       cachedAt: Date.now(),
     });
 
@@ -110,7 +116,7 @@ describe('loadFedModules', () => {
   });
 
   it('uses IndexedDB only when primary and CSC both fail', async () => {
-    const cachedData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: ['cached'] } };
+    const cachedData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'cached', routes: [] }] } };
     mockAxiosByUrl({
       primary: () => Promise.reject(new Error('chrome-service 503')),
       csc: () => Promise.reject(new Error('csc 503')),
@@ -139,7 +145,7 @@ describe('loadFedModules', () => {
       primary: () =>
         Promise.resolve({
           data: {
-            chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: ['primary'] },
+            chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'primary', routes: [] }] },
             other: { manifestLocation: '/apps/other/fed-mods.json' },
           },
         }),
@@ -165,7 +171,7 @@ describe('loadFedModules', () => {
 
       const result = await loadFedModules();
       expect(result.data).toEqual(validCscData);
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Chrome Service fed-modules response is not a valid module map');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Chrome Service fed-modules: dropped'));
     });
 
     it('falls back to IndexedDB when primary and CSC both return malformed data', async () => {
@@ -180,7 +186,7 @@ describe('loadFedModules', () => {
 
       const result = await loadFedModules();
       expect(result.data).toEqual(cachedData);
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Chrome Service fed-modules response is not a valid module map');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Chrome Service fed-modules: dropped'));
       expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
     });
 
@@ -192,7 +198,7 @@ describe('loadFedModules', () => {
       });
       mockGetItem.mockResolvedValue(null);
 
-      await expect(loadFedModules()).rejects.toThrow('not a valid module map');
+      await expect(loadFedModules()).rejects.toThrow(/fed-modules/);
     });
 
     it('falls back to CSC when primary returns an array', async () => {
@@ -254,20 +260,43 @@ describe('loadFedModules', () => {
       expect(mockSetItem).toHaveBeenCalledWith(cacheKey, expect.objectContaining({ data: validData }));
     });
 
-    it('falls back to CSC when primary has non-object entry', async () => {
-      const invalidData = {
+    it('drops a single malformed entry, keeps valid ones, and does not fall back to CSC', async () => {
+      const mixedData = {
         app1: { manifestLocation: '/apps/app1/fed-mods.json' },
-        app2: 'not-an-object', // invalid
+        app2: 'not-an-object', // invalid — must be dropped, not nuke the whole map
       };
-      const validCscData = { app1: { manifestLocation: '/apps/app1/fed-mods.json' } };
       mockAxiosByUrl({
-        primary: () => Promise.resolve({ data: invalidData }),
-        csc: () => Promise.resolve({ data: validCscData }),
+        primary: () => Promise.resolve({ data: mixedData }),
       });
 
       const result = await loadFedModules();
-      expect(result.data).toEqual(validCscData);
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Chrome Service fed-modules response is not a valid module map');
+
+      // Only the malformed app is dropped; the good app survives and CSC is never called.
+      expect(result.data).toEqual({ app1: { manifestLocation: '/apps/app1/fed-mods.json' } });
+      expect(jest.mocked(axios.get).mock.calls.some(([url]) => typeof url === 'string' && url.includes(cscPathPrefix))).toBe(false);
+      // The sanitized (good-only) map is what gets cached.
+      expect(mockSetItem).toHaveBeenCalledWith(cacheKey, expect.objectContaining({ data: { app1: { manifestLocation: '/apps/app1/fed-mods.json' } } }));
+      // Bad data is observable: warned to console and reported to Sentry.
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Chrome Service fed-modules: dropped 1 malformed module(s): app2'));
+      expect(mockCaptureException).toHaveBeenCalledWith(
+        expect.any(Error),
+        expect.objectContaining({ level: 'warning', tags: expect.objectContaining({ area: 'fed-modules' }) })
+      );
+    });
+
+    it('drops an entry whose modules array contains a malformed RemoteModule', async () => {
+      const mixedData = {
+        good: { manifestLocation: '/apps/good/fed-mods.json', modules: [{ module: 'App', routes: ['/good'] }] },
+        broken: { manifestLocation: '/apps/broken/fed-mods.json', modules: [{ module: 'App', routes: null }] },
+      };
+      mockAxiosByUrl({
+        primary: () => Promise.resolve({ data: mixedData }),
+      });
+
+      const result = await loadFedModules();
+
+      expect(result.data).toEqual({ good: { manifestLocation: '/apps/good/fed-mods.json', modules: [{ module: 'App', routes: ['/good'] }] } });
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('broken'));
     });
   });
 });

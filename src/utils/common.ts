@@ -5,6 +5,7 @@ import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
 import { cacheFetch } from './cacheFetch';
+import * as Sentry from '@sentry/react';
 
 /**
  * Base path for the Lightwell route.
@@ -465,7 +466,50 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
   }
 };
 
-// Runtime validator for federated modules structure
+// Validate a single fed-modules entry (one app). Returns a human-readable
+// reason when invalid, or null when the entry is a usable ChromeModule. The
+// checks mirror exactly what generateRoutesList consumes so a passing entry can
+// never crash route generation at bootstrap.
+function getFedModuleEntryError(value: unknown): string | null {
+  if (typeof value !== 'object' || value === null) {
+    return 'entry is not an object';
+  }
+
+  const module = value as Record<string, unknown>;
+  if (!('manifestLocation' in module) || typeof module.manifestLocation !== 'string') {
+    return 'missing string manifestLocation';
+  }
+
+  // The optional `modules` array is consumed by generateRoutesList, which maps
+  // over each RemoteModule's `routes`. Reject malformed shapes here.
+  if ('modules' in module && module.modules !== undefined) {
+    if (!Array.isArray(module.modules)) {
+      return 'modules is not an array';
+    }
+    for (const remote of module.modules) {
+      if (typeof remote !== 'object' || remote === null) {
+        return 'modules[] contains a non-object entry';
+      }
+      const remoteModule = remote as Record<string, unknown>;
+      if (typeof remoteModule.module !== 'string' || !Array.isArray(remoteModule.routes)) {
+        return 'RemoteModule missing string `module` or array `routes`';
+      }
+      // Each route is either a plain string or an object with a string pathname.
+      for (const route of remoteModule.routes) {
+        const validRoute =
+          typeof route === 'string' || (typeof route === 'object' && route !== null && typeof (route as Record<string, unknown>).pathname === 'string');
+        if (!validRoute) {
+          return 'routes[] entry is not a string or object with string pathname';
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+// Runtime validator for the whole federated modules map. Used as the cache-read
+// guard: cached data is written already-sanitized, so it must validate as a whole.
 export function isFedModulesConfig(data: unknown): data is { [key: string]: ChromeModule } {
   if (typeof data !== 'object' || data === null) {
     return false;
@@ -476,51 +520,54 @@ export function isFedModulesConfig(data: unknown): data is { [key: string]: Chro
     return false;
   }
 
-  // Check that each entry (except $schema) is a valid ChromeModule
-  for (const [key, value] of Object.entries(data)) {
-    // $schema is optional metadata, skip validation
-    if (key === '$schema') {
-      continue;
-    }
+  // $schema is optional metadata; every other entry must be a valid ChromeModule
+  return Object.entries(data).every(([key, value]) => key === '$schema' || getFedModuleEntryError(value) === null);
+}
 
-    // Each module must be an object with manifestLocation
-    if (typeof value !== 'object' || value === null) {
-      return false;
-    }
-
-    const module = value as Record<string, unknown>;
-    if (!('manifestLocation' in module) || typeof module.manifestLocation !== 'string') {
-      return false;
-    }
-
-    // The optional `modules` array is consumed by generateRoutesList, which maps
-    // over each RemoteModule's `routes`. Reject malformed shapes here so they can
-    // never be cached as last-known-good and later crash bootstrap.
-    if ('modules' in module && module.modules !== undefined) {
-      if (!Array.isArray(module.modules)) {
-        return false;
-      }
-      for (const remote of module.modules) {
-        if (typeof remote !== 'object' || remote === null) {
-          return false;
-        }
-        const remoteModule = remote as Record<string, unknown>;
-        if (typeof remoteModule.module !== 'string' || !Array.isArray(remoteModule.routes)) {
-          return false;
-        }
-        // Each route is either a plain string or an object with a string pathname.
-        for (const route of remoteModule.routes) {
-          const validRoute =
-            typeof route === 'string' || (typeof route === 'object' && route !== null && typeof (route as Record<string, unknown>).pathname === 'string');
-          if (!validRoute) {
-            return false;
-          }
-        }
-      }
-    }
+// Sanitize a live fed-modules response: drop individual malformed entries
+// (logging + reporting each) instead of discarding the entire map, so one bad
+// app cannot take down the whole console. Throws only when the top-level shape
+// is unusable (not an object map) or when every entry is invalid — those cases
+// fall through to the CSC/IndexedDB fallback chain.
+export function sanitizeFedModules(data: unknown, source: string): { [key: string]: ChromeModule } {
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+    throw new Error(`[chrome] ${source} fed-modules response is not a valid module map`);
   }
 
-  return true;
+  const entries = Object.entries(data);
+  const sanitized: { [key: string]: ChromeModule } = {};
+  const dropped: string[] = [];
+  let moduleEntryCount = 0;
+
+  for (const [key, value] of entries) {
+    if (key === '$schema') {
+      sanitized[key] = value as ChromeModule;
+      continue;
+    }
+    moduleEntryCount += 1;
+    const error = getFedModuleEntryError(value);
+    if (error) {
+      dropped.push(`${key} (${error})`);
+      continue;
+    }
+    sanitized[key] = value as ChromeModule;
+  }
+
+  if (dropped.length > 0) {
+    const message = `[chrome] ${source} fed-modules: dropped ${dropped.length} malformed module(s): ${dropped.join(', ')}`;
+    console.warn(message);
+    // Surface bad config in monitoring instead of silently dropping it. Safe to
+    // call before Sentry.init (no-op when uninitialized).
+    Sentry.captureException(new Error(message), { level: 'warning', tags: { area: 'fed-modules', source } });
+  }
+
+  // If there were module entries but none survived, treat it as a failed
+  // response so the fallback chain (CSC → IndexedDB) can take over.
+  if (moduleEntryCount > 0 && Object.keys(sanitized).every((key) => key === '$schema')) {
+    throw new Error(`[chrome] ${source} fed-modules response has no valid modules`);
+  }
+
+  return sanitized;
 }
 
 // FIXME: Remove once qaprodauth is dealt with
@@ -535,24 +582,21 @@ export const loadFedModules = async () => {
   const fedModulesPath = '/api/chrome-service/v1/static/fed-modules-generated.json';
 
   // Try chrome-service, then live CSC. IndexedDB is only used after both fail.
+  // Each response is sanitized: individually malformed apps are dropped (and
+  // reported) so one bad entry cannot break the whole console; a wholly unusable
+  // response throws so the next fallback takes over.
   const fetchLiveFedModules = async (): Promise<{ [key: string]: ChromeModule }> => {
     try {
-      const { data } = await axios.get<{ [key: string]: ChromeModule }>(fedModulesPath, { headers: fedModulesheaders });
-      if (!isFedModulesConfig(data)) {
-        throw new Error('[chrome] Chrome Service fed-modules response is not a valid module map');
-      }
-      return data;
+      const { data } = await axios.get<unknown>(fedModulesPath, { headers: fedModulesheaders });
+      return sanitizeFedModules(data, 'Chrome Service');
     } catch (err) {
       // Log the original error only if it came from our validation; network
       // errors are expected and will be visible in the fallback path.
-      if (err instanceof Error && err.message.includes('not a valid module map')) {
+      if (err instanceof Error && err.message.includes('fed-modules')) {
         console.warn(err.message);
       }
       const { data } = await loadCSCFedModules();
-      if (!isFedModulesConfig(data)) {
-        throw new Error('[chrome] CSC fed-modules response is not a valid module map');
-      }
-      return data;
+      return sanitizeFedModules(data, 'CSC');
     }
   };
 

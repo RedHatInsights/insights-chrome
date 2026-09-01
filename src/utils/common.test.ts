@@ -1,5 +1,10 @@
-import { findNavLeafPath, getErrorMessage, isExpandableNav, isFedModulesConfig } from './common';
+import { findNavLeafPath, getErrorMessage, isExpandableNav, isFedModulesConfig, sanitizeFedModules } from './common';
 import { NavItem } from '../@types/types';
+
+const mockCaptureException = jest.fn();
+jest.mock('@sentry/react', () => ({
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+}));
 
 describe('isExpandableNav', () => {
   it('returns true when expandable is true and navItems is an array', () => {
@@ -276,5 +281,68 @@ describe('isFedModulesConfig', () => {
       app1: { manifestLocation: '/apps/app1/fed-mods.json', modules: [{ module: 'App', routes: [{ exact: true }] }] },
     };
     expect(isFedModulesConfig(invalidConfig)).toBe(false);
+  });
+});
+
+describe('sanitizeFedModules', () => {
+  let consoleWarnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    mockCaptureException.mockReset();
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
+
+  it('returns the map unchanged when every entry is valid', () => {
+    const valid = {
+      $schema: 'https://example.com/schema.json',
+      app1: { manifestLocation: '/apps/app1/fed-mods.json' },
+      app2: { manifestLocation: '/apps/app2/fed-mods.json', modules: [{ module: 'App', routes: ['/app2'] }] },
+    };
+    expect(sanitizeFedModules(valid, 'Test')).toEqual(valid);
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
+    expect(mockCaptureException).not.toHaveBeenCalled();
+  });
+
+  it('drops only the malformed entries and preserves valid ones and $schema', () => {
+    const mixed = {
+      $schema: 'https://example.com/schema.json',
+      good: { manifestLocation: '/apps/good/fed-mods.json' },
+      badModule: { manifestLocation: '/apps/bad/fed-mods.json', modules: [{ module: 'App', routes: null }] },
+      noManifest: { cdnPath: '/apps/x/' },
+    };
+
+    const result = sanitizeFedModules(mixed, 'Test');
+
+    expect(result).toEqual({
+      $schema: 'https://example.com/schema.json',
+      good: { manifestLocation: '/apps/good/fed-mods.json' },
+    });
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('dropped 2 malformed module(s)'));
+    expect(mockCaptureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({ level: 'warning', tags: expect.objectContaining({ area: 'fed-modules', source: 'Test' }) })
+    );
+  });
+
+  it('throws for a non-object top-level payload', () => {
+    expect(() => sanitizeFedModules(null, 'Test')).toThrow('not a valid module map');
+    expect(() => sanitizeFedModules([{ manifestLocation: '/x' }], 'Test')).toThrow('not a valid module map');
+  });
+
+  it('throws when there are module entries but none are valid', () => {
+    const allBad = {
+      app1: { cdnPath: '/apps/app1/' },
+      app2: 'not-an-object',
+    };
+    expect(() => sanitizeFedModules(allBad, 'Test')).toThrow('no valid modules');
+  });
+
+  it('returns an empty map for a legitimately empty config without throwing', () => {
+    expect(sanitizeFedModules({}, 'Test')).toEqual({});
+    expect(sanitizeFedModules({ $schema: 'x' }, 'Test')).toEqual({ $schema: 'x' });
   });
 });
