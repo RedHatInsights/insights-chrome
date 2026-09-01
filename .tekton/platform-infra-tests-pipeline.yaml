@@ -84,3 +84,5 @@ spec:
               cat > $(results.TEST_OUTPUT.path) <<RESULT
               {"result":"${RESULT}","timestamp":"${TIMESTAMP}","successes":${SUCCESSES},"failures":${FAILURES},"warnings":0,"note":"${NOTE}"}
               RESULT
+
+              exit "${TEST_EXIT}"
