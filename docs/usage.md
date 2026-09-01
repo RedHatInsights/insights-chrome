@@ -7,11 +7,11 @@ You can include/use chrome in your development project by running the [insights-
 <html>
   <head>
     <!-- your own HEAD tags -->
-    <title> App Name </title>
+    <title>App Name</title>
     <esi:include src="/@@env/chrome/snippets/head.html" />
   </head>
   <body>
-    <esi:include src="/@@env/chrome/snippets/body.html"/>
+    <esi:include src="/@@env/chrome/snippets/body.html" />
   </body>
 </html>
 ```
@@ -26,11 +26,11 @@ import App from './App';
 import getBaseName from './Utilities/getBaseName';
 
 ReactDOM.render(
-    <Router basename={ getBaseName(window.location.pathname) }>
-        <App />
-    </Router>,
+  <Router basename={getBaseName(window.location.pathname)}>
+    <App />
+  </Router>,
 
-    document.getElementById('root')
+  document.getElementById('root')
 );
 ```
 

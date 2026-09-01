@@ -10,10 +10,10 @@ These imports are **blocked by ESLint** and will fail CI:
 
 ```typescript
 // NEVER do this:
-import { useAuth } from 'react-oidc-context';        // BLOCKED
-import { OidcClient } from 'oidc-client-ts';          // BLOCKED
-import { something } from '**/cognito/*';              // BLOCKED
-import { utils } from '**/OIDCConnector/utils';        // BLOCKED
+import { useAuth } from 'react-oidc-context'; // BLOCKED
+import { OidcClient } from 'oidc-client-ts'; // BLOCKED
+import { something } from '**/cognito/*'; // BLOCKED
+import { utils } from '**/OIDCConnector/utils'; // BLOCKED
 
 // ALWAYS do this:
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
@@ -28,17 +28,17 @@ const { auth } = useChrome();
 
 Use `ChromeAuthContextValue` for auth operations:
 
-| Method | Purpose |
-|--------|---------|
-| `getToken()` | Get current access token (async) |
-| `getRefreshToken()` | Get refresh token (async) |
-| `getUser()` | Get current user identity (async) |
-| `login()` | Trigger login flow |
-| `logout()` | Logout current tab |
-| `logoutAllTabs()` | Broadcast logout across tabs |
-| `reAuthWithScopes()` | Re-authenticate with additional scopes |
-| `getOfflineToken()` | Get offline token for long-lived sessions |
-| `forceRefresh()` | Force token refresh |
+| Method               | Purpose                                   |
+| -------------------- | ----------------------------------------- |
+| `getToken()`         | Get current access token (async)          |
+| `getRefreshToken()`  | Get refresh token (async)                 |
+| `getUser()`          | Get current user identity (async)         |
+| `login()`            | Trigger login flow                        |
+| `logout()`           | Logout current tab                        |
+| `logoutAllTabs()`    | Broadcast logout across tabs              |
+| `reAuthWithScopes()` | Re-authenticate with additional scopes    |
+| `getOfflineToken()`  | Get offline token for long-lived sessions |
+| `forceRefresh()`     | Force token refresh                       |
 
 ### Token Handling Rules
 
@@ -59,6 +59,7 @@ Use `ChromeAuthContextValue` for auth operations:
 ### Global Auth Header Injection
 
 `src/utils/iqeEnablement.ts` monkey-patches `window.fetch` and `XMLHttpRequest.send()` to automatically inject:
+
 - `Authorization: Bearer <token>` header on requests to allowed origins
 - `x-rh-frontend-origin: hcc` header
 

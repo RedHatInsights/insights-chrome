@@ -54,9 +54,33 @@ function Wrapper() {
   );
 }
 
+function stubMatchMedia(prefersDark: boolean) {
+  cy.window().then((win) => {
+    cy.stub(win, 'matchMedia').callsFake((query: string) => ({
+      matches: query.includes('prefers-color-scheme: dark') ? prefersDark : false,
+      media: query,
+      addEventListener: cy.stub(),
+      removeEventListener: cy.stub(),
+      addListener: cy.stub(),
+      removeListener: cy.stub(),
+      dispatchEvent: cy.stub(),
+      onchange: null,
+    }));
+  });
+}
+
+/** Retrying localStorage assertion — cy.getLocalStorage does not retry while flags hydrate. */
+function expectTheme(value: string) {
+  cy.window().its('localStorage').invoke('getItem', 'chrome:theme').should('equal', value);
+}
+
 describe('ThemeMenu Component', () => {
   describe('With system theme enabled', () => {
     beforeEach(() => {
+      cy.window().then((win) => {
+        win.localStorage.removeItem('chrome:theme');
+        win.document.documentElement.classList.remove('pf-v6-theme-dark');
+      });
       cy.intercept('GET', '/api/featureflags/*', {
         toggles: [
           {
@@ -78,43 +102,30 @@ describe('ThemeMenu Component', () => {
         cy.setLocalStorage('chrome:theme', 'dark');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+        expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('uses localStorage light preference', () => {
         cy.setLocalStorage('chrome:theme', 'light');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'light');
+        expectTheme('light');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
       it('falls back to system dark preference', () => {
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: true,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(true);
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
+        // Assert class first — retries until Unleash flags hydrate and theme applies
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
+        expectTheme('system');
       });
       it('falls back to system light preference', () => {
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: false,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(false);
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
+        expectTheme('system');
       });
     });
 
@@ -123,62 +134,41 @@ describe('ThemeMenu Component', () => {
         localStorage.setItem('chrome:theme', 'light');
         cy.mount(<Wrapper />).get('html');
         cy.get('#dark-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+        expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('toggles from dark to light', () => {
         localStorage.setItem('chrome:theme', 'dark');
         cy.mount(<Wrapper />).get('html');
         cy.get('#light-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'light');
+        expectTheme('light');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
       it('toggles from dark to system light', () => {
         localStorage.setItem('chrome:theme', 'dark');
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: false,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(false);
         cy.mount(<Wrapper />).get('html');
         cy.get('#system-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
+        expectTheme('system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
       it('toggles from system light to dark', () => {
         localStorage.setItem('chrome:theme', 'system');
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: false,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(false);
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
+        expectTheme('system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
         cy.get('#dark-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+        expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('toggles from light to system dark', () => {
         localStorage.setItem('chrome:theme', 'light');
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: true,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(true);
         cy.mount(<Wrapper />).get('html');
         cy.get('#system-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'system');
+        expectTheme('system');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('system button should be available', () => {
@@ -190,6 +180,10 @@ describe('ThemeMenu Component', () => {
 
   describe('With system theme disabled', () => {
     beforeEach(() => {
+      cy.window().then((win) => {
+        win.localStorage.removeItem('chrome:theme');
+        win.document.documentElement.classList.remove('pf-v6-theme-dark');
+      });
       cy.intercept('GET', '/api/featureflags/*', {
         toggles: [
           {
@@ -211,7 +205,7 @@ describe('ThemeMenu Component', () => {
         cy.setLocalStorage('chrome:theme', 'dark');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlagsNoSystem');
-        cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+        expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
 
@@ -219,36 +213,22 @@ describe('ThemeMenu Component', () => {
         cy.setLocalStorage('chrome:theme', 'light');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlagsNoSystem');
-        cy.getLocalStorage('chrome:theme').should('equal', 'light');
+        expectTheme('light');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
 
       it('defaults to light theme when no preference saved (not system)', () => {
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: true,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(true);
         cy.mount(<Wrapper />);
         cy.wait('@featureFlagsNoSystem');
         // Should NOT save 'system' when flag is disabled
-        cy.getLocalStorage('chrome:theme').should('not.equal', 'system');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
+        cy.window().its('localStorage').invoke('getItem', 'chrome:theme').should('not.equal', 'system');
       });
 
       it('ignores localStorage system preference and defaults to light', () => {
         cy.setLocalStorage('chrome:theme', 'system');
-        cy.window().then((win) => {
-          cy.stub(win, 'matchMedia').returns({
-            matches: true,
-            media: '(prefers-color-scheme: dark)',
-            addEventListener: cy.stub(),
-            removeEventListener: cy.stub(),
-          });
-        });
+        stubMatchMedia(true);
         cy.mount(<Wrapper />).get('html');
         cy.wait('@featureFlagsNoSystem');
         // Should ignore saved 'system' preference and use light
@@ -261,7 +241,7 @@ describe('ThemeMenu Component', () => {
         localStorage.setItem('chrome:theme', 'light');
         cy.mount(<Wrapper />).get('html');
         cy.get('#dark-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+        expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
 
@@ -269,7 +249,7 @@ describe('ThemeMenu Component', () => {
         localStorage.setItem('chrome:theme', 'dark');
         cy.mount(<Wrapper />).get('html');
         cy.get('#light-button').click();
-        cy.getLocalStorage('chrome:theme').should('equal', 'light');
+        expectTheme('light');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
     });

@@ -22,8 +22,8 @@ run `npm i`
 ### Create the desired DOM
 
 ```tsx
-const elem = cy.mount(<Banner />).get('html')
-elem.matchImageSnapshot()
+const elem = cy.mount(<Banner />).get('html');
+elem.matchImageSnapshot();
 ```
 
 The **`.get('html')`** is a critical part. The snapshot only accepts DOM.

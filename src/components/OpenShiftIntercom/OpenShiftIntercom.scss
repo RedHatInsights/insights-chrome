@@ -9,7 +9,7 @@ button.pf-v6-c-button.chr-button-intercom {
   justify-content: center;
   background-color: transparent;
   transition: background-color 0.1s ease;
-  
+
   .pf-v6-c-button__icon {
     display: flex;
     align-items: center;
@@ -26,7 +26,7 @@ button.pf-v6-c-button.chr-button-intercom {
     height: var(--pf-t--global--icon--size--md);
     transition: color 0.1s ease;
   }
-  
+
   &:active,
   &.expanded,
   &:hover {
