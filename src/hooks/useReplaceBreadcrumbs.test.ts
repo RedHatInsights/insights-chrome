@@ -1,20 +1,18 @@
 import { renderHook } from '@testing-library/react';
-import { Provider, createStore } from 'jotai';
-import { appBreadcrumbOverrideAtom, appBreadcrumbStorageAtom, appMountPathnameAtom, breadcrumbReplaceModeAtom } from '../state/atoms/breadcrumbAtom';
+import { _resetBreadcrumbStore, getBreadcrumbStore } from '../state/stores/breadcrumbStore';
 import useReplaceBreadcrumbs from './useReplaceBreadcrumbs';
 import { useFlag } from '@unleash/proxy-client-react';
-import React from 'react';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => true),
 }));
 
-describe('useReplaceBreadcrumbs', () => {
-  let store: ReturnType<typeof createStore>;
-  const wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(Provider, { store }, children);
+const getState = () => getBreadcrumbStore().getState();
 
+describe('useReplaceBreadcrumbs', () => {
   beforeEach(() => {
-    store = createStore();
+    _resetBreadcrumbStore();
+    jest.mocked(useFlag).mockReturnValue(true);
     jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
@@ -28,10 +26,9 @@ describe('useReplaceBreadcrumbs', () => {
       { pathname: '/insights/advisor/systems/123', title: 'System 123' },
     ];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    const isReplaceMode = store.get(breadcrumbReplaceModeAtom);
-    expect(isReplaceMode).toBe(true);
+    expect(getState().replaceMode).toBe(true);
   });
 
   it('should set override array', () => {
@@ -40,10 +37,9 @@ describe('useReplaceBreadcrumbs', () => {
       { pathname: '/insights/advisor/systems/123', title: 'System 123' },
     ];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    const override = store.get(appBreadcrumbOverrideAtom);
-    expect(override).toEqual(breadcrumbs);
+    expect(getState().override).toEqual(breadcrumbs);
   });
 
   it('should set breadcrumbs with options', () => {
@@ -60,45 +56,43 @@ describe('useReplaceBreadcrumbs', () => {
       },
     ];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    const override = store.get(appBreadcrumbOverrideAtom);
-    expect(override).toEqual(breadcrumbs);
+    expect(getState().override).toEqual(breadcrumbs);
   });
 
   it('should disable replace mode on unmount', () => {
     const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
 
-    const { unmount } = renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    const { unmount } = renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    expect(store.get(breadcrumbReplaceModeAtom)).toBe(true);
+    expect(getState().replaceMode).toBe(true);
 
     unmount();
 
-    expect(store.get(breadcrumbReplaceModeAtom)).toBe(false);
+    expect(getState().replaceMode).toBe(false);
   });
 
   it('should clear override array on unmount', () => {
     const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
 
-    const { unmount } = renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    const { unmount } = renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual(breadcrumbs);
+    expect(getState().override).toEqual(breadcrumbs);
 
     unmount();
 
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual([]);
+    expect(getState().override).toEqual([]);
   });
 
   it('should update override when breadcrumbs change', () => {
     const initialBreadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
 
     const { rerender } = renderHook(({ breadcrumbs }) => useReplaceBreadcrumbs(breadcrumbs), {
-      wrapper,
       initialProps: { breadcrumbs: initialBreadcrumbs },
     });
 
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual(initialBreadcrumbs);
+    expect(getState().override).toEqual(initialBreadcrumbs);
 
     const updatedBreadcrumbs = [
       { pathname: '/insights/advisor/systems', title: 'Systems' },
@@ -107,26 +101,24 @@ describe('useReplaceBreadcrumbs', () => {
 
     rerender({ breadcrumbs: updatedBreadcrumbs });
 
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual(updatedBreadcrumbs);
+    expect(getState().override).toEqual(updatedBreadcrumbs);
   });
 
   it('should handle empty breadcrumbs array', () => {
-    renderHook(() => useReplaceBreadcrumbs([]), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs([]));
 
-    expect(store.get(breadcrumbReplaceModeAtom)).toBe(true);
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual([]);
+    expect(getState().replaceMode).toBe(true);
+    expect(getState().override).toEqual([]);
   });
 
   it('should not update state when feature flag disabled', () => {
     jest.mocked(useFlag).mockReturnValue(false);
 
     const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    expect(store.get(breadcrumbReplaceModeAtom)).toBe(false);
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual([]);
-
-    jest.mocked(useFlag).mockReturnValue(true);
+    expect(getState().replaceMode).toBe(false);
+    expect(getState().override).toEqual([]);
   });
 
   it('should warn when incremental storage exists (dev mode)', () => {
@@ -134,10 +126,10 @@ describe('useReplaceBreadcrumbs', () => {
     process.env.NODE_ENV = 'development';
 
     // Simulate incremental breadcrumbs storage
-    store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
+    getBreadcrumbStore().updateState('SET_BREADCRUMB', { pathname: '/insights/advisor/systems', entry: { title: 'Systems' } });
 
     const breadcrumbs = [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }];
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
     expect(console.warn).toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.'
@@ -150,10 +142,10 @@ describe('useReplaceBreadcrumbs', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
 
-    store.set(appBreadcrumbStorageAtom, new Map([['/insights/advisor/systems', { title: 'Systems' }]]));
+    getBreadcrumbStore().updateState('SET_BREADCRUMB', { pathname: '/insights/advisor/systems', entry: { title: 'Systems' } });
 
     const breadcrumbs = [{ pathname: '/insights/advisor/systems/123', title: 'System 123' }];
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
     expect(console.warn).not.toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.'
@@ -167,7 +159,7 @@ describe('useReplaceBreadcrumbs', () => {
     process.env.NODE_ENV = 'development';
 
     const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
     expect(console.warn).not.toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.'
@@ -192,15 +184,15 @@ describe('useReplaceBreadcrumbs', () => {
       },
     ];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
     expect(console.warn).toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] breadcrumbs array contains circular references — using object reference for comparison. This may cause extra re-renders.'
     );
 
     // Should still set breadcrumbs despite circular ref
-    expect(store.get(breadcrumbReplaceModeAtom)).toBe(true);
-    expect(store.get(appBreadcrumbOverrideAtom)).toEqual(breadcrumbs);
+    expect(getState().replaceMode).toBe(true);
+    expect(getState().override).toEqual(breadcrumbs);
 
     process.env.NODE_ENV = originalEnv;
   });
@@ -220,7 +212,7 @@ describe('useReplaceBreadcrumbs', () => {
       },
     ];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
     expect(console.warn).not.toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] breadcrumbs array contains circular references — using object reference for comparison. This may cause extra re-renders.'
@@ -233,12 +225,11 @@ describe('useReplaceBreadcrumbs', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
-    // Set app mount pathname
-    store.set(appMountPathnameAtom, '/insights/advisor');
+    getBreadcrumbStore().updateState('SET_APP_MOUNT_PATHNAME', '/insights/advisor');
 
     const breadcrumbs = [{ pathname: '/settings/rbac', title: 'RBAC' }];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
     expect(console.warn).toHaveBeenCalledWith(
       '[useReplaceBreadcrumbs] breadcrumb pathname "/settings/rbac" does not start with app mount pathname "/insights/advisor" - breadcrumbs should be scoped to your app\'s routes'
@@ -251,17 +242,15 @@ describe('useReplaceBreadcrumbs', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
-    // Set app mount pathname
-    store.set(appMountPathnameAtom, '/insights/advisor');
+    getBreadcrumbStore().updateState('SET_APP_MOUNT_PATHNAME', '/insights/advisor');
 
     const breadcrumbs = [
       { pathname: '/insights/advisor/systems', title: 'Systems' },
       { pathname: '/insights/advisor/systems/123', title: 'System 123' },
     ];
 
-    renderHook(() => useReplaceBreadcrumbs(breadcrumbs), { wrapper });
+    renderHook(() => useReplaceBreadcrumbs(breadcrumbs));
 
-    // Should not warn - all pathnames are correctly scoped
     const warnCalls = (console.warn as jest.Mock).mock.calls.filter((call) => call[0].includes('does not start with app mount pathname'));
     expect(warnCalls).toHaveLength(0);
 

@@ -13,7 +13,7 @@ async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
-    baseURL: baseURL
+    baseURL: baseURL,
   });
   const page = await context.newPage();
 

@@ -18,13 +18,13 @@ import { useRemoteHook } from '@scalprum/react-core';
 const MyApp = () => {
   const { hookResult, loading, error } = useRemoteHook<DegradedStateAPI>({
     scope: 'chrome',
-    module: './serviceHealth/useDegradedState'
+    module: './serviceHealth/useDegradedState',
   });
 
   // Hook BEFORE early returns
   useEffect(() => {
     if (!hookResult?.setServiceDegraded) return;
-    
+
     fetchEntitlements().catch(() => {
       hookResult.setServiceDegraded({ service: 'entitlements', degraded: true });
     });
@@ -34,12 +34,7 @@ const MyApp = () => {
   if (loading) return <Spinner />;
   if (error) return <div>Error loading service health</div>;
 
-  const { 
-    serviceHealth, 
-    isAnyServiceDegraded, 
-    isBannerEnabled,
-    setServiceDegraded,
-  } = hookResult;
+  const { serviceHealth, isAnyServiceDegraded, isBannerEnabled, setServiceDegraded } = hookResult;
 
   return <div>...</div>;
 };
@@ -50,16 +45,16 @@ const MyApp = () => {
 ```typescript
 type DegradedStateAPI = {
   // Read-only state
-  serviceHealth: ServiceHealthStatus;           // Current degradation status
-  isAnyServiceDegraded: boolean;               // True if any service degraded
-  isBannerEnabled: boolean;                    // Feature flag status
-  
+  serviceHealth: ServiceHealthStatus; // Current degradation status
+  isAnyServiceDegraded: boolean; // True if any service degraded
+  isBannerEnabled: boolean; // Feature flag status
+
   // Generic state setter
   setServiceDegraded: (params: { service: keyof ServiceHealthStatus; degraded: boolean }) => void;
 };
 
 type ServiceHealthStatus = {
-  userPersonalization: boolean;  // true = degraded
+  userPersonalization: boolean; // true = degraded
   entitlements: boolean;
   configFromCache: boolean;
   featureFlags: boolean;
