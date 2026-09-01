@@ -15,13 +15,17 @@ import { disableCookiePrompt, login as sharedLogin } from '@redhat-cloud-service
  *
  * IMPORTANT: Most tests should NOT call this directly. Global setup handles authentication
  * automatically via storage state. Use this only for tests that specifically test login flows.
+ *
+ * @param page - Playwright Page object
+ * @param user - Optional username (defaults to E2E_USER env var)
+ * @param password - Optional password (defaults to E2E_PASSWORD env var)
  */
-export async function login(page: Page) {
-  const user = process.env.E2E_USER;
-  const password = process.env.E2E_PASSWORD;
+export async function login(page: Page, user?: string, password?: string) {
+  const username = user ?? process.env.E2E_USER;
+  const userPassword = password ?? process.env.E2E_PASSWORD;
 
-  if (!user || !password) {
-    throw new Error('E2E_USER and E2E_PASSWORD environment variables must be set');
+  if (!username || !userPassword) {
+    throw new Error('E2E_USER and E2E_PASSWORD environment variables must be set or passed as parameters');
   }
 
   // Block TrustArc consent requests
@@ -31,7 +35,7 @@ export async function login(page: Page) {
   await page.goto('/');
 
   // Perform login using shared package
-  await sharedLogin(page, user, password);
+  await sharedLogin(page, username, userPassword);
 
   // Disable analytics integrations (insights-chrome specific)
   await page.evaluate(() => {
@@ -44,6 +48,22 @@ export async function login(page: Page) {
     state: 'visible',
     timeout: 60000,
   });
+}
+
+/**
+ * Performs Red Hat SSO login as the non-admin test user.
+ *
+ * Convenience wrapper around login() that uses E2E_NON_ADMIN_USER credentials.
+ */
+export async function loginAsNonAdmin(page: Page) {
+  const user = process.env.E2E_NON_ADMIN_USER;
+  const password = process.env.E2E_NON_ADMIN_PASSWORD;
+
+  if (!user || !password) {
+    throw new Error('E2E_NON_ADMIN_USER and E2E_NON_ADMIN_PASSWORD environment variables must be set');
+  }
+
+  await login(page, user, password);
 }
 
 /**
