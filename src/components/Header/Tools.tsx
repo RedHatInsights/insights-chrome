@@ -104,6 +104,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
   const { contrastMode, setDefaultContrast, setHighContrast, setSystemContrast } = useHighContrast();
   const schedulerDrawerEnabled = useFlag('console.chrome-scheduler_drawer');
+  const schedulerDrawerActive = useAtomValue(drawerPanelContentAtom)?.scope === 'schedulerUi';
 
   const {
     drawerActions: { toggleDrawerContent },
@@ -165,6 +166,8 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           ouiaId: 'settings-menu-scheduler',
           title: 'Scheduler',
           isHidden: !schedulerDrawerEnabled,
+          isSelected: schedulerDrawerActive,
+          isLink: true,
           onClick: () =>
             toggleDrawerContent({
               scope: 'schedulerUi',

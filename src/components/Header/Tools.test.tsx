@@ -38,6 +38,7 @@ interface MockDropdownGroup {
 
 interface MockDropdownItemWithClick extends MockDropdownItem {
   onClick?: () => void;
+  isSelected?: boolean;
 }
 
 interface MockDropdownGroupWithClick extends Omit<MockDropdownGroup, 'items'> {
@@ -57,7 +58,13 @@ jest.mock('./SettingsToggle', () => ({
               : group.items
                   ?.filter((item) => !item.isHidden)
                   .map((item, j: number) => (
-                    <div key={j} data-ouia-component-id={item.ouiaId} onClick={item.onClick} role={item.onClick ? 'button' : undefined}>
+                    <div
+                      key={j}
+                      data-ouia-component-id={item.ouiaId}
+                      data-selected={item.isSelected ? 'true' : undefined}
+                      onClick={item.onClick}
+                      role={item.onClick ? 'button' : undefined}
+                    >
                       {item.title}
                       {item.description && <p>{item.description}</p>}
                     </div>
@@ -145,6 +152,7 @@ const mockInternalChromeContext = {
 };
 
 import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
+import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import type { ToolbarConfig } from './Header';
 
 const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
@@ -282,6 +290,20 @@ describe('Tools - dark mode system feature flag', () => {
         scope: 'schedulerUi',
         module: './SchedulerPanelContent',
       });
+    });
+
+    it('should mark Scheduler item as selected when the scheduler drawer is open', () => {
+      const store = createStore();
+      store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './SchedulerPanelContent' });
+      renderTools({ 'console.chrome-scheduler_drawer': true }, undefined, store);
+      expect(screen.getByTestId('settings-menu-scheduler')).toHaveAttribute('data-selected', 'true');
+    });
+
+    it('should not mark Scheduler item as selected when a different drawer is open', () => {
+      const store = createStore();
+      store.set(drawerPanelContentAtom, { scope: 'notifications', module: './NotificationsPanel' });
+      renderTools({ 'console.chrome-scheduler_drawer': true }, undefined, store);
+      expect(screen.getByTestId('settings-menu-scheduler')).not.toHaveAttribute('data-selected');
     });
   });
 
