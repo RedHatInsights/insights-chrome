@@ -27,7 +27,9 @@ spec:
             image: registry.access.redhat.com/ubi9/nodejs-20:latest
             env:
               - name: PLATFORM_INFRA_ENV
-                value: prod
+                value: stage
+              - name: CI
+                value: "true"
             script: |
               #!/bin/bash
               set -euo pipefail

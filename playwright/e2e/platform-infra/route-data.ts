@@ -107,12 +107,12 @@ const prodReachabilityRoutes: ReachabilityRoute[] = [
   { path: '/subscriptions/usage', description: 'Subscriptions Usage' },
 ];
 
-const STAGE_PROXY = 'http://squid.corp.redhat.com:3128';
+const STAGE_PROXY = process.env.CI ? undefined : 'http://squid.corp.redhat.com:3128';
 
 const configs: Record<string, EnvironmentConfig> = {
   stage: {
     baseUrl: 'https://console.stage.redhat.com',
-    proxy: STAGE_PROXY,
+    ...(STAGE_PROXY && { proxy: STAGE_PROXY }),
     redirects: stageRedirects,
     reachabilityRoutes: stageReachabilityRoutes,
   },
