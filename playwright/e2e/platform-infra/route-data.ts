@@ -8,17 +8,22 @@ export interface ReachabilityRoute {
   description: string;
 }
 
+export interface CrossHostRedirectRoute {
+  sourceUrl: string;
+  expectedUrl: string;
+}
+
 export interface EnvironmentConfig {
   baseUrl: string;
   proxy?: string;
   redirects: RedirectRoute[];
+  crossHostRedirects: CrossHostRedirectRoute[];
   reachabilityRoutes: ReachabilityRoute[];
 }
 
 // Sourced from Akamai Edge Redirector policy er_console (Policy 185335, Version 55)
-// Rules targeting different hosts (openshift.googlecloud.*) or external
-// destinations (sandbox.redhat.com, qualtrics, developers.redhat.com) are
-// excluded -- those require separate test infrastructure.
+// Rules redirecting to external destinations (sandbox.redhat.com, qualtrics,
+// developers.redhat.com) are excluded.
 const redirects: RedirectRoute[] = [
   // Settings to Insights
   { oldPath: '/settings/connector', newPath: '/insights/connector' },
@@ -93,6 +98,26 @@ const redirects: RedirectRoute[] = [
   { oldPath: '/preview/insights/subscriptions/manifests', newPath: '/subscriptions/manifests' },
 ];
 
+// OpenShift Google Cloud cross-host redirects
+const crossHostRedirects: Record<string, CrossHostRedirectRoute[]> = {
+  stage: [
+    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/overview', expectedUrl: 'https://console.stage.redhat.com/openshift/overview' },
+    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/osd/create', expectedUrl: 'https://console.stage.redhat.com/openshift/create/osdgcp' },
+    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/osd', expectedUrl: 'https://console.stage.redhat.com/openshift/overview/osd' },
+    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/ocp/create', expectedUrl: 'https://console.stage.redhat.com/openshift/install/gcp' },
+    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/list', expectedUrl: 'https://console.stage.redhat.com/openshift/cluster-list?plan_id=OSD,OCP' },
+    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/', expectedUrl: 'https://console.stage.redhat.com/openshift/' },
+  ],
+  prod: [
+    { sourceUrl: 'https://openshift.googlecloud.redhat.com/overview', expectedUrl: 'https://console.redhat.com/openshift/overview' },
+    { sourceUrl: 'https://openshift.googlecloud.redhat.com/osd/create', expectedUrl: 'https://console.redhat.com/openshift/create/osdgcp' },
+    { sourceUrl: 'https://openshift.googlecloud.redhat.com/osd', expectedUrl: 'https://console.redhat.com/openshift/overview/osd' },
+    { sourceUrl: 'https://openshift.googlecloud.redhat.com/ocp/create', expectedUrl: 'https://console.redhat.com/openshift/install/gcp' },
+    { sourceUrl: 'https://openshift.googlecloud.redhat.com/list', expectedUrl: 'https://console.redhat.com/openshift/cluster-list?plan_id=OSD,OCP' },
+    { sourceUrl: 'https://openshift.googlecloud.redhat.com/', expectedUrl: 'https://console.redhat.com/openshift/' },
+  ],
+};
+
 const reachabilityRoutes: ReachabilityRoute[] = [
   { path: '/insights/dashboard', description: 'Insights Dashboard' },
   { path: '/insights/advisor/recommendations', description: 'Advisor Recommendations' },
@@ -116,11 +141,13 @@ const configs: Record<string, EnvironmentConfig> = {
     baseUrl: 'https://console.stage.redhat.com',
     ...(STAGE_PROXY && { proxy: STAGE_PROXY }),
     redirects,
+    crossHostRedirects: crossHostRedirects.stage,
     reachabilityRoutes,
   },
   prod: {
     baseUrl: 'https://console.redhat.com',
     redirects,
+    crossHostRedirects: crossHostRedirects.prod,
     reachabilityRoutes,
   },
 };
