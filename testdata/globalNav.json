@@ -1,27 +1,27 @@
 {
-    "ansible": {
-        "id": "ansible",
-        "routes": [],
-        "title": "Red Hat Ansible Automation Platform"
-    },
-    "docs": {
-        "id": "docs",
-        "routes": [],
-        "title": "Documentation"
-    },
-    "insights": {
-        "id": "insights",
-        "routes": [],
-        "title": "Red Hat Insights"
-    },
-    "openshift": {
-        "id": "openshift",
-        "routes": [],
-        "title": "Red Hat Openshift Cluster Manager"
-    },
-    "staging": {
-        "id": "staging",
-        "routes": [],
-        "title": "Staging Bundle"
-    }
+  "ansible": {
+    "id": "ansible",
+    "routes": [],
+    "title": "Red Hat Ansible Automation Platform"
+  },
+  "docs": {
+    "id": "docs",
+    "routes": [],
+    "title": "Documentation"
+  },
+  "insights": {
+    "id": "insights",
+    "routes": [],
+    "title": "Red Hat Insights"
+  },
+  "openshift": {
+    "id": "openshift",
+    "routes": [],
+    "title": "Red Hat Openshift Cluster Manager"
+  },
+  "staging": {
+    "id": "staging",
+    "routes": [],
+    "title": "Staging Bundle"
+  }
 }

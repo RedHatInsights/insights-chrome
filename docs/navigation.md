@@ -12,30 +12,30 @@ Along with static navigation set in CSC, apps can opt into dynamic navigation by
 
 List of available permissions methods:
 
-* `isOrgAdmin` - test if logged in user is organization admin
-* `isActive` - test if logged in user is active
-* `isInternal` - test if logged in user is internal
-* `isEntitled` - test if logged in user is entitled, entitlements to check for is passed as an argument
-* `isProd` - test if current environment is production (prod-beta and prod-stable)
-* `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
-* `isHidden` - hides item in navigation
-* `withEmail` - show nav only if user's email contains first argument
-* `hasLocalStorage` - test if value (passed as second argument) equals to localStorage key (passed as first arg) value
-* `hasCookie` - test if value (passed as second argument) equals to cookie  key (passed as first arg) value
-* `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission'], uses logical AND to evaluate the permissions
-* `loosePermissions` - similar to `hasPermissions`, uses logical OR to evaluate the permissions
-* `loosePermissionsKessel` - check Kessel tenant-scoped permissions using logical OR. Takes an array of Kessel **relation** strings (e.g. `rbac_roles_read`, `rbac_groups_read`). Calls the Kessel `/api/kessel/v1beta2/checkself` (single) or `/api/kessel/v1beta2/checkselfbulk` (multiple) API against the user's org tenant. Returns `true` if at least one relation is `ALLOWED_TRUE`, `false` otherwise (including on error or missing org ID). Duplicate relations are deduplicated automatically.
-* `apiRequest` - call custom API endpoint to test if the item should be displayed.
-  * Expects `true`/`false` response.
-  * `accessor` attribute can be specified. If the boolean value is in nested object. The accessor is a string path of [lodash get](https://lodash.com/docs/4.17.15#get) function.
-  * If the promise receives an error, the item won't be displayed.
-  * `matcher`: `['isEmpty' | 'isNotEmpty']`.
-    * `isEmpty` uses [lodash isEmpty](https://lodash.com/docs/4.17.15#isEmpty) to evaluate api response.
-    * `isNotEmpty` is a negation of `isEmpty`
-* `featureFlag` - test if feature flag name is enabled. First argument is name of the featureFlag and second is the expected value (`true` or `false`)
-* `isITLess` - test if current environment is ITLess (FedRAMP/Commercial). First argument is the expected value (`true` or `false`)
-* `isKesselEnabled` - test if Kessel is deployed in the current environment. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.chrome.kessel` feature flag. First argument is the expected value (`true` or `false`)
-* `isKesselOrgOnboarded` - test if the current user's org is onboarded to the Kessel V2 experience. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.rbac.workspaces` feature flag. First argument is the expected value (`true` or `false`). Use to gate V2-only nav items (e.g. Access Management vs User Access)
+- `isOrgAdmin` - test if logged in user is organization admin
+- `isActive` - test if logged in user is active
+- `isInternal` - test if logged in user is internal
+- `isEntitled` - test if logged in user is entitled, entitlements to check for is passed as an argument
+- `isProd` - test if current environment is production (prod-beta and prod-stable)
+- `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
+- `isHidden` - hides item in navigation
+- `withEmail` - show nav only if user's email contains first argument
+- `hasLocalStorage` - test if value (passed as second argument) equals to localStorage key (passed as first arg) value
+- `hasCookie` - test if value (passed as second argument) equals to cookie key (passed as first arg) value
+- `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission'], uses logical AND to evaluate the permissions
+- `loosePermissions` - similar to `hasPermissions`, uses logical OR to evaluate the permissions
+- `loosePermissionsKessel` - check Kessel tenant-scoped permissions using logical OR. Takes an array of Kessel **relation** strings (e.g. `rbac_roles_read`, `rbac_groups_read`). Calls the Kessel `/api/kessel/v1beta2/checkself` (single) or `/api/kessel/v1beta2/checkselfbulk` (multiple) API against the user's org tenant. Returns `true` if at least one relation is `ALLOWED_TRUE`, `false` otherwise (including on error or missing org ID). Duplicate relations are deduplicated automatically.
+- `apiRequest` - call custom API endpoint to test if the item should be displayed.
+  - Expects `true`/`false` response.
+  - `accessor` attribute can be specified. If the boolean value is in nested object. The accessor is a string path of [lodash get](https://lodash.com/docs/4.17.15#get) function.
+  - If the promise receives an error, the item won't be displayed.
+  - `matcher`: `['isEmpty' | 'isNotEmpty']`.
+    - `isEmpty` uses [lodash isEmpty](https://lodash.com/docs/4.17.15#isEmpty) to evaluate api response.
+    - `isNotEmpty` is a negation of `isEmpty`
+- `featureFlag` - test if feature flag name is enabled. First argument is name of the featureFlag and second is the expected value (`true` or `false`)
+- `isITLess` - test if current environment is ITLess (FedRAMP/Commercial). First argument is the expected value (`true` or `false`)
+- `isKesselEnabled` - test if Kessel is deployed in the current environment. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.chrome.kessel` feature flag. First argument is the expected value (`true` or `false`)
+- `isKesselOrgOnboarded` - test if the current user's org is onboarded to the Kessel V2 experience. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.rbac.workspaces` feature flag. First argument is the expected value (`true` or `false`). Use to gate V2-only nav items (e.g. Access Management vs User Access)
 
 #### apiRequest example
 
@@ -56,7 +56,7 @@ List of available permissions methods:
         }
     ]
 }
- ```
+```
 
 #### loosePermissionsKessel example
 

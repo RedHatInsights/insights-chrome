@@ -1,8 +1,8 @@
 # CodeRabbit AI Configuration for insights-chrome
 # Documentation: https://docs.coderabbit.ai/reference/configuration
 
-language: "en-US"
-tone_instructions: "Be professional, constructive, and focus on critical issues. This is a production-critical repository where any breakage can take down the entire Red Hat Hybrid Cloud Console product."
+language: 'en-US'
+tone_instructions: 'Be professional, constructive, and focus on critical issues. This is a production-critical repository where any breakage can take down the entire Red Hat Hybrid Cloud Console product.'
 early_access: false
 enable_free_tier: true
 
@@ -12,18 +12,18 @@ reviews:
     enabled: true
     drafts: false
     labels:
-      - "!wip"
-      - "!draft"
-      - "!do-not-review"
+      - '!wip'
+      - '!draft'
+      - '!do-not-review'
     # Exclude automated dependency updates from reviews
     ignore_usernames:
-      - "dependabot[bot]"
-      - "renovate[bot]"
-      - "github-actions[bot]"
+      - 'dependabot[bot]'
+      - 'renovate[bot]'
+      - 'github-actions[bot]'
 
   # Path-specific review instructions
   path_instructions:
-    - path: "src/**/*.{ts,tsx}"
+    - path: 'src/**/*.{ts,tsx}'
       instructions: |
         - Verify TypeScript strict mode compliance (no 'any', proper types)
         - Check for restricted imports (no direct react-oidc-context or oidc-client-ts outside OIDCConnector/)
@@ -31,7 +31,7 @@ reviews:
         - Verify PatternFly 6 usage (prefer over PF5)
         - Check for proper Jotai atom usage (not Redux patterns)
 
-    - path: "**/*.test.{ts,tsx,js}"
+    - path: '**/*.test.{ts,tsx,js}'
       instructions: |
         - Verify test quality and coverage
         - Check for proper mocking and test setup
@@ -39,28 +39,28 @@ reviews:
         - Verify snapshot tests are meaningful
         - Check for async handling in tests
 
-    - path: "cypress/component/**/*.cy.tsx"
+    - path: 'cypress/component/**/*.cy.tsx'
       instructions: |
         - Verify component test coverage
         - Check for proper Cypress best practices
         - Ensure meaningful assertions
         - Verify proper waiting patterns
 
-    - path: "playwright/e2e/**/*.spec.ts"
+    - path: 'playwright/e2e/**/*.spec.ts'
       instructions: |
         - Verify e2e test quality
         - Check for proper selectors (prefer accessible selectors)
         - Ensure proper waiting and retry logic
         - Verify no hardcoded timeouts unless necessary
 
-    - path: "src/auth/**/*"
+    - path: 'src/auth/**/*'
       instructions: |
         - CRITICAL: Authentication code must be reviewed thoroughly
         - Verify no security vulnerabilities
         - Check for proper error handling
         - Ensure tokens are handled securely
 
-    - path: ".tekton/**/*.{yaml,yml}"
+    - path: '.tekton/**/*.{yaml,yml}'
       instructions: |
         - Verify Tekton/Konflux pipeline syntax
         - Check for proper task references
@@ -72,8 +72,8 @@ reviews:
     # Custom checks (up to 5 allowed)
     custom_checks:
       # Check 1: Require tests for new code (except dependency updates)
-      - name: "Tests Required"
-        mode: "error"
+      - name: 'Tests Required'
+        mode: 'error'
         instructions: |
           CRITICAL REQUIREMENT: This repository requires 60% minimum test coverage.
 
@@ -109,8 +109,8 @@ reviews:
           Please add tests before merging this PR."
 
       # Check 2: TypeScript strict mode compliance
-      - name: "TypeScript Strict Mode"
-        mode: "warning"
+      - name: 'TypeScript Strict Mode'
+        mode: 'warning'
         instructions: |
           Pass criteria:
           - All new TypeScript files use strict types (no 'any' types unless absolutely necessary)
@@ -125,8 +125,8 @@ reviews:
           If violations found, warn the developer to use proper TypeScript types.
 
       # Check 3: Authentication abstraction compliance
-      - name: "Auth Abstraction Layer"
-        mode: "error"
+      - name: 'Auth Abstraction Layer'
+        mode: 'error'
         instructions: |
           CRITICAL: This repository enforces authentication abstraction via ChromeAuthContext.
 
@@ -150,8 +150,8 @@ reviews:
           Direct OIDC imports are only allowed in src/auth/OIDCConnector/ directory."
 
       # Check 4: Breaking changes to Chrome API
-      - name: "Chrome API Breaking Changes"
-        mode: "error"
+      - name: 'Chrome API Breaking Changes'
+        mode: 'error'
         instructions: |
           Pass criteria:
           - Changes to src/chrome/create-chrome.ts that modify the public Chrome API are documented
@@ -178,8 +178,8 @@ reviews:
           50+ HCC applications depend on the Chrome API. Breaking changes cascade across the entire platform."
 
       # Check 5: Module Federation breaking changes
-      - name: "Module Federation Compatibility"
-        mode: "warning"
+      - name: 'Module Federation Compatibility'
+        mode: 'warning'
         instructions: |
           Pass criteria:
           - Changes to webpack.config.js or webpack.plugins.js maintain Module Federation compatibility
@@ -204,11 +204,11 @@ reviews:
   tools:
     # Security scanning tools
     gitleaks:
-      enabled: true  # Scan for hardcoded credentials/secrets
+      enabled: true # Scan for hardcoded credentials/secrets
     trufflehog:
-      enabled: true  # Secret scanner with verification capabilities
+      enabled: true # Secret scanner with verification capabilities
     semgrep:
-      enabled: true  # Security vulnerabilities and code quality
+      enabled: true # Security vulnerabilities and code quality
 
     # Code analysis tools
     github-checks:
