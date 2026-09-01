@@ -1,4 +1,4 @@
-import { test, expect, APIRequestContext } from '@playwright/test';
+import { APIRequestContext, expect, test } from '@playwright/test';
 import { getConfig } from './route-data';
 
 const RATE_LIMIT_DELAY = 250;
