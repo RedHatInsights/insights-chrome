@@ -77,6 +77,7 @@ const MemoizedHeader = memo(
       setSearchOpen(isOpen);
     };
     const isITLess = useFlag('platform.chrome.itless');
+    const isWorkspaceSelectorEnabled = useFlag('platform.chrome.workspace-global_selector');
     const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
@@ -126,7 +127,7 @@ const MemoizedHeader = memo(
                     <ContextSwitcher orgId={orgId} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
-                {userReady && !isITLess && (
+                {userReady && !isITLess && isWorkspaceSelectorEnabled && (
                   <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
                     <WorkspaceSelector />
                   </ToolbarItem>
