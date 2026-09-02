@@ -6,8 +6,8 @@ metadata:
 spec:
   description: |
     Platform infrastructure tests for insights-chrome.
-    Currently a smoke test to validate the scheduled trigger infrastructure.
-    Will be extended with real test commands once the pipeline is proven.
+    Runs Playwright-based Akamai redirect and route reachability tests
+    against console.redhat.com environments on a daily schedule.
   params:
     - name: SNAPSHOT
       description: "The Konflux snapshot being tested"
@@ -15,16 +15,21 @@ spec:
   results:
     - name: TEST_OUTPUT
       description: "Test result summary"
-      value: $(tasks.smoke-test.results.TEST_OUTPUT)
+      value: $(tasks.run-platform-infra-tests.results.TEST_OUTPUT)
   tasks:
-    - name: smoke-test
+    - name: run-platform-infra-tests
       taskSpec:
         results:
           - name: TEST_OUTPUT
             description: "Test output in Konflux standardized format"
         steps:
-          - name: smoke-test
-            image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+          - name: run-tests
+            image: registry.access.redhat.com/ubi9/nodejs-20:latest
+            env:
+              - name: PLATFORM_INFRA_ENV
+                value: stage
+              - name: CI
+                value: "true"
             script: |
               #!/bin/bash
               set -euo pipefail
@@ -32,11 +37,52 @@ spec:
               TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
               echo "========================================="
-              echo "Platform infra test pipeline - smoke test"
+              echo "Platform infrastructure tests"
+              echo "Environment: ${PLATFORM_INFRA_ENV}"
               echo "Timestamp: ${TIMESTAMP}"
-              echo "Pipeline executed successfully"
+              echo "========================================="
+
+              WORKDIR=$(mktemp -d)
+              cd "${WORKDIR}"
+
+              echo "Cloning insights-chrome..."
+              git clone --depth 1 https://github.com/RedHatInsights/insights-chrome.git .
+
+              echo "Installing dependencies..."
+              npm ci
+
+              echo "Installing Playwright..."
+              npx playwright install --with-deps chromium
+
+              echo "Running platform infrastructure tests..."
+              set +e
+              npx playwright test playwright/e2e/platform-infra/ \
+                --reporter=line 2>&1 | tee test-output.txt
+              TEST_EXIT=${PIPESTATUS[0]}
+              set -e
+
+              # Playwright line reporter prints a summary like:
+              #   X passed (Ys)
+              #   X failed (Ys)
+              SUCCESSES=$(grep -oP '^\s*\K\d+(?= passed)' test-output.txt || echo 0)
+              FAILURES=$(grep -oP '^\s*\K\d+(?= failed)' test-output.txt || echo 0)
+
+              if [ "${TEST_EXIT}" -eq 0 ]; then
+                RESULT="SUCCESS"
+                NOTE="All platform infrastructure tests passed"
+              else
+                RESULT="FAILURE"
+                NOTE="${FAILURES} test(s) failed"
+              fi
+
+              echo ""
+              echo "========================================="
+              echo "Result: ${RESULT}"
+              echo "Passed: ${SUCCESSES}, Failed: ${FAILURES}"
               echo "========================================="
 
               cat > $(results.TEST_OUTPUT.path) <<RESULT
-              {"result":"SUCCESS","timestamp":"${TIMESTAMP}","successes":1,"failures":0,"warnings":0,"note":"Smoke test passed"}
+              {"result":"${RESULT}","timestamp":"${TIMESTAMP}","successes":${SUCCESSES},"failures":${FAILURES},"warnings":0,"note":"${NOTE}"}
               RESULT
+
+              exit "${TEST_EXIT}"
