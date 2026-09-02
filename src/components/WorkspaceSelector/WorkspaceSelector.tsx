@@ -6,7 +6,7 @@ import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleto
 import SilentErrorBoundary from '../Routes/SilentErrorBoundary';
 import { SelectedWorkspace, selectedWorkspaceAtom } from '../../state/atoms/workspaceSelectorAtom';
 
-const WorkspaceSelector = () => {
+const WorkspaceSelector = (): React.JSX.Element | null => {
   const isWorkspaceSelectorEnabled = useFlag('platform.chrome.workspace-global_selector');
   const setSelectedWorkspace = useSetAtom(selectedWorkspaceAtom);
 
