@@ -6,7 +6,7 @@ import { AUTH_TIMEOUT, NAVIGATION_TIMEOUT } from './constants';
 async function globalSetup(config: FullConfig) {
   const { storageState, baseURL } = config.projects[0].use;
 
-  if (!storageState) {
+  if (!storageState || !process.env.E2E_USER) {
     return;
   }
 
