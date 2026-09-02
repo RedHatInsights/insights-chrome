@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
-import { LIGHTWELL_PATH, isProd } from '../../utils/common';
+import { LIGHTWELL_PATH } from '../../utils/common';
 import { isNavItemVisible } from '../../utils/isNavItemVisible';
 import { NavItemPermission } from '../../@types/types';
 
@@ -23,27 +23,18 @@ const featuresPermission = (accessor: string): LightwellNavItemConfig['permissio
 ];
 
 /**
- * Stage/dev: no permissions — all three tabs visible to everyone, no API calls.
- */
-const STAGE_NAV_ITEMS: LightwellNavItemConfig[] = [
-  { label: 'Repositories', path: LIGHTWELL_PATH },
-  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens` },
-  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon` },
-];
-
-/**
- * Production: each item gated behind the content-sources features API.
+ * Each item gated behind the content-sources features API.
  *
- * | Nav Item       | Feature Key            | Accessor                          |
- * |----------------|------------------------|-----------------------------------|
- * | Repositories   | lightwell              | lightwell.accessible              |
- * | Lens           | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
- * | Beacon         | lightwellbeaconandlens | lightwellbeaconandlens.accessible |
+ * | Nav Item       | Feature Key     | Accessor                     |
+ * |----------------|-----------------|------------------------------|
+ * | Repositories   | lightwell       | lightwell.accessible         |
+ * | Lens           | lightwelllens   | lightwelllens.accessible     |
+ * | Beacon         | lightwellbeacon | lightwellbeacon.accessible   |
  */
-const PROD_NAV_ITEMS: LightwellNavItemConfig[] = [
+const NAV_ITEMS: LightwellNavItemConfig[] = [
   { label: 'Repositories', path: LIGHTWELL_PATH, permissions: featuresPermission('lightwell.accessible') },
-  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
-  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeaconandlens.accessible') },
+  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwelllens.accessible') },
+  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeacon.accessible') },
 ];
 
 /**
@@ -57,32 +48,22 @@ const getActiveLightwellNav = (pathname: string): string => {
 };
 
 /**
- * Lightwell-specific horizontal navigation. In production, items are gated
- * behind the content-sources features API (`/api/content-sources/v1.0/features/`)
+ * Lightwell-specific horizontal navigation. Items are gated behind the
+ * content-sources features API (`/api/content-sources/v1.0/features/`)
  * using the built-in `apiRequest` visibility function with an `accessor` to
- * extract the `accessible` boolean. In stage/dev, all items are visible
- * without API calls.
+ * extract the `accessible` boolean.
  */
 const LightwellNavigation = (): React.JSX.Element | null => {
   const { pathname } = useLocation();
-  const isProduction = isProd();
-  const navItems = isProduction ? PROD_NAV_ITEMS : STAGE_NAV_ITEMS;
-
-  // Stage items have no permissions → show immediately, not loading.
-  // Prod items require API verification → start empty, loading until resolved.
-  const [visibleItems, setVisibleItems] = useState<LightwellNavItemConfig[]>(() => (isProduction ? [] : navItems));
-  const [isLoading, setIsLoading] = useState(isProduction);
+  const [visibleItems, setVisibleItems] = useState<LightwellNavItemConfig[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isProduction) {
-      return;
-    }
-
     let cancelled = false;
 
     const evaluatePermissions = async () => {
       const results = await Promise.all(
-        navItems.map(async (item) => {
+        NAV_ITEMS.map(async (item) => {
           if (!item.permissions) {
             return { item, visible: true };
           }
@@ -106,7 +87,7 @@ const LightwellNavigation = (): React.JSX.Element | null => {
     return () => {
       cancelled = true;
     };
-  }, [isProduction]);
+  }, []);
 
   // Hide while loading permissions and when only one item remains (no tabs needed)
   if (isLoading || visibleItems.length <= 1) {

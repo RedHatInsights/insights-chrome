@@ -114,6 +114,7 @@ describe('Header Lightwell mode', () => {
     const { container } = renderHeader(true);
     const lightwellLogo = container.querySelector('img[alt="Lightwell Logo"]');
     expect(lightwellLogo).toBeTruthy();
+    expect(lightwellLogo?.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
   });
 
   it('should render search toolbar group when not in Lightwell mode', () => {

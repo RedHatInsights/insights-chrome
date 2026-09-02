@@ -157,10 +157,7 @@ const commonConfig = ({ dev }) => {
         ...searchIgnoredStyles(path.resolve(__dirname, '../')),
         ...imageNullLoader(),
         // charts override for the PDF renderer
-        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(
-          __dirname,
-          '../src/moduleOverrides/chart-utils-override.js'
-        ),
+        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(__dirname, '../src/moduleOverrides/chart-utils-override.js'),
         // do not consume unfetch from nested dependencies
         unfetch: path.resolve(__dirname, '../src/moduleOverrides/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
@@ -356,8 +353,8 @@ module.exports = function (env) {
       console.warn(
         '\x1b[33m%s\x1b[0m',
         '\n[chrome] Using self-signed certificate for dev server.\n' +
-        'Firefox is recommended for local development (no cert setup needed).\n' +
-        'If using Chrome and seeing ERR_TOO_MANY_RETRIES, see README.md for mkcert setup.\n'
+          'Firefox is recommended for local development (no cert setup needed).\n' +
+          'If using Chrome and seeing ERR_TOO_MANY_RETRIES, see README.md for mkcert setup.\n'
       );
     }
   }

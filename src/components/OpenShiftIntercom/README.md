@@ -14,9 +14,9 @@ This module provides a clickable icon component that integrates OpenShift suppor
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Optional CSS class name for styling |
+| Prop        | Type     | Default | Description                         |
+| ----------- | -------- | ------- | ----------------------------------- |
+| `className` | `string` | -       | Optional CSS class name for styling |
 
 ## Feature Flag
 
@@ -26,7 +26,7 @@ The component is controlled by the feature flag `platform.chrome.openshift-inter
 
 ### Component Structure
 
-```
+```text
 src/components/OpenShiftIntercom/
 ├── OpenShiftIntercomModule.tsx     # Main component
 ├── OpenShiftIntercom.scss        # Styles
@@ -80,7 +80,3 @@ return (
    - Default: Corporate blue
    - Hover: Blue background appears
    - Expanded: Darker blue background
-ponents */}
-  </>
-);
-```
