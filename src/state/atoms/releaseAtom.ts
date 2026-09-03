@@ -81,11 +81,11 @@ export const layoutForceGlassThemeAtom = atom(isLightwellPath);
 export const layoutForceFeltThemeAtom = atom(isLightwellPath);
 
 /**
- * Atom for layouts to signal a simplified header for Lightwell.
- * When true, the AllServicesDropdown is replaced with a static "Lightwell"
- * header and the Search input is hidden.
+ * Atom for layouts to signal that the Lightwell chrome shell is active.
+ * When true, chrome uses Lightwell branding in the masthead, hides search,
+ * and hides breadcrumb favorites.
  */
-export const layoutLightwellHeaderAtom = atom(isLightwellPath);
+export const layoutLightwellShellAtom = atom(isLightwellPath);
 
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {
