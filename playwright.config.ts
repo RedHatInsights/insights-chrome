@@ -5,6 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './playwright/e2e',
+  testIgnore: process.env.PLATFORM_INFRA_ENV ? [] : ['**/platform-infra/**'],
 
   /* Global setup for authentication */
   globalSetup: require.resolve('./playwright/setup/global-setup'),
