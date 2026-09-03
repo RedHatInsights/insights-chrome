@@ -93,6 +93,22 @@ useRemoteHook({
 });
 ```
 
+An app can opt in to dropping Chrome's final breadcrumb when it supplies its
+own breadcrumb trail:
+
+```tsx
+useRemoteHook({
+  scope: 'chrome',
+  module: './breadcrumbs/useReplaceBreadcrumbs',
+  args: [breadcrumbs, { dropLastChromeSegment: true }],
+});
+```
+
+With this option, Chrome drops its final segment whenever the app supplies a
+non-empty breadcrumb trail and Chrome has more than one segment. If Chrome has
+only the HCC root segment, Chrome preserves it. The default is `false`, so
+existing apps keep Chrome's normal breadcrumb behavior unless they opt in.
+
 **Rule of thumb:** If each route knows its own title → use `useBreadcrumbs`. If you compute the full array → use `useReplaceBreadcrumbs`.
 
 ## Accessing application breadcrumbs API
@@ -193,8 +209,8 @@ There will be a single point of management in an application. It does not mean i
 
 The source code API example:
 
-| declare function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void; //Replace the entire node array where AppBreadcrumbSegment = { pathname: string; title: string; options?: NavigateOptions } useReplaceBreadcrumbs(\[ { pathname: ‘/application/path’, title: ‘A parent title’ }, { pathname: ‘/application/path/leaf’, title: ‘A leaf title’ }, \]); |
-| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| declare function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[], options?: { dropLastChromeSegment?: boolean }): void; //Replace the entire node array where AppBreadcrumbSegment = { pathname: string; title: string; options?: NavigateOptions } useReplaceBreadcrumbs(\[ { pathname: ‘/application/path’, title: ‘A parent title’ }, { pathname: ‘/application/path/leaf’, title: ‘A leaf title’ }, \]); |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 ## Consumption Constraint
 
@@ -273,6 +289,10 @@ It can be expected that the application and Chrome breadcrumbs will have a confl
 ### Disabling the last visible Chrome segment
 
 If an application uses the “useBreadcrumbs” or “replaceBreadcrumbs” API, we generate the Chrome segments normally, but during rendering it will omit the last segment that was discovered by Chrome and **is not equal to the application mount pathname.** Any path segment after the application mount point is an application nested route and has to be handled by the application.
+
+`useReplaceBreadcrumbs` can opt in to dropping the final Chrome segment. This
+is for apps whose breadcrumb trail should start directly after the HCC root.
+Without the option, the default mount-preserving behavior remains unchanged.
 
 Switching the application will reset the default Chrome breadcrumbs behavior until the API is called again. We can be 100% sure the hooks are called always after the breadcrumbs reset because of how the module loading works. There is no risk of disabling the behavior after the initial hook calls and invalid breadcrumbs state.
 
