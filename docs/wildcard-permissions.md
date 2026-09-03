@@ -22,12 +22,14 @@ Permissions are split by the `:` delimiter into segments. The wildcard character
 User has permission: `rbac:*:*`
 
 **Matches:**
+
 - `rbac:inventory:read` ✅
 - `rbac:inventory:write` ✅
 - `rbac:cost-management:read` ✅
 - `rbac:cost-management:write` ✅
 
 **Does not match:**
+
 - `rbac:inventory` ❌ (different segment count)
 - `other:inventory:read` ❌ (first segment doesn't match)
 
@@ -36,6 +38,7 @@ User has permission: `rbac:*:*`
 User has permission: `rbac:*:read`
 
 **Matches:**
+
 - `rbac:inventory:read` ✅
 - `rbac:cost-management:read` ✅
 - `rbac:any-service:read` ✅
@@ -45,6 +48,7 @@ User has permission: `rbac:*:read`
 User has permission: `rbac:inventory:*`
 
 **Matches:**
+
 - `rbac:inventory:read` ✅
 - `rbac:inventory:write` ✅
 - `rbac:inventory:delete` ✅

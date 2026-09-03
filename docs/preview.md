@@ -17,7 +17,7 @@ As of June 2024, the new preview environment is available. The HCC UI will be sw
 To test the preview functionality before the switch a localStorage flag needs to ne enabled. In the browser console use this command:
 
 ```js
-window.insights.chrome.enable.forceLocalPreview()
+window.insights.chrome.enable.forceLocalPreview();
 ```
 
 After this, reload the browser window.

@@ -673,4 +673,34 @@ export default defineMessages({
     description: 'Dark color scheme',
     defaultMessage: 'Dark',
   },
+  degradedStateBannerPrefix: {
+    id: 'degradedStateBannerPrefix',
+    description: 'First part of degraded state banner message',
+    defaultMessage: 'Core functionality is available, but some services are degraded:',
+  },
+  degradedStateBannerSuffix: {
+    id: 'degradedStateBannerSuffix',
+    description: 'Last part of degraded state banner message',
+    defaultMessage: 'Try again later.',
+  },
+  degradedServiceUserPersonalization: {
+    id: 'degradedServiceUserPersonalization',
+    description: 'Label for user personalization service',
+    defaultMessage: 'User Preferences',
+  },
+  degradedServiceEntitlements: {
+    id: 'degradedServiceEntitlements',
+    description: 'Label for entitlements service',
+    defaultMessage: 'Entitlements',
+  },
+  degradedServiceConfigFromCache: {
+    id: 'degradedServiceConfigFromCache',
+    description: 'Label for navigation configuration service',
+    defaultMessage: 'Navigation Configuration',
+  },
+  degradedServiceFeatureFlags: {
+    id: 'degradedServiceFeatureFlags',
+    description: 'Label for feature flags service',
+    defaultMessage: 'Feature Flags',
+  },
 });

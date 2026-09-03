@@ -45,6 +45,7 @@ All events include enriched user properties automatically.
 User navigates Dashboard → Cost Management:
 
 **Event 1: Click "Cost Management" nav link**
+
 ```json
 {
   "event_type": "[Amplitude] Element Clicked",
@@ -61,13 +62,14 @@ User navigates Dashboard → Cost Management:
 ```
 
 **Event 2: Cost Management page view**
+
 ```json
 {
   "event_type": "[Amplitude] Page Viewed",
   "user_properties": {
     "$set": {
-      "current_bundle": "cost-management",  // Updated
-      "current_app": "cost-management",     // Updated
+      "current_bundle": "cost-management", // Updated
+      "current_app": "cost-management", // Updated
       "isOrgAdmin": true,
       "org_id": "20283813"
       // ... 40+ properties
@@ -77,6 +79,7 @@ User navigates Dashboard → Cost Management:
 ```
 
 **Event 3: Click "Create Budget" button**
+
 ```json
 {
   "event_type": "[Amplitude] Element Clicked",
@@ -98,11 +101,11 @@ User navigates Dashboard → Cost Management:
 
 Properties that update on navigation:
 
-| Property | Updates When |
-|----------|--------------|
+| Property         | Updates When                 |
+| ---------------- | ---------------------------- |
 | `current_bundle` | Navigate to different bundle |
-| `current_app` | Navigate to different app |
-| `isBeta` | Toggle Preview mode |
+| `current_app`    | Navigate to different app    |
+| `isBeta`         | Toggle Preview mode          |
 
 Properties that remain static:
 
@@ -111,6 +114,7 @@ Properties that remain static:
 ## Coverage Matrix
 
 **What IS captured:**
+
 - Module Federation apps
 - React and non-React apps
 - Dynamically loaded content
@@ -118,6 +122,7 @@ Properties that remain static:
 - Forms, buttons, links, downloads
 
 **What is NOT captured:**
+
 - Same-origin/cross-origin iframes (separate document context)
 - Events before SDK initialization
 - Custom events (use Segment `analytics.track()`)
@@ -128,6 +133,7 @@ Properties that remain static:
 **Required:** Nothing. Zero code changes.
 
 **Optional custom events:**
+
 ```typescript
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
@@ -139,25 +145,29 @@ analytics.track('Budget Created', { budget_amount: 1000 });
 ## Example Queries
 
 **Org admins creating budgets:**
-```
+
+```text
 Event: [Amplitude] Element Clicked
 WHERE [Amplitude] Element Text = "Create Budget" AND isOrgAdmin = true
 ```
 
 **Trial users interacting with features:**
-```
+
+```text
 Event: [Amplitude] Element Clicked
 WHERE entitlement_cost_management_trial = true
 ```
 
 **Beta feature adoption:**
-```
+
+```text
 Event: [Amplitude] Element Clicked
 WHERE isBeta = true AND [Amplitude] Element Text = "Create Playbook"
 ```
 
 **Top engaged organizations:**
-```
+
+```text
 Event: [Amplitude] Page Viewed
 GROUP BY org_id
 ORDER BY event_count DESC
@@ -168,6 +178,7 @@ ORDER BY event_count DESC
 **Amplitude Browser SDK:** Singleton pattern. Chrome initializes once; tenant apps share the same instance.
 
 **Autocapture plugin:**
+
 - Attaches event listeners to `document` (not scoped to specific elements)
 - Uses event delegation (captures events from any child element)
 - Listeners persist across route changes
@@ -176,6 +187,7 @@ ORDER BY event_count DESC
 **Module Federation:** Tenant apps render into the same DOM, events bubble to same document listeners, share same Amplitude SDK instance. Autocapture works seamlessly.
 
 **Performance:**
+
 - SDK loaded once by Chrome (~50KB gzipped)
 - Single event listener per event type (delegation)
 - Event batching reduces network requests

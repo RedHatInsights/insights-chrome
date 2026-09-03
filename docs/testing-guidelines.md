@@ -9,11 +9,11 @@
 
 ## Test Frameworks
 
-| Framework | Purpose | Location | File Pattern |
-|-----------|---------|----------|-------------|
-| Jest + SWC | Unit tests | Next to source files | `*.test.ts`, `*.test.tsx` |
-| Cypress | Component + E2E tests | `cypress/component/`, `cypress/e2e/` | `*.cy.tsx`, `*.cy.ts` |
-| Playwright | E2E release gate tests | `playwright/e2e/` | `*.spec.ts` |
+| Framework  | Purpose                | Location                             | File Pattern              |
+| ---------- | ---------------------- | ------------------------------------ | ------------------------- |
+| Jest + SWC | Unit tests             | Next to source files                 | `*.test.ts`, `*.test.tsx` |
+| Cypress    | Component + E2E tests  | `cypress/component/`, `cypress/e2e/` | `*.cy.tsx`, `*.cy.ts`     |
+| Playwright | E2E release gate tests | `playwright/e2e/`                    | `*.spec.ts`               |
 
 ## Jest Unit Tests
 
@@ -72,6 +72,7 @@ src/components/Navigation/
 ### Mocking Patterns
 
 **Chrome Auth Context:**
+
 ```typescript
 jest.mock('../auth/ChromeAuthContext', () => ({
   __esModule: true,
@@ -80,6 +81,7 @@ jest.mock('../auth/ChromeAuthContext', () => ({
 ```
 
 **Jotai Atoms:** Use `Provider` from `jotai` with initial values:
+
 ```typescript
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
@@ -169,6 +171,7 @@ npm run playwright:report       # View HTML report
 ### Requirements
 
 E2E tests need:
+
 - Running dev server (`npm run dev`)
 - Stage test account credentials via `E2E_USER` and `E2E_PASSWORD` env vars
 - Account creation: [Ethel](https://account-manager-stage.app.eng.rdu2.redhat.com/#create)
@@ -191,6 +194,7 @@ await element.click({ timeout: BUTTON_CLICK_TIMEOUT });
 ```
 
 **Why:** CI environments (especially Konflux/Tekton) can be significantly slower than local development. Named constants make it easy to:
+
 - Understand why a timeout exists
 - Adjust timeouts globally when CI performance changes
 - Distinguish between different types of waits
@@ -212,6 +216,7 @@ if ((await button.count()) > 0) {
 ```
 
 **Examples from the codebase:**
+
 - `playwright/e2e/release-gate/landing-page.spec.ts` - `TOOLTIP_TIMEOUT`
 - `playwright/e2e/release-gate/favorite-services.spec.ts` - `SERVICES_LOAD_TIMEOUT`, `BUTTON_STABILITY_TIMEOUT`, `BUTTON_CLICK_TIMEOUT`
 

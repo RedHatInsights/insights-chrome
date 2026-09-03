@@ -14,6 +14,10 @@ const fetchPermissions = async (_userToken: string, app = '') => {
     return [];
   }
 
+  if (app === 'inventory' && unleashClientExists() && getUnleashClient().isEnabled('hbi.rbac-v2')) {
+    return [];
+  }
+
   try {
     const resp = await rbacApi.getPrincipalAccess({
       limit: perPage,
@@ -56,6 +60,9 @@ export const createFetchPermissionsWatcher = (getUser: () => Promise<void | Chro
     }
     if (typeof currentCall?.[app] === 'undefined' || bypassCache) {
       currentCall[app] = await fetchPermissions(userToken, app);
+    }
+    if (app === 'inventory' && currentCall[app]?.length && unleashClientExists() && getUnleashClient().isEnabled('hbi.rbac-v2')) {
+      currentCall[app] = [];
     }
     return currentCall?.[app] || [];
   };

@@ -32,6 +32,7 @@ import useTabName from '../../hooks/useTabName';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
+import DegradedStateBanner from '../DegradedStateBanner';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
@@ -41,6 +42,7 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
+import { preloadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
 
@@ -61,6 +63,7 @@ const ScalprumRoot = memo(
     return (
       <ChromeProvider>
         <BetaSwitcher />
+        <DegradedStateBanner />
         <Routes>
           <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
           <Route
@@ -158,6 +161,13 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
         return unregister();
       }
     };
+  }, []);
+
+  useEffect(() => {
+    // Warm the breadcrumb store from the `chrome` federated remote so useBreadcrumbStoreRef
+    // and ChromeRoute's loadBreadcrumbStore resolve immediately. Best-effort, idempotent.
+    // Scalprum is already initialized by the child ScalprumProvider before this effect runs.
+    preloadBreadcrumbStore().catch(() => {});
   }, []);
 
   const setPageMetadata = useCallback((pageOptions: any) => {

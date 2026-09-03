@@ -30,14 +30,14 @@ jest.unmock('../components/NotificationsDrawer/DrawerPanelContent');
 
 // jest.mock does not intercept @scalprum/* in this project's SWC/Jest setup,
 // so we initialize scalprum with a stub config instead.
-import { initialize } from '@scalprum/core';
+import { getSharedScope, initialize } from '@scalprum/core';
 
 const mockUseFlag = jest.fn<(flagName: string) => boolean>();
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: (flagName: string) => mockUseFlag(flagName),
 }));
 
-import { render } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
@@ -79,7 +79,7 @@ const mockInternalChromeContextValue = {
   },
 };
 
-const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
+const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRoute = '/lightwell') => {
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
@@ -93,7 +93,7 @@ const renderLightwell = (flagOverrides: Record<string, boolean> = {}) => {
   return {
     store,
     ...render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[initialRoute]}>
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -118,6 +118,14 @@ describe('Lightwell', () => {
         },
       },
     });
+    getSharedScope()['@chrome/visibilityFunctions'] = {
+      '*': {
+        loaded: 1,
+        get: () => ({
+          apiRequest: () => Promise.resolve(true),
+        }),
+      },
+    };
   });
 
   beforeEach(() => {
@@ -200,5 +208,67 @@ describe('Lightwell', () => {
     // Verify the Breadcrumbs component renders (uses established breadcrumbs behavior)
     const breadcrumb = container.querySelector('.chr-c-breadcrumbs');
     expect(breadcrumb).toBeTruthy();
+  });
+
+  describe('horizontal navigation', () => {
+    it('should render horizontal subnav with three navigation items', async () => {
+      renderLightwell();
+      const nav = await screen.findByRole('navigation', { name: 'Lightwell navigation' });
+      expect(nav).toBeTruthy();
+      const links = within(nav).getAllByRole('link');
+      expect(links).toHaveLength(3);
+    });
+
+    it('should render Repositories, Lens, and Beacon links', async () => {
+      renderLightwell();
+      const repoLink = await screen.findByRole('link', { name: 'Repositories' });
+      const lensLink = screen.getByRole('link', { name: 'Lens' });
+      const beaconLink = screen.getByRole('link', { name: 'Beacon' });
+      expect(repoLink).toHaveAttribute('href', '/lightwell');
+      expect(lensLink).toHaveAttribute('href', '/lightwell/lens');
+      expect(beaconLink).toHaveAttribute('href', '/lightwell/beacon');
+    });
+
+    it('should mark Repositories as active on /lightwell', async () => {
+      renderLightwell({}, '/lightwell');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+      });
+    });
+
+    it('should mark Lens as active on /lightwell/lens', async () => {
+      renderLightwell({}, '/lightwell/lens');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Lens' })).toHaveAttribute('aria-current', 'page');
+      });
+    });
+
+    it('should mark Beacon as active on /lightwell/beacon', async () => {
+      renderLightwell({}, '/lightwell/beacon');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Beacon' })).toHaveAttribute('aria-current', 'page');
+      });
+    });
+
+    it('should mark Repositories as active on unknown Lightwell subroute', async () => {
+      renderLightwell({}, '/lightwell/unknown');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+      });
+    });
+
+    it('should not match /lightwell/lens-preview as Lens', async () => {
+      renderLightwell({}, '/lightwell/lens-preview');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+      });
+    });
+
+    it('should not match /lightwell/beacon-preview as Beacon', async () => {
+      renderLightwell({}, '/lightwell/beacon-preview');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
+      });
+    });
   });
 });

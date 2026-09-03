@@ -3,7 +3,7 @@
 );
 @use '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
-// TODO: Bring these quick starts overrides into the lib instead 
+// TODO: Bring these quick starts overrides into the lib instead
 .pfext-page-layout__title {
   margin-top: 0;
   padding-top: 23px;
@@ -32,8 +32,8 @@ aside {
 }
 
 .quickstarts-open ._pendo-badge {
-  display:none !important;
-} 
+  display: none !important;
+}
 
 #chrome-app-render-root {
   height: 100vh;
@@ -46,14 +46,25 @@ aside {
     border-top-color: var(--pf-t--global--border--color--on-secondary);
   }
   &__hasBanner {
-    grid-template-areas: "banner banner"
-                         "header header"
-                         "nav main";
+    grid-template-areas:
+      'banner banner'
+      'header header'
+      'nav main';
   }
 }
 
 #no-access.pf-v6-c-page__main {
-    display: none;
+  display: none;
+}
+
+// Shared subnav grid placement — any layout that adds a "subnav" row to its
+// grid-template-areas at xl+ gets outside-card horizontal navigation.
+// Scoped to xl because below xl the Page grid has no "subnav" area and an
+// unscoped grid-area declaration would cause an implicit row.
+@media (min-width: $pf-v6-global--breakpoint--xl) {
+  .chr-c-page-subnav {
+    grid-area: subnav;
+  }
 }
 
 // Page temp styles
@@ -63,7 +74,8 @@ aside {
 
 // Page root background color
 .pf-v6-c-page__main {
-  &#root, &#no-access {
+  &#root,
+  &#no-access {
     background: var(--pf-v6-c-page__main-section--BackgroundColor);
   }
 }
@@ -94,7 +106,7 @@ aside {
   display: flex;
   flex-direction: column;
   > main {
-      flex-grow: 1;
+    flex-grow: 1;
   }
 }
 
@@ -102,45 +114,48 @@ aside {
 * The footer is tall and during the module loading process, it create "rubber banding" effect as the loading
 * elements change during different stages. 
 */
-@media screen and (min-width : $pf-v6-global--breakpoint--2xl) {
+@media screen and (min-width: $pf-v6-global--breakpoint--2xl) {
   .chr-scope__default-layout {
     // we do not have PF variables for the header height unfortunately
     min-height: calc(100vh - 172px /** the size of the masthead on double extra large screens */);
   }
 }
 
-
-@media screen and (min-width : $pf-v6-global--breakpoint--md) and (max-width : $pf-v6-global--breakpoint--2xl)  {
+@media screen and (min-width: $pf-v6-global--breakpoint--md) and (max-width: $pf-v6-global--breakpoint--2xl) {
   .chr-scope__default-layout {
     min-height: calc(100vh - 226px /** the size of the masthead on extra large screens */);
-  };
+  }
 }
 
 @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
-  .ins-m-hide-on-md {display: none;}
+  .ins-m-hide-on-md {
+    display: none;
+  }
 
   .chr-scope__default-layout {
     min-height: calc(100vh - 226px /** the size of the masthead on medium screens */);
-  };
+  }
 }
 
 @media only screen and (max-width: $pf-v6-global--breakpoint--sm) {
-  .ins-m-hide-on-sm {display: none;}
+  .ins-m-hide-on-sm {
+    display: none;
+  }
 
   .chr-scope__default-layout {
     min-height: calc(100vh - 226px /** the size of the masthead on small screens */);
-  };
+  }
 
   .ins-c-table-empty-state.pf-m-grid-md.pf-v6-c-table,
   .ins-c-table-empty-state.pf-m-grid-lg.pf-v6-c-table {
-      [data-label] {
-          --pf-v6-c-table--cell--hidden-visible--Display: 0;
+    [data-label] {
+      --pf-v6-c-table--cell--hidden-visible--Display: 0;
+    }
+    tr:first-of-type {
+      > td::before {
+        display: none;
       }
-      tr:first-of-type {
-          > td::before { 
-              display: none; 
-          }
-      }
+    }
   }
 }
 
@@ -166,13 +181,12 @@ aside {
   }
 }
 
-
 // centers modals when a quick start drawer is open
 .pfext-quick-start-drawer__body {
-    .pf-v6-c-backdrop {
-      --pf-v6-c-backdrop--Position: absolute;
-    }
+  .pf-v6-c-backdrop {
+    --pf-v6-c-backdrop--Position: absolute;
   }
+}
 
 // https://github.com/patternfly/patternfly-quickstarts/issues/392
 .pfext-quick-start-task .pf-v6-c-wizard {
@@ -183,18 +197,20 @@ aside {
 .pfext-quick-start-footer__restartbtn {
   float: none;
 }
-  
+
 // fix quickstarts drawer overflow for long quickstart/helptopic content
 #chrome-entry {
   height: 100vh;
 }
 .chr-c-favorite-trigger {
   cursor: pointer;
-  .pf-v6-c-icon { // AllServicesLink
+  .pf-v6-c-icon {
+    // AllServicesLink
     color: var(--pf-t--global--background--color--disabled--default);
   }
-  .pf-v6-c-button { // AllServicesGalleryLink
-     background: none;
+  .pf-v6-c-button {
+    // AllServicesGalleryLink
+    background: none;
     .pf-v6-c-icon {
       --pf-v6-c-icon__content--Color: var(--pf-t--global--background--color--disabled--default);
     }
@@ -205,12 +221,14 @@ aside {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
   }
 }
-.chr-c-link-favorite-card { //trigger not needed here
+.chr-c-link-favorite-card {
+  //trigger not needed here
   .pf-v6-c-icon {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
     &:hover {
       --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
-      .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
+      .chr-c-icon-external-link,
+      .chr-c-icon-external-link:hover {
         --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
@@ -226,7 +244,7 @@ aside {
   text-decoration: none;
 }
 
-@media(min-width: $pf-v6-global--breakpoint--2xl) {
+@media (min-width: $pf-v6-global--breakpoint--2xl) {
   .pf-v6-c-page > .pf-v6-c-masthead {
     --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: none;
     grid-template-columns: min-content;

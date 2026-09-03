@@ -5,6 +5,7 @@
 ## Subscribing to an event
 
 To consume events, the following information is necessary
+
 - the event type
 - the event payload shape
 

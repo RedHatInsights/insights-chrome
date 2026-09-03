@@ -8,10 +8,7 @@
  * authentication. These functions are for special cases that need manual login.
  */
 import type { Page } from '@playwright/test';
-import {
-  login as sharedLogin,
-  disableCookiePrompt
-} from '@redhat-cloud-services/playwright-test-auth';
+import { disableCookiePrompt, login as sharedLogin } from '@redhat-cloud-services/playwright-test-auth';
 
 /**
  * Performs Red Hat SSO login with analytics disabled.
@@ -45,7 +42,7 @@ export async function login(page: Page) {
   // Verify we're logged in by checking for user menu toggle
   await page.getByRole('button', { name: /User Avatar/ }).waitFor({
     state: 'visible',
-    timeout: 60000
+    timeout: 60000,
   });
 }
 
