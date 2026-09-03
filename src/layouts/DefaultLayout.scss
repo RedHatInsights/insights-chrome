@@ -95,7 +95,7 @@ html:has(.pf-v6-c-drawer.pf-m-expanded .virtualAssistant) {
       flex-direction: column;
     }
 
-    [data-ouia-component-id="help-panel-content-container"] {
+    [data-ouia-component-id='help-panel-content-container'] {
       flex: 1 1 0;
       min-height: 0;
       overflow-y: auto;
