@@ -20,9 +20,13 @@ jest.mock('@unleash/proxy-client-react', () => ({
 describe('EmptySearchState', () => {
   const useFlag = unleashReact.useFlag as jest.MockedFunction<typeof unleashReact.useFlag>;
 
+  const setFlagMock = (flags: Record<string, boolean>) => {
+    useFlag.mockImplementation((flag: string) => flags[flag] ?? false);
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    useFlag.mockReturnValue(false);
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
   });
 
   it('should render the empty state with "No results found" title', () => {
@@ -33,7 +37,7 @@ describe('EmptySearchState', () => {
   });
 
   it('should hide the VA link when platform.va.environment.enabled flag is disabled', () => {
-    useFlag.mockReturnValue(false);
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
 
     render(<EmptySearchState />);
 
@@ -41,8 +45,8 @@ describe('EmptySearchState', () => {
     expect(screen.getByText(/Try searching Hybrid Cloud help for more information/)).toBeInTheDocument();
   });
 
-  it('should show the VA link when platform.va.environment.enabled flag is enabled', () => {
-    useFlag.mockReturnValue(true);
+  it('should show the VA link when VA flag is enabled and chatbot tab is disabled', () => {
+    setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': false });
 
     render(<EmptySearchState />);
 
@@ -50,11 +54,21 @@ describe('EmptySearchState', () => {
     expect(screen.getByText(/start a conversation with our/)).toBeInTheDocument();
   });
 
-  it('should check the correct feature flag name', () => {
-    useFlag.mockReturnValue(false);
+  it('should hide the VA link when chatbot tab is enabled', () => {
+    setFlagMock({ 'platform.va.environment.enabled': true, 'platform.chrome.help-panel_chatbot': true });
+
+    render(<EmptySearchState />);
+
+    expect(screen.queryByText(/Virtual Assistant/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Try searching Hybrid Cloud help for more information/)).toBeInTheDocument();
+  });
+
+  it('should check the correct feature flag names', () => {
+    setFlagMock({ 'platform.va.environment.enabled': false, 'platform.chrome.help-panel_chatbot': false });
 
     render(<EmptySearchState />);
 
     expect(useFlag).toHaveBeenCalledWith('platform.va.environment.enabled');
+    expect(useFlag).toHaveBeenCalledWith('platform.chrome.help-panel_chatbot');
   });
 });
