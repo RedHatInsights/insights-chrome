@@ -267,7 +267,7 @@ describe('OIDCProvider', () => {
     const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
     // Must include base scopes so implicit signinSilent calls (automaticSilentRenew,
     // forceRefresh, BroadcastChannel refresh) don't downgrade to "openid" only
-    expect(userManagerConfig.scope).toBe('openid api.console api.ask_red_hat');
+    expect(userManagerConfig.scope).toBe('openid api.console api.ask_red_hat api.graphql');
     // Silent auth iframe timeout must be short to avoid delaying cold loads
     // when no SSO session exists (default is 10s, we cap at 2s)
     expect(userManagerConfig.silentRequestTimeoutInSeconds).toBe(2);
