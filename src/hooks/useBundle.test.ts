@@ -108,10 +108,12 @@ describe('useBundle', () => {
       expect(result.current.bundleTitle).toBe('Home');
     });
 
-    it('resolves support bundle via getUrl', () => {
-      const bundleId = getUrl('bundle', '/support/cases');
-      expect(bundleId).toBe('support');
-      expect(bundleMapping[bundleId]).toBe('Support');
+    it('resolves support bundle from pathname', () => {
+      jsdomReconfigure({ url: 'https://localhost/support/cases' });
+      const { result } = renderHook(() => useBundle());
+      expect(result.current.bundleId).toBe('support');
+      expect(result.current.bundleTitle).toBe('Support');
+      jsdomReset();
     });
 
     it('resolves openshift bundle via getUrl', () => {
@@ -121,9 +123,11 @@ describe('useBundle', () => {
     });
 
     it('falls back to bundleId when mapping not found', () => {
-      const bundleId = getUrl('bundle', '/unknown-bundle/page');
-      expect(bundleId).toBe('unknown-bundle');
-      expect(bundleMapping[bundleId]).toBeUndefined();
+      jsdomReconfigure({ url: 'https://localhost/unknown-bundle/page' });
+      const { result } = renderHook(() => useBundle());
+      expect(result.current.bundleId).toBe('unknown-bundle');
+      expect(result.current.bundleTitle).toBe('unknown-bundle');
+      jsdomReset();
     });
   });
 
