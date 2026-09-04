@@ -25,8 +25,89 @@
   }
 }
 
+html:has(.pf-v6-c-drawer.pf-m-expanded .learningResources),
+html:has(.pf-v6-c-drawer.pf-m-expanded .virtualAssistant) {
+  overflow: hidden;
+
+  body {
+    overflow: hidden;
+  }
+
+  .pf-v6-c-page {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
 .pf-v6-c-page__drawer {
   .pf-v6-c-drawer__content {
     background-color: transparent;
+  }
+
+  &:has(.pf-m-expanded .learningResources),
+  &:has(.pf-m-expanded .virtualAssistant) {
+    overflow: hidden;
+  }
+
+  .pf-v6-c-drawer__panel:has(> .learningResources),
+  .pf-v6-c-drawer__panel:has(> .virtualAssistant) {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    padding-block: 0;
+  }
+
+  .learningResources,
+  .virtualAssistant {
+    flex: 1 1 0;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    .va-embed {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+
+      #ai-chatbot {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pf-chatbot--embedded {
+        height: 100%;
+      }
+    }
+
+    > .pf-v6-c-drawer__body {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lr-c-help-panel-tab-content {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex !important;
+      flex-direction: column;
+    }
+
+    [data-ouia-component-id='help-panel-content-container'] {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+
+      > .pf-v6-u-h-100 {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+    }
   }
 }
