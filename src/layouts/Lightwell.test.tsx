@@ -44,7 +44,7 @@ import Lightwell from './Lightwell';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellShellAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import InternalChromeContext from '../utils/internalChromeContext';
 
@@ -189,11 +189,11 @@ describe('Lightwell', () => {
     expect(store.get(layoutForceGlassThemeAtom)).toBe(false);
   });
 
-  it('should set layoutLightwellHeaderAtom to true on mount and false on unmount', () => {
+  it('should set layoutLightwellShellAtom to true on mount and false on unmount', () => {
     const { store, unmount } = renderLightwell();
-    expect(store.get(layoutLightwellHeaderAtom)).toBe(true);
+    expect(store.get(layoutLightwellShellAtom)).toBe(true);
     unmount();
-    expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
+    expect(store.get(layoutLightwellShellAtom)).toBe(false);
   });
 
   it('should set activeModuleAtom to contentSources on mount and clear on unmount', () => {
@@ -203,11 +203,11 @@ describe('Lightwell', () => {
     expect(store.get(activeModuleAtom)).toBeUndefined();
   });
 
-  it('should render the established Breadcrumbs component with favorites support', () => {
+  it('should render breadcrumbs without the favorites toggle', () => {
     const { container } = renderLightwell();
-    // Verify the Breadcrumbs component renders (uses established breadcrumbs behavior)
     const breadcrumb = container.querySelector('.chr-c-breadcrumbs');
     expect(breadcrumb).toBeTruthy();
+    expect(within(breadcrumb as HTMLElement).queryByRole('button', { name: 'Toggle' })).not.toBeInTheDocument();
   });
 
   describe('horizontal navigation', () => {

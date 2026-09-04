@@ -7,6 +7,8 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useLocation } from 'react-router-dom';
 import type { NavigateOptions } from 'react-router-dom';
 import { Required } from 'utility-types';
+import { useGetState } from '@scalprum/react-core';
+import { useAtomValue } from 'jotai';
 import { OpenShiftIntercomModule } from '../OpenShiftIntercom';
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -17,7 +19,7 @@ import { NavItem } from '../../@types/types';
 import { useBreadcrumbStoreRef } from '../../chrome/breadcrumbStoreBridge';
 import { type BreadcrumbStore } from '../../state/stores/breadcrumbStore';
 import { type AppBreadcrumbSegment, buildBreadcrumbSegments, normalizePathname } from '../../utils/breadcrumbUtils';
-import { useGetState } from '@scalprum/react-core';
+import { layoutLightwellShellAtom } from '../../state/atoms/releaseAtom';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -129,6 +131,7 @@ function mergeBreadcrumbSegments(
  */
 const BreadcrumbsView = ({ segments }: { segments: BreadcrumbSegment[] }) => {
   const { favoritePages, favoritePage, unfavoritePage } = useFavoritePagesWrapper();
+  const isLightwellShell = useAtomValue(layoutLightwellShellAtom);
   const [isOpenshift, setisOpenshift] = useState(false);
 
   const leafHref = segments[segments.length - 1]?.href;
@@ -174,7 +177,7 @@ const BreadcrumbsView = ({ segments }: { segments: BreadcrumbSegment[] }) => {
             <OpenShiftIntercomModule />
           </FlexItem>
         )}
-        {leafHref && (
+        {!isLightwellShell && leafHref && (
           <FlexItem alignSelf={{ default: 'alignSelfFlexEnd' }}>
             <BreadcrumbsFavorites favoritePage={() => favoritePage(leafHref)} unfavoritePage={() => unfavoritePage(leafHref)} isFavorited={!!isFavorited} />
           </FlexItem>
