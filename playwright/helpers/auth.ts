@@ -47,23 +47,26 @@ export async function login(page: Page) {
 }
 
 /**
- * Extracts the logged-in user's full name from OIDC localStorage data.
+ * Extracts the logged-in user's full name from the Chrome runtime API.
+ *
+ * Uses window.insights.chrome.getUser() which works regardless of whether
+ * OIDC tokens are stored in localStorage or in-memory (InMemoryWebStorage).
  *
  * @param page - Playwright Page object
  * @returns Promise resolving to the user's full name (first + last)
- * @throws Error if OIDC data not found or incomplete
+ * @throws Error if Chrome API unavailable or user profile incomplete
  */
 export async function getUserFullName(page: Page): Promise<string> {
-  return page.evaluate(() => {
-    const oidcKey = Object.keys(localStorage).find((key) => key.startsWith('oidc.user:'));
-    if (!oidcKey) throw new Error('OIDC user key was not found in localStorage');
-    const rawUser = localStorage.getItem(oidcKey);
-    if (!rawUser) throw new Error(`OIDC user payload missing for key: ${oidcKey}`);
-    const parsedUser = JSON.parse(rawUser);
-    const firstName = parsedUser.profile?.first_name;
-    const lastName = parsedUser.profile?.last_name;
+  return page.evaluate(async () => {
+    const chrome = (window as any).insights?.chrome;
+    if (!chrome?.getUser) {
+      throw new Error('Chrome API (window.insights.chrome.getUser) is not available — page may not be fully loaded');
+    }
+    const user = await chrome.getUser();
+    const firstName = user?.identity?.user?.first_name;
+    const lastName = user?.identity?.user?.last_name;
     if (!firstName || !lastName) {
-      throw new Error('OIDC profile is missing first_name and/or last_name');
+      throw new Error('Chrome user profile is missing first_name and/or last_name');
     }
     return `${firstName} ${lastName}`;
   });
