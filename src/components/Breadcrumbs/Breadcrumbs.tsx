@@ -36,14 +36,16 @@ type BreadcrumbSegment = {
 /**
  * Merge Chrome-native breadcrumb segments with app-provided segments.
  *
- * Chrome segments are ALWAYS present. App segments are purely additive: when the
- * app provides nothing (`finalAppSegments` empty) the result is exactly the Chrome
- * segments — identical to the pre-app-breadcrumbs behavior.
+ * Chrome segments are normally always present and app segments are additive. An
+ * app can opt into dropping the final Chrome segment. When the app provides
+ * nothing (`finalAppSegments` empty), the result is exactly the Chrome
+ * segments, identical to the pre-app-breadcrumbs behavior.
  */
 function mergeBreadcrumbSegments(
   chromeSegments: ChromeBreadcrumbSegment[],
   finalAppSegments: AppBreadcrumbSegment[],
-  appMountPathname: string | undefined
+  appMountPathname: string | undefined,
+  dropLastChromeSegment: boolean
 ): BreadcrumbSegment[] {
   if (finalAppSegments.length === 0) {
     return chromeSegments.map((seg) => ({
@@ -53,17 +55,21 @@ function mergeBreadcrumbSegments(
     }));
   }
 
-  // Omit last chrome segment if:
-  // 1. App breadcrumbs exist
-  // 2. Last chrome segment is NOT the app mount pathname (design requirement)
-  // 3. App's first breadcrumb matches or extends the last chrome segment (prevents gaps)
-  // appMountPathname is set by ChromeRoute from the route path (e.g., '/settings', '/insights/advisor')
   const lastChromeSegment = chromeSegments[chromeSegments.length - 1];
   const firstAppSegment = finalAppSegments[0];
 
-  // Check if app's first breadcrumb matches or extends (immediate child only) the last Chrome segment
-  let shouldDropLastChromeSegment = false;
-  if (chromeSegments.length > 1 && appMountPathname && lastChromeSegment?.href !== appMountPathname && firstAppSegment && lastChromeSegment?.href) {
+  // An opted-in app owns the app trail and can omit Chrome's final segment.
+  let shouldDropLastChromeSegment = dropLastChromeSegment && chromeSegments.length > 1;
+  if (
+    !shouldDropLastChromeSegment &&
+    chromeSegments.length > 1 &&
+    appMountPathname &&
+    lastChromeSegment?.href !== appMountPathname &&
+    firstAppSegment &&
+    lastChromeSegment?.href
+  ) {
+    // Default behavior: drop the last Chrome segment when the app starts at
+    // that segment or its immediate child, while preserving the app mount page.
     const normalizedAppFirst = normalizePathname(firstAppSegment.pathname);
     const normalizedChromeLast = normalizePathname(lastChromeSegment.href);
 
@@ -190,7 +196,7 @@ const BreadcrumbsView = ({ segments }: { segments: BreadcrumbSegment[] }) => {
  * app provided no breadcrumbs, the merge returns the Chrome segments unchanged.
  */
 const BreadcrumbsWithApp = ({ store, chromeSegments, pathname }: { store: BreadcrumbStore; chromeSegments: ChromeBreadcrumbSegment[]; pathname: string }) => {
-  const { storage, replaceMode, override, appMountPathname } = useGetState(store);
+  const { storage, replaceMode, override, appMountPathname, dropLastChromeSegment } = useGetState(store);
 
   // Sync pathname before paint to prevent breadcrumb flicker on navigation
   useLayoutEffect(() => {
@@ -203,8 +209,8 @@ const BreadcrumbsWithApp = ({ store, chromeSegments, pathname }: { store: Breadc
   );
 
   const segments = useMemo<BreadcrumbSegment[]>(
-    () => mergeBreadcrumbSegments(chromeSegments, appSegments, appMountPathname),
-    [chromeSegments, appSegments, appMountPathname]
+    () => mergeBreadcrumbSegments(chromeSegments, appSegments, appMountPathname, dropLastChromeSegment),
+    [chromeSegments, appSegments, appMountPathname, dropLastChromeSegment]
   );
 
   return <BreadcrumbsView segments={segments} />;

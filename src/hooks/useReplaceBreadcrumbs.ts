@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
-import { getBreadcrumbStore, setOverride, setReplaceMode } from '../state/stores/breadcrumbStore';
+import { getBreadcrumbStore, setDropLastChromeSegment, setOverride, setReplaceMode } from '../state/stores/breadcrumbStore';
 import { type AppBreadcrumbSegment, normalizePathname } from '../utils/breadcrumbUtils';
+
+export type ReplaceBreadcrumbsOptions = {
+  /** Drop the final Chrome segment when this app supplies breadcrumbs. */
+  dropLastChromeSegment?: boolean;
+};
 
 /**
  * Hook for replacing the entire app breadcrumb array
@@ -9,6 +14,7 @@ import { type AppBreadcrumbSegment, normalizePathname } from '../utils/breadcrum
  * Disables the incremental storage system
  *
  * @param breadcrumbs - Array of breadcrumb segments with pathname, title, and optional NavigateOptions
+ * @param options - Optional behavior for merging app and Chrome breadcrumbs
  *
  * Exposed as a federated module via Scalprum:
  * @example
@@ -24,15 +30,16 @@ import { type AppBreadcrumbSegment, normalizePathname } from '../utils/breadcrum
  *   useRemoteHook({
  *     scope: 'chrome',
  *     module: './breadcrumbs/useReplaceBreadcrumbs',
- *     args: [breadcrumbs],
+ *     args: [breadcrumbs, { dropLastChromeSegment: true }],
  *   });
  *
  *   return <div>...</div>;
  * }
  * ```
  */
-function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
+function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[], options?: ReplaceBreadcrumbsOptions): void {
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
+  const dropLastChromeSegment = options?.dropLastChromeSegment ?? false;
   const breadcrumbsRef = useRef(breadcrumbs);
 
   // Stabilize breadcrumbs via JSON.stringify, with fallback for circular refs
@@ -83,12 +90,14 @@ function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
 
     setReplaceMode(true);
     setOverride(breadcrumbsRef.current);
+    setDropLastChromeSegment(dropLastChromeSegment);
 
     return () => {
       setReplaceMode(false);
       setOverride([]);
+      setDropLastChromeSegment(false);
     };
-  }, [breadcrumbsKey, isEnabled]);
+  }, [breadcrumbsKey, isEnabled, dropLastChromeSegment]);
 }
 
 export default useReplaceBreadcrumbs;

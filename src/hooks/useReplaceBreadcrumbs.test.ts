@@ -61,6 +61,18 @@ describe('useReplaceBreadcrumbs', () => {
     expect(getState().override).toEqual(breadcrumbs);
   });
 
+  it('should set and clear the drop-final Chrome segment option', () => {
+    const breadcrumbs = [{ pathname: '/lightwell', title: 'Lightwell Repositories' }];
+
+    const { unmount } = renderHook(() => useReplaceBreadcrumbs(breadcrumbs, { dropLastChromeSegment: true }));
+
+    expect(getState().dropLastChromeSegment).toBe(true);
+
+    unmount();
+
+    expect(getState().dropLastChromeSegment).toBe(false);
+  });
+
   it('should disable replace mode on unmount', () => {
     const breadcrumbs = [{ pathname: '/insights/advisor/systems', title: 'Systems' }];
 
