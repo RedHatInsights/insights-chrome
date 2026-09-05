@@ -143,6 +143,17 @@ describe('Lightwell', () => {
     expect(container.querySelector('[data-testid="mock-footer"]')).toBeTruthy();
   });
 
+  it('should render the footer after the page, outside the page card', () => {
+    const { container } = renderLightwell();
+    const root = container.querySelector('#chrome-app-render-root');
+    const page = container.querySelector('.pf-v6-c-page');
+    const footer = container.querySelector('[data-testid="mock-footer"]');
+
+    expect(root?.contains(footer)).toBe(true);
+    expect(page?.contains(footer)).toBe(false);
+    expect(page?.nextElementSibling).toBe(footer);
+  });
+
   it('should not render sidebar navigation', () => {
     const { container } = renderLightwell();
     expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
