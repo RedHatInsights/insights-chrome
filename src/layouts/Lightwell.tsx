@@ -73,7 +73,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   }, [isNotificationsDrawerExpanded]);
 
   return (
-    <div id="chrome-app-render-root">
+    <div id="chrome-app-render-root" className="chr-m-footer-after-page">
       <Page
         className="chr-c-page--lightwell"
         sidebar={null}
@@ -113,8 +113,8 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           ErrorComponent={<ErrorComponent />}
           fallback={LoadingFallback}
         />
-        {Footer}
       </Page>
+      {Footer}
     </div>
   );
 };

@@ -1,6 +1,12 @@
-@use '~@patternfly/patternfly/sass-utilities/scss-variables' as *;
+#chrome-app-render-root.chr-m-footer-after-page {
+  display: flex;
+  flex-direction: column;
+}
 
 .pf-v6-c-page.chr-c-page--lightwell {
+  flex: 1;
+  min-height: 0;
+  height: auto;
   grid-template-areas: 'header' 'subnav' 'main';
   grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr;

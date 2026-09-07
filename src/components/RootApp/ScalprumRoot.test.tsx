@@ -357,6 +357,7 @@ describe('ScalprumRoot', () => {
       expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
       expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
       expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
+      expect(container.querySelector('footer')).toBeTruthy();
     });
 
     useLocationSpy.mockRestore();
