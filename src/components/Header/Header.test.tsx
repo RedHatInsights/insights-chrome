@@ -38,7 +38,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import { Header } from './Header';
-import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+import { layoutLightwellShellAtom } from '../../state/atoms/releaseAtom';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { describe, expect, it, jest } from '@jest/globals';
@@ -74,10 +74,10 @@ const mockInternalChromeContext = {
   },
 };
 
-const renderHeader = (lightwellHeader = false) => {
+const renderHeader = (lightwellShell = false) => {
   const store = createStore();
-  if (lightwellHeader) {
-    store.set(layoutLightwellHeaderAtom, true);
+  if (lightwellShell) {
+    store.set(layoutLightwellShellAtom, true);
   }
 
   return {

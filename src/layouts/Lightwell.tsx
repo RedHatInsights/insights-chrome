@@ -11,7 +11,7 @@ import LoadingFallback from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { layoutBannerHiddenAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
+import { layoutBannerHiddenAtom, layoutLightwellShellAtom } from '../state/atoms/releaseAtom';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
@@ -29,17 +29,17 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
-  const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
+  const setLayoutLightwellShell = useSetAtom(layoutLightwellShellAtom);
   const setActiveModule = useSetAtom(activeModuleAtom);
 
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
-    setLayoutLightwellHeader(true);
+    setLayoutLightwellShell(true);
     return () => {
       setLayoutBannerHidden(false);
-      setLayoutLightwellHeader(false);
+      setLayoutLightwellShell(false);
     };
-  }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
+  }, [setLayoutBannerHidden, setLayoutLightwellShell]);
 
   useEffect(() => {
     setActiveModule('contentSources');

@@ -19,7 +19,7 @@ import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+import { layoutLightwellShellAtom } from '../../state/atoms/releaseAtom';
 
 export type SettingsGroupConfig = {
   showPreview?: boolean;
@@ -76,7 +76,7 @@ const MemoizedHeader = memo(
       setSearchOpen(isOpen);
     };
     const isITLess = useFlag('platform.chrome.itless');
-    const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
+    const isLightwellShell = useAtomValue(layoutLightwellShellAtom);
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
@@ -87,17 +87,17 @@ const MemoizedHeader = memo(
         <MastheadMain>
           {!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}
           <MastheadBrand data-codemods>
-            {isLightwellHeader && !(!md && searchOpen) && <AllServicesDropdown />}
+            {isLightwellShell && !(!md && searchOpen) && <AllServicesDropdown />}
             <MastheadLogo
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
               component={(props: LinkWrapperProps) => (
-                <ChromeLink {...props} {...(isLightwellHeader ? { href: '/lightwell' } : { appId: 'landing', href: '/' })} />
+                <ChromeLink {...props} {...(isLightwellShell ? { href: '/lightwell' } : { appId: 'landing', href: '/' })} />
               )}
             >
               <Logo />
             </MastheadLogo>
-            {isLightwellHeader ? (
+            {isLightwellShell ? (
               <ChromeLink href="/lightwell" className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-mt-xs chr-m-plain">
                 Lightwell
               </ChromeLink>
@@ -127,7 +127,7 @@ const MemoizedHeader = memo(
                 )}
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
-                {!isLightwellHeader && (
+                {!isLightwellShell && (
                   <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-4xl-on-2xl" variant="filter-group" data-testid="search-toolbar-group">
                     <Suspense fallback={null}>
                       <SearchInput onStateChange={hideAllServices} />

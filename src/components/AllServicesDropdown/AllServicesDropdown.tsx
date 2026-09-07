@@ -13,7 +13,7 @@ import AllServicesPortal from './AllServicesMenu';
 import { useLocation } from 'react-router-dom';
 import useAllServices from '../../hooks/useAllServices';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
-import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+import { layoutLightwellShellAtom } from '../../state/atoms/releaseAtom';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -24,7 +24,7 @@ const AllServicesDropdown = () => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
+  const isLightwellShell = useAtomValue(layoutLightwellShellAtom);
   const { linkSections, ready } = useAllServices();
   const favoritedServices = useFavoritedServices();
 
@@ -71,7 +71,7 @@ const AllServicesDropdown = () => {
     });
   };
 
-  const toggle = isLightwellHeader ? (
+  const toggle = isLightwellShell ? (
     <MenuToggle
       ouiaId="AllServices-DropdownToggle"
       aria-label="All services"

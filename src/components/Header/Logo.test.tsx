@@ -2,14 +2,14 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
 import Logo from './Logo';
-import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
+import { layoutLightwellShellAtom } from '../../state/atoms/releaseAtom';
 import { _resetDarkModeStore, getDarkModeStore } from '../../state/stores/darkModeStore';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
-const renderLogo = (options: { lightwellHeader?: boolean } = {}) => {
-  const { lightwellHeader = false } = options;
+const renderLogo = (options: { lightwellShell?: boolean } = {}) => {
+  const { lightwellShell = false } = options;
   const store = createStore();
-  store.set(layoutLightwellHeaderAtom, lightwellHeader);
+  store.set(layoutLightwellShellAtom, lightwellShell);
 
   return render(
     <Provider store={store}>
@@ -43,21 +43,21 @@ describe('Logo', () => {
     expect(darkImg.getAttribute('src')).not.toContain('lightwell-logomark');
   });
 
-  it('should render light Lightwell logo by default when layoutLightwellHeaderAtom is true', () => {
-    renderLogo({ lightwellHeader: true });
+  it('should render light Lightwell logo by default when layoutLightwellShellAtom is true', () => {
+    renderLogo({ lightwellShell: true });
     const img = screen.getByAltText('Lightwell Logo');
     expect(img.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
   });
 
   it('should render dark Lightwell logo when dark mode is active', () => {
     getDarkModeStore().updateState('SET_DARK');
-    renderLogo({ lightwellHeader: true });
+    renderLogo({ lightwellShell: true });
     const img = screen.getByAltText('Lightwell Logo');
     expect(img.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-dark.svg');
   });
 
   it('should switch Lightwell logo when the dark mode store updates', () => {
-    renderLogo({ lightwellHeader: true });
+    renderLogo({ lightwellShell: true });
     const img = screen.getByAltText('Lightwell Logo');
     expect(img.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
 

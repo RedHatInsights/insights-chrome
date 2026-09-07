@@ -1,9 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider, createStore } from 'jotai';
 import Breadcrumbs from './Breadcrumbs';
 import { _resetBreadcrumbStore, getBreadcrumbStore } from '../../state/stores/breadcrumbStore';
 import { useFlag } from '@unleash/proxy-client-react';
+import { layoutLightwellShellAtom } from '../../state/atoms/releaseAtom';
 
 // Controllable store ref — the outer Breadcrumbs consumes the store through the
 // bridge (self-consumed MF remote). We mock the bridge and return the REAL store
@@ -178,7 +180,7 @@ describe('Breadcrumbs', () => {
     expect(links.length).toBeGreaterThan(0);
   });
 
-  it('should render favorite button for leaf breadcrumb', () => {
+  it('should render favorite toggle for leaf breadcrumb', () => {
     mockUseBreadcrumbsLinks.mockReturnValue([
       { title: 'Insights', href: '/insights' },
       { title: 'Advisor', href: '/insights/advisor' },
@@ -186,8 +188,25 @@ describe('Breadcrumbs', () => {
 
     renderBreadcrumbs();
 
-    const breadcrumb = screen.getByRole('navigation');
-    expect(breadcrumb).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Toggle' })).toBeInTheDocument();
+  });
+
+  it('should hide favorite toggle when layoutLightwellShellAtom is true', () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'Lightwell', href: '/lightwell' }]);
+
+    const store = createStore();
+    store.set(layoutLightwellShellAtom, true);
+
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/lightwell']}>
+          <Breadcrumbs />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    expect(screen.queryByRole('button', { name: 'Toggle' })).not.toBeInTheDocument();
+    expect(screen.getByText('Lightwell')).toBeInTheDocument();
   });
 
   it('should render breadcrumbs with state options', () => {
