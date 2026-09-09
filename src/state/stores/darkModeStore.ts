@@ -9,13 +9,17 @@ const EVENTS = ['SET_DARK', 'SET_LIGHT'] as const;
 
 type DarkModeStore = ReturnType<typeof createSharedStore<DarkModeState, typeof EVENTS>>;
 
-// Anchor the singleton to window so Chrome's internal code and Module Federation
-// consumers share the same instance even if webpack creates separate module closures.
 const STORE_KEY = '__chrome_dark_mode_store__';
+type DarkModeStoreGlobal = typeof globalThis & { [STORE_KEY]?: DarkModeStore };
+const globalScope = globalThis as DarkModeStoreGlobal;
 
 export const getDarkModeStore = (): DarkModeStore => {
-  if (!window[STORE_KEY]) {
-    window[STORE_KEY] = createSharedStore({
+  // Anchor the singleton on globalThis so Chrome's internal code and Module
+  // Federation consumers share the same instance across duplicate factories.
+  // TODO: Replace this workaround with Chrome consuming the federated hook once
+  // it owns state transitions and initialization.
+  if (!globalScope[STORE_KEY]) {
+    globalScope[STORE_KEY] = createSharedStore({
       initialState: { isDark: false } as DarkModeState,
       events: EVENTS,
       onEventChange: (state, event): DarkModeState => {
@@ -30,12 +34,12 @@ export const getDarkModeStore = (): DarkModeStore => {
       },
     });
   }
-  return window[STORE_KEY]!;
+  return globalScope[STORE_KEY]!;
 };
 
 /** @internal Reset the store singleton. For testing only. */
 export const _resetDarkModeStore = () => {
-  delete window[STORE_KEY];
+  delete globalScope[STORE_KEY];
 };
 
 /**
