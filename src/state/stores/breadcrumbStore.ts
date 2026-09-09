@@ -13,9 +13,20 @@ export interface BreadcrumbState {
   pathname: string;
   /** App mount pathname set by ChromeRoute when switching applications */
   appMountPathname: string | undefined;
+  /** Allow replace-mode apps to drop the final Chrome breadcrumb */
+  dropLastChromeSegment: boolean;
 }
 
-const EVENTS = ['SET_BREADCRUMB', 'REMOVE_BREADCRUMB', 'SET_REPLACE_MODE', 'SET_OVERRIDE', 'SET_PATHNAME', 'SET_APP_MOUNT_PATHNAME', 'CLEAR'] as const;
+const EVENTS = [
+  'SET_BREADCRUMB',
+  'REMOVE_BREADCRUMB',
+  'SET_REPLACE_MODE',
+  'SET_OVERRIDE',
+  'SET_PATHNAME',
+  'SET_APP_MOUNT_PATHNAME',
+  'SET_DROP_LAST_CHROME_SEGMENT',
+  'CLEAR',
+] as const;
 
 export type BreadcrumbStore = ReturnType<typeof createSharedStore<BreadcrumbState, typeof EVENTS>>;
 
@@ -54,6 +65,7 @@ export const getBreadcrumbStore = (): BreadcrumbStore => {
         override: [],
         pathname: '/',
         appMountPathname: undefined,
+        dropLastChromeSegment: false,
       } as BreadcrumbState,
       events: EVENTS,
       onEventChange: (state, event, payload): BreadcrumbState => {
@@ -89,10 +101,21 @@ export const getBreadcrumbStore = (): BreadcrumbStore => {
             const appMountPathname = payload as string | undefined;
             return state.appMountPathname === appMountPathname ? state : { ...state, appMountPathname };
           }
+          case 'SET_DROP_LAST_CHROME_SEGMENT': {
+            const dropLastChromeSegment = payload as boolean;
+            return state.dropLastChromeSegment === dropLastChromeSegment ? state : { ...state, dropLastChromeSegment };
+          }
           case 'CLEAR':
-            // Reset app-provided breadcrumbs but preserve pathname/appMountPathname
+            // Reset app-provided breadcrumbs but preserve pathname/appMountPathname.
+            // The drop option belongs to the active app and must not leak across routes.
             // (matches the old clearAppBreadcrumbsAtom behavior)
-            return { ...state, storage: new Map<string, BreadcrumbEntry>(), replaceMode: false, override: [] };
+            return {
+              ...state,
+              storage: new Map<string, BreadcrumbEntry>(),
+              replaceMode: false,
+              override: [],
+              dropLastChromeSegment: false,
+            };
           default:
             return state;
         }
@@ -119,6 +142,10 @@ export const setOverride = (override: AppBreadcrumbSegment[]) => getBreadcrumbSt
 export const setPathname = (pathname: string) => getBreadcrumbStore().updateState('SET_PATHNAME', pathname);
 
 export const setAppMountPathname = (appMountPathname: string | undefined) => getBreadcrumbStore().updateState('SET_APP_MOUNT_PATHNAME', appMountPathname);
+
+/** Set whether replace-mode apps drop Chrome's final breadcrumb segment. */
+export const setDropLastChromeSegment = (dropLastChromeSegment: boolean) =>
+  getBreadcrumbStore().updateState('SET_DROP_LAST_CHROME_SEGMENT', dropLastChromeSegment);
 
 export const clearBreadcrumbs = () => getBreadcrumbStore().updateState('CLEAR');
 
