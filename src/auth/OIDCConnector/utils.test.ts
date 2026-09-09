@@ -89,6 +89,7 @@ describe('login', () => {
     const arg = (auth.signinRedirect as jest.Mock).mock.calls[0][0] as { redirect_uri: string; scope: string; nonce: string };
     expect(arg.redirect_uri).toBe('https://console.redhat.com/insights');
     expect(arg.scope).toContain('openid');
+    expect(arg.scope).toContain('api.graphql');
     expect(arg.nonce).toEqual(expect.any(String));
   });
 });
