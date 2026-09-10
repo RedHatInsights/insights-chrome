@@ -40,6 +40,83 @@ chrome: {
 },
 ```
 
+## Environment, bundle, and app identification
+
+Chrome exposes three functions for identifying the current environment, bundle, and application from the browser URL. Each reads the live `window.location` when called and returns a plain string — not an object.
+
+### `getEnvironment()` — environment key
+
+Returns a string key identifying the deployment environment. The key is resolved by matching `window.location.hostname` against a set of known hostname lists (defined in `DEFAULT_SSO_ROUTES`).
+
+**Return type:** `string`
+
+Known environment keys include `prod`, `qa`, `ci`, `stage`, `dev`, `frh`, `frhStage`, `ephem`, `int`, `scr`, and `qaprodauth`.
+
+If no configured hostname matches, the function **falls back to `"qa"`**.
+
+**Examples:**
+
+| Hostname                     | Return value      |
+| ---------------------------- | ----------------- |
+| `console.redhat.com`         | `"prod"`          |
+| `console.stage.redhat.com`   | `"stage"`         |
+| `ci.foo.redhat.com`          | `"ci"`            |
+| `console.openshiftusgov.com` | `"frh"`           |
+| `localhost`                  | `"qa"` (fallback) |
+
+```js
+const chrome = useChrome();
+const env = chrome.getEnvironment(); // e.g. "prod"
+```
+
+### `getBundle()` — bundle ID
+
+Returns a string bundle ID derived from the first segment of the URL path.
+
+**Return type:** `string`
+
+For the root path (`/`), the function returns `"landing"`. For all other paths, it returns the first path segment.
+
+**Examples:**
+
+| URL path                            | Return value  |
+| ----------------------------------- | ------------- |
+| `/`                                 | `"landing"`   |
+| `/openshift/overview`               | `"openshift"` |
+| `/insights/advisor/recommendations` | `"insights"`  |
+| `/ansible/insights/advisor`         | `"ansible"`   |
+| `/settings/integrations`            | `"settings"`  |
+
+```js
+const chrome = useChrome();
+const bundle = chrome.getBundle(); // e.g. "openshift"
+```
+
+> **`getBundle()` vs `getBundleData()`:** `getBundle()` returns only the string bundle ID (e.g. `"openshift"`). If you also need the human-readable display title, use `getBundleData()` instead, which returns `{ bundleId: string, bundleTitle: string }` — for example `{ bundleId: "openshift", bundleTitle: "OpenShift" }`. The `bundleTitle` is looked up from a static mapping; when no mapping exists, it falls back to the `bundleId` value.
+
+### `getApp()` — app/route ID
+
+Returns a string app (route) ID derived from the URL path segment after the bundle.
+
+**Return type:** `string`
+
+The app ID is normally the second path segment. However, for **Ansible Insights** paths (URLs containing both `ansible` and `insights` segments), an extra `insights` segment is skipped so the app ID is the third segment instead.
+
+**Examples:**
+
+| URL path                    | Return value                               |
+| --------------------------- | ------------------------------------------ |
+| `/openshift/overview`       | `"overview"`                               |
+| `/insights/advisor`         | `"advisor"`                                |
+| `/ansible/insights/advisor` | `"advisor"` (skips the `insights` segment) |
+| `/settings/integrations`    | `"integrations"`                           |
+| `/`                         | `"landing"`                                |
+
+```js
+const chrome = useChrome();
+const app = chrome.getApp(); // e.g. "advisor"
+```
+
 ## Update document title
 
 Please do not update title directly via `document.title`. Use one of following options.
