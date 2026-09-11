@@ -6,6 +6,7 @@ import {
   removeBreadcrumb,
   setAppMountPathname,
   setBreadcrumb,
+  setDropLastChromeSegment,
   setOverride,
   setPathname,
   setReplaceMode,
@@ -30,6 +31,7 @@ describe('breadcrumbStore', () => {
       expect(state.override).toEqual([]);
       expect(state.pathname).toBe('/');
       expect(state.appMountPathname).toBeUndefined();
+      expect(state.dropLastChromeSegment).toBe(false);
     });
   });
 
@@ -112,6 +114,13 @@ describe('breadcrumbStore', () => {
     });
   });
 
+  describe('SET_DROP_LAST_CHROME_SEGMENT', () => {
+    it('should set the drop-final Chrome segment option', () => {
+      setDropLastChromeSegment(true);
+      expect(getBreadcrumbStore().getState().dropLastChromeSegment).toBe(true);
+    });
+  });
+
   describe('CLEAR', () => {
     it('should reset storage/replaceMode/override but preserve pathname/appMountPathname', () => {
       setBreadcrumb('/insights/advisor/systems', { title: 'Systems' });
@@ -119,6 +128,7 @@ describe('breadcrumbStore', () => {
       setOverride([{ pathname: '/x', title: 'X' }]);
       setPathname('/insights/advisor/systems');
       setAppMountPathname('/insights/advisor');
+      setDropLastChromeSegment(true);
 
       clearBreadcrumbs();
 
@@ -129,6 +139,7 @@ describe('breadcrumbStore', () => {
       // preserved
       expect(state.pathname).toBe('/insights/advisor/systems');
       expect(state.appMountPathname).toBe('/insights/advisor');
+      expect(state.dropLastChromeSegment).toBe(false);
     });
   });
 

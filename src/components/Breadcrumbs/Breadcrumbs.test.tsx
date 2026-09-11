@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Breadcrumbs from './Breadcrumbs';
-import { _resetBreadcrumbStore, getBreadcrumbStore } from '../../state/stores/breadcrumbStore';
+import { _resetBreadcrumbStore, getBreadcrumbStore, setDropLastChromeSegment } from '../../state/stores/breadcrumbStore';
 import { useFlag } from '@unleash/proxy-client-react';
 
 // Controllable store ref — the outer Breadcrumbs consumes the store through the
@@ -45,6 +45,7 @@ const seedIncremental = (entries: [string, { title: string; options?: any }][]) 
   entries.forEach(([pathname, entry]) => getBreadcrumbStore().updateState('SET_BREADCRUMB', { pathname, entry }));
 };
 const seedAppMount = (mount: string) => getBreadcrumbStore().updateState('SET_APP_MOUNT_PATHNAME', mount);
+const seedDropLastChromeSegment = (enabled: boolean) => setDropLastChromeSegment(enabled);
 
 describe('Breadcrumbs', () => {
   const renderBreadcrumbs = (initialEntries: string[] = ['/']) => {
@@ -302,6 +303,49 @@ describe('Breadcrumbs', () => {
     expect(screen.getByText('Advisor')).toBeInTheDocument();
     expect(screen.getByText('System 123')).toBeInTheDocument();
     expect(screen.queryByText('Systems')).not.toBeInTheDocument();
+  });
+
+  it.each([
+    { pathname: '/lightwell', title: 'Lightwell Repositories' },
+    { pathname: '/lightwell/beacon/details', title: 'Lightwell Beacon Details' },
+  ])('should drop the final Chrome segment for an opted-in app at $pathname', ({ pathname, title }) => {
+    mockUseBreadcrumbsLinks.mockReturnValue([
+      { title: 'Red Hat Hybrid Cloud Console', href: '/' },
+      { title: 'Lightwell', href: '/lightwell' },
+    ]);
+
+    seedReplace([{ pathname, title }]);
+    seedDropLastChromeSegment(true);
+
+    renderBreadcrumbs([pathname]);
+
+    expect(screen.getByText('Red Hat Hybrid Cloud Console')).toBeInTheDocument();
+    expect(screen.getByText(title)).toBeInTheDocument();
+    expect(screen.queryByText('Lightwell')).not.toBeInTheDocument();
+  });
+
+  it('should preserve the sole Chrome root segment when an app opts in', () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'Red Hat Hybrid Cloud Console', href: '/' }]);
+
+    seedReplace([{ pathname: '/lightwell/beacon', title: 'Lightwell Beacon' }]);
+    seedDropLastChromeSegment(true);
+
+    renderBreadcrumbs(['/lightwell/beacon']);
+
+    expect(screen.getByText('Red Hat Hybrid Cloud Console')).toBeInTheDocument();
+    expect(screen.getByText('Lightwell Beacon')).toBeInTheDocument();
+  });
+
+  it('should keep the Chrome mount segment for a child path by default', () => {
+    mockUseBreadcrumbsLinks.mockReturnValue([{ title: 'Settings', href: '/settings' }]);
+
+    seedReplace([{ pathname: '/settings/users', title: 'Users' }]);
+    seedAppMount('/settings');
+
+    renderBreadcrumbs(['/settings/users']);
+
+    expect(screen.getByText('Settings')).toBeInTheDocument();
+    expect(screen.getByText('Users')).toBeInTheDocument();
   });
 
   it('should warn about duplicate hrefs with conflicting titles in dev mode', () => {

@@ -27,6 +27,7 @@ export const bundleMapping: {
   docs: 'Documentation',
   'user-preferences': 'User Preferences',
   lightwell: 'Lightwell',
+  support: 'Support',
 };
 
 const useBundle = () => {
