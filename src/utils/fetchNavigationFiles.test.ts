@@ -3,6 +3,7 @@ import localforage from 'localforage';
 import fetchNavigationFiles from './fetchNavigationFiles';
 import { CACHE_SCHEMA_VERSION } from './cacheFetch';
 import { BundleNavigation } from '../@types/types';
+import { reportConfigSource, resetConfigCacheStatus, subscribeConfigCacheStatus } from './configCacheStatus';
 
 const mockSetItem = jest.fn();
 const mockGetItem = jest.fn();
@@ -35,8 +36,11 @@ const cacheKey = `v${CACHE_SCHEMA_VERSION}:bundles-generated`;
 
 describe('fetchNavigationFiles', () => {
   let consoleWarnSpy: jest.SpyInstance;
+  let statusUnsubscribers: Array<() => void> = [];
 
   beforeEach(() => {
+    resetConfigCacheStatus();
+    statusUnsubscribers = [];
     mockSetItem.mockReset().mockResolvedValue(undefined);
     mockGetItem.mockReset().mockResolvedValue(null);
     jest
@@ -52,8 +56,10 @@ describe('fetchNavigationFiles', () => {
   });
 
   afterEach(() => {
+    statusUnsubscribers.forEach((unsubscribe) => unsubscribe());
     consoleWarnSpy.mockRestore();
     jest.restoreAllMocks();
+    resetConfigCacheStatus();
   });
 
   describe('feoGenerated mode', () => {
@@ -67,9 +73,14 @@ describe('fetchNavigationFiles', () => {
       ];
 
       jest.mocked(axios.get).mockResolvedValue({ data: rawData });
+      reportConfigSource('bundles-generated', true);
+      const statusListener = jest.fn();
+      statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+      statusListener.mockClear();
 
       const result = await fetchNavigationFiles(true);
 
+      expect(statusListener).toHaveBeenCalledWith(false);
       expect(axios.get).toHaveBeenCalledWith('/api/chrome-service/v1/static/bundles-generated.json');
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -129,7 +140,42 @@ describe('fetchNavigationFiles', () => {
       // valid live entries are returned, and the cache is NOT used.
       expect(result).toHaveLength(2);
       expect(result.map((b) => b.id)).toEqual(['valid', 'another']);
+      expect(mockSetItem).not.toHaveBeenCalled();
       expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('IndexedDB cache'));
+    });
+
+    it('uses the complete cache when every live navigation entry is malformed', async () => {
+      const cachedData: BundleNavigation[] = [
+        {
+          id: 'cached-bundle',
+          title: 'Cached',
+          navItems: [{ href: '/cached', title: 'Cached Page' }],
+        },
+      ];
+
+      jest.mocked(axios.get).mockResolvedValue({
+        data: [undefined, { id: 'broken', title: 'Broken', navItems: [null] }] as unknown as BundleNavigation[],
+      });
+      mockGetItem.mockResolvedValue({ data: cachedData, cachedAt: Date.now() });
+      const statusListener = jest.fn();
+      statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+      statusListener.mockClear();
+
+      const result = await fetchNavigationFiles(true);
+
+      expect(result).toEqual(cachedData);
+      expect(statusListener).toHaveBeenCalledWith(true);
+      expect(mockGetItem).toHaveBeenCalledWith(cacheKey);
+      expect(mockSetItem).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Bundle navigation loaded from IndexedDB cache (origin unavailable)');
+    });
+
+    it('rejects an empty live navigation response when no cache exists', async () => {
+      jest.mocked(axios.get).mockResolvedValue({ data: [] });
+      mockGetItem.mockResolvedValue(null);
+
+      await expect(fetchNavigationFiles(true)).rejects.toThrow('bundles-generated.json: no usable navigation entries');
+      expect(mockSetItem).not.toHaveBeenCalled();
     });
 
     it('falls back to IndexedDB cache when network fails and logs warning', async () => {
@@ -284,12 +330,7 @@ describe('fetchNavigationFiles', () => {
       jest.mocked(axios.get).mockResolvedValue({ data: rawData });
       mockGetItem.mockResolvedValue(null);
 
-      const result = await fetchNavigationFiles(true);
-
-      // The only bundle is malformed, so it is filtered out. The filtered empty
-      // array is still valid, so it is returned as-is. The key guarantee is that
-      // normalizeBundle never throws on the nested null.
-      expect(result).toEqual([]);
+      await expect(fetchNavigationFiles(true)).rejects.toThrow('bundles-generated.json: no usable navigation entries');
     });
 
     it('rejects bundle entries where both navItems and routes are present but one is not an array', async () => {

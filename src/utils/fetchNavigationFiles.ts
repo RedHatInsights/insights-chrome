@@ -4,6 +4,7 @@ import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
 import { ITLess, getChromeStaticPathname } from './common';
 import { cacheFetch } from './cacheFetch';
+import { reportConfigSource } from './configCacheStatus';
 
 type RawNavItem = Omit<NavItem, 'navItems'> & { routes?: RawNavItem[]; navItems?: RawNavItem[] };
 
@@ -83,7 +84,7 @@ export function isBundleNavigation(item: unknown): item is BundleNavigation {
 }
 
 function isBundleNavigationArray(data: unknown): data is BundleNavigation[] {
-  return Array.isArray(data) && data.every(isBundleNavigation);
+  return Array.isArray(data) && data.length > 0 && data.every(isBundleNavigation);
 }
 
 export function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
@@ -116,24 +117,28 @@ const fetchNavigationFiles = async (feoGenerated = false) => {
   if (feoGenerated) {
     const { data: aggregateData, fromCache } = await cacheFetch(
       'bundles-generated',
-      // Drop malformed entries on the live path so one bad bundle can't nuke all
-      // navigation. The filtered-and-good array is what gets cached, so the strict
-      // payload guard below validates it as-is and only guards the cached read.
+      // Keep the raw live array so a partially malformed response fails the cache
+      // guard and cannot replace the last-known-good snapshot. Valid live entries
+      // are filtered only after cache admission has been decided.
       () =>
         axios.get<BundleNavigation[]>('/api/chrome-service/v1/static/bundles-generated.json').then((r) => {
           if (!Array.isArray(r.data)) {
             throw new Error('bundles-generated.json: expected array, received non-array payload');
           }
-          return r.data.filter(isBundleNavigation);
+          if (r.data.filter(isBundleNavigation).length === 0) {
+            throw new Error('bundles-generated.json: no usable navigation entries');
+          }
+          return r.data;
         }),
       undefined,
       isBundleNavigationArray
     );
+    reportConfigSource('bundles-generated', fromCache);
     if (fromCache) {
       console.warn('[chrome] Bundle navigation loaded from IndexedDB cache (origin unavailable)');
     }
-    // Entries are guaranteed valid: live data was filtered above, cached data passed the payload guard.
-    const bundleNavigation = aggregateData.map(normalizeBundle);
+    // Cached data passed the payload guard; live data may be partial and is filtered here.
+    const bundleNavigation = aggregateData.filter(isBundleNavigation).map(normalizeBundle);
     return bundleNavigation;
   }
   const bundles = ITLess() ? itLessBundles : requiredBundles;
