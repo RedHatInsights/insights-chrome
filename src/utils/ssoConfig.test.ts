@@ -138,9 +138,11 @@ describe('resolveSSOUrl', () => {
 describe('loadSSOConfig', () => {
   let mockAxiosInstance: { get: jest.Mock };
   let consoleWarnSpy: jest.SpyInstance;
+  let statusUnsubscribers: Array<() => void> = [];
 
   beforeEach(() => {
     jest.resetModules();
+    statusUnsubscribers = [];
     jest.clearAllMocks();
 
     mockAxiosInstance = { get: jest.fn() };
@@ -154,6 +156,7 @@ describe('loadSSOConfig', () => {
   });
 
   afterEach(() => {
+    statusUnsubscribers.forEach((unsubscribe) => unsubscribe());
     consoleWarnSpy.mockRestore();
     jsdomReset();
   });
@@ -168,6 +171,11 @@ describe('loadSSOConfig', () => {
     };
 
     mockAxiosInstance.get.mockResolvedValue({ data: mockSSOConfig });
+    const statusTracker = await import('./configCacheStatus');
+    statusTracker.reportConfigSource('sso-config-generated', true);
+    const statusListener = jest.fn();
+    statusUnsubscribers.push(statusTracker.subscribeConfigCacheStatus(statusListener));
+    statusListener.mockClear();
 
     const { loadSSOConfig: loadFn } = await import('./common');
     const result = await loadFn();
@@ -183,6 +191,7 @@ describe('loadSSOConfig', () => {
       })
     );
     expect(result).toEqual(mockSSOConfig);
+    expect(statusListener).toHaveBeenCalledWith(false);
     expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
@@ -325,6 +334,36 @@ describe('loadSSOConfig', () => {
 
     expect(result).toEqual(validCachedConfig);
     expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] SSO config loaded from IndexedDB cache (origin unavailable)');
+  });
+
+  it('clears cached SSO degradation when a later load uses static fallback', async () => {
+    const validCachedConfig: SSOConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: { 'cloud.redhat.com': 'https://sso.redhat.com/auth' },
+    };
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const localforageMock = require('localforage');
+    const mockGetItem = jest.fn().mockResolvedValue({ data: validCachedConfig, cachedAt: Date.now() });
+    localforageMock.createInstance.mockReturnValue({
+      setItem: jest.fn().mockResolvedValue(undefined),
+      getItem: mockGetItem,
+    });
+    mockAxiosInstance.get.mockRejectedValue(new Error('Network error'));
+
+    const statusTracker = await import('./configCacheStatus');
+    const statusListener = jest.fn();
+    statusUnsubscribers.push(statusTracker.subscribeConfigCacheStatus(statusListener));
+    statusListener.mockClear();
+    const { loadSSOConfig: loadFn } = await import('./common');
+
+    const cachedResult = await loadFn();
+    mockGetItem.mockResolvedValue(null);
+    const fallbackResult = await loadFn();
+
+    expect(cachedResult).toEqual(validCachedConfig);
+    expect(fallbackResult.ssoMapping).toBeDefined();
+    expect(statusListener).toHaveBeenNthCalledWith(1, true);
+    expect(statusListener).toHaveBeenNthCalledWith(2, false);
   });
 });
 

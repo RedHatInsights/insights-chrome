@@ -5,6 +5,7 @@ import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
 import { cacheFetch } from './cacheFetch';
+import { reportConfigSource } from './configCacheStatus';
 import * as Sentry from '@sentry/react';
 
 /**
@@ -441,11 +442,13 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
       undefined,
       isSSOConfig
     );
+    reportConfigSource('sso-config-generated', fromCache);
     if (fromCache) {
       console.warn('[chrome] SSO config loaded from IndexedDB cache (origin unavailable)');
     }
     return data;
   } catch (error) {
+    reportConfigSource('sso-config-generated', false);
     console.warn('Unable to load SSO config from operator, using default fallback', error);
 
     // Create fallback SSO config from DEFAULT_SSO_ROUTES
@@ -601,6 +604,7 @@ export const loadFedModules = async () => {
   };
 
   const staticConfigPromise = cacheFetch('fed-modules-generated', fetchLiveFedModules, undefined, isFedModulesConfig).then(({ data, fromCache }) => {
+    reportConfigSource('fed-modules-generated', fromCache);
     if (fromCache) {
       console.warn('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
     }

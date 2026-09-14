@@ -2,6 +2,7 @@ import axios from 'axios';
 import localforage from 'localforage';
 import { CACHE_SCHEMA_VERSION } from './cacheFetch';
 import { loadFedModules } from './common';
+import { reportConfigSource, resetConfigCacheStatus, subscribeConfigCacheStatus } from './configCacheStatus';
 
 const mockSetItem = jest.fn();
 const mockGetItem = jest.fn();
@@ -43,8 +44,11 @@ const cacheKey = `v${CACHE_SCHEMA_VERSION}:fed-modules-generated`;
 
 describe('loadFedModules', () => {
   let consoleWarnSpy: jest.SpyInstance;
+  let statusUnsubscribers: Array<() => void> = [];
 
   beforeEach(() => {
+    resetConfigCacheStatus();
+    statusUnsubscribers = [];
     mockSetItem.mockReset().mockResolvedValue(undefined);
     mockGetItem.mockReset().mockResolvedValue(null);
     jest
@@ -57,7 +61,9 @@ describe('loadFedModules', () => {
   });
 
   afterEach(() => {
+    statusUnsubscribers.forEach((unsubscribe) => unsubscribe());
     consoleWarnSpy.mockRestore();
+    resetConfigCacheStatus();
   });
 
   function mockAxiosByUrl(handlers: {
@@ -84,10 +90,15 @@ describe('loadFedModules', () => {
     mockAxiosByUrl({
       primary: () => Promise.resolve({ data: primaryData }),
     });
+    reportConfigSource('fed-modules-generated', true);
+    const statusListener = jest.fn();
+    statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+    statusListener.mockClear();
 
     const result = await loadFedModules();
 
     expect(result.data).toEqual(primaryData);
+    expect(statusListener).toHaveBeenCalledWith(false);
     expect(mockSetItem).toHaveBeenCalledWith(cacheKey, expect.objectContaining({ data: primaryData }));
     expect(jest.mocked(axios.get).mock.calls.some(([url]) => typeof url === 'string' && url.includes(cscPathPrefix))).toBe(false);
     expect(mockGetItem).not.toHaveBeenCalled();
@@ -115,6 +126,24 @@ describe('loadFedModules', () => {
     expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps another cached source degraded when federated modules recover live', async () => {
+    const liveData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'live', routes: [] }] } };
+    mockAxiosByUrl({
+      primary: () => Promise.resolve({ data: liveData }),
+    });
+    reportConfigSource('bundles-generated', true);
+    reportConfigSource('fed-modules-generated', true);
+    const statusListener = jest.fn();
+    statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+    statusListener.mockClear();
+
+    await loadFedModules();
+
+    expect(statusListener).not.toHaveBeenCalled();
+    reportConfigSource('bundles-generated', false);
+    expect(statusListener).toHaveBeenCalledWith(false);
+  });
+
   it('uses IndexedDB only when primary and CSC both fail', async () => {
     const cachedData = { chrome: { manifestLocation: '/apps/chrome/fed-mods.json', modules: [{ module: 'cached', routes: [] }] } };
     mockAxiosByUrl({
@@ -122,10 +151,14 @@ describe('loadFedModules', () => {
       csc: () => Promise.reject(new Error('csc 503')),
     });
     mockGetItem.mockResolvedValue({ data: cachedData, cachedAt: Date.now() });
+    const statusListener = jest.fn();
+    statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+    statusListener.mockClear();
 
     const result = await loadFedModules();
 
     expect(result.data).toEqual(cachedData);
+    expect(statusListener).toHaveBeenCalledWith(true);
     expect(mockGetItem).toHaveBeenCalledWith(cacheKey);
     expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
   });
