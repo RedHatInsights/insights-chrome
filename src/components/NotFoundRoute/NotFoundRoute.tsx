@@ -63,12 +63,13 @@ const NotFoundVAButton = () => {
 
 const NotFoundRoute = () => {
   const isVAEnabled = useFlag('platform.va.environment.enabled');
+  const isChatbotTabEnabled = useFlag('platform.chrome.help-panel_chatbot');
 
   return (
     <EmptyState id="not-found">
       <EmptyStateBody>
         <InvalidObject />
-        {isVAEnabled && <NotFoundVAButton />}
+        {isVAEnabled && !isChatbotTabEnabled && <NotFoundVAButton />}
       </EmptyStateBody>
     </EmptyState>
   );
