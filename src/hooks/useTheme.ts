@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import { getDarkModeStore, useDarkModeStore } from '../state/stores/darkModeStore';
+import { THEME_STORAGE_KEY } from '../utils/consts';
 
 // Force webpack to treat useDarkModeStore as a used export so the module cache
 // includes it when remote modules load it via Module Federation.
@@ -15,6 +16,8 @@ export enum ThemeVariants {
 export const useTheme = () => {
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const { flagsReady, flagsError } = useFlagsStatus();
+  const flagsResolved = flagsReady || !!flagsError;
 
   const applyTheme = (isDark: boolean) => {
     if (isDark) {
@@ -33,7 +36,7 @@ export const useTheme = () => {
       return ThemeVariants.light;
     }
 
-    const savedTheme = localStorage.getItem('chrome:theme');
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
 
     if (savedTheme === 'dark') {
       applyTheme(true);
@@ -48,7 +51,7 @@ export const useTheme = () => {
       return ThemeVariants.system;
     } else if (isDarkModeSystemEnabled) {
       // Default to system mode
-      localStorage.setItem('chrome:theme', 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, 'system');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
       return ThemeVariants.system;
@@ -59,30 +62,39 @@ export const useTheme = () => {
     return ThemeVariants.light;
   };
 
-  const [themeMode, setThemeMode] = useState<ThemeVariants>(getInitialTheme);
+  // Preserve the saved mode while flags load without changing the pre-paint DOM theme.
+  const getSavedThemeMode = (): ThemeVariants => {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme === 'dark') return ThemeVariants.dark;
+    if (savedTheme === 'system') return ThemeVariants.system;
+    return ThemeVariants.light;
+  };
+
+  const [themeMode, setThemeMode] = useState<ThemeVariants>(() => (flagsResolved ? getInitialTheme() : getSavedThemeMode()));
 
   useEffect(() => {
+    if (!flagsResolved) return;
     const newTheme = getInitialTheme();
     setThemeMode(newTheme);
-  }, [isDarkModeEnabled, isDarkModeSystemEnabled]);
+  }, [isDarkModeEnabled, isDarkModeSystemEnabled, flagsResolved]);
 
   const setLightMode = () => {
     setThemeMode(ThemeVariants.light);
     applyTheme(false);
-    localStorage.setItem('chrome:theme', 'light');
+    localStorage.setItem(THEME_STORAGE_KEY, 'light');
   };
 
   const setDarkMode = () => {
     setThemeMode(ThemeVariants.dark);
     applyTheme(true);
-    localStorage.setItem('chrome:theme', 'dark');
+    localStorage.setItem(THEME_STORAGE_KEY, 'dark');
   };
 
   const setSystemMode = () => {
     setThemeMode(ThemeVariants.system);
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     applyTheme(prefersDark);
-    localStorage.setItem('chrome:theme', 'system');
+    localStorage.setItem(THEME_STORAGE_KEY, 'system');
   };
 
   return {

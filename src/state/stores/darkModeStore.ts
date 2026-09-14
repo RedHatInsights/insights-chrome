@@ -9,10 +9,12 @@ const EVENTS = ['SET_DARK', 'SET_LIGHT'] as const;
 
 let store: ReturnType<typeof createSharedStore<DarkModeState, typeof EVENTS>> | null = null;
 
+const getInitialIsDark = () => typeof document !== 'undefined' && document.documentElement.classList.contains('pf-v6-theme-dark');
+
 export const getDarkModeStore = () => {
   if (!store) {
     store = createSharedStore({
-      initialState: { isDark: false } as DarkModeState,
+      initialState: { isDark: getInitialIsDark() } as DarkModeState,
       events: EVENTS,
       onEventChange: (state, event): DarkModeState => {
         switch (event) {
