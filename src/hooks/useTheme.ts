@@ -8,9 +8,9 @@ import { THEME_STORAGE_KEY } from '../utils/consts';
 void useDarkModeStore;
 
 export enum ThemeVariants {
-  light,
-  dark,
-  system,
+  light = 'light',
+  dark = 'dark',
+  system = 'system',
 }
 
 export const useTheme = () => {
@@ -38,20 +38,20 @@ export const useTheme = () => {
 
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
 
-    if (savedTheme === 'dark') {
+    if (savedTheme === ThemeVariants.dark) {
       applyTheme(true);
       return ThemeVariants.dark;
-    } else if (savedTheme === 'light') {
+    } else if (savedTheme === ThemeVariants.light) {
       applyTheme(false);
       return ThemeVariants.light;
-    } else if (isDarkModeSystemEnabled && savedTheme === 'system') {
+    } else if (isDarkModeSystemEnabled && savedTheme === ThemeVariants.system) {
       // System mode - use media query
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
       return ThemeVariants.system;
     } else if (isDarkModeSystemEnabled) {
       // Default to system mode
-      localStorage.setItem(THEME_STORAGE_KEY, 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.system);
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
       return ThemeVariants.system;
@@ -64,10 +64,12 @@ export const useTheme = () => {
 
   // Preserve the saved mode while flags load without changing the pre-paint DOM theme.
   const getSavedThemeMode = (): ThemeVariants => {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    if (savedTheme === 'dark') return ThemeVariants.dark;
-    if (savedTheme === 'system') return ThemeVariants.system;
-    return ThemeVariants.light;
+    try {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+      return Object.values(ThemeVariants).find((variant) => variant === savedTheme) ?? ThemeVariants.light;
+    } catch {
+      return ThemeVariants.light;
+    }
   };
 
   const [themeMode, setThemeMode] = useState<ThemeVariants>(() => (flagsResolved ? getInitialTheme() : getSavedThemeMode()));
@@ -81,20 +83,20 @@ export const useTheme = () => {
   const setLightMode = () => {
     setThemeMode(ThemeVariants.light);
     applyTheme(false);
-    localStorage.setItem(THEME_STORAGE_KEY, 'light');
+    localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.light);
   };
 
   const setDarkMode = () => {
     setThemeMode(ThemeVariants.dark);
     applyTheme(true);
-    localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+    localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.dark);
   };
 
   const setSystemMode = () => {
     setThemeMode(ThemeVariants.system);
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     applyTheme(prefersDark);
-    localStorage.setItem(THEME_STORAGE_KEY, 'system');
+    localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.system);
   };
 
   return {

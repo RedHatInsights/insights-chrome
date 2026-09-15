@@ -86,6 +86,30 @@ describe('useTheme hook', () => {
 
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
     });
+
+    it('preserves the pre-paint theme when localStorage is unavailable until flags resolve', () => {
+      document.documentElement.classList.add('pf-v6-theme-dark');
+      setFlags(false, false);
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: null });
+      const getItem = jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('storage unavailable');
+      });
+
+      let hook: ReturnType<typeof renderHook>;
+      try {
+        hook = renderHook(() => useTheme());
+      } finally {
+        getItem.mockRestore();
+      }
+
+      expect(hook.result.current.themeMode).toBe(ThemeVariants.light);
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
+
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+      hook.rerender();
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
+    });
   });
 
   describe('when dark mode is disabled', () => {
