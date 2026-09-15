@@ -24,7 +24,8 @@ spec:
             description: "Test output in Konflux standardized format"
         steps:
           - name: run-tests
-            image: registry.access.redhat.com/ubi9/nodejs-20:latest
+            # Keep in sync with @playwright/test in package-lock.json.
+            image: mcr.microsoft.com/playwright:v1.62.1-jammy
             env:
               - name: PLATFORM_INFRA_ENV
                 value: stage
@@ -43,6 +44,8 @@ spec:
               echo "========================================="
 
               WORKDIR=$(mktemp -d)
+              # Keep npm and other caches writable for the CI-assigned user.
+              export HOME="${WORKDIR}"
               cd "${WORKDIR}"
 
               echo "Cloning insights-chrome..."
@@ -50,9 +53,6 @@ spec:
 
               echo "Installing dependencies..."
               npm ci
-
-              echo "Installing Playwright..."
-              npx playwright install --with-deps chromium
 
               echo "Running platform infrastructure tests..."
               set +e
