@@ -9,11 +9,12 @@
 
 ## Test Frameworks
 
-| Framework  | Purpose                | Location                             | File Pattern              |
-| ---------- | ---------------------- | ------------------------------------ | ------------------------- |
-| Jest + SWC | Unit tests             | Next to source files                 | `*.test.ts`, `*.test.tsx` |
-| Cypress    | Component + E2E tests  | `cypress/component/`, `cypress/e2e/` | `*.cy.tsx`, `*.cy.ts`     |
-| Playwright | E2E release gate tests | `playwright/e2e/`                    | `*.spec.ts`               |
+| Framework  | Purpose                                                | Location                             | File Pattern              |
+| ---------- | ------------------------------------------------------ | ------------------------------------ | ------------------------- |
+| Jest + SWC | Unit tests                                             | Next to source files                 | `*.test.ts`, `*.test.tsx` |
+| Cypress    | Component + E2E tests                                  | `cypress/component/`, `cypress/e2e/` | `*.cy.tsx`, `*.cy.ts`     |
+| Playwright | E2E release gate tests                                 | `playwright/e2e/`                    | `*.spec.ts`               |
+| Playwright | Browser integration tests with controlled dependencies | `playwright/integration/`            | `*.spec.ts`               |
 
 ## Jest Unit Tests
 
