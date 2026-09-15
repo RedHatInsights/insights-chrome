@@ -1,5 +1,6 @@
 import localforage from 'localforage';
-import { CACHE_SCHEMA_VERSION, CACHE_TTL_MS, cacheFetch } from './cacheFetch';
+import { getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
+import { CACHE_SCHEMA_VERSION, CACHE_TTL_MS, CONFIG_CACHE_FALLBACK_FLAG, cacheFetch } from './cacheFetch';
 
 const mockSetItem = jest.fn();
 const mockGetItem = jest.fn();
@@ -11,14 +12,120 @@ jest.mock('localforage', () => ({
   createInstance: jest.fn(),
 }));
 
+jest.mock('../components/FeatureFlags/unleashClient', () => ({
+  getFeatureFlagsError: jest.fn(() => false),
+  getUnleashClient: jest.fn(),
+  unleashClientExists: jest.fn(() => false),
+}));
+
+const mockedGetFeatureFlagsError = jest.mocked(getFeatureFlagsError);
+const mockedGetUnleashClient = jest.mocked(getUnleashClient);
+const mockedUnleashClientExists = jest.mocked(unleashClientExists);
+
 describe('cacheFetch', () => {
   beforeEach(() => {
+    mockedGetFeatureFlagsError.mockReturnValue(false);
+    mockedUnleashClientExists.mockReturnValue(true);
+    mockedGetUnleashClient.mockReset().mockReturnValue({ isReady: () => true, isEnabled: () => true } as never);
     mockSetItem.mockReset().mockResolvedValue(undefined);
     mockGetItem.mockReset().mockResolvedValue(null);
     jest
       .mocked(localforage.createInstance)
       .mockClear()
       .mockReturnValue({ setItem: mockSetItem, getItem: mockGetItem } as unknown as LocalForage);
+  });
+
+  it('does not initialize storage when the runtime flag is unavailable', async () => {
+    const fetcher = jest.fn().mockResolvedValue({ foo: 'live' });
+    mockedUnleashClientExists.mockReturnValue(false);
+
+    await expect(cacheFetch('test-key', fetcher)).resolves.toEqual({ data: { foo: 'live' }, fromCache: false });
+    expect(jest.mocked(localforage.createInstance)).not.toHaveBeenCalled();
+    expect(mockSetItem).not.toHaveBeenCalled();
+    expect(mockGetItem).not.toHaveBeenCalled();
+  });
+
+  it('does not use cache fallback while the flag client is not ready', async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error('network error'));
+    mockedGetUnleashClient.mockReturnValue({ isReady: () => false, isEnabled: jest.fn(() => true) } as never);
+    mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+
+    await expect(cacheFetch('test-key', fetcher)).rejects.toThrow('network error');
+    expect(mockGetItem).not.toHaveBeenCalled();
+  });
+
+  it('continues the live fetch when reading flag state fails', async () => {
+    const fetcher = jest.fn().mockResolvedValue({ foo: 'live' });
+    mockedGetFeatureFlagsError.mockImplementation(() => {
+      throw new Error('localStorage unavailable');
+    });
+
+    await expect(cacheFetch('test-key', fetcher)).resolves.toEqual({ data: { foo: 'live' }, fromCache: false });
+    expect(jest.mocked(localforage.createInstance)).not.toHaveBeenCalled();
+  });
+
+  it('does not delay the live fetch while the flag client is not ready', async () => {
+    const fetcher = jest.fn().mockResolvedValue({ foo: 'live' });
+    mockedGetUnleashClient.mockReturnValue({ isReady: () => false, isEnabled: jest.fn(() => true) } as never);
+
+    await expect(cacheFetch('test-key', fetcher)).resolves.toEqual({ data: { foo: 'live' }, fromCache: false });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(mockSetItem).not.toHaveBeenCalled();
+    expect(mockGetItem).not.toHaveBeenCalled();
+  });
+
+  it('uses cache when flags become ready while the live fetch is in flight', async () => {
+    const fetcher = jest.fn(
+      () =>
+        new Promise<never>((_resolve, reject) => {
+          rejectFetch = reject;
+        })
+    );
+    let rejectFetch: (error: Error) => void = () => undefined;
+    let clientReady = false;
+    const handlers: Record<string, () => void> = {};
+    const client = {
+      isReady: () => clientReady,
+      isEnabled: jest.fn(() => true),
+      on: jest.fn((event: string, callback: () => void) => {
+        handlers[event] = callback;
+      }),
+      off: jest.fn(),
+    };
+    mockedGetUnleashClient.mockReturnValue(client as never);
+    mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+
+    const resultPromise = cacheFetch('test-key', fetcher);
+    await Promise.resolve();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    rejectFetch(new Error('network error'));
+    clientReady = true;
+    handlers.ready();
+    await expect(resultPromise).resolves.toEqual({ data: { foo: 'cached' }, fromCache: true });
+    expect(client.isEnabled).toHaveBeenCalledWith(CONFIG_CACHE_FALLBACK_FLAG);
+  });
+
+  it('allows bootstrap callers to enable cache fallback explicitly', async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error('network error'));
+    mockedUnleashClientExists.mockReturnValue(false);
+    mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+
+    await expect(cacheFetch('test-key', fetcher, undefined, undefined, { enabled: true })).resolves.toEqual({
+      data: { foo: 'cached' },
+      fromCache: true,
+    });
+  });
+
+  it('does not use cache fallback when the dedicated flag is disabled', async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error('network error'));
+    const isEnabled = jest.fn((flag: string) => flag !== CONFIG_CACHE_FALLBACK_FLAG);
+    mockedGetUnleashClient.mockReturnValue({ isReady: () => true, isEnabled } as never);
+    mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+
+    await expect(cacheFetch('test-key', fetcher)).rejects.toThrow('network error');
+    expect(isEnabled).toHaveBeenCalledWith(CONFIG_CACHE_FALLBACK_FLAG);
+    expect(mockGetItem).not.toHaveBeenCalled();
   });
 
   it('returns data from fetcher and stores a versioned envelope on success', async () => {
@@ -219,6 +326,15 @@ describe('cacheFetch', () => {
 
       const result = await cacheFetch('test-key', fetcher);
       expect(result).toEqual({ data: { foo: 'cached' }, fromCache: true });
+    });
+
+    it('does not use cache for canceled requests', async () => {
+      const error = { code: 'ERR_CANCELED' };
+      const fetcher = jest.fn().mockRejectedValue(error);
+      mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+
+      await expect(cacheFetch('test-key', fetcher)).rejects.toEqual(error);
+      expect(mockGetItem).not.toHaveBeenCalled();
     });
 
     it('rethrows 5xx error when no cache exists', async () => {

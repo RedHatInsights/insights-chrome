@@ -22,6 +22,12 @@ jest.mock('localforage', () => ({
   createInstance: jest.fn(),
 }));
 
+jest.mock('../components/FeatureFlags/unleashClient', () => ({
+  getFeatureFlagsError: jest.fn(() => false),
+  getUnleashClient: jest.fn(() => ({ isReady: () => true, isEnabled: () => true })),
+  unleashClientExists: jest.fn(() => true),
+}));
+
 jest.mock('./common', () => ({
   ITLess: jest.fn(() => false),
   getChromeStaticPathname: jest.fn(() => '/api/static'),
@@ -215,11 +221,16 @@ describe('fetchNavigationFiles', () => {
       expect(result[0].navItems).toEqual([{ href: '/legacy', title: 'Old Format' }]);
     });
 
-    it('throws when network fails and no cache exists', async () => {
+    it('throws when network fails and no cache exists and clears degraded status', async () => {
       jest.mocked(axios.get).mockRejectedValue(new Error('Network error'));
       mockGetItem.mockResolvedValue(null);
+      reportConfigSource('bundles-generated', true);
+      const statusListener = jest.fn();
+      statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+      statusListener.mockClear();
 
       await expect(fetchNavigationFiles(true)).rejects.toThrow('Network error');
+      expect(statusListener).toHaveBeenCalledWith(false);
     });
 
     it('rejects non-array response and does not cache it, falls back to cache if available', async () => {

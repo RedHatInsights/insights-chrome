@@ -163,14 +163,19 @@ describe('loadFedModules', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
   });
 
-  it('rethrows when primary, CSC, and IndexedDB all miss', async () => {
+  it('rethrows when primary, CSC, and IndexedDB all miss and clears degraded status', async () => {
     mockAxiosByUrl({
       primary: () => Promise.reject(new Error('chrome-service 503')),
       csc: () => Promise.reject(new Error('csc 503')),
     });
     mockGetItem.mockResolvedValue(null);
+    reportConfigSource('fed-modules-generated', true);
+    const statusListener = jest.fn();
+    statusUnsubscribers.push(subscribeConfigCacheStatus(statusListener));
+    statusListener.mockClear();
 
     await expect(loadFedModules()).rejects.toThrow('csc 503');
+    expect(statusListener).toHaveBeenCalledWith(false);
   });
 
   it('merges FEO chrome override onto static config', async () => {

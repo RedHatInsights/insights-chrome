@@ -1,18 +1,22 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '../setup/test-setup';
+import { CONFIG_SOURCES, type ConfigSource } from '../../src/utils/configCacheStatus';
 
 type CacheEntry = {
   key: string;
   data: unknown;
 };
 
-type ConfigSource = 'sso-config-generated' | 'fed-modules-generated' | 'bundles-generated';
 type ConfigMode = 'cache' | 'live';
+type StaticConfigMode = 'serviceTiles' | 'searchIndex';
 type NavigationResponse = 'failure' | 'malformed' | 'live';
 type ConfigRouteModes = {
   sso: ConfigMode;
   fedModules: ConfigMode;
   navigation: NavigationResponse;
+  serviceTiles?: ConfigMode;
+  searchIndex?: ConfigMode;
+  cacheFallbackEnabled?: boolean;
 };
 type RouteObservations = {
   cached: Set<ConfigSource>;
@@ -27,14 +31,18 @@ const CACHE_SCHEMA_VERSION = 1;
 const E2E_TIMEOUT = 60_000;
 const FOCUSED_CACHE_SOURCE_COUNT = 1;
 const FOCUSED_LIVE_SOURCE_COUNT = 2;
-const ALL_CONFIG_SOURCE_COUNT = 3;
-const SSO_CONFIG_SOURCE: ConfigSource = 'sso-config-generated';
-const FED_MODULES_SOURCE: ConfigSource = 'fed-modules-generated';
-const NAVIGATION_SOURCE: ConfigSource = 'bundles-generated';
+const CORE_CONFIG_SOURCE_COUNT = 3;
+const SSO_CONFIG_SOURCE = CONFIG_SOURCES.SSO_CONFIG;
+const FED_MODULES_SOURCE = CONFIG_SOURCES.FED_MODULES;
+const NAVIGATION_SOURCE = CONFIG_SOURCES.NAVIGATION;
+const SERVICE_TILES_SOURCE = CONFIG_SOURCES.SERVICE_TILES;
+const SEARCH_INDEX_SOURCE = CONFIG_SOURCES.SEARCH_INDEX;
 const CACHE_WARNING_BY_SOURCE: Record<ConfigSource, string> = {
   [SSO_CONFIG_SOURCE]: '[chrome] SSO config loaded from IndexedDB cache (origin unavailable)',
   [FED_MODULES_SOURCE]: '[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)',
   [NAVIGATION_SOURCE]: '[chrome] Bundle navigation loaded from IndexedDB cache (origin unavailable)',
+  [SERVICE_TILES_SOURCE]: '[chrome] Service tiles loaded from IndexedDB cache (origin unavailable)',
+  [SEARCH_INDEX_SOURCE]: '[chrome] Search index loaded from IndexedDB cache (origin unavailable)',
 };
 const EXPECTED_CACHE_WARNING_SOURCES: ConfigSource[] = [SSO_CONFIG_SOURCE, FED_MODULES_SOURCE, NAVIGATION_SOURCE];
 const TEST_NAVIGATION_PATH = '/insights/cached-navigation-check';
@@ -67,6 +75,15 @@ const cachedNavigation = [
   },
 ];
 
+const cachedServiceTiles = [
+  {
+    title: 'Cached Services',
+    links: [{ title: 'Cached Service', href: '/cached-service' }],
+  },
+];
+
+const cachedSearchIndex = [{ id: 'cached-search-entry', title: 'Cached Search Entry', href: '/cached-search' }];
+
 const malformedNavigation = [
   {
     id: 'insights',
@@ -82,7 +99,7 @@ const malformedNavigation = [
   null,
 ];
 
-const featureFlags = {
+const featureFlags = (cacheFallbackEnabled = true) => ({
   toggles: [
     {
       name: 'platform.chrome.consume-feo',
@@ -91,13 +108,19 @@ const featureFlags = {
       variant: { name: 'disabled', enabled: false },
     },
     {
+      name: 'platform.chrome.config-cache-fallback',
+      enabled: cacheFallbackEnabled,
+      impressionData: false,
+      variant: { name: cacheFallbackEnabled ? 'enabled' : 'disabled', enabled: cacheFallbackEnabled },
+    },
+    {
       name: 'platform.chrome.degraded-state-banner',
       enabled: true,
       impressionData: false,
       variant: { name: 'disabled', enabled: false },
     },
   ],
-};
+});
 
 const cacheKey = (key: string) => `v${CACHE_SCHEMA_VERSION}:${key}`;
 
@@ -169,9 +192,26 @@ async function setupConfigRoutes(page: Page, modes: ConfigRouteModes): Promise<R
     }
   });
 
-  await page.route('**/api/featureflags/v0**', (route) => route.fulfill({ json: featureFlags }));
+  await page.route('**/api/featureflags/v0**', (route) => route.fulfill({ json: featureFlags(modes.cacheFallbackEnabled ?? true) }));
   await page.route('**/apps/chrome/operator-generated/fed-modules.json*', (route) => route.fulfill({ json: {} }));
-  await page.route('**/api/chrome-service/v1/static/service-tiles-generated.json*', (route) => route.fulfill({ json: [] }));
+
+  await page.route('**/api/chrome-service/v1/static/service-tiles-generated.json*', async (route) => {
+    if (modes.serviceTiles === 'cache') {
+      observations.cached.add(SERVICE_TILES_SOURCE);
+      await route.abort();
+      return;
+    }
+    await route.fulfill({ json: cachedServiceTiles });
+  });
+
+  await page.route('**/api/chrome-service/v1/static/search-index-generated.json*', async (route) => {
+    if (modes.searchIndex === 'cache') {
+      observations.cached.add(SEARCH_INDEX_SOURCE);
+      await route.abort();
+      return;
+    }
+    await route.fulfill({ json: cachedSearchIndex });
+  });
 
   await page.route('**/api/chrome-service/v1/static/sso-config-generated.json*', async (route) => {
     if (modes.sso === 'cache') {
@@ -237,6 +277,21 @@ const focusedCacheScenarios: Array<{ name: string; source: ConfigSource; data: u
   },
 ];
 
+const focusedStaticCacheScenarios: Array<{ name: string; source: ConfigSource; data: unknown; mode: StaticConfigMode }> = [
+  {
+    name: 'reports cached service-tile degradation when core config is live',
+    source: SERVICE_TILES_SOURCE,
+    data: cachedServiceTiles,
+    mode: 'serviceTiles',
+  },
+  {
+    name: 'reports cached search-index degradation when core config is live',
+    source: SEARCH_INDEX_SOURCE,
+    data: cachedSearchIndex,
+    mode: 'searchIndex',
+  },
+];
+
 test.describe('IndexedDB config cache fallback', () => {
   for (const scenario of focusedCacheScenarios) {
     test(scenario.name, async ({ page }) => {
@@ -260,6 +315,49 @@ test.describe('IndexedDB config cache fallback', () => {
     });
   }
 
+  for (const scenario of focusedStaticCacheScenarios) {
+    test(scenario.name, async ({ page }) => {
+      await seedConfigCache(page, [{ key: cacheKey(scenario.source), data: scenario.data }]);
+      const observations = await setupConfigRoutes(page, {
+        sso: 'live',
+        fedModules: 'live',
+        navigation: 'live',
+        serviceTiles: scenario.mode === 'serviceTiles' ? 'cache' : 'live',
+        searchIndex: scenario.mode === 'searchIndex' ? 'cache' : 'live',
+      });
+
+      await page.goto(TEST_NAVIGATION_PATH);
+
+      const degradedBanner = page.locator('[data-ouia-component-id="DegradedStateBanner"]');
+      await expect(degradedBanner).toBeVisible({ timeout: E2E_TIMEOUT });
+      await expect(degradedBanner).toContainText('Core functionality is available');
+      await expect(degradedBanner).toContainText('Navigation Configuration');
+      await expect.poll(() => observations.cached.size, { timeout: E2E_TIMEOUT }).toBe(FOCUSED_CACHE_SOURCE_COUNT);
+      await expect.poll(() => observations.live.size, { timeout: E2E_TIMEOUT }).toBe(CORE_CONFIG_SOURCE_COUNT);
+      await expect.poll(() => observations.cacheWarnings.size, { timeout: E2E_TIMEOUT }).toBe(FOCUSED_CACHE_SOURCE_COUNT);
+      expect([...observations.cached]).toEqual([scenario.source]);
+      expect([...observations.cacheWarnings]).toEqual([scenario.source]);
+    });
+  }
+
+  test('does not read post-auth cache when the dedicated flag is disabled', async ({ page }) => {
+    await seedConfigCache(page, [{ key: cacheKey(SERVICE_TILES_SOURCE), data: cachedServiceTiles }]);
+    const observations = await setupConfigRoutes(page, {
+      sso: 'live',
+      fedModules: 'live',
+      navigation: 'live',
+      serviceTiles: 'cache',
+      cacheFallbackEnabled: false,
+    });
+
+    await page.goto('/allservices');
+
+    await expect.poll(() => observations.cached.size, { timeout: E2E_TIMEOUT }).toBe(FOCUSED_CACHE_SOURCE_COUNT);
+    await expect.poll(() => observations.cacheWarnings.size, { timeout: E2E_TIMEOUT }).toBe(0);
+    await expect(page.getByRole('link', { name: 'Cached Service' })).toHaveCount(0);
+    expect(await readCacheEntry(page, cacheKey(SERVICE_TILES_SOURCE))).toMatchObject({ data: cachedServiceTiles });
+  });
+
   test('persists live config and uses it after a later origin failure', async ({ page }) => {
     const modes: ConfigRouteModes = {
       sso: 'live',
@@ -278,7 +376,7 @@ test.describe('IndexedDB config cache fallback', () => {
 
     const degradedBanner = page.locator('[data-ouia-component-id="DegradedStateBanner"]');
     await expect(page.getByRole('link', { name: CACHED_SERVICE_TITLE })).toBeVisible({ timeout: E2E_TIMEOUT });
-    await expect.poll(() => observations.live.size, { timeout: E2E_TIMEOUT }).toBe(ALL_CONFIG_SOURCE_COUNT);
+    await expect.poll(() => observations.live.size, { timeout: E2E_TIMEOUT }).toBe(CORE_CONFIG_SOURCE_COUNT);
 
     for (const entry of liveConfigEntries) {
       await expect.poll(() => readCacheEntry(page, entry.key), { timeout: E2E_TIMEOUT }).toMatchObject({ data: entry.data, cachedAt: expect.any(Number) });
@@ -293,8 +391,8 @@ test.describe('IndexedDB config cache fallback', () => {
 
     await expect(degradedBanner).toBeVisible({ timeout: E2E_TIMEOUT });
     await expect(page.getByRole('link', { name: CACHED_SERVICE_TITLE })).toBeVisible({ timeout: E2E_TIMEOUT });
-    await expect.poll(() => observations.cached.size, { timeout: E2E_TIMEOUT }).toBe(ALL_CONFIG_SOURCE_COUNT);
-    await expect.poll(() => observations.cacheWarnings.size, { timeout: E2E_TIMEOUT }).toBe(ALL_CONFIG_SOURCE_COUNT);
+    await expect.poll(() => observations.cached.size, { timeout: E2E_TIMEOUT }).toBe(CORE_CONFIG_SOURCE_COUNT);
+    await expect.poll(() => observations.cacheWarnings.size, { timeout: E2E_TIMEOUT }).toBe(CORE_CONFIG_SOURCE_COUNT);
     expect([...observations.cacheWarnings].sort()).toEqual([...EXPECTED_CACHE_WARNING_SOURCES].sort());
     for (const [index, entry] of liveConfigEntries.entries()) {
       const cachedEnvelope = await readCacheEntry(page, entry.key);
@@ -335,7 +433,7 @@ test.describe('IndexedDB config cache fallback', () => {
     // not same-runtime tracker recovery; unit/integration tests cover that transition.
     await page.reload();
 
-    await expect.poll(() => observations.live.size, { timeout: E2E_TIMEOUT }).toBe(ALL_CONFIG_SOURCE_COUNT);
+    await expect.poll(() => observations.live.size, { timeout: E2E_TIMEOUT }).toBe(CORE_CONFIG_SOURCE_COUNT);
     await expect(degradedBanner).toBeHidden({ timeout: E2E_TIMEOUT });
   });
 });
