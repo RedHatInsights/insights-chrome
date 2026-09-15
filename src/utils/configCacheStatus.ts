@@ -1,4 +1,12 @@
-export type ConfigSource = 'sso-config-generated' | 'fed-modules-generated' | 'bundles-generated';
+export const CONFIG_SOURCES = {
+  SSO_CONFIG: 'sso-config-generated',
+  FED_MODULES: 'fed-modules-generated',
+  NAVIGATION: 'bundles-generated',
+  SERVICE_TILES: 'service-tiles-generated',
+  SEARCH_INDEX: 'search-index-generated',
+} as const;
+
+export type ConfigSource = (typeof CONFIG_SOURCES)[keyof typeof CONFIG_SOURCES];
 
 type ConfigCacheStatusListener = (degraded: boolean) => void;
 
