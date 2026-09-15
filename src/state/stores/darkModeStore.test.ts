@@ -1,6 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { _resetDarkModeStore, getDarkModeStore, useDarkModeStore } from './darkModeStore';
 
+const STORE_KEY = '__chrome_dark_mode_store__';
+type DarkModeStoreGlobal = typeof globalThis & { [STORE_KEY]?: ReturnType<typeof getDarkModeStore> };
+const globalScope = globalThis as DarkModeStoreGlobal;
+
 describe('darkModeStore', () => {
   beforeEach(() => {
     _resetDarkModeStore();
@@ -11,6 +15,18 @@ describe('darkModeStore', () => {
       const store1 = getDarkModeStore();
       const store2 = getDarkModeStore();
       expect(store1).toBe(store2);
+    });
+
+    it('should anchor the store to the global scope so Module Federation consumers share the same instance', () => {
+      const store = getDarkModeStore();
+      expect(globalScope[STORE_KEY]).toBe(store);
+    });
+
+    it('should clear the global singleton on reset', () => {
+      getDarkModeStore();
+      expect(globalScope[STORE_KEY]).toBeDefined();
+      _resetDarkModeStore();
+      expect(globalScope[STORE_KEY]).toBeUndefined();
     });
 
     it('should have initial state isDark: false', () => {
