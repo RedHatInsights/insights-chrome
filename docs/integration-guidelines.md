@@ -138,6 +138,33 @@ Multiple analytics services are integrated:
 
 ### Rules
 
-- Always use the provided hooks/providers — never initialize analytics directly
+- Use the provided hooks/providers (`useSegment` from `src/analytics/useSegment.ts`) — do not initialize analytics SDKs ad hoc
 - Analytics are disabled in non-production by default
 - User consent and data privacy rules apply — check before adding new tracking
+- Document new events in `docs/analytics.md`
+
+## External services
+
+| Service                                     | Role                                                                              |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| Keycloak / SSO                              | Auth (`sso.redhat.com`, `sso.stage.redhat.com`) resolved in `src/utils/common.ts` |
+| RBAC API                                    | Permissions (`src/auth/fetchPermissions.ts`)                                      |
+| Entitlements API                            | Bundle access (`src/auth/entitlementsApi.ts`)                                     |
+| Host Inventory API                          | System inventory                                                                  |
+| chrome-service-backend                      | Navigation, search, WebSocket                                                     |
+| Segment, Amplitude, Pendo, Intercom, Sentry | Analytics / support / errors                                                      |
+| Unleash                                     | Feature flags                                                                     |
+
+Do not hardcode service hosts. Use `getEnv()`, `isProd()`, and `getEnvDetails()` for non-SSO services. For SSO, use `loadSSOConfig()` and `resolveSSOUrl()` from `src/utils/common.ts`.
+
+Page titles: `chrome.updateDocumentTitle()` (implemented in `src/utils/common.ts`). Do not set `document.title` directly.
+
+## Verification
+
+```bash
+npm run build                 # webpack + Module Federation graph
+npm run lint                  # restricted import rules
+npm run verify                # lint + CRD + build + unit tests
+```
+
+Manifest after a local run: `https://stage.foo.redhat.com:1337/apps/chrome/js/fed-mods.json`.
