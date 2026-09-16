@@ -79,12 +79,12 @@ jest.mock('./SettingsToggle', () => ({
 }));
 jest.mock('../../hooks/useTheme', () => ({
   useTheme: () => ({
-    themeMode: 0,
+    themeMode: 'light',
     setLightMode: jest.fn(),
     setDarkMode: jest.fn(),
     setSystemMode: jest.fn(),
   }),
-  ThemeVariants: { light: 0, dark: 1, system: 2 },
+  ThemeVariants: { light: 'light', dark: 'dark', system: 'system' },
 }));
 const mockEnableGlass = jest.fn();
 const mockDisableGlass = jest.fn();

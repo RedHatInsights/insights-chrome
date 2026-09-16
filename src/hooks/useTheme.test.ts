@@ -1,10 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
 import { ThemeVariants, useTheme } from './useTheme';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import { getDarkModeStore } from '../state/stores/darkModeStore';
+import { THEME_STORAGE_KEY } from '../utils/consts';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
 }));
 
 jest.mock('../state/stores/darkModeStore', () => {
@@ -17,6 +19,7 @@ jest.mock('../state/stores/darkModeStore', () => {
 });
 
 const mockedUseFlag = useFlag as unknown as jest.Mock;
+const mockedUseFlagsStatus = useFlagsStatus as unknown as jest.Mock;
 const mockUpdateState = getDarkModeStore().updateState as jest.Mock;
 
 describe('useTheme hook', () => {
@@ -27,6 +30,7 @@ describe('useTheme hook', () => {
     document.documentElement.classList.remove('pf-v6-theme-dark');
     originalMatchMedia = window.matchMedia;
     jest.clearAllMocks();
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
   });
 
   afterEach(() => {
@@ -50,6 +54,64 @@ describe('useTheme hook', () => {
     });
   };
 
+  describe('while feature flags are loading', () => {
+    it('preserves the pre-paint dark theme until flags resolve', () => {
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+      document.documentElement.classList.add('pf-v6-theme-dark');
+      setFlags(false, false);
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: null });
+
+      const { rerender } = renderHook(() => useTheme());
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
+
+      setFlags(true, false);
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+      rerender();
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
+    });
+
+    it('removes a stale pre-paint dark theme when flags resolve disabled', () => {
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+      document.documentElement.classList.add('pf-v6-theme-dark');
+      setFlags(false, false);
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: null });
+
+      const { rerender } = renderHook(() => useTheme());
+
+      setFlags(false, false);
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+      rerender();
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
+    });
+
+    it('preserves the pre-paint theme when localStorage is unavailable until flags resolve', () => {
+      document.documentElement.classList.add('pf-v6-theme-dark');
+      setFlags(false, false);
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: null });
+      const getItem = jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('storage unavailable');
+      });
+
+      let hook: ReturnType<typeof renderHook>;
+      try {
+        hook = renderHook(() => useTheme());
+      } finally {
+        getItem.mockRestore();
+      }
+
+      expect(hook.result.current.themeMode).toBe(ThemeVariants.light);
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
+
+      mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+      hook.rerender();
+
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
+    });
+  });
+
   describe('when dark mode is disabled', () => {
     beforeEach(() => setFlags(false, false));
 
@@ -60,14 +122,14 @@ describe('useTheme hook', () => {
     });
 
     it('should ignore saved dark preference', () => {
-      localStorage.setItem('chrome:theme', 'dark');
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
     });
 
     it('should ignore saved system preference', () => {
-      localStorage.setItem('chrome:theme', 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, 'system');
       mockMatchMedia(true);
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
@@ -82,7 +144,7 @@ describe('useTheme hook', () => {
       mockMatchMedia(false);
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.system);
-      expect(localStorage.getItem('chrome:theme')).toBe('system');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('system');
     });
 
     it('should apply dark theme when system prefers dark', () => {
@@ -98,7 +160,7 @@ describe('useTheme hook', () => {
     });
 
     it('should respect saved system preference', () => {
-      localStorage.setItem('chrome:theme', 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, 'system');
       mockMatchMedia(true);
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.system);
@@ -106,14 +168,14 @@ describe('useTheme hook', () => {
     });
 
     it('should allow setting system mode', () => {
-      localStorage.setItem('chrome:theme', 'light');
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
       mockMatchMedia(true);
       const { result } = renderHook(() => useTheme());
 
       act(() => result.current.setSystemMode());
 
       expect(result.current.themeMode).toBe(ThemeVariants.system);
-      expect(localStorage.getItem('chrome:theme')).toBe('system');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('system');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
   });
@@ -132,11 +194,11 @@ describe('useTheme hook', () => {
       mockMatchMedia(true);
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).not.toBe(ThemeVariants.system);
-      expect(localStorage.getItem('chrome:theme')).not.toBe('system');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).not.toBe('system');
     });
 
     it('should ignore saved system preference and default to light', () => {
-      localStorage.setItem('chrome:theme', 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, 'system');
       mockMatchMedia(true);
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
@@ -144,14 +206,14 @@ describe('useTheme hook', () => {
     });
 
     it('should respect saved dark preference', () => {
-      localStorage.setItem('chrome:theme', 'dark');
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.dark);
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
 
     it('should respect saved light preference', () => {
-      localStorage.setItem('chrome:theme', 'light');
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
       const { result } = renderHook(() => useTheme());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
@@ -161,16 +223,16 @@ describe('useTheme hook', () => {
       const { result } = renderHook(() => useTheme());
       act(() => result.current.setDarkMode());
       expect(result.current.themeMode).toBe(ThemeVariants.dark);
-      expect(localStorage.getItem('chrome:theme')).toBe('dark');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
 
     it('should allow switching to light mode', () => {
-      localStorage.setItem('chrome:theme', 'dark');
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
       const { result } = renderHook(() => useTheme());
       act(() => result.current.setLightMode());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
-      expect(localStorage.getItem('chrome:theme')).toBe('light');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
     });
   });
@@ -179,40 +241,40 @@ describe('useTheme hook', () => {
     beforeEach(() => setFlags(true, true));
 
     it('should switch from light to dark', () => {
-      localStorage.setItem('chrome:theme', 'light');
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
       const { result } = renderHook(() => useTheme());
       act(() => result.current.setDarkMode());
       expect(result.current.themeMode).toBe(ThemeVariants.dark);
-      expect(localStorage.getItem('chrome:theme')).toBe('dark');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
 
     it('should switch from dark to light', () => {
-      localStorage.setItem('chrome:theme', 'dark');
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
       const { result } = renderHook(() => useTheme());
       act(() => result.current.setLightMode());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
-      expect(localStorage.getItem('chrome:theme')).toBe('light');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
     });
 
     it('should switch from system to light', () => {
-      localStorage.setItem('chrome:theme', 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, 'system');
       mockMatchMedia(true);
       const { result } = renderHook(() => useTheme());
       act(() => result.current.setLightMode());
       expect(result.current.themeMode).toBe(ThemeVariants.light);
-      expect(localStorage.getItem('chrome:theme')).toBe('light');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(false);
     });
 
     it('should switch from system to dark', () => {
-      localStorage.setItem('chrome:theme', 'system');
+      localStorage.setItem(THEME_STORAGE_KEY, 'system');
       mockMatchMedia(false);
       const { result } = renderHook(() => useTheme());
       act(() => result.current.setDarkMode());
       expect(result.current.themeMode).toBe(ThemeVariants.dark);
-      expect(localStorage.getItem('chrome:theme')).toBe('dark');
+      expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
       expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
   });
@@ -220,14 +282,14 @@ describe('useTheme hook', () => {
   describe('shared store sync', () => {
     it('should update shared store with SET_DARK when dark mode applied', () => {
       setFlags(true, false);
-      localStorage.setItem('chrome:theme', 'dark');
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
       renderHook(() => useTheme());
       expect(mockUpdateState).toHaveBeenCalledWith('SET_DARK');
     });
 
     it('should update shared store with SET_LIGHT when light mode applied', () => {
       setFlags(true, false);
-      localStorage.setItem('chrome:theme', 'light');
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
       renderHook(() => useTheme());
       expect(mockUpdateState).toHaveBeenCalledWith('SET_LIGHT');
     });

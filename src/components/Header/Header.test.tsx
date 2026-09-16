@@ -15,6 +15,7 @@ jest.mock('../../hooks/useFavoritedServices', () => ({
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: () => false,
+  useFlagsStatus: () => ({ flagsReady: true, flagsError: null }),
 }));
 
 jest.mock('@scalprum/react-core', () => ({
