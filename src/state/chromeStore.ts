@@ -13,6 +13,7 @@ import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
 import { segmentPageOptionsAtom } from './atoms/segmentPageOptionsAtom';
 import { virtualAssistantShowAssistantAtom } from './atoms/virtualAssistantAtom';
 import { degradedStateAtom } from './atoms/degradedStateAtom';
+import { selectedWorkspaceAtom } from './atoms/workspaceSelectorAtom';
 
 const chromeStore = createStore();
 
@@ -35,6 +36,8 @@ chromeStore.set(drawerPanelContentAtom, undefined);
 chromeStore.set(notificationDrawerExpandedAtom, false);
 
 chromeStore.set(virtualAssistantShowAssistantAtom, false);
+
+chromeStore.set(selectedWorkspaceAtom, undefined);
 
 // analytics data
 chromeStore.set(segmentPageOptionsAtom, {});

@@ -69,4 +69,15 @@ describe('QuickstartsCatalogRoute', () => {
     expect(screen.getByTestId('remote-catalog')).toBeInTheDocument();
     expect(screen.queryByTestId('legacy-catalog')).not.toBeInTheDocument();
   });
+
+  it('renders a localized unavailable state when the remote catalog fails', () => {
+    mockedUseFlag.mockReturnValue(true);
+    renderRoute();
+
+    const props = MockedScalprumComponent.mock.calls[0][0];
+    const { getByTestId, getByText } = render(<IntlProvider locale="en">{props.ErrorComponent}</IntlProvider>);
+
+    expect(getByTestId('quickstarts-catalog-unavailable')).toBeInTheDocument();
+    expect(getByText('Unable to load the quickstarts content.')).toBeInTheDocument();
+  });
 });

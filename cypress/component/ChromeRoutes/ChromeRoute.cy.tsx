@@ -9,6 +9,7 @@ import ScalprumProvider from '@scalprum/react-core';
 import { initialize, removeScalprum } from '@scalprum/core';
 import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
+import { getBreadcrumbStore } from '../../../src/state/stores/breadcrumbStore';
 
 const defaultUser: ChromeUser = {
   entitlements: {},
@@ -80,6 +81,10 @@ const Wrapper = ({ children, getUser }: React.PropsWithChildren<{ getUser?: () =
           name: 'virtualAssistant',
           manifestLocation: '/bar/manifest.json',
         },
+        chrome: {
+          name: 'chrome',
+          manifestLocation: '/bar/manifest.json',
+        },
       },
     })
   );
@@ -91,6 +96,10 @@ const Wrapper = ({ children, getUser }: React.PropsWithChildren<{ getUser?: () =
     };
     scalprum.current.exposedModules['virtualAssistant#AstroVirtualAssistant'] = {
       default: () => <div id="virtual-assistant">Virtual Assistant</div>,
+    };
+    // ChromeRoute clears/sets breadcrumbs via the self-consumed `chrome` remote store.
+    scalprum.current.exposedModules['chrome#./breadcrumbs/store'] = {
+      getBreadcrumbStore,
     };
 
     setIsReady(true);

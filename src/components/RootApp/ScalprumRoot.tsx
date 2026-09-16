@@ -16,6 +16,7 @@ import { FlagTagsFilter } from '../../@types/types';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
 import ChromeFooter from '../Footer/Footer';
+import LightwellFooter from '../Footer/LightwellFooter';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
@@ -43,6 +44,7 @@ import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
 import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef } from '../../state/atoms/remoteQuickstartsAtom';
 import type { QuickStart } from '@patternfly/quickstarts';
+import { preloadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
 
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
@@ -95,11 +97,12 @@ const ScalprumRoot = memo(
               />
             )}
             <Route path="/security" element={<DefaultLayout />} />
+            {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
             <Route
               path={`${LIGHTWELL_PATH}/*`}
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <Lightwell />
+                  <Lightwell Footer={<LightwellFooter />} />
                 </Suspense>
               }
             />
@@ -180,6 +183,13 @@ const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
         return unregister();
       }
     };
+  }, []);
+
+  useEffect(() => {
+    // Warm the breadcrumb store from the `chrome` federated remote so useBreadcrumbStoreRef
+    // and ChromeRoute's loadBreadcrumbStore resolve immediately. Best-effort, idempotent.
+    // Scalprum is already initialized by the child ScalprumProvider before this effect runs.
+    preloadBreadcrumbStore().catch(() => {});
   }, []);
 
   const setPageMetadata = useCallback((pageOptions: any) => {

@@ -75,6 +75,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './analytics/intercom/OpenShiftItercom': resolve(__dirname, '../src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx'),
         './analytics/intercom/useOpenShiftIntercomStore': resolve(__dirname, '../src/state/stores/openShiftIntercomStore.ts'),
         './theme/useDarkModeStore': resolve(__dirname, '../src/state/stores/darkModeStore.ts'),
+        './breadcrumbs/store': resolve(__dirname, '../src/state/stores/breadcrumbStore.ts'),
         './breadcrumbs/useBreadcrumbs': resolve(__dirname, '../src/hooks/useBreadcrumbs.ts'),
         './breadcrumbs/useReplaceBreadcrumbs': resolve(__dirname, '../src/hooks/useReplaceBreadcrumbs.ts'),
       },

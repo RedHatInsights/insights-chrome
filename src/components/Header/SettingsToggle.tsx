@@ -20,6 +20,8 @@ export type SettingsToggleDropdownItem = {
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;
   isHidden?: boolean;
   isDisabled?: boolean;
+  isSelected?: boolean;
+  isLink?: boolean;
   rel?: string;
   ouiaId?: string;
 };
@@ -45,21 +47,26 @@ const SettingsToggle = (props: SettingsToggleProps) => {
     <DropdownGroup key={`${groupIndex}-${title}`} label={title}>
       {customContent
         ? customContent
-        : items?.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
+        : items?.map(({ url, title, description, onClick, isHidden, isDisabled, isSelected, isLink, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
             !isHidden ? (
               <DropdownItem
                 onClick={onClick}
                 key={typeof title === 'string' ? title : itemIndex}
                 ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
                 isDisabled={isDisabled}
+                isSelected={isSelected}
+                // Render selectable, non-navigating items (e.g. drawer toggles) as an anchor so the
+                // PF `isSelected` highlight renders; PF still applies role="menuitem" + tabindex="0".
                 component={
-                  onClick || !url
-                    ? undefined
-                    : ({ className: itemClassName, children }) => (
+                  url
+                    ? ({ className: itemClassName, children }) => (
                         <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
                           {children}
                         </ChromeLink>
                       )
+                    : isLink
+                      ? 'a'
+                      : undefined
                 }
                 description={description}
               >

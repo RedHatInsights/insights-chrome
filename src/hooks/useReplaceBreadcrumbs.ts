@@ -1,14 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
-import {
-  type AppBreadcrumbSegment,
-  appBreadcrumbOverrideAtom,
-  appBreadcrumbStorageAtom,
-  appMountPathnameAtom,
-  breadcrumbReplaceModeAtom,
-} from '../state/atoms/breadcrumbAtom';
-import { normalizePathname } from '../utils/breadcrumbUtils';
+import { getBreadcrumbStore, setDropLastChromeSegment, setOverride, setReplaceMode } from '../state/stores/breadcrumbStore';
+import { type AppBreadcrumbSegment, normalizePathname } from '../utils/breadcrumbUtils';
+
+export type ReplaceBreadcrumbsOptions = {
+  /** Drop the final Chrome segment when this app supplies breadcrumbs. */
+  dropLastChromeSegment?: boolean;
+};
 
 /**
  * Hook for replacing the entire app breadcrumb array
@@ -16,6 +14,7 @@ import { normalizePathname } from '../utils/breadcrumbUtils';
  * Disables the incremental storage system
  *
  * @param breadcrumbs - Array of breadcrumb segments with pathname, title, and optional NavigateOptions
+ * @param options - Optional behavior for merging app and Chrome breadcrumbs
  *
  * Exposed as a federated module via Scalprum:
  * @example
@@ -31,19 +30,16 @@ import { normalizePathname } from '../utils/breadcrumbUtils';
  *   useRemoteHook({
  *     scope: 'chrome',
  *     module: './breadcrumbs/useReplaceBreadcrumbs',
- *     args: [breadcrumbs],
+ *     args: [breadcrumbs, { dropLastChromeSegment: true }],
  *   });
  *
  *   return <div>...</div>;
  * }
  * ```
  */
-function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
-  const setReplaceMode = useSetAtom(breadcrumbReplaceModeAtom);
-  const setOverride = useSetAtom(appBreadcrumbOverrideAtom);
-  const storage = useAtomValue(appBreadcrumbStorageAtom);
-  const appMountPathname = useAtomValue(appMountPathnameAtom);
+function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[], options?: ReplaceBreadcrumbsOptions): void {
   const isEnabled = useFlag('platform.chrome.app-breadcrumbs');
+  const dropLastChromeSegment = options?.dropLastChromeSegment ?? false;
   const breadcrumbsRef = useRef(breadcrumbs);
 
   // Stabilize breadcrumbs via JSON.stringify, with fallback for circular refs
@@ -69,32 +65,39 @@ function useReplaceBreadcrumbs(breadcrumbs: AppBreadcrumbSegment[]): void {
       return;
     }
 
-    // Warn in dev mode if any breadcrumb pathname doesn't start with app mount pathname
-    if (process.env.NODE_ENV !== 'production' && appMountPathname) {
-      const normalizedAppMount = normalizePathname(appMountPathname);
-      for (const segment of breadcrumbsRef.current) {
-        const normalizedPathname = normalizePathname(segment.pathname);
-        if (!normalizedPathname.startsWith(normalizedAppMount)) {
-          console.warn(
-            `[useReplaceBreadcrumbs] breadcrumb pathname "${segment.pathname}" does not start with app mount pathname "${appMountPathname}" - breadcrumbs should be scoped to your app's routes`
-          );
+    if (process.env.NODE_ENV !== 'production') {
+      // Non-reactive reads — only used for dev warnings
+      const { appMountPathname, storage } = getBreadcrumbStore().getState();
+
+      // Warn if any breadcrumb pathname doesn't start with app mount pathname
+      if (appMountPathname) {
+        const normalizedAppMount = normalizePathname(appMountPathname);
+        for (const segment of breadcrumbsRef.current) {
+          const normalizedPathname = normalizePathname(segment.pathname);
+          if (!normalizedPathname.startsWith(normalizedAppMount)) {
+            console.warn(
+              `[useReplaceBreadcrumbs] breadcrumb pathname "${segment.pathname}" does not start with app mount pathname "${appMountPathname}" - breadcrumbs should be scoped to your app's routes`
+            );
+          }
         }
       }
-    }
 
-    // Warn in dev mode if incremental storage exists — it will be ignored
-    if (process.env.NODE_ENV !== 'production' && storage.size > 0) {
-      console.warn('[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.');
+      // Warn if incremental storage exists — it will be ignored
+      if (storage.size > 0) {
+        console.warn('[useReplaceBreadcrumbs] Incremental breadcrumb storage exists — it will be ignored. Use only one hook type per app.');
+      }
     }
 
     setReplaceMode(true);
     setOverride(breadcrumbsRef.current);
+    setDropLastChromeSegment(dropLastChromeSegment);
 
     return () => {
       setReplaceMode(false);
       setOverride([]);
+      setDropLastChromeSegment(false);
     };
-  }, [breadcrumbsKey, setReplaceMode, setOverride, isEnabled]);
+  }, [breadcrumbsKey, isEnabled, dropLastChromeSegment]);
 }
 
 export default useReplaceBreadcrumbs;

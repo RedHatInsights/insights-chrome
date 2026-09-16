@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
+import { cacheFetch } from './cacheFetch';
+import * as Sentry from '@sentry/react';
 
 /**
  * Base path for the Lightwell route.
@@ -400,15 +402,49 @@ export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
   return sanitizeSsoUrl(ssoConfig.ssoUrl);
 };
 
+// Runtime validator for SSOConfig shape
+function isSSOConfig(data: unknown): data is SSOConfig {
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    !('ssoUrl' in data) ||
+    typeof (data as SSOConfig).ssoUrl !== 'string' ||
+    (data as SSOConfig).ssoUrl.length === 0 ||
+    !('ssoMapping' in data) ||
+    typeof (data as SSOConfig).ssoMapping !== 'object' ||
+    (data as SSOConfig).ssoMapping === null ||
+    Array.isArray((data as SSOConfig).ssoMapping)
+  ) {
+    return false;
+  }
+
+  // Validate that all ssoMapping values are nonempty strings
+  const mapping = (data as SSOConfig).ssoMapping;
+  return Object.values(mapping).every((value) => typeof value === 'string' && value.length > 0);
+}
+
 // Load SSO configuration from operator-generated config with automatic caching
 export const loadSSOConfig = async (): Promise<SSOConfig> => {
   const ssoConfigPath = '/api/chrome-service/v1/static/sso-config-generated.json';
   try {
-    const response = await getSSOConfigAxios().get<SSOConfig>(ssoConfigPath, {
-      headers: fedModulesheaders,
-    });
-
-    return response.data;
+    const { data, fromCache } = await cacheFetch(
+      'sso-config-generated',
+      () =>
+        getSSOConfigAxios()
+          .get<SSOConfig>(ssoConfigPath, { headers: fedModulesheaders })
+          .then((r) => {
+            if (!isSSOConfig(r.data)) {
+              throw new Error('SSO config validation failed: invalid shape or mapping values');
+            }
+            return r.data;
+          }),
+      undefined,
+      isSSOConfig
+    );
+    if (fromCache) {
+      console.warn('[chrome] SSO config loaded from IndexedDB cache (origin unavailable)');
+    }
+    return data;
   } catch (error) {
     console.warn('Unable to load SSO config from operator, using default fallback', error);
 
@@ -430,24 +466,149 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
   }
 };
 
+// Validate a single fed-modules entry (one app). Returns a human-readable
+// reason when invalid, or null when the entry is a usable ChromeModule. The
+// checks mirror exactly what generateRoutesList consumes so a passing entry can
+// never crash route generation at bootstrap.
+function getFedModuleEntryError(value: unknown): string | null {
+  if (typeof value !== 'object' || value === null) {
+    return 'entry is not an object';
+  }
+
+  const module = value as Record<string, unknown>;
+  if (!('manifestLocation' in module) || typeof module.manifestLocation !== 'string') {
+    return 'missing string manifestLocation';
+  }
+
+  // The optional `modules` array is consumed by generateRoutesList, which maps
+  // over each RemoteModule's `routes`. Reject malformed shapes here.
+  if ('modules' in module && module.modules !== undefined) {
+    if (!Array.isArray(module.modules)) {
+      return 'modules is not an array';
+    }
+    for (const remote of module.modules) {
+      if (typeof remote !== 'object' || remote === null) {
+        return 'modules[] contains a non-object entry';
+      }
+      const remoteModule = remote as Record<string, unknown>;
+      if (typeof remoteModule.module !== 'string' || !Array.isArray(remoteModule.routes)) {
+        return 'RemoteModule missing string `module` or array `routes`';
+      }
+      // Each route is either a plain string or an object with a string pathname.
+      for (const route of remoteModule.routes) {
+        const validRoute =
+          typeof route === 'string' || (typeof route === 'object' && route !== null && typeof (route as Record<string, unknown>).pathname === 'string');
+        if (!validRoute) {
+          return 'routes[] entry is not a string or object with string pathname';
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+// Runtime validator for the whole federated modules map. Used as the cache-read
+// guard: cached data is written already-sanitized, so it must validate as a whole.
+export function isFedModulesConfig(data: unknown): data is { [key: string]: ChromeModule } {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+
+  // Reject arrays — fed-modules config must be a plain object map
+  if (Array.isArray(data)) {
+    return false;
+  }
+
+  // $schema is optional metadata; every other entry must be a valid ChromeModule
+  return Object.entries(data).every(([key, value]) => key === '$schema' || getFedModuleEntryError(value) === null);
+}
+
+// Sanitize a live fed-modules response: drop individual malformed entries
+// (logging + reporting each) instead of discarding the entire map, so one bad
+// app cannot take down the whole console. Throws only when the top-level shape
+// is unusable (not an object map) or when every entry is invalid — those cases
+// fall through to the CSC/IndexedDB fallback chain.
+export function sanitizeFedModules(data: unknown, source: string): { [key: string]: ChromeModule } {
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+    throw new Error(`[chrome] ${source} fed-modules response is not a valid module map`);
+  }
+
+  const entries = Object.entries(data);
+  const sanitized: { [key: string]: ChromeModule } = {};
+  const dropped: string[] = [];
+  let moduleEntryCount = 0;
+
+  for (const [key, value] of entries) {
+    if (key === '$schema') {
+      sanitized[key] = value as ChromeModule;
+      continue;
+    }
+    moduleEntryCount += 1;
+    const error = getFedModuleEntryError(value);
+    if (error) {
+      dropped.push(`${key} (${error})`);
+      continue;
+    }
+    sanitized[key] = value as ChromeModule;
+  }
+
+  if (dropped.length > 0) {
+    const message = `[chrome] ${source} fed-modules: dropped ${dropped.length} malformed module(s): ${dropped.join(', ')}`;
+    console.warn(message);
+    // Surface bad config in monitoring instead of silently dropping it. Safe to
+    // call before Sentry.init (no-op when uninitialized).
+    Sentry.captureException(new Error(message), { level: 'warning', tags: { area: 'fed-modules', source } });
+  }
+
+  // If there were module entries but none survived, treat it as a failed
+  // response so the fallback chain (CSC → IndexedDB) can take over.
+  if (moduleEntryCount > 0 && Object.keys(sanitized).every((key) => key === '$schema')) {
+    throw new Error(`[chrome] ${source} fed-modules response has no valid modules`);
+  }
+
+  return sanitized;
+}
+
 // FIXME: Remove once qaprodauth is dealt with
 // can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
 // Always use stable
 const loadCSCFedModules = () =>
-  axios.get(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+  axios.get<{ [key: string]: ChromeModule }>(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
     headers: fedModulesheaders,
   });
 
 export const loadFedModules = async () => {
   const fedModulesPath = '/api/chrome-service/v1/static/fed-modules-generated.json';
-  return Promise.all([
-    axios
-      .get(fedModulesPath, {
-        headers: fedModulesheaders,
-      })
-      .catch(loadCSCFedModules),
-    axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} })),
-  ]).then(([staticConfig, feoConfig]) => {
+
+  // Try chrome-service, then live CSC. IndexedDB is only used after both fail.
+  // Each response is sanitized: individually malformed apps are dropped (and
+  // reported) so one bad entry cannot break the whole console; a wholly unusable
+  // response throws so the next fallback takes over.
+  const fetchLiveFedModules = async (): Promise<{ [key: string]: ChromeModule }> => {
+    try {
+      const { data } = await axios.get<unknown>(fedModulesPath, { headers: fedModulesheaders });
+      return sanitizeFedModules(data, 'Chrome Service');
+    } catch (err) {
+      // Log the original error only if it came from our validation; network
+      // errors are expected and will be visible in the fallback path.
+      if (err instanceof Error && err.message.includes('fed-modules')) {
+        console.warn(err.message);
+      }
+      const { data } = await loadCSCFedModules();
+      return sanitizeFedModules(data, 'CSC');
+    }
+  };
+
+  const staticConfigPromise = cacheFetch('fed-modules-generated', fetchLiveFedModules, undefined, isFedModulesConfig).then(({ data, fromCache }) => {
+    if (fromCache) {
+      console.warn('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
+    }
+    return { data };
+  });
+
+  const dynamicPathsPromise = axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} }));
+  return Promise.all([staticConfigPromise, dynamicPathsPromise]).then(([staticConfig, feoConfig]) => {
     if (feoConfig?.data?.chrome) {
       staticConfig.data.chrome = feoConfig?.data?.chrome;
     }

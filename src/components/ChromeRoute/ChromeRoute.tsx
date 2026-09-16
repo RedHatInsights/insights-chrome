@@ -12,7 +12,7 @@ import { NavItemPermission } from '../../@types/types';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
 import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
-import { appMountPathnameAtom, clearAppBreadcrumbsAtom } from '../../state/atoms/breadcrumbAtom';
+import { loadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -33,8 +33,6 @@ const ChromeRoute = memo(
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
     const currentActiveModule = useAtomValue(activeModuleAtom);
     const setActiveModule = useSetAtom(activeModuleAtom);
-    const clearAppBreadcrumbs = useSetAtom(clearAppBreadcrumbsAtom);
-    const setAppMountPathname = useSetAtom(appMountPathnameAtom);
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {
@@ -59,12 +57,18 @@ const ChromeRoute = memo(
       // This prevents unnecessary updates while still allowing navigation between apps
       if (currentActiveModule !== scope) {
         setActiveModule(scope);
-        // Clear app breadcrumbs when switching to different application
-        clearAppBreadcrumbs();
-        // Set app mount pathname from route path (e.g., '/settings', '/insights/advisor')
-        // Remove trailing /* if present
+        // Clear app breadcrumbs and set the app mount pathname when switching apps.
+        // The breadcrumb store lives in the `chrome` federated remote (single factory),
+        // so reach it through the bridge. Fire-and-forget: breadcrumbs are non-critical UI.
+        // Set app mount pathname from route path (e.g., '/settings', '/insights/advisor'),
+        // removing a trailing /* if present.
         const mountPath = path.replace(/\/\*$/, '');
-        setAppMountPathname(mountPath);
+        loadBreadcrumbStore()
+          .then((store) => {
+            store.updateState('CLEAR');
+            store.updateState('SET_APP_MOUNT_PATHNAME', mountPath);
+          })
+          .catch(() => {});
       }
       // Help topic clearing: QuickstartsRuntime ApiPublisher calls setActiveTopic('')
       // when activeModule (this atom) changes. Do not read HelpTopicContext here.
