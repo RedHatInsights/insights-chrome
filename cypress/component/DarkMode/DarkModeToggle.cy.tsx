@@ -3,6 +3,7 @@ import { Button, Card, CardBody, CardFooter, CardTitle } from '@patternfly/react
 import { useTheme } from '../../../src/hooks/useTheme';
 import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
 import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
+import { THEME_STORAGE_KEY } from '../../../src/utils/consts';
 
 function DarkMode() {
   const { setLightMode, setDarkMode, setSystemMode } = useTheme();
@@ -71,14 +72,14 @@ function stubMatchMedia(prefersDark: boolean) {
 
 /** Retrying localStorage assertion — cy.getLocalStorage does not retry while flags hydrate. */
 function expectTheme(value: string) {
-  cy.window().its('localStorage').invoke('getItem', 'chrome:theme').should('equal', value);
+  cy.window().its('localStorage').invoke('getItem', THEME_STORAGE_KEY).should('equal', value);
 }
 
 describe('ThemeMenu Component', () => {
   describe('With system theme enabled', () => {
     beforeEach(() => {
       cy.window().then((win) => {
-        win.localStorage.removeItem('chrome:theme');
+        win.localStorage.removeItem(THEME_STORAGE_KEY);
         win.document.documentElement.classList.remove('pf-v6-theme-dark');
       });
       cy.intercept('GET', '/api/featureflags/*', {
@@ -99,14 +100,14 @@ describe('ThemeMenu Component', () => {
 
     describe('Initial State', () => {
       it('uses localStorage dark preference', () => {
-        cy.setLocalStorage('chrome:theme', 'dark');
+        cy.setLocalStorage(THEME_STORAGE_KEY, 'dark');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
         expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('uses localStorage light preference', () => {
-        cy.setLocalStorage('chrome:theme', 'light');
+        cy.setLocalStorage(THEME_STORAGE_KEY, 'light');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
         expectTheme('light');
@@ -131,21 +132,21 @@ describe('ThemeMenu Component', () => {
 
     describe('User Interactions', () => {
       it('toggles from light to dark', () => {
-        localStorage.setItem('chrome:theme', 'light');
+        localStorage.setItem(THEME_STORAGE_KEY, 'light');
         cy.mount(<Wrapper />).get('html');
         cy.get('#dark-button').click();
         expectTheme('dark');
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('toggles from dark to light', () => {
-        localStorage.setItem('chrome:theme', 'dark');
+        localStorage.setItem(THEME_STORAGE_KEY, 'dark');
         cy.mount(<Wrapper />).get('html');
         cy.get('#light-button').click();
         expectTheme('light');
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
       it('toggles from dark to system light', () => {
-        localStorage.setItem('chrome:theme', 'dark');
+        localStorage.setItem(THEME_STORAGE_KEY, 'dark');
         stubMatchMedia(false);
         cy.mount(<Wrapper />).get('html');
         cy.get('#system-button').click();
@@ -153,7 +154,7 @@ describe('ThemeMenu Component', () => {
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
       });
       it('toggles from system light to dark', () => {
-        localStorage.setItem('chrome:theme', 'system');
+        localStorage.setItem(THEME_STORAGE_KEY, 'system');
         stubMatchMedia(false);
         cy.mount(<Wrapper />);
         cy.wait('@featureFlags');
@@ -164,7 +165,7 @@ describe('ThemeMenu Component', () => {
         cy.get('html').should('have.class', 'pf-v6-theme-dark');
       });
       it('toggles from light to system dark', () => {
-        localStorage.setItem('chrome:theme', 'light');
+        localStorage.setItem(THEME_STORAGE_KEY, 'light');
         stubMatchMedia(true);
         cy.mount(<Wrapper />).get('html');
         cy.get('#system-button').click();
@@ -181,7 +182,7 @@ describe('ThemeMenu Component', () => {
   describe('With system theme disabled', () => {
     beforeEach(() => {
       cy.window().then((win) => {
-        win.localStorage.removeItem('chrome:theme');
+        win.localStorage.removeItem(THEME_STORAGE_KEY);
         win.document.documentElement.classList.remove('pf-v6-theme-dark');
       });
       cy.intercept('GET', '/api/featureflags/*', {
@@ -202,7 +203,7 @@ describe('ThemeMenu Component', () => {
 
     describe('Initial State', () => {
       it('uses localStorage dark preference', () => {
-        cy.setLocalStorage('chrome:theme', 'dark');
+        cy.setLocalStorage(THEME_STORAGE_KEY, 'dark');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlagsNoSystem');
         expectTheme('dark');
@@ -210,7 +211,7 @@ describe('ThemeMenu Component', () => {
       });
 
       it('uses localStorage light preference', () => {
-        cy.setLocalStorage('chrome:theme', 'light');
+        cy.setLocalStorage(THEME_STORAGE_KEY, 'light');
         cy.mount(<Wrapper />);
         cy.wait('@featureFlagsNoSystem');
         expectTheme('light');
@@ -223,11 +224,11 @@ describe('ThemeMenu Component', () => {
         cy.wait('@featureFlagsNoSystem');
         // Should NOT save 'system' when flag is disabled
         cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
-        cy.window().its('localStorage').invoke('getItem', 'chrome:theme').should('not.equal', 'system');
+        cy.window().its('localStorage').invoke('getItem', THEME_STORAGE_KEY).should('not.equal', 'system');
       });
 
       it('ignores localStorage system preference and defaults to light', () => {
-        cy.setLocalStorage('chrome:theme', 'system');
+        cy.setLocalStorage(THEME_STORAGE_KEY, 'system');
         stubMatchMedia(true);
         cy.mount(<Wrapper />).get('html');
         cy.wait('@featureFlagsNoSystem');
@@ -238,7 +239,7 @@ describe('ThemeMenu Component', () => {
 
     describe('User Interactions', () => {
       it('toggles from light to dark', () => {
-        localStorage.setItem('chrome:theme', 'light');
+        localStorage.setItem(THEME_STORAGE_KEY, 'light');
         cy.mount(<Wrapper />).get('html');
         cy.get('#dark-button').click();
         expectTheme('dark');
@@ -246,7 +247,7 @@ describe('ThemeMenu Component', () => {
       });
 
       it('toggles from dark to light', () => {
-        localStorage.setItem('chrome:theme', 'dark');
+        localStorage.setItem(THEME_STORAGE_KEY, 'dark');
         cy.mount(<Wrapper />).get('html');
         cy.get('#light-button').click();
         expectTheme('light');
