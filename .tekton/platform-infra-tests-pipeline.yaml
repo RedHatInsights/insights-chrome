@@ -6,7 +6,7 @@ metadata:
 spec:
   description: |
     Platform infrastructure tests for insights-chrome.
-    Runs Playwright-based Akamai redirect and route reachability tests
+    Runs Playwright-based redirect, route reachability, and stage WebSocket tests
     against console.redhat.com environments on a daily schedule.
   params:
     - name: SNAPSHOT
@@ -36,6 +36,16 @@ spec:
                 value: stage
               - name: CI
                 value: "true"
+              - name: E2E_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: chrome-credentials-secret
+                    key: username
+              - name: E2E_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: chrome-credentials-secret
+                    key: password
             script: |
               #!/bin/bash
               set -euo pipefail
