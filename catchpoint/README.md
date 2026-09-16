@@ -1,5 +1,7 @@
 # Catchpoint WebSocket availability monitor
 
+Operational production monitor: [Catchpoint test 8413627](https://portal.catchpoint.com/ui/Symphony/ControlCenter/Tests/Test/8413627/Properties).
+
 Paste the entire contents of [websocket.ts](websocket.ts) into a **Playwright test**
 in Catchpoint. Although stored as TypeScript for repository type checking, the
 script uses plain JavaScript syntax: no compilation, imports, Jest, or repository
