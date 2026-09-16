@@ -10,6 +10,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
+const themeBootstrap = require('./theme-bootstrap');
 
 const deps = require('../package.json').dependencies;
 
@@ -103,6 +104,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       base: '/',
       templateParameters: {
         pf6styles: `/apps/chrome/js/pf/pf-v6.css`,
+        themeBootstrap,
       },
     }),
     new HtmlWebpackPlugin({

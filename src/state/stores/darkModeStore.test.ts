@@ -4,6 +4,7 @@ import { _resetDarkModeStore, getDarkModeStore, useDarkModeStore } from './darkM
 describe('darkModeStore', () => {
   beforeEach(() => {
     _resetDarkModeStore();
+    document.documentElement.classList.remove('pf-v6-theme-dark');
   });
 
   describe('getDarkModeStore', () => {
@@ -16,6 +17,14 @@ describe('darkModeStore', () => {
     it('should have initial state isDark: false', () => {
       const store = getDarkModeStore();
       expect(store.getState()).toEqual({ isDark: false });
+    });
+
+    it('should initialize from the document theme class', () => {
+      document.documentElement.classList.add('pf-v6-theme-dark');
+
+      const store = getDarkModeStore();
+
+      expect(store.getState()).toEqual({ isDark: true });
     });
 
     it('should set isDark to true on SET_DARK event', () => {
