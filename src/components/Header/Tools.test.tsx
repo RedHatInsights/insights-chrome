@@ -26,6 +26,7 @@ interface MockDropdownItem {
   title: React.ReactNode;
   description?: React.ReactNode;
   isHidden?: boolean;
+  isDisabled?: boolean;
   ouiaId?: string;
 }
 
@@ -62,6 +63,7 @@ jest.mock('./SettingsToggle', () => ({
                       key={j}
                       data-ouia-component-id={item.ouiaId}
                       data-selected={item.isSelected ? 'true' : undefined}
+                      data-disabled={item.isDisabled ? 'true' : undefined}
                       onClick={item.onClick}
                       role={item.onClick ? 'button' : undefined}
                     >
@@ -153,6 +155,7 @@ const mockInternalChromeContext = {
 
 import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import type { ToolbarConfig } from './Header';
 
 const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
@@ -234,6 +237,18 @@ describe('Tools - dark mode system feature flag', () => {
     it('should have OUIA ID on preview toggle', () => {
       renderTools();
       expect(screen.getByTestId('PreviewSwitcher')).toBeInTheDocument();
+    });
+
+    it('should enable the preview toggle when personalization is healthy', () => {
+      renderTools();
+      expect(screen.getByTestId('PreviewSwitcher')).not.toHaveAttribute('data-disabled');
+    });
+
+    it('should disable the preview toggle when personalization is degraded', () => {
+      const store = createStore();
+      store.set(degradedStateAtom, { userPersonalization: true } as any);
+      renderTools({}, undefined, store);
+      expect(screen.getByTestId('PreviewSwitcher')).toHaveAttribute('data-disabled', 'true');
     });
 
     it('should render color scheme ToggleGroupItems when dark mode is enabled', () => {
