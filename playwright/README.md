@@ -150,3 +150,43 @@ See `playwright.config.ts` in the root directory for configuration options inclu
 - Retries
 - Browser settings
 - Parallel execution
+
+### Stage WebSocket infrastructure check
+
+Run with stage test-account credentials in `E2E_USER` and `E2E_PASSWORD`:
+
+```bash
+PLATFORM_INFRA_ENV=stage npm run playwright:platform-infra
+```
+
+To run only the WebSocket check:
+
+```bash
+PLATFORM_INFRA_ENV=stage npx playwright test playwright/e2e/platform-infra/websocket.spec.ts
+```
+
+The check logs in with a fresh browser, loads `/insights/dashboard`, and verifies
+that the application's notification WebSocket negotiates HTTP 101 and the
+`cloudevents.json` subprotocol. It then observes 75 seconds of network activity
+and requires a server ping followed by a browser pong on the same WebSocket.
+This verifies transport connectivity; it does not verify notification delivery
+through Kafka. The stage notification-drawer feature flag must be enabled;
+missing credentials or an unavailable socket fail the check. Production skips it.
+
+Chromium NetLog is used because DevTools frame events omit control frames.
+Raw logs are temporary and deleted after the test; the report includes only a
+sanitized handshake/heartbeat summary. Local runs use the infrastructure suite's
+corporate proxy; CI connects directly. The Tekton job uses
+`chrome-credentials-secret` (`username` and `password`), which must be available
+in the job's namespace. Infrastructure tests bypass shared login setup.
+
+To compare with a browser using a direct connection (for example, on VPN), run:
+
+```bash
+PLATFORM_INFRA_ENV=stage PLATFORM_INFRA_BROWSER_PROXY=direct npx playwright test playwright/e2e/platform-infra/websocket.spec.ts
+```
+
+`PLATFORM_INFRA_BROWSER_PROXY` also accepts a proxy URL. It affects only the
+WebSocket browser check; redirect and reachability tests retain their existing
+proxy configuration. The network summary records whether the browser used an
+explicit proxy, a direct connection, or browser defaults.
