@@ -31,6 +31,41 @@ The authentication selectors and consent suppression follow the repository's
 shared authentication flow. They are inlined because this script must run without
 installing the shared npm package in Catchpoint.
 
+## Staging through Squid
+
+Create a separate Catchpoint Playwright test for stage, using the same script.
+Leave the operational production monitor configured for production.
+
+1. Change the script's `CONFIG.consoleUrl` to `https://console.stage.redhat.com`.
+   The dashboard URL and WebSocket URL are derived from this value; no other URL
+   changes are needed.
+2. Assign **stage** account credentials to this new test.
+3. Select a Catchpoint node that can resolve and reach
+   `squid.corp.redhat.com:3128`, typically an Enterprise Node on the corporate
+   network. Your workstation's VPN connection does not give a remote Catchpoint
+   node access to the proxy.
+4. Where supported by your account and agent version, create/select an HTTP proxy
+   definition for `http://squid.corp.redhat.com:3128` in Catchpoint's proxy
+   configuration library and associate it with the stage test. Otherwise, have
+   the node administrator configure the Enterprise Node's proxy settings.
+   Configure any required proxy credentials there, separately from the stage SSO
+   credentials.
+5. Ensure the proxy routing covers the Console, stage SSO, and the secure
+   WebSocket connection. Squid must permit HTTPS CONNECT to the required hosts
+   on port 443. If using a PAC file, verify that it routes `wss:` traffic as well
+   as HTTPS traffic through Squid.
+6. Run an Instant Test and require the final `WebSocket result - PASS` step.
+   A Lockdown page now produces an explicit proxy/routing diagnostic.
+
+The script cannot configure its browser's proxy: Catchpoint owns that browser,
+and its scripting API does not expose the Browser/BrowserContext classes.
+Adding a `proxy` field to `CONFIG` or a request header would not route traffic
+through Squid. The monitoring node needs an actual network path to the proxy.
+
+Catchpoint documents [test-level proxy support](https://docs.catchpoint.com/docs/2026-04-europa-release-notes)
+as agent-dependent and describes Enterprise Node proxy/reachability requirements
+in its [network requirements](https://docs.catchpoint.com/docs/catchpoint-synthetic-monitoring-firewall-network-requirements).
+
 ## What a successful run proves
 
 - The configured account reached an authenticated Console page.
