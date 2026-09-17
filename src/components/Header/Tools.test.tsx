@@ -155,7 +155,7 @@ const mockInternalChromeContext = {
 
 import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
-import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import type { ToolbarConfig } from './Header';
 
 const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
@@ -246,7 +246,7 @@ describe('Tools - dark mode system feature flag', () => {
 
     it('should disable the preview toggle when personalization is degraded', () => {
       const store = createStore();
-      store.set(degradedStateAtom, { userPersonalization: true } as any);
+      store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
       renderTools({}, undefined, store);
       expect(screen.getByTestId('PreviewSwitcher')).toHaveAttribute('data-disabled', 'true');
     });

@@ -117,6 +117,23 @@ describe('useSessionConfig', () => {
     expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
   });
 
+  it('does not re-fetch on remount (page-scoped guard survives unmount/remount)', async () => {
+    mockedInitChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
+
+    const tokenRef = { current: 'tok' };
+    // First mount fetches once.
+    const first = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
+    await waitFor(() => expect(first.result.current.configLoaded).toBe(true));
+    expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+
+    // Fully unmount, then mount a fresh hook against the SAME store. A component-scoped useRef would
+    // reset here and re-fetch; the store-backed guard must prevent that.
+    first.unmount();
+    renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
+
+    expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+  });
+
   it('does not swallow a real gateway outage (leaves configLoaded false so bootstrap shows the gateway error)', async () => {
     const gatewayErr = { detail: 'gateway down' } as unknown as ThreeScaleError;
     // The XHR interceptor records the gateway error on the store before the request rejects.
