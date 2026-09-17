@@ -14,7 +14,7 @@ import BetaSwitcher from './BetaSwitcher';
 import { describe, expect, it } from '@jest/globals';
 import { hidePreviewBannerAtom, isPreviewAtom, layoutBannerHiddenAtom } from '../../state/atoms/releaseAtom';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
-import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 
 const renderBetaSwitcher = (previewHidden = false, layoutHidden = false, userPersonalizationDegraded = false) => {
   const store = createStore();
@@ -22,7 +22,7 @@ const renderBetaSwitcher = (previewHidden = false, layoutHidden = false, userPer
   store.set(isPreviewAtom, false);
   store.set(layoutBannerHiddenAtom, layoutHidden);
   store.set(userConfigAtom, { data: { uiPreviewSeen: true }, ready: true } as any);
-  store.set(degradedStateAtom, { userPersonalization: userPersonalizationDegraded } as any);
+  store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: userPersonalizationDegraded });
 
   return render(
     <Provider store={store}>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom, useStore } from 'jotai';
 import { initChromeUserConfig, initVisibilityFunctions } from '../utils/initUserConfig';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
@@ -6,6 +6,7 @@ import { userConfigAtom } from '../state/atoms/userConfigAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { gatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { setServiceDegradedAtom } from '../state/atoms/degradedStateAtom';
+import { configInitializedAtom } from '../state/atoms/configInitializedAtom';
 import { visibilityFunctionsExist } from '../utils/VisibilitySingleton';
 
 const useSessionConfig = () => {
@@ -16,9 +17,10 @@ const useSessionConfig = () => {
   const initPreview = useSetAtom(isPreviewAtom);
   const setUserConfig = useSetAtom(userConfigAtom);
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
-  // Run the config init only once per page load. There is no in-session retry: a failed fetch
-  // renders the shell degraded, and a normal next page load re-attempts the fetch from scratch.
-  const initialized = useRef(false);
+  // Run the config init only once per page load. The guard lives on the singleton chromeStore
+  // (configInitializedAtom), not a component-scoped ref, so an App remount cannot re-run it.
+  // There is no in-session retry: a failed fetch renders the shell degraded, and a normal next
+  // page load re-attempts the fetch from scratch.
 
   async function initConfig() {
     // Initialize the visibility functions independently of the user config fetch so navigation
@@ -60,10 +62,11 @@ const useSessionConfig = () => {
   }
 
   useEffect(() => {
-    if (initialized.current) {
+    if (store.get(configInitializedAtom)) {
       return;
     }
-    initialized.current = true;
+    // Set synchronously, before the async init, so a concurrent remount cannot double-fire it.
+    store.set(configInitializedAtom, true);
     initConfig();
     // Run once per page load; getToken is a stable live getter, so token changes need no re-run.
   }, []);
