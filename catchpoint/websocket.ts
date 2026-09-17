@@ -1,6 +1,7 @@
 // Paste this entire file into a Catchpoint Playwright test. It uses plain JavaScript syntax.
 // Catchpoint provides `page`, `expect`, and `Catchpoint`; credentials stay in its credential store.
 const CONFIG = {
+  // For stage use https://console.stage.redhat.com and configure Squid in Catchpoint (see README).
   consoleUrl: 'https://console.redhat.com',
   dashboardPath: '/insights/dashboard',
   socketPath: '/wss/chrome-service/v1/ws',
@@ -16,14 +17,16 @@ if (CONFIG.resultTracepoint) await Catchpoint.setTracepoint(CONFIG.resultTracepo
 await Catchpoint.startStep('Log in to Console');
 const username = await Catchpoint.username();
 const password = await Catchpoint.password();
-if (!username || !password) throw new Error('Configure a production username and password in Catchpoint.');
+if (!username || !password) throw new Error('Configure a username and password for the target environment in Catchpoint.');
 
 // Matches the consent suppression used by our shared Playwright authentication helper.
 await page.route('**/consent.trustarc.com/**', (route) => route.abort());
 await page.goto(new URL(CONFIG.dashboardPath, CONFIG.consoleUrl).href, { waitUntil: 'domcontentloaded', timeout: CONFIG.authTimeout });
 const userMenu = page.getByRole('button', { name: /User Avatar/ });
 const usernameInput = page.locator('input[name="username"]:visible').first();
-await usernameInput.or(userMenu).first().waitFor({ state: 'visible', timeout: CONFIG.authTimeout });
+const lockdown = page.getByText('Lockdown', { exact: false }).first();
+await usernameInput.or(userMenu).or(lockdown).first().waitFor({ state: 'visible', timeout: CONFIG.authTimeout });
+if (await lockdown.isVisible()) throw new Error('Lockdown page detected. Check the Catchpoint node and Squid proxy configuration for this environment.');
 
 // SSO can return an already authenticated session without displaying a login form.
 if (!(await userMenu.isVisible())) {

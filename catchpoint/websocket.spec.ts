@@ -5,12 +5,16 @@ import { resolve } from 'node:path';
 import { Page, expect, test } from '@playwright/test';
 import { WebSocketServer } from 'ws';
 
-type Mode = 'healthy' | 'reject' | 'close' | 'wrong-protocol' | 'missing-cookie' | 'timeout';
+type Mode = 'healthy' | 'reject' | 'close' | 'wrong-protocol' | 'missing-cookie' | 'timeout' | 'lockdown';
 
 async function runMonitor(page: Page, mode: Mode, authenticated = false, outcomes: string[] = []) {
   const handshakes: { hasCookie: boolean; protocol?: string }[] = [];
   const server = createServer((request, response) => {
     response.setHeader('Content-Type', 'text/html');
+    if (mode === 'lockdown') {
+      response.end('<!doctype html><h1>Lockdown</h1>');
+      return;
+    }
     if (request.headers.cookie?.includes('session=logged-in')) {
       response.end('<!doctype html><button aria-label="User Avatar">Test user</button>');
       return;
@@ -113,4 +117,10 @@ test('fails if the server closes the socket during observation', async ({ page }
 
 test('fails when the handshake does not complete', async ({ page }) => {
   await expect(runMonitor(page, 'timeout')).rejects.toThrow('WebSocket did not open before the connection timeout');
+});
+
+test('identifies a stage routing failure before attempting login', async ({ page }) => {
+  const outcomes: string[] = [];
+  await expect(runMonitor(page, 'lockdown', false, outcomes)).rejects.toThrow('Lockdown page detected. Check the Catchpoint node and Squid proxy');
+  expect(outcomes).toEqual(['NOT COMPLETED: login or WebSocket check has not finished.']);
 });
