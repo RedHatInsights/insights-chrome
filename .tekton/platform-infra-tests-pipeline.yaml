@@ -101,3 +101,68 @@ spec:
               RESULT
 
               exit "${TEST_EXIT}"
+  finally:
+    - name: notify-slack
+      params:
+        # Status is available even if setup fails before TEST_OUTPUT is written.
+        - name: test-status
+          value: $(tasks.run-platform-infra-tests.status)
+        - name: results-url
+          value: https://konflux-ui.apps.stone-prd-rh01.pg1f.p1.openshiftapps.com/ns/$(context.pipelineRun.namespace)/applications/chrome-frontend-sc/pipelineruns/$(context.pipelineRun.name)/logs
+      taskSpec:
+        params:
+          - name: test-status
+            type: string
+          - name: results-url
+            type: string
+        steps:
+          - name: notify
+            # Reuse the test image, which includes curl.
+            image: mcr.microsoft.com/playwright@sha256:b3251f7ff1a9fa559a28d1c67eaa15fc1a9800f7845e82756caea7842967f615
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+            env:
+              - name: SLACK_WEBHOOK_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: platform-infra-slack-webhook
+                    key: url
+                    optional: true
+              - name: TEST_STATUS
+                value: $(params.test-status)
+              - name: RESULTS_URL
+                value: $(params.results-url)
+            script: |
+              #!/bin/bash
+              set -euo pipefail
+
+              if [ -z "${SLACK_WEBHOOK_URL:-}" ]; then
+                echo "Slack notification skipped: webhook is not configured."
+                exit 0
+              fi
+
+              # Only a successful test task is a pass, including setup in the outcome.
+              case "$TEST_STATUS" in
+                Succeeded) NOTIFICATION_STATUS=pass ;;
+                *) NOTIFICATION_STATUS=fail ;;
+              esac
+
+              # The URL uses the fixed console address and Kubernetes resource names.
+              PAYLOAD=$(printf '{"status":"%s","results_url":"%s"}' "$NOTIFICATION_STATUS" "$RESULTS_URL")
+
+              # Suppress response bodies and transport errors to keep the URL out of logs.
+              # Do not retry POSTs: the workflow may already have accepted the message.
+              if ! HTTP_STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                --connect-timeout 10 --max-time 30 \
+                --header 'Content-Type: application/json' \
+                --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"); then
+                echo "Slack notification delivery failed."
+                exit 0
+              fi
+
+              case "$HTTP_STATUS" in
+                2??) echo "Slack workflow accepted the notification." ;;
+                *) echo "Slack notification rejected (HTTP ${HTTP_STATUS})." ;;
+              esac
