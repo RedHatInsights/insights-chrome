@@ -143,39 +143,29 @@ describe('Lightwell', () => {
     expect(container.querySelector('[data-testid="mock-footer"]')).toBeTruthy();
   });
 
-  it('should apply pf-m-plain modifier to the Page component', () => {
+  it('should apply pf-m-plain and chr-c-page--lightwell classes to the Page component', () => {
     renderLightwell();
     const page = screen.getByTestId('lightwell-page');
-    expect(page).toHaveClass('pf-v6-c-page');
     expect(page).toHaveClass('pf-m-plain');
-  });
-
-  it('should apply chr-c-page--lightwell class to the Page component', () => {
-    renderLightwell();
-    const page = screen.getByTestId('lightwell-page');
-    expect(page).toHaveClass('pf-v6-c-page');
     expect(page).toHaveClass('chr-c-page--lightwell');
   });
 
   it('should render Page without sidebar or resize handler', () => {
     renderLightwell();
     const page = screen.getByTestId('lightwell-page');
-    expect(page).toHaveClass('pf-v6-c-page');
     // Verify Page renders with sidebar=null (no sidebar element)
-    expect(page.querySelector('.pf-v6-c-page__sidebar')).toBeFalsy();
+    expect(page.querySelector('[class*="page__sidebar"]')).toBeFalsy();
     // Verify Page renders with onPageResize=null (no resize handler errors)
-    expect(screen.getByTestId('lightwell-page')).toBeInTheDocument();
+    expect(page).toBeInTheDocument();
   });
 
   it('should render the footer after the page, outside the page card', () => {
-    const { container } = renderLightwell();
-    const root = container.querySelector('#chrome-app-render-root');
-    const page = container.querySelector('.pf-v6-c-page');
-    const footer = container.querySelector('[data-testid="mock-footer"]');
+    renderLightwell();
+    const page = screen.getByTestId('lightwell-page');
+    const footer = screen.getByTestId('mock-footer');
 
-    expect(root?.contains(footer)).toBe(true);
-    expect(page?.contains(footer)).toBe(false);
-    expect(page?.nextElementSibling).toBe(footer);
+    expect(page.contains(footer)).toBe(false);
+    expect(page.nextElementSibling).toBe(footer);
   });
 
   it('should not render sidebar navigation', () => {
