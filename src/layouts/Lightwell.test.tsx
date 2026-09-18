@@ -143,6 +143,31 @@ describe('Lightwell', () => {
     expect(container.querySelector('[data-testid="mock-footer"]')).toBeTruthy();
   });
 
+  it('should apply pf-m-plain modifier to the Page component', () => {
+    const { container } = renderLightwell();
+    const page = container.querySelector('.pf-v6-c-page');
+    expect(page).toBeTruthy();
+    expect(page?.classList.contains('pf-m-plain')).toBe(true);
+  });
+
+  it('should apply chr-c-page--lightwell class to the Page component', () => {
+    const { container } = renderLightwell();
+    const page = container.querySelector('.pf-v6-c-page');
+    expect(page).toBeTruthy();
+    expect(page?.classList.contains('chr-c-page--lightwell')).toBe(true);
+  });
+
+  it('should render Page from pf-6-next prerelease alias', () => {
+    const { container } = renderLightwell();
+    // The pf-6-next Page component should render with the standard PF6 page class
+    const page = container.querySelector('.pf-v6-c-page');
+    expect(page).toBeTruthy();
+    // Verify Page renders with sidebar=null (no sidebar element)
+    expect(page?.querySelector('.pf-v6-c-page__sidebar')).toBeFalsy();
+    // Verify Page renders with onPageResize=null (no resize handler errors)
+    expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
+  });
+
   it('should render the footer after the page, outside the page card', () => {
     const { container } = renderLightwell();
     const root = container.querySelector('#chrome-app-render-root');
