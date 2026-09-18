@@ -131,6 +131,7 @@
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3",
     "whatwg-fetch": "^3.6.20",
+    "ws": "^8.21.3",
     "yargs": "^18.0.0"
   },
   "dependencies": {
