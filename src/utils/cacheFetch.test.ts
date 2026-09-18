@@ -54,6 +54,43 @@ describe('cacheFetch', () => {
     expect(mockGetItem).not.toHaveBeenCalled();
   });
 
+  it('propagates client errors without waiting for flag readiness', async () => {
+    const error = { response: { status: 401 }, message: 'Unauthorized' };
+    const fetcher = jest.fn().mockRejectedValue(error);
+    const handlers: Record<string, () => void> = {};
+    mockedGetUnleashClient.mockReturnValue({
+      isReady: () => false,
+      isEnabled: jest.fn(() => true),
+      on: jest.fn((event: string, callback: () => void) => {
+        handlers[event] = callback;
+      }),
+      off: jest.fn(),
+    } as never);
+
+    jest.useFakeTimers();
+    try {
+      const resultPromise = cacheFetch('test-key', fetcher);
+      const outcomePromise = Promise.race([
+        resultPromise.then(
+          () => 'resolved',
+          () => 'rejected'
+        ),
+        new Promise<'timed-out'>((resolve) => setTimeout(() => resolve('timed-out'), 1_000)),
+      ]);
+
+      await jest.advanceTimersByTimeAsync(1_000);
+
+      await expect(outcomePromise).resolves.toBe('rejected');
+      await expect(resultPromise).rejects.toEqual(error);
+      expect(mockGetItem).not.toHaveBeenCalled();
+    } finally {
+      // Settle the independently-started flag policy and clear its five-second timer.
+      handlers.error?.();
+      await Promise.resolve();
+      jest.useRealTimers();
+    }
+  });
+
   it('continues the live fetch when reading flag state fails', async () => {
     const fetcher = jest.fn().mockResolvedValue({ foo: 'live' });
     mockedGetFeatureFlagsError.mockImplementation(() => {
