@@ -216,9 +216,13 @@ export async function cacheFetch<T>(
     });
     return { data, fromCache: false };
   } catch (err) {
-    // Only use cache for origin failures (5xx) and network errors, not client errors (4xx)
+    // Reject client errors and canceled requests immediately; only origin/network failures need flag readiness.
+    if (!shouldUseCacheFallback(err)) {
+      throw err;
+    }
+
     const cacheFallbackEnabled = await cacheFallbackPolicy;
-    if (!cacheFallbackEnabled || !shouldUseCacheFallback(err)) {
+    if (!cacheFallbackEnabled) {
       throw err;
     }
 
