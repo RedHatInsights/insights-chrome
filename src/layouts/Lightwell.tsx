@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
-import { Page } from 'pf-6-next/dist/dynamic/components/Page';
+import { Page, PageFooter } from 'pf-6-next/dist/dynamic/components/Page';
 import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -73,10 +73,12 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   }, [isNotificationsDrawerExpanded]);
 
   return (
-    <div id="chrome-app-render-root" className="chr-m-footer-after-page">
+    <div id="chrome-app-render-root">
       <Page
         data-testid="lightwell-page"
-        className="chr-c-page--lightwell pf-m-plain"
+        className="chr-c-page--lightwell"
+        isPlain
+        footer={Footer ? <PageFooter>{Footer}</PageFooter> : undefined}
         sidebar={null}
         onPageResize={null}
         masthead={withHorizontalSubnav(
@@ -115,7 +117,6 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           fallback={LoadingFallback}
         />
       </Page>
-      {Footer}
     </div>
   );
 };

@@ -159,13 +159,15 @@ describe('Lightwell', () => {
     expect(page).toBeInTheDocument();
   });
 
-  it('should render the footer after the page, outside the page card', () => {
+  it('should render the footer inside the Page via the footer prop', () => {
     renderLightwell();
     const page = screen.getByTestId('lightwell-page');
     const footer = screen.getByTestId('mock-footer');
 
-    expect(page.contains(footer)).toBe(false);
-    expect(page.nextElementSibling).toBe(footer);
+    // Footer should render inside the Page component (via the footer prop wrapped in PageFooter)
+    expect(page.contains(footer)).toBe(true);
+    // Footer should no longer be a sibling after the page
+    expect(page.nextElementSibling).toBeNull();
   });
 
   it('should not render sidebar navigation', () => {
