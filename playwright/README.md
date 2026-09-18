@@ -153,6 +153,8 @@ The webhook comes from the `platform-infra-slack-webhook` Secret's `url` key in 
 
 The notification task uses a digest-pinned UBI 9 Minimal image with Bash, curl, and CA certificates, running as UID/GID 1000 without installing packages.
 
+The `notify-slack` PipelineTask sets `onError: continue`, so notification TaskRun failures, including failures before the script starts, do not fail the PipelineRun. Test task failures still fail the run.
+
 The job uses the Playwright `v1.62.1-jammy` image with browsers and system dependencies preinstalled, avoiding browser installation that requires root privileges. The image is pinned to a SHA256 manifest digest covering AMD64 and ARM64. When updating Playwright, resolve the matching image's digest and update the pipeline image reference and version comment together, keeping the image version aligned with `@playwright/test` in `package-lock.json`.
 
 The test step explicitly runs as the image's `pwuser` (UID 1000, GID 1000), with `runAsNonRoot: true`. The script creates a temporary workspace and uses it for the checkout and home directory so npm and other caches remain writable. Tekton must permit this UID/GID and allow the step to write its test result.

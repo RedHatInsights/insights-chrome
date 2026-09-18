@@ -93,6 +93,8 @@ spec:
               exit "${TEST_EXIT}"
   finally:
     - name: notify-slack
+      # Preserve the test outcome even if the notification TaskRun cannot start.
+      onError: continue
       params:
         # Status is available even if setup fails before TEST_OUTPUT is written.
         - name: test-status
