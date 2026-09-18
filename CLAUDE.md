@@ -301,6 +301,7 @@ browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
    ```
 
 6. **Form Filling Patterns:**
+
    ```javascript
    // Single field approach
    await browser_type({ ref: 'ref-123', text: 'value' });
