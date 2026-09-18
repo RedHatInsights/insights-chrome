@@ -11,7 +11,7 @@ import entitlementsApi from '../entitlementsApi';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import logger from '../logger';
-import { login, logout } from './utils';
+import { getBaseScopes, login, logout } from './utils';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
@@ -139,7 +139,22 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     initializeAccessRequestCookies();
 
     if (!hasAuthParams() && !auth.activeNavigator && !auth.isLoading && !auth.isAuthenticated) {
-      login(auth, initialModuleConfig?.ssoScopes);
+      // With in-memory token storage, persisted user state is lost on page
+      // refresh. Attempt a silent SSO re-auth via iframe first to avoid a
+      // full-page redirect when the SSO session is still valid.
+      // Request the same base + module scopes that login() would use so the
+      // refreshed token is not downgraded to the default "openid" scope.
+      const silentScope = Array.from(new Set([...getBaseScopes(), ...(initialModuleConfig?.ssoScopes || [])])).join(' ');
+      try {
+        const user = await auth.signinSilent({ scope: silentScope });
+        if (!user) {
+          // signinSilent can resolve null/undefined without throwing when the
+          // SSO session is gone — treat as failure and redirect to login.
+          login(auth, initialModuleConfig?.ssoScopes);
+        }
+      } catch {
+        login(auth, initialModuleConfig?.ssoScopes);
+      }
     }
   };
 
@@ -219,10 +234,19 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     if (auth.error && !recoveryAttemptedRef.current) {
       recoveryAttemptedRef.current = true;
       log(`Auth error detected, attempting silent recovery: ${auth.error.message}`);
-      auth.signinSilent().catch(() => {
-        log('Silent recovery failed, redirecting to SSO');
-        login(auth);
-      });
+      const recoveryScope = getBaseScopes().join(' ');
+      auth
+        .signinSilent({ scope: recoveryScope })
+        .then((user) => {
+          if (!user) {
+            log('Silent recovery returned no user, redirecting to SSO');
+            login(auth);
+          }
+        })
+        .catch(() => {
+          log('Silent recovery failed, redirecting to SSO');
+          login(auth);
+        });
     }
 
     if (!auth.error) {
