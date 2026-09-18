@@ -48,6 +48,7 @@ chromeStore.set(degradedStateAtom, {
   entitlements: false,
   configFromCache: false,
   featureFlags: false,
+  quickstarts: false,
 });
 
 // globally handle subscription to activeModuleAtom

@@ -5,6 +5,7 @@ export type ServiceHealthStatus = {
   entitlements: boolean;
   configFromCache: boolean;
   featureFlags: boolean;
+  quickstarts: boolean;
 };
 
 const initialState: ServiceHealthStatus = {
@@ -12,6 +13,7 @@ const initialState: ServiceHealthStatus = {
   entitlements: false,
   configFromCache: false,
   featureFlags: false,
+  quickstarts: false,
 };
 
 export const degradedStateAtom = atom<ServiceHealthStatus>(initialState);

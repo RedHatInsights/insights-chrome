@@ -135,6 +135,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.sources.integrations': false,
   'platform.rbac.workspaces': false,
   'platform.chrome.help-panel': false,
+  'platform.chrome.learning-resources-quickstarts': false,
   'platform.chrome.ask-redhat-help': false,
   'platform.learning-resources.global-learning-resources': false,
   'platform.chrome.itless': false,
