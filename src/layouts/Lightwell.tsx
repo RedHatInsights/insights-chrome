@@ -75,6 +75,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   return (
     <div id="chrome-app-render-root" className="chr-m-footer-after-page">
       <Page
+        data-testid="lightwell-page"
         className="chr-c-page--lightwell pf-m-plain"
         sidebar={null}
         onPageResize={null}
