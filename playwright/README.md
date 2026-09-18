@@ -1,6 +1,6 @@
-# Playwright Release Gate Tests
+# Playwright Tests
 
-This directory contains Playwright-based E2E tests for the insights-chrome release gate process, converted from the original Cypress tests.
+This directory contains Playwright-based release-gate E2E tests and browser integration tests for insights-chrome.
 
 ## Structure
 
@@ -15,6 +15,8 @@ playwright/
 │       ├── landing-page.spec.ts
 │       ├── favorite-services.spec.ts
 │       └── refresh-token.spec.ts
+├── integration/                    # Browser integration tests with controlled dependencies
+│   └── cache-fallback.spec.ts
 └── README.md                       # This file
 ```
 
