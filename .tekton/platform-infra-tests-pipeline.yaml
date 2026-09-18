@@ -117,8 +117,8 @@ spec:
             type: string
         steps:
           - name: notify
-            # Reuse the test image, which includes curl.
-            image: mcr.microsoft.com/playwright@sha256:b3251f7ff1a9fa559a28d1c67eaa15fc1a9800f7845e82756caea7842967f615
+            # UBI 9 Minimal includes Bash, curl, and CA certificates; pin the multi-architecture manifest.
+            image: registry.access.redhat.com/ubi9/ubi-minimal@sha256:7b8e25a1b56ca4d00219198f3b5b51a3e1693a5c4f5369c5e190d7d6cb3f980e
             securityContext:
               runAsUser: 1000
               runAsGroup: 1000
