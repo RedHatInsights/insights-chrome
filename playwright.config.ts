@@ -33,8 +33,8 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.PLAYWRIGHT_BASE_URL || process.env.BASE || 'https://stage.foo.redhat.com:1337',
 
-    /* Ignore HTTPS certificate errors in stage environment */
-    ignoreHTTPSErrors: true,
+    /* Never disable certificate validation for credentialed runs. */
+    ignoreHTTPSErrors: !(process.env.E2E_USER && process.env.E2E_PASSWORD),
 
     /* Reuse authentication state from global setup */
     storageState: 'playwright/.auth/user.json',

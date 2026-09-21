@@ -1,55 +1,38 @@
 # Testing Guidelines
 
-## Coverage Requirements
+## Coverage
 
-- **Minimum: 60%** code coverage (enforced by Codecov)
-- Acceptable range: 60-80%
-- Threshold: 1% delta allowed per PR
-- Coverage combines Jest + Cypress results
+Coverage minimum is **60%** (Codecov), with a 1% delta threshold per PR. The 60–80% range controls Codecov status colors only; coverage above 80% remains compliant. Jest coverage is uploaded by GitHub Actions; Cypress has separate code-coverage support. No Jest `coverageThreshold` is configured, so the percentage is not locally enforced by Jest.
 
-## Test Frameworks
+| Framework  | Purpose          | Location                             | Pattern                   |
+| ---------- | ---------------- | ------------------------------------ | ------------------------- |
+| Jest + SWC | Unit             | Next to source                       | `*.test.ts`, `*.test.tsx` |
+| Cypress    | Component + E2E  | `cypress/component/`, `cypress/e2e/` | `*.cy.tsx`, `*.cy.ts`     |
+| Playwright | E2E release gate | `playwright/e2e/`                    | `*.spec.ts`               |
 
-| Framework  | Purpose                | Location                             | File Pattern              |
-| ---------- | ---------------------- | ------------------------------------ | ------------------------- |
-| Jest + SWC | Unit tests             | Next to source files                 | `*.test.ts`, `*.test.tsx` |
-| Cypress    | Component + E2E tests  | `cypress/component/`, `cypress/e2e/` | `*.cy.tsx`, `*.cy.ts`     |
-| Playwright | E2E release gate tests | `playwright/e2e/`                    | `*.spec.ts`               |
+`Navigation` fixtures from `src/@types/types.d.ts` must include `sortedLinks: string[]` or CI fails with TS2741.
 
-## Jest Unit Tests
+## Jest
 
-### Configuration
-
-- Config: `jest.config.js`
-- Transform: `@swc/jest` (not ts-jest)
-- Environment: custom jsdom (`config/jest-environment-jsdom.js`)
-- Setup: `config/setupTests.js`
-- Module name mapping handles `@redhat-cloud-services/*`, CSS modules, and asset files
-
-### Running Tests
+Config: `jest.config.js` with `@swc/jest` (not ts-jest), custom jsdom `config/jest-environment-jsdom.js`, setup `config/setupTests.js`. Module name mapping covers `@redhat-cloud-services/*`, CSS modules, and assets.
 
 ```bash
 npm test                    # All unit tests
-npm run test:update         # Update snapshots
+npm run test:update         # Snapshots — review diffs; they hide regressions
 npm run ci:unit-tests       # CI mode with coverage
 ```
 
-### Known Pitfalls
+**OOM:** `node --max-old-space-size=4096 ./node_modules/.bin/jest --maxWorkers=1`
 
-**Jest OOM:** Jest can run out of memory on this repo. Use `--maxWorkers=1` when running locally if OOM occurs:
+**jsdom 26+:** `window.location` is non-configurable. Use `jsdomReconfigure({ url: 'https://console.redhat.com/insights' })`, not `Object.defineProperty(window, 'location', ...)`.
 
-```bash
-node --max-old-space-size=4096 ./node_modules/.bin/jest --maxWorkers=1
-```
+**Federated modules:** mock `global.__webpack_share_scopes__ = { default: {} }` and `global.__webpack_init_sharing__ = jest.fn()`.
 
-**jsdom URL changes:** Since jsdom 26+, `window.location` is non-configurable. Use the custom `jsdomReconfigure()` global instead:
+Place `Foo.test.tsx` beside `Foo.tsx`. There is no shared test wrapper — compose Jotai `Provider`, `MemoryRouter`, and `ChromeAuthContext.Provider` per test.
 
-```typescript
-// WRONG — will throw
-Object.defineProperty(window, 'location', { value: { href: '...' } });
+Auth mock: `jest.mock('../auth/ChromeAuthContext', ...)` with `Consumer`/`Provider`. Hydrate atoms with `useHydrateAtoms` from `jotai/utils`. Spy `window.fetch` or use `src/__mocks__/axios.js`. `react-intl` is mocked in `src/__mocks__/react-intl.js` (`defaultMessage` / `formatMessage` string).
 
-// RIGHT — use custom environment helper
-jsdomReconfigure({ url: 'https://console.redhat.com/insights' });
-```
+## Jest tests
 
 **Module Federation globals:** Tests that touch federated modules must mock webpack globals in setup:
 
@@ -133,42 +116,31 @@ cypress/component/
 
 ### Running
 
+`cypress/component/MyComponent.cy.tsx`. Mount with Jotai, Router, and Intl. Prefer `data-testid`. Visual regression: `cy.matchImageSnapshot()` at 3%. Config keeps `numTestsKeptInMemory: 50`. Auth: `AuthContext.Provider` mock + `cy.spy()`.
+
 ```bash
 npm run test:ct                    # Headless
 npm run cypress                    # Interactive
-npm run ci:cypress-component-tests # CI mode
+npm run ci:cypress-component-tests # CI
 ```
 
-### Patterns
+## Playwright
 
-- Uses webpack dev server for component rendering
-- Mount components with required providers (Jotai, Router, Intl)
-- Use `cy.mount()` for component rendering
-- Prefer `data-testid` attributes for selectors
-- Visual regression: `cy.matchImageSnapshot()` with 3% failure threshold
-- Memory optimization: `numTestsKeptInMemory: 50` in config to prevent OOM
-- Auth testing: wrap with `AuthContext.Provider` mock, use `cy.spy()` for verification
+Config: `playwright.config.ts`. Base URL `https://stage.foo.redhat.com:1337` by default, overridable with `PLAYWRIGHT_BASE_URL` or `BASE`. Retries are disabled; workers are single-threaded on CI and parallel locally.
 
-## Playwright E2E Tests
+Needs `npm run dev`, plus `E2E_USER` / `E2E_PASSWORD`. Create accounts via [Ethel](https://account-manager-stage.app.eng.rdu2.redhat.com/#create).
 
-### Configuration
-
-- Config: `playwright.config.ts`
-- Base URL: `https://stage.foo.redhat.com:1337`
-- Retries: 2 on CI, 0 locally
-- Workers: 1 on CI (avoids flakiness)
-
-### Running
+Credentialed runs keep certificate validation enabled and allow only approved application and SSO origins. Certificate validation may be disabled only for non-credentialed local runs.
 
 ```bash
-npm run playwright              # All E2E tests
-npm run playwright:headed       # With visible browser
-npm run playwright:ui           # Interactive UI mode
-npm run playwright:debug        # Debug mode
-npm run playwright:report       # View HTML report
+npm run playwright              # All E2E
+npm run playwright:headed       # Visible browser
+npm run playwright:ui           # Interactive
+npm run playwright:debug
+npm run playwright:report
 ```
 
-### Requirements
+If browser/Playwright MCP tools are available, explore with accessibility snapshots first, then write the spec. Do not commit MCP `ref` handles. Workflow: `docs/playwright-mcp.md`.
 
 E2E tests need:
 
@@ -223,9 +195,16 @@ if ((await button.count()) > 0) {
 ## Pre-PR Verification
 
 Always run the full verification before submitting:
+Use named timeout constants (Konflux is slower than local). Do not check `isVisible()` then click — the node can detach. Pattern and constants: `playwright/e2e/release-gate/landing-page.spec.ts` (`TOOLTIP_TIMEOUT`), `playwright/e2e/release-gate/favorite-services.spec.ts` (`SERVICES_LOAD_TIMEOUT`, `BUTTON_STABILITY_TIMEOUT`, `BUTTON_CLICK_TIMEOUT`).
+
+## Verification
 
 ```bash
-npm run verify    # Runs: lint + build + test
+npm run verify    # lint + validate:crd + build + unit tests
 ```
 
-This catches TypeScript errors, lint violations, and test failures that CI would reject.
+Does not run Cypress or Playwright. Also confirm: new `src/` code is TypeScript with colocated Jest tests; interactive `src/components/` UI has a Cypress component test; shell user-flow changes have Playwright coverage; coverage stays ≥60%; `create-chrome.ts` / shared Module Federation singletons were not changed without a `breaking-change` label.
+
+```bash
+npm run test:ct && npm run playwright   # when those layers apply
+```

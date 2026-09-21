@@ -112,4 +112,4 @@ SSO endpoints are environment-specific:
 
 - Production: `sso.redhat.com`
 - Stage: `sso.stage.redhat.com`
-- Managed via `src/auth/platformUrl.ts` — use `getInitialScope()` (from `src/auth/getInitialScope.ts`) for scope resolution
+- Resolved by `loadSSOConfig()` and `resolveSSOUrl()` in `src/utils/common.ts`; use `getInitialScope()` from `src/auth/getInitialScope.ts` for scope resolution

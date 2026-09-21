@@ -1,19 +1,20 @@
 @AGENTS.md
 
-# Insights Chrome - AI Assistant Guidelines
+# Insights Chrome
 
-## ⚠️ CRITICAL REPOSITORY WARNING
+This is the Hybrid Cloud Console shell. Breakage takes down every HCC application.
 
-**This is the most critical component in the Red Hat Hybrid Cloud Console product.**
+Before changing a domain, read the matching file from the Documentation Index in AGENTS.md. Do not `@` import those guideline files from here — they are loaded on demand.
 
-- **ANY BREAKAGE CAN TAKE DOWN THE ENTIRE PRODUCT**
-- This repository is the "chrome wrapper" that provides the shell for ALL applications
-- Thousands of users depend on this being stable and functional
-- Test thoroughly. Never skip tests. Never take shortcuts.
+## Hard constraints
 
----
+- New features in TypeScript only (`strict`). No new JavaScript sources.
+- Auth only through ChromeAuthContext / `useChrome().auth`. Direct `react-oidc-context` or `oidc-client-ts` imports are allowed only under `src/auth/OIDCConnector/`.
+- Behavior changes under `src/` need relevant tests (Jest next to source; Cypress component for interactive UI; Playwright for shell user flows). Coverage target is 60%.
+- `src/chrome/create-chrome.ts` is the public API for 50+ apps. Signature or export changes need a `breaking-change` label and migration notes.
+- Finish with `npm run verify` (lint + CRD validate + build + unit tests). Run `npm run test:ct` / `npm run playwright` when those layers apply.
 
-## Project Overview
+## Agent-specific
 
 **Insights Chrome** is the foundational micro-frontend platform wrapper for the Red Hat Hybrid Cloud Console. It provides:
 
@@ -147,196 +148,7 @@ npm run test:e2e            # E2E tests
 
 #### Playwright E2E Tests
 
-##### Using Playwright MCP (Model Context Protocol)
-
-**When Playwright MCP is available, AI assistants can visually interact with the application in a real browser.**
-
-This is the PREFERRED method for writing and debugging e2e tests with AI assistance.
-
-**Available MCP Tools:**
-
-**Visual Inspection & Debugging:**
-
-- `browser_navigate(url)` - Navigate to application URLs
-- `browser_snapshot()` - **Capture accessibility tree (PREFERRED for interactions)**
-- `browser_take_screenshot()` - Take visual screenshots (for documentation/debugging only)
-- `browser_console_messages(level)` - Inspect console errors/warnings
-- `browser_network_requests(includeStatic)` - Debug API calls and network activity
-
-**User Interactions:**
-
-- `browser_click(ref, element)` - Click buttons, links, elements
-- `browser_type(ref, text, slowly, submit)` - Type into input fields
-- `browser_hover(ref, element)` - Hover over elements (for tooltips, menus)
-- `browser_select_option(ref, values)` - Select from dropdowns
-- `browser_fill_form(fields)` - Fill multiple form fields at once
-- `browser_press_key(key)` - Press keyboard keys (Enter, Escape, Arrow keys)
-
-**Advanced Operations:**
-
-- `browser_evaluate(function, ref, element)` - Run JavaScript in page context
-- `browser_run_code(code)` - Run Playwright code snippets directly
-- `browser_wait_for(text/textGone/time)` - Wait for conditions
-- `browser_handle_dialog(accept, promptText)` - Handle alerts/confirms/prompts
-- `browser_tabs(action, index)` - Manage browser tabs
-- `browser_drag(startRef, endRef)` - Drag and drop interactions
-- `browser_navigate_back()` - Browser back navigation
-
-**🔑 Key Concept: Snapshots vs Screenshots**
-
-```
-browser_snapshot()          → Accessibility tree with `ref` attributes (for actions)
-browser_take_screenshot()   → Visual PNG/JPEG image (for viewing only)
-```
-
-**IMPORTANT:** Always use `browser_snapshot()` before interactions to get `ref` values!
-
-**Best Practices with Playwright MCP:**
-
-1. **Standard E2E Test Development Workflow:**
-
-   ```
-   Step 1: Navigate    → browser_navigate('https://stage.foo.redhat.com:1337')
-   Step 2: Snapshot    → browser_snapshot() to see accessibility tree & get refs
-   Step 3: Interact    → browser_click(ref), browser_type(ref, text)
-   Step 4: Wait        → browser_wait_for(text: 'Success') if async operations
-   Step 5: Verify      → browser_snapshot() again to verify changes
-   Step 6: Debug       → browser_console_messages(), browser_network_requests()
-   ```
-
-2. **Example: Testing Login Flow with MCP**
-
-   ```javascript
-   // AI Assistant uses MCP tools to develop the test:
-
-   // 1. Navigate to app
-   await browser_navigate('https://stage.foo.redhat.com:1337');
-
-   // 2. Take snapshot to see page structure
-   const initialSnapshot = await browser_snapshot();
-   // Returns accessibility tree like:
-   // button "Login" [ref: "ref-abc123"]
-   // textbox "Username" [ref: "ref-def456"]
-
-   // 3. Click login button using ref from snapshot
-   await browser_click({ ref: 'ref-abc123', element: 'Login button' });
-
-   // 4. Wait for login form
-   await browser_wait_for({ text: 'Username' });
-
-   // 5. Take new snapshot to get form field refs
-   const formSnapshot = await browser_snapshot();
-
-   // 6. Fill in credentials
-   await browser_type({ ref: 'ref-def456', text: 'test@redhat.com' });
-   await browser_type({ ref: 'ref-ghi789', text: 'password', submit: true });
-
-   // 7. Verify success
-   await browser_wait_for({ text: 'Welcome' });
-
-   // 8. Check for console errors
-   const consoleErrors = await browser_console_messages({ level: 'error' });
-
-   // 9. Check network calls
-   const networkCalls = await browser_network_requests({ includeStatic: false });
-
-   // Now AI can write the actual Playwright test based on this exploration!
-   ```
-
-3. **Use MCP for Critical User Flows:**
-   - ✅ Authentication/SSO login flows
-   - ✅ Navigation between bundles/apps
-   - ✅ Global filter interactions
-   - ✅ Module Federation dynamic loading
-   - ✅ Permission-based UI rendering
-   - ✅ Feature flag conditional behaviors
-   - ✅ WebSocket connection testing
-   - ✅ Complex form submissions
-
-4. **Debugging Failed Tests with MCP:**
-
-   ```javascript
-   // When a test fails, AI can investigate:
-
-   // Check what's on the page
-   await browser_snapshot();
-
-   // Look for JavaScript errors
-   await browser_console_messages({ level: 'error' });
-
-   // Check failed API calls
-   await browser_network_requests({ includeStatic: false });
-
-   // Take screenshot for visual inspection
-   await browser_take_screenshot({ type: 'png', fullPage: true });
-
-   // Run custom Playwright code to investigate
-   await browser_run_code(`
-     async (page) => {
-       const title = await page.title();
-       const url = page.url();
-       const errorElement = await page.locator('.error-message').textContent();
-       return { title, url, errorElement };
-     }
-   `);
-   ```
-
-5. **Network & API Testing:**
-
-   ```javascript
-   // Navigate to page that makes API calls
-   await browser_navigate('https://stage.foo.redhat.com:1337/insights/dashboard');
-
-   // Wait for page to load
-   await browser_wait_for({ time: 2 });
-
-   // Check all network requests (excluding static assets)
-   const requests = await browser_network_requests({ includeStatic: false });
-
-   // AI can verify:
-   // - RBAC API was called
-   // - Entitlements API was called
-   // - No 401/403 errors
-   // - Module Federation manifests loaded
-   ```
-
-6. **Form Filling Patterns:**
-   ```javascript
-   // Single field approach
-   await browser_type({ ref: 'ref-123', text: 'value' });
-
-   // Multi-field approach (more efficient)
-   await browser_fill_form({
-     fields: [
-       { name: 'Username', type: 'textbox', ref: 'ref-123', value: 'user@redhat.com' },
-       { name: 'Password', type: 'textbox', ref: 'ref-456', value: 'password' },
-       { name: 'Remember me', type: 'checkbox', ref: 'ref-789', value: 'true' },
-     ],
-   });
-   ```
-
-**After using MCP to explore, write the actual Playwright test:**
-
-```typescript
-// playwright/e2e/login.spec.ts
-import { test, expect } from '@playwright/test';
-
-test('should login successfully', async ({ page }) => {
-  // Based on MCP exploration, write the actual test
-  await page.goto('/');
-
-  // Click login button
-  await page.getByRole('button', { name: 'Login' }).click();
-
-  // Fill credentials
-  await page.getByLabel('Username').fill('test@redhat.com');
-  await page.getByLabel('Password').fill('password');
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  // Verify success
-  await expect(page.getByText('Welcome')).toBeVisible();
-});
-```
+For browser/Playwright MCP exploration, follow [docs/playwright-mcp.md](docs/playwright-mcp.md). Keep MCP references out of committed tests.
 
 ##### Traditional Playwright Tests (Without MCP)
 
@@ -932,3 +744,7 @@ Before submitting PRs, verify:
 8. **Verify before committing** - `npm run verify` must pass
 9. **Follow existing patterns** - Check similar components first
 10. **Read the docs** - Especially [docs/api.md](docs/api.md)
+
+- Dev server: `npm run dev` → https://stage.foo.redhat.com:1337. Firefox avoids self-signed cert issues; Chrome setup is in README.md.
+- Proxy a local federated app with `LOCAL_APPS` (README.md).
+- If browser / Playwright MCP tools are available, explore with accessibility snapshots first, then write the spec. Workflow: [docs/playwright-mcp.md](docs/playwright-mcp.md).

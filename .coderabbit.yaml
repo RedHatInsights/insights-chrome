@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 # CodeRabbit AI Configuration for insights-chrome
 # Documentation: https://docs.coderabbit.ai/reference/configuration
 
@@ -5,6 +6,11 @@ language: 'en-US'
 tone_instructions: 'Be professional, constructive, and focus on critical issues. This is a production-critical repository where any breakage can take down the entire Red Hat Hybrid Cloud Console product.'
 early_access: false
 enable_free_tier: true
+
+knowledge_base:
+  code_guidelines:
+    filePatterns:
+      - 'docs/*-guidelines.md'
 
 # Exclude dependency update bots from automated reviews
 reviews:
@@ -75,33 +81,33 @@ reviews:
       - name: 'Tests Required'
         mode: 'error'
         instructions: |
-          CRITICAL REQUIREMENT: This repository requires 60% minimum test coverage.
+          CRITICAL REQUIREMENT: This repository targets 60% test coverage.
 
           Pass criteria:
-          - If this PR modifies source code files (src/**/*.{ts,tsx,js,jsx}), it MUST include corresponding test files
-          - Test files can be: **/*.test.{ts,tsx,js}, cypress/component/**/*.cy.tsx, or playwright/e2e/**/*.spec.ts
+          - If this PR changes behavior in source code files (src/**/*.{ts,tsx,js,jsx}), it MUST include relevant test evidence
+          - Test files can be: **/*.test.{ts,tsx,js,jsx}, cypress/component/**/*.cy.tsx, or playwright/e2e/**/*.spec.ts
           - Exception: If ONLY documentation files (.md, .txt) are changed, tests are not required
           - Exception: If ONLY configuration files are changed without logic changes, tests may be optional
           - Exception: Dependency updates (package.json, package-lock.json only) do not require tests
 
           Fail criteria:
-          - PR modifies TypeScript/JavaScript source files in src/ directory
-          - AND no test files are added or modified
+          - PR modifies behavior in TypeScript/JavaScript source files in src/ directory
+          - AND no relevant test evidence is added or modified
           - AND PR is not a dependency-only update
 
           If this check fails, post a STERN WARNING:
-          "⚠️ **CRITICAL: NO TESTS DETECTED** ⚠️
+          "⚠️ **CRITICAL: NO RELEVANT TEST EVIDENCE DETECTED** ⚠️
 
-          This PR modifies source code but does not include any tests. The insights-chrome repository requires a minimum of 60% test coverage.
+          This PR modifies source behavior but does not include relevant test evidence. The insights-chrome repository targets 60% test coverage.
 
           **Required Actions:**
-          1. Add unit tests (.test.ts/.test.tsx files) for new/modified code
-          2. Add Cypress component tests (cypress/component/**/*.cy.tsx) for UI components
-          3. Add Playwright e2e tests (playwright/e2e/**/*.spec.ts) for critical user flows if applicable
+          1. Add relevant unit tests (.test.ts/.test.tsx files) for new or modified behavior
+          2. Add Cypress component tests (cypress/component/**/*.cy.tsx) for interactive UI when applicable
+          3. Add Playwright e2e tests (playwright/e2e/**/*.spec.ts) for critical user flows when applicable
 
           **Coverage Requirements:**
-          - Minimum 60% code coverage (enforced by CI)
-          - All new TypeScript code must have corresponding tests
+          - Aim for 60% code coverage; Jest does not enforce a local threshold
+          - New or changed behavior must have relevant tests
           - Test files should cover edge cases and error scenarios
 
           **This is a CRITICAL repository** - Any breakage can take down the entire Red Hat Hybrid Cloud Console product.

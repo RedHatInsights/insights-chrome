@@ -11,27 +11,31 @@ insights-chrome is the micro-frontend platform shell for the Hybrid Cloud Consol
 
 Detailed domain-specific guidelines for AI agents:
 
-| File                                                                   | Domain                                                             |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [docs/security-guidelines.md](docs/security-guidelines.md)             | Authentication, authorization, token handling, RBAC, feature flags |
-| [docs/testing-guidelines.md](docs/testing-guidelines.md)               | Jest, Cypress, Playwright, coverage requirements, mocking patterns |
-| [docs/error-handling-guidelines.md](docs/error-handling-guidelines.md) | Error boundaries, Sentry, chunk loading, graceful degradation      |
-| [docs/integration-guidelines.md](docs/integration-guidelines.md)       | Module Federation, Scalprum, Chrome API, WebSocket, analytics      |
-| [docs/performance-guidelines.md](docs/performance-guidelines.md)       | Code splitting, caching, bundle optimization, Jotai patterns       |
+| File                                                                         | Domain                                                               |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [docs/security-guidelines.md](docs/security-guidelines.md)                   | Authentication, authorization, token handling, RBAC, feature flags   |
+| [docs/testing-guidelines.md](docs/testing-guidelines.md)                     | Jest, Cypress, Playwright, coverage requirements, mocking patterns   |
+| [docs/error-handling-guidelines.md](docs/error-handling-guidelines.md)       | Error boundaries, Sentry, chunk loading, graceful degradation        |
+| [docs/integration-guidelines.md](docs/integration-guidelines.md)             | Module Federation, Scalprum, Chrome API, WebSocket, analytics        |
+| [docs/performance-guidelines.md](docs/performance-guidelines.md)             | Code splitting, caching, bundle optimization, Jotai patterns         |
+| [docs/code-organization-guidelines.md](docs/code-organization-guidelines.md) | Entry point, new component/hook/atom layout, titles, local app proxy |
+| [docs/deployment-guidelines.md](docs/deployment-guidelines.md)               | GitHub Actions, Konflux/Tekton, CodeRabbit pre-merge checks          |
 
 Existing documentation for deeper reference:
 
-| File                                                             | Topic                                                   |
-| ---------------------------------------------------------------- | ------------------------------------------------------- |
-| [docs/api.md](docs/api.md)                                       | Chrome JavaScript API specification                     |
-| [docs/navigation.md](docs/navigation.md)                         | Navigation configuration system                         |
-| [docs/auth.md](docs/auth.md)                                     | Authentication architecture                             |
-| [docs/analytics.md](docs/analytics.md)                           | Analytics integration                                   |
-| [docs/errorHandling.md](docs/errorHandling.md)                   | Sentry error handling                                   |
-| [docs/localSearchDevelopment.md](docs/localSearchDevelopment.md) | Search implementation                                   |
-| [docs/wsSubscription.md](docs/wsSubscription.md)                 | WebSocket subscriptions                                 |
-| [docs/wildcard-permissions.md](docs/wildcard-permissions.md)     | Wildcard permission handling                            |
-| [docs/darkMode.md](docs/darkMode.md)                             | Dark mode / color scheme remote hook for consuming apps |
+| File                                                             | Topic                                                            |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [docs/api.md](docs/api.md)                                       | Chrome JavaScript API specification                              |
+| [docs/navigation.md](docs/navigation.md)                         | Navigation configuration system                                  |
+| [docs/auth.md](docs/auth.md)                                     | Authentication architecture                                      |
+| [docs/analytics.md](docs/analytics.md)                           | Analytics integration                                            |
+| [docs/errorHandling.md](docs/errorHandling.md)                   | Sentry error handling                                            |
+| [docs/localSearchDevelopment.md](docs/localSearchDevelopment.md) | Search implementation                                            |
+| [docs/wsSubscription.md](docs/wsSubscription.md)                 | WebSocket subscriptions                                          |
+| [docs/wildcard-permissions.md](docs/wildcard-permissions.md)     | Wildcard permission handling                                     |
+| [docs/darkMode.md](docs/darkMode.md)                             | Dark mode / color scheme remote hook for consuming apps          |
+| [docs/debugging.md](docs/debugging.md)                           | localStorage debug flags and common failure modes                |
+| [docs/playwright-mcp.md](docs/playwright-mcp.md)                 | Browser MCP exploration workflow before writing Playwright specs |
 
 ## Project Structure
 
@@ -42,7 +46,7 @@ src/
   auth/            # Authentication layer (ChromeAuthContext, OIDC, RBAC, entitlements)
     OIDCConnector/ # ONLY place allowed to import oidc-client-ts / react-oidc-context
   chrome/          # Chrome API surface (create-chrome.ts — BREAKING CHANGE RISK)
-  components/      # React components (33 feature directories)
+  components/      # React components grouped by feature
     ErrorComponents/   # Error boundaries and error pages
     FavoriteServices/  # Exposed via Module Federation
     GlobalFilter/      # Cross-app global filtering
@@ -50,10 +54,10 @@ src/
     Navigation/        # Left navigation
     Search/            # Search UI
     RootApp/           # App entry point, Scalprum setup
-  hooks/           # Custom React hooks (22 hooks)
+  hooks/           # Custom React hooks
   layouts/         # Page layouts (SatelliteToken exposed via MF)
   state/
-    atoms/         # Jotai atoms (27 atoms — the state management layer)
+    atoms/         # Jotai atoms — the state management layer
     stores/        # Scalprum shared stores (limited use)
     chromeStore.ts # Central Jotai store
   utils/           # Utility functions
@@ -99,7 +103,7 @@ docs/              # Documentation (you are here)
 
 ### File Organization
 
-- Feature-based folders with `index.ts` barrel exports
+- Feature-based folders; add an `index.ts` barrel only when the folder is imported from several places
 - Test files next to source files (not in a separate `__tests__/` tree)
 - One component per file (exception: small helper components used only by the parent)
 
@@ -134,6 +138,7 @@ docs/              # Documentation (you are here)
 6. **PF5 vs PF6** — PF5 styles are still imported for backward compatibility. Prefer PF6 for new code but do not remove PF5 imports.
 7. **Environment-specific URLs** — Never hardcode URLs. Use `getEnv()`, `isProd()`, `getEnvDetails()` from `src/utils/common.ts`.
 8. **Global filter side effects** — `globalFilterAtom` changes propagate to ALL consuming applications. Test thoroughly.
+9. **`document.title`** — Use `chrome.updateDocumentTitle()` (`src/utils/common.ts`). Direct assignment drops the console suffix and skips chrome listeners.
 
 ## Build & Run Commands
 
@@ -145,14 +150,16 @@ npm run lint         # ESLint check
 npm test             # Jest unit tests
 npm run test:ct      # Cypress component tests
 npm run playwright   # Playwright E2E tests
-npm run verify       # Full verification: lint + build + test
+npm run verify       # lint + validate:crd + build + unit tests
 npm run analyze      # Bundle analyzer
+# Proxy a local federated app: LOCAL_APPS=app:8003 npm run dev  (see README)
 ```
 
 ## CI/CD
 
-- **GitHub Actions** (`.github/workflows/test.yml`): lint, unit tests, Cypress, build, Playwright
+- **GitHub Actions** (`.github/workflows/test.yml`): lint, unit tests, Cypress, build
 - **Konflux/Tekton** (`.tekton/`): container builds, SBOM, enterprise contract checks
 - Node version: see `.nvmrc`
 - PR images expire after 5 days
 - Default branch: `master`
+- Details: [docs/deployment-guidelines.md](docs/deployment-guidelines.md)

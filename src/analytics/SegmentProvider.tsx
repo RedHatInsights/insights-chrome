@@ -98,7 +98,7 @@ const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = ''
   };
 };
 
-const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+const SegmentProvider = ({ children }: React.PropsWithChildren) => {
   const initialized = useRef(false);
   const isITLessEnv = ITLess();
   const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv;
