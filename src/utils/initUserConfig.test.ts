@@ -39,8 +39,10 @@ describe('initUserConfig', () => {
       const result = await initChromeUserConfig();
 
       expect(result).toEqual(config);
+      // A timeout is set so a hung request cannot block shell init indefinitely.
       expect(mockedGet).toHaveBeenCalledWith('/api/chrome-service/v1/user', {
         params: { 'skip-identity-cache': 'true' },
+        timeout: 5000,
       });
       // The visibility functions must be initialized independently of the fetch.
       expect(mockedInitVisibility).not.toHaveBeenCalled();
@@ -50,6 +52,13 @@ describe('initUserConfig', () => {
       mockedGet.mockRejectedValueOnce(new Error('500'));
 
       await expect(initChromeUserConfig()).rejects.toThrow('500');
+      expect(mockedInitVisibility).not.toHaveBeenCalled();
+    });
+
+    it('rejects on request timeout (ECONNABORTED) so the caller can fall back to a degraded shell', async () => {
+      mockedGet.mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+
+      await expect(initChromeUserConfig()).rejects.toThrow('timeout of 5000ms exceeded');
       expect(mockedInitVisibility).not.toHaveBeenCalled();
     });
   });

@@ -1,26 +1,32 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useAtomValue, useSetAtom, useStore } from 'jotai';
 import { initChromeUserConfig, initVisibilityFunctions } from '../utils/initUserConfig';
-import { isPreviewAtom } from '../state/atoms/releaseAtom';
+import { hydratePreviewAtom, isPreviewAtom } from '../state/atoms/releaseAtom';
 import { userConfigAtom } from '../state/atoms/userConfigAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { gatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { setServiceDegradedAtom } from '../state/atoms/degradedStateAtom';
-import { configInitializedAtom } from '../state/atoms/configInitializedAtom';
+import { configInitializedAtom, configLoadedAtom } from '../state/atoms/configInitializedAtom';
 import { visibilityFunctionsExist } from '../utils/VisibilitySingleton';
 
 const useSessionConfig = () => {
   const gatewayError = useAtomValue(gatewayErrorAtom);
-  const [configLoaded, setConfigLoaded] = useState(false);
+  // `configLoaded` is backed by an atom on the singleton chromeStore (not component `useState`) so it
+  // survives an App remount. Otherwise a remount would reset it to `false` while `configInitializedAtom`
+  // stayed `true`, and the shell would hang on the loading placeholder forever.
+  const configLoaded = useAtomValue(configLoadedAtom);
+  const setConfigLoaded = useSetAtom(configLoadedAtom);
   const { getUser, getToken } = useContext(ChromeAuthContext);
   const store = useStore();
-  const initPreview = useSetAtom(isPreviewAtom);
+  // Hydrates preview from the server WITHOUT persisting it back (no update-ui-preview POST), so a
+  // transient fetch failure cannot clobber the user's saved preference.
+  const hydratePreview = useSetAtom(hydratePreviewAtom);
   const setUserConfig = useSetAtom(userConfigAtom);
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
   // Run the config init only once per page load. The guard lives on the singleton chromeStore
   // (configInitializedAtom), not a component-scoped ref, so an App remount cannot re-run it.
   // There is no in-session retry: a failed fetch renders the shell degraded, and a normal next
-  // page load re-attempts the fetch from scratch.
+  // page load (or reload) re-attempts the fetch from scratch.
 
   async function initConfig() {
     // Initialize the visibility functions independently of the user config fetch so navigation
@@ -34,11 +40,10 @@ const useSessionConfig = () => {
     try {
       const config = await initChromeUserConfig();
       setUserConfig(config);
-      // Set preview exactly once, and only on an actual change. This avoids the redundant
-      // onToggle side effects (cache clear + update-ui-preview POST) and the transient render
-      // flip that a false-then-value double set would cause, plus a redundant POST on remount.
+      // Hydrate preview from the server value, only on an actual change to avoid a redundant render
+      // flip. Hydration never POSTs, so this cannot re-persist the value we just read back.
       if (store.get(isPreviewAtom) !== config.data.uiPreview) {
-        initPreview(config.data.uiPreview);
+        hydratePreview(config.data.uiPreview);
       }
       setConfigLoaded(true);
     } catch (error) {
@@ -50,12 +55,12 @@ const useSessionConfig = () => {
       }
       // The personalization API is optional. Render the shell with production defaults and flag the
       // degraded state. Force preview OFF while degraded (the toggle is also disabled in the UI);
-      // guarded so the side effect only fires on an actual change. On a truly-down service the
-      // update-ui-preview POST fails harmlessly (swallowed by isPreviewAtom's onToggle).
+      // guarded so the side effect only fires on an actual change. Hydration never POSTs, so a
+      // transient GET failure cannot overwrite the user's saved preference with `false`.
       console.error('Failed to fetch user configuration; rendering with defaults', error);
       setServiceDegraded({ service: 'userPersonalization', degraded: true });
       if (store.get(isPreviewAtom) !== false) {
-        initPreview(false);
+        hydratePreview(false);
       }
       setConfigLoaded(true);
     }

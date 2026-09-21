@@ -101,6 +101,24 @@ describe('useSessionConfig', () => {
     consoleError.mockRestore();
   });
 
+  it('falls back to a degraded shell when the fetch times out (ECONNABORTED, not a gateway error)', async () => {
+    // A client-side timeout aborts the XHR (ontimeout), so gatewayErrorAtom stays unset and the
+    // request lands in the degraded branch instead of blocking the shell forever.
+    mockedInitChromeUserConfig.mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const tokenRef = { current: 'tok' };
+    const { result } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
+
+    await waitFor(() => expect(result.current.configLoaded).toBe(true));
+
+    expect(result.current.gatewayError).toBeUndefined();
+    expect(store.get(degradedStateAtom).userPersonalization).toBe(true);
+    expect(mockedPost).not.toHaveBeenCalledWith('/api/chrome-service/v1/user/update-ui-preview', expect.anything());
+
+    consoleError.mockRestore();
+  });
+
   it('fetches config only once per page load (no in-session retry on token change)', async () => {
     mockedInitChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
 
@@ -117,7 +135,7 @@ describe('useSessionConfig', () => {
     expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
   });
 
-  it('does not re-fetch on remount (page-scoped guard survives unmount/remount)', async () => {
+  it('renders loaded immediately on remount without re-fetching (no infinite loading)', async () => {
     mockedInitChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
 
     const tokenRef = { current: 'tok' };
@@ -126,12 +144,15 @@ describe('useSessionConfig', () => {
     await waitFor(() => expect(first.result.current.configLoaded).toBe(true));
     expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
 
-    // Fully unmount, then mount a fresh hook against the SAME store. A component-scoped useRef would
-    // reset here and re-fetch; the store-backed guard must prevent that.
+    // Fully unmount, then mount a fresh hook against the SAME store — this simulates the ErrorBoundary
+    // "Try again" remount. A component-scoped useState/useRef would reset here (re-fetch, or worse hang
+    // on the loading placeholder forever); the store-backed guard + loaded signal must prevent both.
     first.unmount();
-    renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
+    const second = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
 
+    // No re-fetch, and the shell is loaded immediately (regression guard for the infinite-loading bug).
     expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+    expect(second.result.current.configLoaded).toBe(true);
   });
 
   it('does not swallow a real gateway outage (leaves configLoaded false so bootstrap shows the gateway error)', async () => {
@@ -156,10 +177,10 @@ describe('useSessionConfig', () => {
     expect(store.get(degradedStateAtom).userPersonalization).toBe(false);
   });
 
-  it('applies preview once with a single side effect when the value changes (no false->value double set)', async () => {
+  it('hydrates preview from the server value without persisting it back (no POST)', async () => {
     // Seed while the singleton does not yet exist so seeding does not itself POST.
     store.set(isPreviewAtom, false);
-    // Visibility singleton already exists, so isPreviewAtom.onToggle will POST update-ui-preview.
+    // Visibility singleton already exists — a user toggle would POST, but a hydrate must not.
     mockedVisibilityFunctionsExist.mockReturnValue(true);
     mockedPost.mockClear();
     mockedInitChromeUserConfig.mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
@@ -169,12 +190,12 @@ describe('useSessionConfig', () => {
 
     await waitFor(() => expect(result.current.configLoaded).toBe(true));
 
+    // The read value reflects the server config...
     expect(store.get(isPreviewAtom)).toBe(true);
     // Singleton already existed, so we do not re-init the visibility functions.
     expect(mockedInitVisibilityFunctions).not.toHaveBeenCalled();
-    // Exactly one update-ui-preview POST — the old false-then-true double set fired it twice.
-    await waitFor(() => expect(mockedPost).toHaveBeenCalledWith('/api/chrome-service/v1/user/update-ui-preview', { uiPreview: true }));
-    expect(mockedPost.mock.calls.filter(([url]) => url === '/api/chrome-service/v1/user/update-ui-preview')).toHaveLength(1);
+    // ...but hydration must NOT persist it back — no update-ui-preview POST for the value we just read.
+    expect(mockedPost).not.toHaveBeenCalledWith('/api/chrome-service/v1/user/update-ui-preview', expect.anything());
   });
 
   it('does not re-POST preview on remount when the saved value is unchanged', async () => {
@@ -193,10 +214,13 @@ describe('useSessionConfig', () => {
     expect(mockedPost).not.toHaveBeenCalledWith('/api/chrome-service/v1/user/update-ui-preview', expect.anything());
   });
 
-  it('forces preview off while degraded even when the singleton already exists (remount)', async () => {
+  it('forces preview off while degraded without clobbering the saved preference (no POST)', async () => {
     // Seed while the singleton does not yet exist so seeding does not itself POST.
+    // isPreviewAtom is truthy at GET-reject time (e.g. the user flipped the switch during the initial
+    // GET) — the exact case where the old code would POST uiPreview:false and overwrite the saved value.
     store.set(isPreviewAtom, true);
     mockedVisibilityFunctionsExist.mockReturnValue(true);
+    mockedPost.mockClear();
     mockedInitChromeUserConfig.mockRejectedValueOnce(new Error('500'));
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
@@ -207,6 +231,8 @@ describe('useSessionConfig', () => {
 
     expect(store.get(isPreviewAtom)).toBe(false);
     expect(store.get(degradedStateAtom).userPersonalization).toBe(true);
+    // The key regression: the degraded fallback must never persist uiPreview:false.
+    expect(mockedPost).not.toHaveBeenCalledWith('/api/chrome-service/v1/user/update-ui-preview', expect.anything());
 
     consoleError.mockRestore();
   });

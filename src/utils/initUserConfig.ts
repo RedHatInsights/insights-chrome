@@ -26,11 +26,17 @@ export const initVisibilityFunctions = ({ getUser, getToken }: { getUser: () => 
   });
 };
 
+// Bound the personalization fetch so a hung request cannot block shell init indefinitely. On
+// timeout axios rejects with `ECONNABORTED`, which flows into useSessionConfig's degraded branch
+// (it is not a 3scale gateway error) and renders the shell with defaults instead of hanging.
+const USER_CONFIG_TIMEOUT_MS = 5000;
+
 export const initChromeUserConfig = async () => {
   const { data } = await axios.get<ChromeUserConfig>('/api/chrome-service/v1/user', {
     params: {
       'skip-identity-cache': 'true',
     },
+    timeout: USER_CONFIG_TIMEOUT_MS,
   });
 
   return data;

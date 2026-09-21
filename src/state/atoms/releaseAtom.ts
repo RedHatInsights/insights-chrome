@@ -3,7 +3,7 @@ import { updateVisibilityFunctionsBeta, visibilityFunctionsExist } from '../../u
 import { atomWithToggle } from './utils';
 import { getUnleashClient, unleashClientExists } from '../../components/FeatureFlags/unleashClient';
 import { SearchPermissionsCache } from './localSearchAtom';
-import { atom } from 'jotai';
+import { WritableAtom, atom } from 'jotai';
 import { userConfigAtom } from './userConfigAtom';
 import { ChromeUserConfig } from '../../utils/initUserConfig';
 import { LIGHTWELL_PATH } from '../../utils/common';
@@ -13,13 +13,23 @@ const isLightwellPath = window.location.pathname.startsWith(LIGHTWELL_PATH);
 export const previewModalOpenAtom = atomWithToggle(false);
 
 const HIDE_PREVIEW_BANNER_KEY = 'chrome:preview:banner:hide';
-export const isPreviewAtom = atomWithToggle(undefined, async (isPreview) => {
+
+// Private primitive holding the current preview value. Written only through `isPreviewAtom`
+// (user toggle, persists) or `hydratePreviewAtom` (trusted source, does not persist).
+const previewValueAtom = atom<boolean>(false);
+
+// Shared side effects for a preview change. `persist` controls the ONLY difference between a user
+// toggle and a hydrate: whether the value is written back to the personalization API. Everything
+// else (search cache, visibility functions, feature-flag context, banner) runs in both cases.
+async function applyPreviewSideEffects(isPreview: boolean, persist: boolean) {
   try {
     SearchPermissionsCache.clear();
     // Required to change the `isBeta` function return value in the visibility functions
     if (visibilityFunctionsExist()) {
       updateVisibilityFunctionsBeta(isPreview);
-      await axios.post('/api/chrome-service/v1/user/update-ui-preview', { uiPreview: isPreview });
+      if (persist) {
+        await axios.post('/api/chrome-service/v1/user/update-ui-preview', { uiPreview: isPreview });
+      }
     }
     if (unleashClientExists()) {
       // Required to change the `platform.chrome.ui.preview` context in the feature flags, TS is bugged
@@ -39,6 +49,32 @@ export const isPreviewAtom = atomWithToggle(undefined, async (isPreview) => {
   if (isPreview) {
     localStorage.removeItem(HIDE_PREVIEW_BANNER_KEY);
   }
+}
+
+/**
+ * User-facing preview toggle. On write it persists the value to the personalization API
+ * (update-ui-preview POST) alongside the visibility/feature-flag side effects. Keeps the historical
+ * `atomWithToggle` contract: read `boolean`, write `boolean | undefined` (undefined flips the
+ * current value); the POST stays fire-and-forget so the toggle is non-blocking.
+ */
+export const isPreviewAtom = atom(
+  (get) => get(previewValueAtom),
+  (get, set, nextValue?: boolean) => {
+    const update = nextValue ?? !get(previewValueAtom);
+    set(previewValueAtom, update);
+    void applyPreviewSideEffects(update, true);
+  }
+) as WritableAtom<boolean, [boolean?], void>;
+
+/**
+ * Hydrate preview from a trusted source (server config on load, or the degraded fallback) WITHOUT
+ * persisting it back. Runs the same visibility/feature-flag side effects as a user toggle but never
+ * POSTs update-ui-preview, so a transient config-fetch failure can never clobber the user's saved
+ * preference (see `useSessionConfig`).
+ */
+export const hydratePreviewAtom = atom(null, (get, set, isPreview: boolean) => {
+  set(previewValueAtom, isPreview);
+  void applyPreviewSideEffects(isPreview, false);
 });
 
 export const togglePreviewWithCheckAtom = atom(null, (get, set, update?: boolean) => {
