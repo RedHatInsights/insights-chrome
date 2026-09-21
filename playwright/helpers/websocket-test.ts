@@ -22,6 +22,7 @@ export const test = base.extend<{ webSocketSession: WebSocketSession }>({
     const logPath = join(directory, 'netlog.json');
     const direct = proxy?.server === 'direct';
     const browser = await chromium.launch({ headless, args: [`--log-net-log=${logPath}`, ...(direct ? ['--no-proxy-server'] : [])] });
+    let browserCloseAttempted = false;
     try {
       const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, ...(!direct && proxy && { proxy }) });
       const page = await context.newPage();
@@ -34,6 +35,8 @@ export const test = base.extend<{ webSocketSession: WebSocketSession }>({
       async function saveSummary(): Promise<Heartbeat[]> {
         if (!monitor) return [];
         const network = await monitor.stop();
+        // Mark before awaiting so teardown does not retry a failed close.
+        browserCloseAttempted = true;
         await browser.close(); // Flush NetLog before parsing; normal page teardown would record a close.
         const log: ChromiumNetworkLog = JSON.parse(await readFile(logPath, 'utf8'));
         const heartbeats = getHeartbeats(log, targetUrl);
@@ -64,9 +67,12 @@ export const test = base.extend<{ webSocketSession: WebSocketSession }>({
         await finish();
       }
     } finally {
-      await browser.close();
-      // Raw logs can contain account/request data; only the sanitized summary is retained.
-      await rm(directory, { recursive: true, force: true });
+      try {
+        if (!browserCloseAttempted) await browser.close();
+      } finally {
+        // Raw logs can contain account/request data; only the sanitized summary is retained.
+        await rm(directory, { recursive: true, force: true });
+      }
     }
   },
 });
