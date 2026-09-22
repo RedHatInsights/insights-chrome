@@ -5,6 +5,7 @@ import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
 import { cacheFetch } from './cacheFetch';
+import { CONFIG_SOURCES, reportConfigSource } from './configCacheStatus';
 import * as Sentry from '@sentry/react';
 
 /**
@@ -428,7 +429,7 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
   const ssoConfigPath = '/api/chrome-service/v1/static/sso-config-generated.json';
   try {
     const { data, fromCache } = await cacheFetch(
-      'sso-config-generated',
+      CONFIG_SOURCES.SSO_CONFIG,
       () =>
         getSSOConfigAxios()
           .get<SSOConfig>(ssoConfigPath, { headers: fedModulesheaders })
@@ -439,13 +440,16 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
             return r.data;
           }),
       undefined,
-      isSSOConfig
+      isSSOConfig,
+      { enabled: true }
     );
+    reportConfigSource(CONFIG_SOURCES.SSO_CONFIG, fromCache);
     if (fromCache) {
       console.warn('[chrome] SSO config loaded from IndexedDB cache (origin unavailable)');
     }
     return data;
   } catch (error) {
+    reportConfigSource(CONFIG_SOURCES.SSO_CONFIG, false);
     console.warn('Unable to load SSO config from operator, using default fallback', error);
 
     // Create fallback SSO config from DEFAULT_SSO_ROUTES
@@ -600,12 +604,20 @@ export const loadFedModules = async () => {
     }
   };
 
-  const staticConfigPromise = cacheFetch('fed-modules-generated', fetchLiveFedModules, undefined, isFedModulesConfig).then(({ data, fromCache }) => {
-    if (fromCache) {
-      console.warn('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
-    }
-    return { data };
-  });
+  const staticConfigPromise = cacheFetch(CONFIG_SOURCES.FED_MODULES, fetchLiveFedModules, undefined, isFedModulesConfig, {
+    enabled: true,
+  })
+    .then(({ data, fromCache }) => {
+      reportConfigSource(CONFIG_SOURCES.FED_MODULES, fromCache);
+      if (fromCache) {
+        console.warn('[chrome] Fed modules loaded from IndexedDB cache (origin unavailable)');
+      }
+      return { data };
+    })
+    .catch((error) => {
+      reportConfigSource(CONFIG_SOURCES.FED_MODULES, false);
+      throw error;
+    });
 
   const dynamicPathsPromise = axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} }));
   return Promise.all([staticConfigPromise, dynamicPathsPromise]).then(([staticConfig, feoConfig]) => {
