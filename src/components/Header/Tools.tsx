@@ -23,6 +23,7 @@ import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom, layoutForceFeltThemeAtom, layoutForceGlassThemeAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
@@ -81,6 +82,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   });
   const isPreview = useAtomValue(isPreviewAtom);
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
+  const { userPersonalization: userConfigDegraded } = useAtomValue(degradedStateAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const helpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -143,6 +145,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
         {
           ouiaId: 'PreviewSwitcher',
           title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
+          isDisabled: userConfigDegraded,
           onClick: () => togglePreviewWithCheck(),
         },
       ],
@@ -418,6 +421,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
           ? [
               {
                 title: betaSwitcherTitle,
+                isDisabled: userConfigDegraded,
                 onClick: () => togglePreviewWithCheck(),
               },
             ]
@@ -544,7 +548,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
                 {action.title === 'separator' ? (
                   <Divider component="li" />
                 ) : 'onClick' in action ? (
-                  <DropdownItem component="button" onClick={action.onClick}>
+                  <DropdownItem component="button" isDisabled={'isDisabled' in action ? action.isDisabled : undefined} onClick={action.onClick}>
                     {action.title}
                   </DropdownItem>
                 ) : 'url' in action ? (

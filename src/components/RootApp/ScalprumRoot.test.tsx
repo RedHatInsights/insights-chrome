@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ScalprumRoot from './ScalprumRoot';
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { PluginManifest, RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { ScalprumProviderConfigurableProps } from '@scalprum/react-core';
@@ -350,7 +350,7 @@ describe('ScalprumRoot', () => {
       expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
       expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
       expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
-      expect(container.querySelector('footer')).toBeTruthy();
+      expect(screen.getByRole('list', { name: 'Lightwell footer links' })).toBeTruthy();
     });
 
     useLocationSpy.mockRestore();

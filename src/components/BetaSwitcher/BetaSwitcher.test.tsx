@@ -14,13 +14,15 @@ import BetaSwitcher from './BetaSwitcher';
 import { describe, expect, it } from '@jest/globals';
 import { hidePreviewBannerAtom, isPreviewAtom, layoutBannerHiddenAtom } from '../../state/atoms/releaseAtom';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
+import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 
-const renderBetaSwitcher = (previewHidden = false, layoutHidden = false) => {
+const renderBetaSwitcher = (previewHidden = false, layoutHidden = false, userPersonalizationDegraded = false) => {
   const store = createStore();
   store.set(hidePreviewBannerAtom, previewHidden);
   store.set(isPreviewAtom, false);
   store.set(layoutBannerHiddenAtom, layoutHidden);
   store.set(userConfigAtom, { data: { uiPreviewSeen: true }, ready: true } as any);
+  store.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: userPersonalizationDegraded });
 
   return render(
     <Provider store={store}>
@@ -43,5 +45,15 @@ describe('BetaSwitcher', () => {
   it('should not render when banner is hidden by user', () => {
     const { container } = renderBetaSwitcher(true);
     expect(container.querySelector('.chr-c-beta-switcher')).toBeFalsy();
+  });
+
+  it('should enable the preview toggle when personalization is healthy', () => {
+    const { container } = renderBetaSwitcher();
+    expect(container.querySelector<HTMLInputElement>('#preview-toggle')?.disabled).toBe(false);
+  });
+
+  it('should disable the preview toggle when personalization is degraded', () => {
+    const { container } = renderBetaSwitcher(false, false, true);
+    expect(container.querySelector<HTMLInputElement>('#preview-toggle')?.disabled).toBe(true);
   });
 });

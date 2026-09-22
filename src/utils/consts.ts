@@ -29,6 +29,7 @@ export const OIDC_RESERVED_PARAMS = [
   'token_type',
 ] as const;
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
+export const THEME_STORAGE_KEY = 'chrome:theme';
 export const GLOBAL_FILTER_UPDATE = 'GLOBAL_FILTER_UPDATE';
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
 export const isITLessEnv = ITLess();

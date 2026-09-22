@@ -7,7 +7,7 @@ describe('LightwellFooter', () => {
     document.getElementById('teconsent')?.remove();
   });
 
-  it('should render a footer that hosts the cookie preferences control', () => {
+  it('should render a list that hosts the cookie preferences control', () => {
     const teconsent = document.createElement('a');
     teconsent.id = 'teconsent';
     teconsent.textContent = 'Cookie Preferences';
@@ -15,8 +15,8 @@ describe('LightwellFooter', () => {
 
     render(<LightwellFooter />);
 
-    const footer = screen.getByRole('contentinfo');
-    expect(within(footer).getByRole('list', { name: 'Lightwell footer links' })).toBeTruthy();
-    expect(within(footer).getByText('Cookie Preferences')).toBe(teconsent);
+    const list = screen.getByRole('list', { name: 'Lightwell footer links' });
+    expect(list).toBeTruthy();
+    expect(within(list).getByText('Cookie Preferences')).toBe(teconsent);
   });
 });

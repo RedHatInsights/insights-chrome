@@ -3,6 +3,7 @@ import { ChromeTopbar } from './pages/chrome-topbar';
 import { mockFeatureFlags } from '../helpers/feature-flags';
 
 const DARK_THEME_CLASS = 'pf-v6-theme-dark';
+// Playwright specs run in Node; importing src/utils/consts.ts evaluates browser-only location-dependent code.
 const THEME_STORAGE_KEY = 'chrome:theme';
 
 test.describe('Color Scheme — Light / Dark / System', () => {

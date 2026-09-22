@@ -1,6 +1,6 @@
-# Playwright Release Gate Tests
+# Playwright Tests
 
-This directory contains Playwright-based E2E tests for the insights-chrome release gate process, converted from the original Cypress tests.
+This directory contains Playwright-based release-gate E2E tests and browser integration tests for insights-chrome.
 
 ## Structure
 
@@ -15,6 +15,8 @@ playwright/
 │       ├── landing-page.spec.ts
 │       ├── favorite-services.spec.ts
 │       └── refresh-token.spec.ts
+├── integration/                    # Browser integration tests with controlled dependencies
+│   └── cache-fallback.spec.ts
 └── README.md                       # This file
 ```
 
@@ -140,6 +142,14 @@ The CI script is available as:
 ```bash
 npm run ci:playwright-release-gate-tests
 ```
+
+### Scheduled platform infrastructure tests
+
+The [platform infrastructure pipeline](../.tekton/platform-infra-tests-pipeline.yaml) runs redirect and route reachability tests against stage with `PLATFORM_INFRA_ENV=stage`.
+
+The job uses the Playwright `v1.62.1-jammy` image with browsers and system dependencies preinstalled, avoiding browser installation that requires root privileges. The image is pinned to a SHA256 manifest digest covering AMD64 and ARM64. When updating Playwright, resolve the matching image's digest and update the pipeline image reference and version comment together, keeping the image version aligned with `@playwright/test` in `package-lock.json`.
+
+The test step explicitly runs as the image's `pwuser` (UID 1000, GID 1000), with `runAsNonRoot: true`. The script creates a temporary workspace and uses it for the checkout and home directory so npm and other caches remain writable. Tekton must permit this UID/GID and allow the step to write its test result.
 
 ## Configuration
 

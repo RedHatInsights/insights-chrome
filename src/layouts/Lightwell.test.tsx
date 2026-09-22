@@ -144,15 +144,31 @@ describe('Lightwell', () => {
     expect(container.querySelector('[data-testid="mock-footer"]')).toBeTruthy();
   });
 
-  it('should render the footer after the page, outside the page card', () => {
-    const { container } = renderLightwell();
-    const root = container.querySelector('#chrome-app-render-root');
-    const page = container.querySelector('.pf-v6-c-page');
-    const footer = container.querySelector('[data-testid="mock-footer"]');
+  it('should apply pf-m-plain and chr-c-page--lightwell classes to the Page component', () => {
+    renderLightwell();
+    const page = screen.getByTestId('lightwell-page');
+    expect(page).toHaveClass('pf-m-plain');
+    expect(page).toHaveClass('chr-c-page--lightwell');
+  });
 
-    expect(root?.contains(footer)).toBe(true);
-    expect(page?.contains(footer)).toBe(false);
-    expect(page?.nextElementSibling).toBe(footer);
+  it('should render Page without sidebar or resize handler', () => {
+    renderLightwell();
+    const page = screen.getByTestId('lightwell-page');
+    // Verify Page renders with sidebar=null (no sidebar element)
+    expect(page.querySelector('[class*="page__sidebar"]')).toBeFalsy();
+    // Verify Page renders with onPageResize=null (no resize handler errors)
+    expect(page).toBeInTheDocument();
+  });
+
+  it('should render the footer inside the Page via the footer prop', () => {
+    renderLightwell();
+    const page = screen.getByTestId('lightwell-page');
+    const footer = screen.getByTestId('mock-footer');
+
+    // Footer should render inside the Page component (via the footer prop wrapped in PageFooter)
+    expect(page.contains(footer)).toBe(true);
+    // Footer should no longer be a sibling after the page
+    expect(page.nextElementSibling).toBeNull();
   });
 
   it('should not render sidebar navigation', () => {

@@ -6,6 +6,8 @@ import { getChromeStaticPathname } from '../../utils/common';
 import axios, { AxiosResponse } from 'axios';
 import { NavItemPermission } from '../../@types/types';
 import { bundleMapping, getUrl } from '../../hooks/useBundle';
+import { cacheFetch } from '../../utils/cacheFetch';
+import { CONFIG_SOURCES, reportConfigSource } from '../../utils/configCacheStatus';
 
 type IndexEntry = {
   icon?: string;
@@ -26,6 +28,53 @@ type GeneratedSearchIndexResponse = {
   href: string;
   title: string;
   description?: string;
+};
+
+const GENERATED_SEARCH_INDEX_PATH = '/api/chrome-service/v1/static/search-index-generated.json';
+
+const isGeneratedSearchIndex = (data: unknown): data is GeneratedSearchIndexResponse[] => {
+  return (
+    Array.isArray(data) &&
+    data.every((entry) => {
+      if (typeof entry !== 'object' || entry === null) {
+        return false;
+      }
+
+      const value = entry as Record<string, unknown>;
+      return (
+        typeof value.id === 'string' &&
+        typeof value.href === 'string' &&
+        typeof value.title === 'string' &&
+        (value.description === undefined || typeof value.description === 'string') &&
+        (value.alt_title === undefined || (Array.isArray(value.alt_title) && value.alt_title.every((title) => typeof title === 'string')))
+      );
+    })
+  );
+};
+
+export const loadGeneratedSearchIndex = async (): Promise<GeneratedSearchIndexResponse[]> => {
+  try {
+    const { data, fromCache } = await cacheFetch(
+      CONFIG_SOURCES.SEARCH_INDEX,
+      () =>
+        axios.get<unknown>(GENERATED_SEARCH_INDEX_PATH).then((response) => {
+          if (!isGeneratedSearchIndex(response.data)) {
+            throw new Error('search-index-generated.json: invalid payload');
+          }
+          return response.data;
+        }),
+      undefined,
+      isGeneratedSearchIndex
+    );
+    reportConfigSource(CONFIG_SOURCES.SEARCH_INDEX, fromCache);
+    if (fromCache) {
+      console.warn('[chrome] Search index loaded from IndexedDB cache (origin unavailable)');
+    }
+    return data;
+  } catch (error) {
+    reportConfigSource(CONFIG_SOURCES.SEARCH_INDEX, false);
+    throw error;
+  }
 };
 
 export const SearchPermissions = new Map<string | number, NavItemPermission[]>();
@@ -61,15 +110,15 @@ const asyncSearchIndexAtom = atom(async () => {
   const staticPath = getChromeStaticPathname('search');
   const searchIndex: SearchEntry[] = [];
   const idSet = new Set<string>();
-  const searchRequests: [Promise<AxiosResponse<IndexEntry[]>>, Promise<AxiosResponse<GeneratedSearchIndexResponse[]>>] = [
+  const searchRequests: [Promise<AxiosResponse<IndexEntry[]>>, Promise<GeneratedSearchIndexResponse[]>] = [
     axios.get<IndexEntry[]>(`${staticPath}/search-index.json`),
-    axios.get<GeneratedSearchIndexResponse[]>(`/api/chrome-service/v1/static/search-index-generated.json`),
+    loadGeneratedSearchIndex(),
   ];
 
   const [legacyIndex, generatedIndex] = await Promise.allSettled(searchRequests);
 
   if (generatedIndex.status === 'fulfilled') {
-    generatedIndex.value.data.forEach((entry) => {
+    generatedIndex.value.forEach((entry) => {
       if (idSet.has(entry.id)) {
         console.warn('Duplicate id found in index', entry.id);
         return;
