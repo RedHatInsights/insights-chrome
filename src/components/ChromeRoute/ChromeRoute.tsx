@@ -68,7 +68,15 @@ const ChromeRoute = memo(
             store.updateState('CLEAR');
             store.updateState('SET_APP_MOUNT_PATHNAME', mountPath);
           })
-          .catch(() => {});
+          .catch((error) => {
+            // Non-critical UI. Breadcrumbs.tsx already falls back to chrome-native
+            // crumbs when this store is missing; keep the tenant module up.
+            console.error('Failed to load federated breadcrumb store; skipping CLEAR and SET_APP_MOUNT_PATHNAME', {
+              scope,
+              mountPath,
+              error,
+            });
+          });
       }
       // Help topic clearing: QuickstartsRuntime ApiPublisher calls setActiveTopic('')
       // when activeModule (this atom) changes. Do not read HelpTopicContext here.
