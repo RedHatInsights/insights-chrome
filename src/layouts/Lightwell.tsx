@@ -1,7 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
-import { Page, PageFooter } from '@patternfly/react-core/dist/dynamic/components/Page';
+// Lightwell-only PF 6.6 Page APIs (isPlain, footer, horizontalSubnav) — keep tenants on shared 6.5.
+import { Page, PageFooter } from 'pf-6-next/dist/dynamic/components/Page';
 import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -16,6 +17,9 @@ import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import LightwellNavigation from '../components/Navigation/LightwellNavigation';
+// Matching 6.6 Page CSS for pf-6-next (JS). Chunk-scoped so it can cascade over
+// chrome's shared Page styles for Lightwell only.
+import 'pf-6-next-styles/components/Page/page.css';
 import './Lightwell.scss';
 
 export type LightwellProps = {
