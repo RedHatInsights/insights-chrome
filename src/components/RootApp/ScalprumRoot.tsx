@@ -63,48 +63,50 @@ const ScalprumRoot = memo(
   () => {
     return (
       <ChromeProvider>
-        <BetaSwitcher />
-        <DegradedStateBanner />
-        <Routes>
-          <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
-          <Route
-            path="/connect/products"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <ProductSelection />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/allservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<ChromeFooter />} />
-              </Suspense>
-            }
-          />
-          {!ITLess() && (
+        <div className="chr-c-shell">
+          <BetaSwitcher />
+          <DegradedStateBanner />
+          <Routes>
+            <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
             <Route
-              path="/favoritedservices"
+              path="/connect/products"
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <FavoritedServices Footer={<ChromeFooter />} />
+                  <ProductSelection />
                 </Suspense>
               }
             />
-          )}
-          <Route path="/security" element={<DefaultLayout />} />
-          {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
-          <Route
-            path={`${LIGHTWELL_PATH}/*`}
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <Lightwell Footer={<LightwellFooter />} />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
-        </Routes>
+            <Route
+              path="/allservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <AllServices Footer={<ChromeFooter />} />
+                </Suspense>
+              }
+            />
+            {!ITLess() && (
+              <Route
+                path="/favoritedservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <FavoritedServices Footer={<ChromeFooter />} />
+                  </Suspense>
+                }
+              />
+            )}
+            <Route path="/security" element={<DefaultLayout />} />
+            {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
+            <Route
+              path={`${LIGHTWELL_PATH}/*`}
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <Lightwell Footer={<LightwellFooter />} />
+                </Suspense>
+              }
+            />
+            <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
+          </Routes>
+        </div>
       </ChromeProvider>
     );
     // no props, no need to ever render based on parent changes

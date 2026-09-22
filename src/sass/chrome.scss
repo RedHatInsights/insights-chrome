@@ -35,8 +35,20 @@ aside {
   display: none !important;
 }
 
-#chrome-app-render-root {
+// Flex-column shell wrapping the shell banners (BetaSwitcher, DegradedStateBanner) and the active
+// layout. Sized to the viewport so the banners take their natural height and the render-root fills
+// the rest — no window scrollbar, for any number of banners.
+.chr-c-shell {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+}
+
+#chrome-app-render-root {
+  // Fill the space left by the banners above. `min-height: 0` lets it shrink below its content so
+  // the inner PatternFly Page scrolls instead of pushing the window past the viewport.
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 .pf-v6-c-page.chr-c-page {
