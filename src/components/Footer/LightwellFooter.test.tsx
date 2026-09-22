@@ -13,13 +13,12 @@ describe('LightwellFooter', () => {
     teconsent.textContent = 'Cookie Preferences';
     document.body.appendChild(teconsent);
 
-    const { container } = render(<LightwellFooter />);
+    render(<LightwellFooter />);
 
-    const footer = container.querySelector('footer');
-    expect(footer).toBeTruthy();
+    const footer = screen.getByRole('contentinfo');
     const list = screen.getByRole('list', { name: 'Lightwell footer links' });
     expect(list).toBeTruthy();
-    expect(footer!.contains(list)).toBe(true);
+    expect(footer.contains(list)).toBe(true);
     expect(within(list).getByText('Cookie Preferences')).toBe(teconsent);
   });
 });
