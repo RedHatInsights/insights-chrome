@@ -7,16 +7,19 @@ describe('LightwellFooter', () => {
     document.getElementById('teconsent')?.remove();
   });
 
-  it('should render a list that hosts the cookie preferences control', () => {
+  it('should render a footer with a list that hosts the cookie preferences control', () => {
     const teconsent = document.createElement('a');
     teconsent.id = 'teconsent';
     teconsent.textContent = 'Cookie Preferences';
     document.body.appendChild(teconsent);
 
-    render(<LightwellFooter />);
+    const { container } = render(<LightwellFooter />);
 
+    const footer = container.querySelector('footer');
+    expect(footer).toBeTruthy();
     const list = screen.getByRole('list', { name: 'Lightwell footer links' });
     expect(list).toBeTruthy();
+    expect(footer!.contains(list)).toBe(true);
     expect(within(list).getByText('Cookie Preferences')).toBe(teconsent);
   });
 });
