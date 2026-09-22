@@ -140,14 +140,14 @@
     "@lit/react": "^1.0.8",
     "@openshift/dynamic-plugin-sdk": "^9.1.0",
     "@orama/orama": "^3.1.18",
-    "@patternfly/patternfly": "^6.5.2",
+    "@patternfly/patternfly": "6.6.0-prerelease.46",
     "@patternfly/quickstarts": "^6.5.0",
     "@patternfly/react-charts": "^8.5.0",
-    "@patternfly/react-core": "^6.5.0",
+    "@patternfly/react-core": "6.6.1-prerelease.10",
     "@patternfly/react-drag-drop": "^6.5.0",
-    "@patternfly/react-icons": "^6.5.0",
+    "@patternfly/react-icons": "6.6.1-prerelease.4",
     "@patternfly/react-table": "^6.5.0",
-    "@patternfly/react-tokens": "^6.5.0",
+    "@patternfly/react-tokens": "6.6.1-prerelease.3",
     "@redhat-cloud-services/chrome": "^2.4.2",
     "@redhat-cloud-services/entitlements-client": "^4.0.17",
     "@redhat-cloud-services/frontend-components": "^7.10.4",
@@ -182,7 +182,6 @@
     "marked": "^15.0.12",
     "oidc-client-ts": "^2.5.0",
     "pf-5-styles": "npm:@patternfly/patternfly@^5.4.2",
-    "pf-6-next": "npm:@patternfly/react-core@6.6.1-prerelease.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intl": "^7.1.14",
@@ -198,5 +197,12 @@
   },
   "nyc": {
     "report-dir": "cypress-coverage"
+  },
+  "overrides": {
+    "@patternfly/react-core": "6.6.1-prerelease.10",
+    "@patternfly/react-styles": "6.6.1-prerelease.3",
+    "@patternfly/react-tokens": "6.6.1-prerelease.3",
+    "@patternfly/react-icons": "6.6.1-prerelease.4",
+    "@patternfly/patternfly": "6.6.0-prerelease.46"
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
-import { Page, PageFooter } from 'pf-6-next/dist/dynamic/components/Page';
+import { Page, PageFooter } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -16,7 +16,6 @@ import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import LightwellNavigation from '../components/Navigation/LightwellNavigation';
-import { withHorizontalSubnav } from './layoutUtils';
 import './Lightwell.scss';
 
 export type LightwellProps = {
@@ -81,7 +80,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         footer={Footer ? <PageFooter>{Footer}</PageFooter> : undefined}
         sidebar={null}
         onPageResize={null}
-        masthead={withHorizontalSubnav(
+        masthead={
           <Masthead className="chr-c-masthead" display={{ default: 'inline' }}>
             <Header
               breadcrumbsProps={{ hideNav: true }}
@@ -96,9 +95,9 @@ const Lightwell = ({ Footer }: LightwellProps) => {
                 },
               }}
             />
-          </Masthead>,
-          <LightwellNavigation />
-        )}
+          </Masthead>
+        }
+        horizontalSubnav={<LightwellNavigation />}
         {...(isDrawerEnabled && {
           onNotificationDrawerExpand: focusDrawer,
           notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,

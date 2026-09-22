@@ -136,7 +136,7 @@ describe('Lightwell', () => {
     document.documentElement.classList.remove('pf-v6-theme-felt', 'pf-v6-theme-glass');
   });
 
-  it('should render the layout shell', () => {
+  it('should render the layout shell with footer', () => {
     const { container } = renderLightwell();
     expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
     expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
@@ -168,6 +168,13 @@ describe('Lightwell', () => {
     expect(page.contains(footer)).toBe(true);
     // Footer should no longer be a sibling after the page
     expect(page.nextElementSibling).toBeNull();
+  });
+
+  it('should place Lightwell navigation in PF Page horizontalSubnav', async () => {
+    renderLightwell();
+    const nav = await screen.findByRole('navigation', { name: 'Lightwell navigation' });
+    expect(nav.closest('.pf-v6-c-page__main-subnav')).toBeTruthy();
+    expect(document.querySelector('.chr-c-page-subnav')).toBeNull();
   });
 
   it('should not render sidebar navigation', () => {
