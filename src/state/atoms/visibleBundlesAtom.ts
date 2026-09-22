@@ -8,6 +8,8 @@ import { getChromeStaticPathname } from '../../utils/common';
 import useFeoConfig from '../../hooks/useFeoConfig';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup, isAllServicesLink } from '../../components/AllServices/allServicesLinks';
+import { cacheFetch } from '../../utils/cacheFetch';
+import { CONFIG_SOURCES, reportConfigSource } from '../../utils/configCacheStatus';
 
 export const visibleBundlesAtom = atom<BundleNavigation[]>([]);
 export const visibleBundlesReadyAtom = atom(false);
@@ -69,6 +71,75 @@ export const evaluateServiceTilesVisibility = async (sections: AllServicesSectio
 
 const GENERATED_SERVICES_PATH = '/api/chrome-service/v1/static/service-tiles-generated.json';
 
+const isServiceLinkConfig = (value: unknown): value is AllServicesLink => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const link = value as Record<string, unknown>;
+  return typeof link.href === 'string' && typeof link.title === 'string';
+};
+
+const isServiceTilesConfig = (data: unknown): data is AllServicesSection[] => {
+  if (!Array.isArray(data)) {
+    return false;
+  }
+
+  return data.every((section) => {
+    if (typeof section !== 'object' || section === null) {
+      return false;
+    }
+
+    const value = section as Record<string, unknown>;
+    if (typeof value.title !== 'string' || !Array.isArray(value.links)) {
+      return false;
+    }
+
+    return value.links.every((link) => {
+      if (typeof link !== 'object' || link === null) {
+        return false;
+      }
+
+      const value = link as Record<string, unknown>;
+      if (value.isGroup === true) {
+        return typeof value.title === 'string' && Array.isArray(value.links) && value.links.every(isServiceLinkConfig);
+      }
+
+      return isServiceLinkConfig(link);
+    });
+  });
+};
+
+export const loadServiceTiles = async (feoGenerated: boolean, signal: AbortSignal): Promise<AllServicesSection[]> => {
+  if (!feoGenerated) {
+    reportConfigSource(CONFIG_SOURCES.SERVICE_TILES, false);
+    return axios.get<AllServicesSection[]>(`${getChromeStaticPathname('services')}/services-generated.json`, { signal }).then((response) => response.data);
+  }
+
+  try {
+    const { data, fromCache } = await cacheFetch(
+      CONFIG_SOURCES.SERVICE_TILES,
+      () =>
+        axios.get<unknown>(GENERATED_SERVICES_PATH, { signal }).then((response) => {
+          if (!isServiceTilesConfig(response.data)) {
+            throw new Error('service-tiles-generated.json: invalid payload');
+          }
+          return response.data;
+        }),
+      undefined,
+      isServiceTilesConfig
+    );
+    reportConfigSource(CONFIG_SOURCES.SERVICE_TILES, fromCache);
+    if (fromCache) {
+      console.warn('[chrome] Service tiles loaded from IndexedDB cache (origin unavailable)');
+    }
+    return data;
+  } catch (error) {
+    reportConfigSource(CONFIG_SOURCES.SERVICE_TILES, false);
+    throw error;
+  }
+};
+
 /**
  * Single initializer hook — call once, high in the component tree.
  * Fetches bundles and service tiles, evaluates visibility, and writes to atoms.
@@ -110,12 +181,8 @@ export const useInitVisibleBundles = () => {
         setBundlesReady(true);
       });
 
-    const tilesQuery = feoGenerated ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
-    axios
-      .get<AllServicesSection[]>(tilesQuery, {
-        signal: controller.signal,
-      })
-      .then((response) => evaluateServiceTilesVisibility(response.data))
+    loadServiceTiles(feoGenerated, controller.signal)
+      .then(evaluateServiceTilesVisibility)
       .then((result) => {
         if (!cancelled) {
           setTiles(result);
