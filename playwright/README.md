@@ -179,6 +179,8 @@ The check logs in with a fresh browser, loads `/insights/dashboard`, and verifie
 that the application's notification WebSocket negotiates HTTP 101 and the
 `cloudevents.json` subprotocol. It then observes 75 seconds of network activity
 and requires a server ping followed by a browser pong on the same WebSocket.
+The original dashboard socket must remain healthy for the entire observation
+window; a close, frame error, or replacement connection fails the check.
 This verifies transport connectivity; it does not verify notification delivery
 through Kafka. The stage notification-drawer feature flag must be enabled;
 missing credentials or an unavailable socket fail the check. Production skips it.

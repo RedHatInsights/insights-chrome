@@ -35,12 +35,15 @@ test.describe('Stage WebSocket connectivity', () => {
       await expect(page.getByRole('button', { name: /User Avatar/ })).toBeVisible();
       await expect
         .poll(network.connections, { timeout: HEARTBEAT_TIMEOUT, message: 'Dashboard WebSocket must upgrade with the CloudEvents protocol' })
-        .toEqual(expect.arrayContaining([expect.objectContaining(HEALTHY_CONNECTION)]));
+        .toEqual([expect.objectContaining(HEALTHY_CONNECTION)]);
     });
 
-    await test.step('Verify a server ping and browser pong', async () => {
+    await test.step('Verify the connection stays healthy and exchanges a server ping and browser pong', async () => {
       await page.waitForTimeout(HEARTBEAT_TIMEOUT);
-      expect(network.connections()).toEqual(expect.arrayContaining([expect.objectContaining(HEALTHY_CONNECTION)]));
+      // The monitor retains closed/failed attempts, so a reconnect cannot hide an interruption.
+      expect(network.connections(), 'The original dashboard socket must stay healthy without reconnecting').toEqual([
+        expect.objectContaining(HEALTHY_CONNECTION),
+      ]);
       const heartbeats = await webSocketSession.finish();
       expect(heartbeats, 'The stage socket must receive a server ping and send a pong').toContainEqual({ receivedPing: true, sentPong: true });
     });

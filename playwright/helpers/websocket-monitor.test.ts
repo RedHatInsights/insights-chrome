@@ -79,4 +79,23 @@ describe('observeWebSocket', () => {
     expect(summary.featureFlags).toEqual([{ status: 200, notificationsEnabled: true }]);
     expect(JSON.stringify(summary)).not.toContain('secret');
   });
+
+  it.each(['Network.webSocketClosed', 'Network.webSocketFrameError'])('retains %s after a healthy reconnect', async (event) => {
+    const { session, monitor } = await setup();
+    const handshake = { status: 101, headers: { 'Sec-WebSocket-Protocol': 'cloudevents.json' } };
+    session.emit('Network.webSocketCreated', { requestId: 'original', url: SOCKET_URL });
+    session.emit('Network.webSocketHandshakeResponseReceived', { requestId: 'original', response: handshake });
+    session.emit(event, { requestId: 'original', errorMessage: 'net::ERR_CONNECTION_RESET' });
+    session.emit('Network.webSocketCreated', { requestId: 'replacement', url: SOCKET_URL });
+    session.emit('Network.webSocketHandshakeResponseReceived', { requestId: 'replacement', response: handshake });
+
+    const connections = monitor.connections();
+    expect(connections).toHaveLength(2);
+    expect(connections[0]).toMatchObject({
+      closed: event === 'Network.webSocketClosed',
+      failed: event === 'Network.webSocketFrameError',
+    });
+    expect(connections[1]).toEqual({ status: 101, protocol: 'cloudevents.json', closed: false, failed: false });
+    expect((await monitor.stop()).connections).toEqual(connections);
+  });
 });
