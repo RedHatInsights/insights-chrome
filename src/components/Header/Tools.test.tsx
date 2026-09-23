@@ -156,6 +156,7 @@ const mockInternalChromeContext = {
 import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
+import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import type { ToolbarConfig } from './Header';
 
 const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
@@ -310,8 +311,18 @@ describe('Tools - dark mode system feature flag', () => {
     it('should mark Scheduler item as selected when the scheduler drawer is open', () => {
       const store = createStore();
       store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './SchedulerPanelContent' });
+      store.set(notificationDrawerExpandedAtom, true);
       renderTools({ 'console.chrome-scheduler_drawer': true }, undefined, store);
       expect(screen.getByTestId('settings-menu-scheduler')).toHaveAttribute('data-selected', 'true');
+    });
+
+    it('should not mark Scheduler item as selected when the drawer is collapsed via the panel close button', () => {
+      const store = createStore();
+      // Closing via the panel "x" collapses the drawer but leaves drawerPanelContentAtom set.
+      store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './SchedulerPanelContent' });
+      store.set(notificationDrawerExpandedAtom, false);
+      renderTools({ 'console.chrome-scheduler_drawer': true }, undefined, store);
+      expect(screen.getByTestId('settings-menu-scheduler')).not.toHaveAttribute('data-selected');
     });
 
     it('should not mark Scheduler item as selected when a different drawer is open', () => {
