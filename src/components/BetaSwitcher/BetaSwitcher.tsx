@@ -15,6 +15,7 @@ import {
 } from '../../state/atoms/releaseAtom';
 import BetaInfoModal from './BetaInfoModal';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import BetaSwitcherDropdown from './BetaSwitcherDropdown';
 
 import './BetaSwitcher.scss';
@@ -30,6 +31,8 @@ const BetaSwitcher = () => {
   const {
     data: { uiPreviewSeen },
   } = useAtomValue(userConfigAtom);
+  // When the personalization API failed, preview changes cannot be persisted — disable the toggle.
+  const { userPersonalization: userConfigDegraded } = useAtomValue(degradedStateAtom);
   useEffect(() => {
     const chromeRenderElement = document.getElementById('chrome-app-render-root');
     // adjust the height of the chrome render element to fit the banner and not show extra scrollbar
@@ -78,6 +81,7 @@ const BetaSwitcher = () => {
               }
               aria-label="preview-toggle"
               isChecked={isPreview}
+              isDisabled={userConfigDegraded}
               onChange={(_e, checked) => togglePreviewWithCheck(checked)}
               isReversed
             />

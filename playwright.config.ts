@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './playwright/e2e',
+  testDir: './playwright',
   testIgnore: process.env.PLATFORM_INFRA_ENV ? [] : ['**/platform-infra/**'],
 
   /* Global setup for authentication */

@@ -1,15 +1,48 @@
-import { evaluateServiceTilesVisibility, filterHiddenItems } from './visibleBundlesAtom';
+import axios from 'axios';
+import localforage from 'localforage';
+import { evaluateServiceTilesVisibility, filterHiddenItems, loadServiceTiles } from './visibleBundlesAtom';
 import { NavItem } from '../../@types/types';
 import { AllServicesSection } from '../../components/AllServices/allServicesLinks';
+import { CACHE_SCHEMA_VERSION } from '../../utils/cacheFetch';
+import { CONFIG_SOURCES, resetConfigCacheStatus } from '../../utils/configCacheStatus';
+
+const mockSetItem = jest.fn();
+const mockGetItem = jest.fn();
+
+jest.mock('localforage', () => ({
+  INDEXEDDB: 'asyncStorage',
+  WEBSQL: 'webSQLStorage',
+  LOCALSTORAGE: 'localStorageWrapper',
+  createInstance: jest.fn(),
+}));
+
+jest.mock('../../components/FeatureFlags/unleashClient', () => ({
+  getFeatureFlagsError: jest.fn(() => false),
+  getUnleashClient: jest.fn(() => ({ isReady: () => true, isEnabled: () => true })),
+  unleashClientExists: jest.fn(() => true),
+}));
 
 jest.mock('../../utils/isNavItemVisible', () => ({
-  evaluateVisibility: jest.fn((item: any) =>
+  evaluateVisibility: jest.fn((item: { title?: string }) =>
     Promise.resolve({
       ...item,
       isHidden: item.title?.startsWith('hidden'),
     })
   ),
 }));
+
+beforeEach(() => {
+  mockSetItem.mockReset().mockResolvedValue(undefined);
+  mockGetItem.mockReset().mockResolvedValue(null);
+  jest.mocked(localforage.createInstance).mockReturnValue({ setItem: mockSetItem, getItem: mockGetItem } as unknown as LocalForage);
+  jest.spyOn(axios, 'get').mockReset();
+  resetConfigCacheStatus();
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+  resetConfigCacheStatus();
+});
 
 describe('filterHiddenItems', () => {
   it('should remove items with isHidden: true', () => {
@@ -100,6 +133,34 @@ describe('filterHiddenItems', () => {
     const items: NavItem[] = [{ title: 'leaf', href: '/a', appId: 'foo' }];
     const result = filterHiddenItems(items);
     expect(result).toEqual([{ title: 'leaf', href: '/a', appId: 'foo' }]);
+  });
+});
+
+describe('loadServiceTiles', () => {
+  const signal = new AbortController().signal;
+  const serviceTiles: AllServicesSection[] = [
+    {
+      title: 'Services',
+      links: [{ href: '/insights', title: 'Insights' }],
+    },
+  ];
+
+  it('caches generated service tiles', async () => {
+    jest.mocked(axios.get).mockResolvedValue({ data: serviceTiles });
+
+    await expect(loadServiceTiles(true, signal)).resolves.toEqual(serviceTiles);
+
+    expect(axios.get).toHaveBeenCalledWith('/api/chrome-service/v1/static/service-tiles-generated.json', { signal });
+    expect(mockSetItem).toHaveBeenCalledWith(`v${CACHE_SCHEMA_VERSION}:${CONFIG_SOURCES.SERVICE_TILES}`, expect.objectContaining({ data: serviceTiles }));
+  });
+
+  it('uses cached generated service tiles after an origin failure', async () => {
+    jest.mocked(axios.get).mockRejectedValue(new Error('network error'));
+    mockGetItem.mockResolvedValue({ data: serviceTiles, cachedAt: Date.now() });
+
+    await expect(loadServiceTiles(true, signal)).resolves.toEqual(serviceTiles);
+
+    expect(mockGetItem).toHaveBeenCalledWith(`v${CACHE_SCHEMA_VERSION}:${CONFIG_SOURCES.SERVICE_TILES}`);
   });
 });
 

@@ -11,6 +11,7 @@ import chromeStore from './state/chromeStore';
 import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
 import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
+import ConfigCacheDegradedStateBridge from './components/ConfigCacheDegradedStateBridge/ConfigCacheDegradedStateBridge';
 
 const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
@@ -39,6 +40,7 @@ if (entry) {
   const reactRoot = createRoot(entry);
   reactRoot.render(
     <JotaiProvider store={chromeStore}>
+      <ConfigCacheDegradedStateBridge />
       <IntlProvider
         locale={language}
         messages={messages[language]}
