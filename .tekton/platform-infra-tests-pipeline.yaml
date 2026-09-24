@@ -156,7 +156,7 @@ spec:
 
               # Suppress response bodies and transport errors to keep the URL out of logs.
               # Do not retry POSTs: the workflow may already have accepted the message.
-              if ! HTTP_STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              if ! HTTP_STATUS=$(curl --proto '=https' --silent --output /dev/null --write-out '%{http_code}' \
                 --connect-timeout 10 --max-time 30 \
                 --header 'Content-Type: application/json' \
                 --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"); then
