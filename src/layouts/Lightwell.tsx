@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+// Lightwell-only PF 6.6 Page APIs (isPlain, footer, horizontalSubnav) — keep tenants on shared 6.5.
 import { Page, PageFooter } from 'pf-6-next/dist/dynamic/components/Page';
 import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
@@ -16,7 +17,9 @@ import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import LightwellNavigation from '../components/Navigation/LightwellNavigation';
-import { withHorizontalSubnav } from './layoutUtils';
+// Matching 6.6 Page CSS for pf-6-next (JS). Chunk-scoped so it can cascade over
+// chrome's shared Page styles for Lightwell only.
+import 'pf-6-next-styles/components/Page/page.css';
 import './Lightwell.scss';
 
 export type LightwellProps = {
@@ -81,7 +84,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         footer={Footer ? <PageFooter>{Footer}</PageFooter> : undefined}
         sidebar={null}
         onPageResize={null}
-        masthead={withHorizontalSubnav(
+        masthead={
           <Masthead className="chr-c-masthead" display={{ default: 'inline' }}>
             <Header
               breadcrumbsProps={{ hideNav: true }}
@@ -96,9 +99,9 @@ const Lightwell = ({ Footer }: LightwellProps) => {
                 },
               }}
             />
-          </Masthead>,
-          <LightwellNavigation />
-        )}
+          </Masthead>
+        }
+        horizontalSubnav={<LightwellNavigation />}
         {...(isDrawerEnabled && {
           onNotificationDrawerExpand: focusDrawer,
           notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,

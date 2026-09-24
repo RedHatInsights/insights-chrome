@@ -184,6 +184,7 @@
     "oidc-client-ts": "^2.5.0",
     "pf-5-styles": "npm:@patternfly/patternfly@^5.4.2",
     "pf-6-next": "npm:@patternfly/react-core@6.6.1-prerelease.10",
+    "pf-6-next-styles": "npm:@patternfly/patternfly@6.6.0-prerelease.46",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intl": "^7.1.14",

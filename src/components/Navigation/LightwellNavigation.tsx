@@ -97,7 +97,7 @@ const LightwellNavigation = (): React.JSX.Element | null => {
   const activeNav = getActiveLightwellNav(pathname);
 
   return (
-    <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
+    <Nav variant="horizontal-subnav" aria-label="Lightwell navigation" className="chr-c-lightwell-navigation">
       <NavList>
         {visibleItems.map(({ label, path }) => (
           <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>

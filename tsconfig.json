@@ -16,7 +16,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "types": ["node", "jest"],
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "pf-6-next": ["node_modules/pf-6-next"],
+      "pf-6-next/*": ["node_modules/pf-6-next/*"]
+    }
   },
   "include": ["src/**/*.ts", "**/*.tsx", "config/*.d.ts"],
   "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx", "**/*.test.ts", "**/*.test.tsx"]
