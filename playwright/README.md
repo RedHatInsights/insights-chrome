@@ -147,6 +147,16 @@ npm run ci:playwright-release-gate-tests
 
 The [platform infrastructure pipeline](../.tekton/platform-infra-tests-pipeline.yaml) runs redirect and route reachability tests against stage with `PLATFORM_INFRA_ENV=stage`.
 
+These HTTP checks create request contexts with empty authentication state, so they do not require `playwright/.auth/user.json` or test account credentials.
+
+Every run invokes a Slack workflow from a `finally` task, including runs that fail during setup. The payload's `status` is `pass` when the test task succeeds and `fail` otherwise, including failed setup or an unavailable task outcome. The `results_url` links to that run's Konflux logs for `chrome-frontend-sc`, using the current PipelineRun name and namespace. Configure both `status` and `results_url` as text variables in the Slack workflow and include them in its message to `#team-consoledot-experience-notifications`.
+
+The webhook comes from the `platform-infra-slack-webhook` Secret's `url` key in `hcc-platex-services-tenant`. Its ExternalSecret is managed in `konflux-release-data`, using `insights-appsre-vault` to read `creds/konflux/platform-infra`, property `url`. A missing webhook or delivery failure is logged without changing the test outcome. Runs that never start, or are cancelled without running final tasks, cannot notify through this pipeline.
+
+The notification task uses a digest-pinned UBI 9 Minimal image with Bash, curl, and CA certificates, running as UID/GID 1000 without installing packages.
+
+The `notify-slack` PipelineTask sets `onError: continue`, so notification TaskRun failures, including failures before the script starts, do not fail the PipelineRun. Test task failures still fail the run.
+
 The job uses the Playwright `v1.62.1-jammy` image with browsers and system dependencies preinstalled, avoiding browser installation that requires root privileges. The image is pinned to a SHA256 manifest digest covering AMD64 and ARM64. When updating Playwright, resolve the matching image's digest and update the pipeline image reference and version comment together, keeping the image version aligned with `@playwright/test` in `package-lock.json`.
 
 The test step explicitly runs as the image's `pwuser` (UID 1000, GID 1000), with `runAsNonRoot: true`. The script creates a temporary workspace and uses it for the checkout and home directory so npm and other caches remain writable. Tekton must permit this UID/GID and allow the step to write its test result.
