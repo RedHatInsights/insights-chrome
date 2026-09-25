@@ -30,7 +30,7 @@ done < <(extract_jira_keys "$PR_TITLE")
 
 jira_url_pattern='https?://issues\.redhat\.com/browse/[A-Za-z][A-Za-z0-9]{1,9}-[0-9]+'
 title_has_jira_url=false
-if [[ $PR_TITLE =~ $jira_url_pattern ]]; then
+if grep -Eiq "$jira_url_pattern" <<<"$PR_TITLE"; then
   title_has_jira_url=true
 fi
 

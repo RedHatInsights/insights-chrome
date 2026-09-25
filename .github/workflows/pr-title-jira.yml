@@ -18,9 +18,13 @@ jobs:
         with:
           repository: ${{ github.repository }}
           ref: ${{ github.event.repository.default_branch }}
-          sparse-checkout: scripts/validate-jira-pr-reference.sh
+          sparse-checkout: |
+            scripts/validate-jira-pr-reference.sh
+            scripts/validate-jira-pr-reference.test.sh
           sparse-checkout-cone-mode: false
           persist-credentials: false
+      - name: Test validator
+        run: bash scripts/validate-jira-pr-reference.test.sh
       - name: Check PR title and description
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
