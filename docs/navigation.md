@@ -37,6 +37,10 @@ List of available permissions methods:
 - `isKesselEnabled` - test if Kessel is deployed in the current environment. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.chrome.kessel` feature flag. First argument is the expected value (`true` or `false`)
 - `isKesselOrgOnboarded` - test if the current user's org is onboarded to the Kessel V2 experience. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.rbac.workspaces` feature flag. First argument is the expected value (`true` or `false`). Use to gate V2-only nav items (e.g. Access Management vs User Access)
 
+#### Unleash outage policy
+
+Visibility checks use the Unleash client's last successfully stored toggles when a toggle request fails. Stored toggles are keyed by org ID and user account ID, so a shared browser never evaluates one account's navigation with another account's toggles; without a complete identity, toggles are kept in memory only. Toggles cached by older Chrome versions under the unscoped `unleash:repository:*` keys are removed on startup. If no value is available, the flag is treated as disabled: checks expecting `true` return `false`, while checks expecting `false` return `true`. `isKesselEnabled` and `isKesselOrgOnboarded` use the same policy, except ITLess mode continues to return `false`. The first toggle request times out after 5 seconds because it gates the initial navigation; background refreshes time out after 15 seconds, since stored toggles are served meanwhile. Unexpected toggle-fetch 4xx/5xx, network, or timeout errors mark feature flags degraded; metrics POST failures and requests intentionally cancelled by the client do not. The degraded state clears after the client is ready or recovers.
+
 #### apiRequest example
 
 ```JSON

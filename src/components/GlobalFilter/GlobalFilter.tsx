@@ -179,7 +179,8 @@ const GlobalFilterWrapper = () => {
   const isRbacV2 = useFlag('platform.rbac.workspaces');
   const isHbiRbacV2 = useFlag('hbi.rbac-v2');
   const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
-  const { flagsReady } = useFlagsStatus();
+  const { flagsReady, flagsError } = useFlagsStatus();
+  const flagsResolved = flagsReady || !!flagsError;
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
@@ -200,7 +201,7 @@ const GlobalFilterWrapper = () => {
       return;
     }
 
-    if (!flagsReady) {
+    if (!flagsResolved) {
       return;
     }
 
@@ -219,7 +220,7 @@ const GlobalFilterWrapper = () => {
     return () => {
       mounted = false;
     };
-  }, [isRbacV2, isHbiRbacV2, flagsReady]);
+  }, [isRbacV2, isHbiRbacV2, flagsResolved]);
   return isGlobalFilterEnabled && chromeAuth.ready ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 
