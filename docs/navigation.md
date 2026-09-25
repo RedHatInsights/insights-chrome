@@ -8,6 +8,14 @@ Chrome leverages [Cloud Services Config][CSC] (CSC) to build the navigation on a
 
 Along with static navigation set in CSC, apps can opt into dynamic navigation by updating the `<namespace-navigation>` file with a few options:
 
+### Visibility failures
+
+Visibility checks fail closed: a thrown exception or rejected promise hides only the affected item. A failed parent check hides its entire branch; a failed child check preserves its ancestors and siblings. Empty navigation groups are not rendered. This applies to both live and cached navigation, independently of the configuration-cache feature flag, and to service tiles in All Services.
+
+Chrome reports exceptions to Sentry with the visibility method, source and available configuration identifiers, without the original error, arguments or request data. A normal `false` result is not an error. Bundle and service-tile evaluations report degradation separately to the existing service-health banner, without setting the bundle/tile load-error flag for an item exception. A successful subsequent evaluation clears degradation only for that source. Banner display remains controlled by `platform.chrome.degraded-state-banner`.
+
+`hasLocalStorage` uses `localStorage.getItem` with strict comparison (no boolean/number coercion). Storage access exceptions are handled by the same visibility boundary. Functions that already catch their own errors and return `false` retain that behavior.
+
 ### Permissions
 
 List of available permissions methods:

@@ -58,6 +58,8 @@ type ServiceHealthStatus = {
   entitlements: boolean;
   configFromCache: boolean;
   featureFlags: boolean;
+  navigation?: boolean;
+  serviceTiles?: boolean;
 };
 ```
 
@@ -99,6 +101,8 @@ if (getFeatureFlagsError()) {
 ```
 
 ## Recovery
+
+Chrome tracks navigation and All Services evaluation failures separately from `configFromCache`. Item-level exceptions set `navigation` or `serviceTiles`, while normal visibility denials do not. Each source clears its own degraded state after a successful re-evaluation; recovery of another source cannot clear it. These optional fields preserve compatibility with consumers constructing older health snapshots.
 
 Mark service as recovered when API succeeds:
 

@@ -109,4 +109,18 @@ describe('DegradedStateBanner', () => {
 
     expect(container.firstChild).toBeNull();
   });
+
+  it.each([
+    ['navigation', 'Navigation'],
+    ['serviceTiles', 'All Services'],
+  ] as const)('reports %s independently of cached configuration and respects the banner flag', (service, label) => {
+    const state = { userPersonalization: false, entitlements: false, configFromCache: false, featureFlags: false, [service]: true };
+    const { container, unmount } = renderBanner(state);
+    expect(container.textContent).toContain(label);
+    expect(container.textContent).not.toContain('Navigation Configuration');
+    unmount();
+
+    mockedUseFlag.mockReturnValue(false);
+    expect(renderBanner(state).container.firstChild).toBeNull();
+  });
 });
