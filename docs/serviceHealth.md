@@ -2,7 +2,7 @@
 
 ## Overview
 
-Chrome provides infrastructure for displaying service degradation alerts. When backend services fail (entitlements, user personalization, navigation config, feature flags), consuming apps can mark services as degraded, triggering a banner notification.
+Chrome provides infrastructure for displaying service degradation alerts. When backend services fail (entitlements, user personalization, navigation config, feature flags, quick starts), consuming apps can mark services as degraded, triggering a banner notification.
 
 ## Feature Flag
 
@@ -58,6 +58,7 @@ type ServiceHealthStatus = {
   entitlements: boolean;
   configFromCache: boolean;
   featureFlags: boolean;
+  quickstarts: boolean;
 };
 ```
 
@@ -119,4 +120,8 @@ insights.chrome.enable.degradedStateBanner();
 // To clear (returns cleanup function)
 const clear = insights.chrome.enable.degradedStateBanner();
 clear(); // Clears degraded state
+
+// Quick starts specifically
+const clearQs = insights.chrome.enable.quickstartsDegraded();
+clearQs();
 ```

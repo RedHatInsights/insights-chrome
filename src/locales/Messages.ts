@@ -703,4 +703,9 @@ export default defineMessages({
     description: 'Label for feature flags service',
     defaultMessage: 'Feature Flags',
   },
+  degradedServiceQuickstarts: {
+    id: 'degradedServiceQuickstarts',
+    description: 'Label for quickstarts / learning-resources runtime',
+    defaultMessage: 'Quick starts',
+  },
 });

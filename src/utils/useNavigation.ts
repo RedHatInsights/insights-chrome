@@ -1,12 +1,12 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from './common';
-import { QuickStartContext } from '@patternfly/quickstarts';
 import { NavItem, Navigation } from '../@types/types';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
 import { useVisibleBundles, useVisibleBundlesError } from '../state/atoms/visibleBundlesAtom';
+import { remoteActiveQuickStartIDAtom } from '../state/atoms/remoteQuickstartsAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -20,9 +20,6 @@ function cleanNavItemsHref(navItem: NavItem) {
   }
 
   if (typeof result.href === 'string') {
-    /**
-     * Remove traling "/" from  the link
-     */
     result.href = result.href.replace(/\/$/, '');
   }
 
@@ -47,22 +44,20 @@ const useNavigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { pathname } = location;
-  const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
   const navigation = useAtomValue(navigationAtom);
   const schema = navigation[currentNamespace];
   const setNavigationSegment = useSetAtom(setNavigationSegmentAtom);
   const [noNav, setNoNav] = useState(false);
 
-  /**
-   * We need a side effect to get the value into the mutation observer closure
-   */
+  const activeQuickStartID = useAtomValue(remoteActiveQuickStartIDAtom);
   const activeQSId = useRef<undefined | string>('');
   const activeLocation = useRef({});
+
   useEffect(() => {
     activeQSId.current = activeQuickStartID;
     activeLocation.current = location;
-  }, [activeQuickStartID]);
+  }, [activeQuickStartID, location]);
 
   const registerLocationObserver = (initialPathname: string, schema: Navigation) => {
     let prevPathname = initialPathname;
@@ -73,9 +68,6 @@ const useNavigation = () => {
         if (newPathname !== prevPathname) {
           prevPathname = newPathname;
           setNavigationSegment({ schema, segment: currentNamespace, pathname: prevPathname });
-          /**
-           * Clean gateway error on URL change
-           */
           if (localStorage.getItem(BLOCK_CLEAR_GATEWAY_ERROR) !== 'true') {
             clearGatewayError();
           }

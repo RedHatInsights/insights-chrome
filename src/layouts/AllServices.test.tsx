@@ -105,6 +105,7 @@ const renderAllServices = (flagOverrides: Record<string, boolean> = {}) => {
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
+    'platform.chrome.learning-resources-quickstarts': false,
     'platform.chrome.allservices.redesign': false,
   };
 
