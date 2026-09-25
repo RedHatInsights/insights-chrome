@@ -110,7 +110,7 @@ async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.S
     return cacheHit;
   }
   const permissions = SearchPermissions.get(id);
-  const result = !!(await evaluateVisibility({ id, permissions }))?.isHidden;
+  const result = !!(await evaluateVisibility({ id, permissions }, { source: 'search' }))?.isHidden;
   SearchPermissionsCache.set(cacheKey, result);
   return result;
 }

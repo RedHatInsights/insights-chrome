@@ -22,6 +22,8 @@ const DegradedStateBanner = () => {
     entitlements: messages.degradedServiceEntitlements,
     configFromCache: messages.degradedServiceConfigFromCache,
     featureFlags: messages.degradedServiceFeatureFlags,
+    navigation: messages.degradedServiceNavigation,
+    serviceTiles: messages.degradedServiceServiceTiles,
   };
 
   const degradedServices: string[] = [];
@@ -29,6 +31,8 @@ const DegradedStateBanner = () => {
   if (serviceHealth.entitlements) degradedServices.push(intl.formatMessage(serviceNameMap.entitlements));
   if (serviceHealth.configFromCache) degradedServices.push(intl.formatMessage(serviceNameMap.configFromCache));
   if (serviceHealth.featureFlags) degradedServices.push(intl.formatMessage(serviceNameMap.featureFlags));
+  if (serviceHealth.navigation) degradedServices.push(intl.formatMessage(serviceNameMap.navigation));
+  if (serviceHealth.serviceTiles) degradedServices.push(intl.formatMessage(serviceNameMap.serviceTiles));
 
   const serviceList = degradedServices.join(', ');
   const prefix = intl.formatMessage(messages.degradedStateBannerPrefix);

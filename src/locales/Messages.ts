@@ -703,4 +703,14 @@ export default defineMessages({
     description: 'Label for feature flags service',
     defaultMessage: 'Feature Flags',
   },
+  degradedServiceNavigation: {
+    id: 'degradedServiceNavigation',
+    description: 'Label for degraded navigation visibility or loading',
+    defaultMessage: 'Navigation',
+  },
+  degradedServiceServiceTiles: {
+    id: 'degradedServiceServiceTiles',
+    description: 'Label for degraded All Services visibility or loading',
+    defaultMessage: 'All Services',
+  },
 });

@@ -10,6 +10,8 @@ describe('degradedStateAtom', () => {
       entitlements: false,
       configFromCache: false,
       featureFlags: false,
+      navigation: false,
+      serviceTiles: false,
     });
   });
 
@@ -106,6 +108,21 @@ describe('degradedStateAtom', () => {
     expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
 
     store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
+    expect(store.get(isAnyServiceDegradedAtom)).toBe(false);
+  });
+
+  it('tracks navigation, service tiles and cached configuration independently', () => {
+    const store = createStore();
+    store.set(setServiceDegradedAtom, { service: 'navigation', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'serviceTiles', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'navigation', degraded: false });
+
+    expect(store.get(degradedStateAtom).serviceTiles).toBe(true);
+    expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
+    store.set(setServiceDegradedAtom, { service: 'serviceTiles', degraded: false });
+    expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
+    store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: false });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(false);
   });
 });

@@ -1,20 +1,41 @@
-import flatMap from 'lodash/flatMap';
+import * as Sentry from '@sentry/react';
 import { AnyNavItemPermission, NavItem } from '../@types/types';
 import { getVisibilityFunctions } from './VisibilitySingleton';
 
-const visibilityHandler = async ({ method, args }: AnyNavItemPermission) => {
-  const visibilityFunctions = getVisibilityFunctions();
-  // (null, undefined, true) !== false
-  if (!visibilityFunctions[method]) {
-    return false;
-  }
-  return (await visibilityFunctions[method]?.(...(args || []))) !== false;
+export type VisibilityEvaluationContext = {
+  source?: 'navigation' | 'service-tiles' | 'route' | 'search' | 'lightwell';
+  bundleId?: string;
+  itemId?: string;
+  onError?: () => void;
 };
 
-export const isNavItemVisible = (permissions: AnyNavItemPermission | AnyNavItemPermission[]) =>
-  Promise.all(flatMap(Array.isArray(permissions) ? permissions : [permissions], visibilityHandler)).then((visibility) => visibility.every(Boolean));
+const visibilityHandler = async ({ method, args }: AnyNavItemPermission, context: VisibilityEvaluationContext) => {
+  try {
+    const visibilityFunctions = getVisibilityFunctions();
+    // (null, undefined, true) !== false
+    if (!visibilityFunctions[method]) {
+      return false;
+    }
+    return (await visibilityFunctions[method]?.(...(args || []))) !== false;
+  } catch {
+    // Do not attach the original error or arguments: API errors can contain
+    // authorization headers, request payloads and other private data.
+    Sentry.captureMessage('Visibility evaluation failed', {
+      level: 'warning',
+      tags: { area: 'visibility', source: context.source ?? 'unknown', bundleId: context.bundleId, itemId: context.itemId, method },
+    });
+    context.onError?.();
+    return false;
+  }
+};
+
+export const isNavItemVisible = (permissions: AnyNavItemPermission | AnyNavItemPermission[], context: VisibilityEvaluationContext = {}) =>
+  Promise.all((Array.isArray(permissions) ? permissions : [permissions]).map((permission) => visibilityHandler(permission, context))).then((visibility) =>
+    visibility.every(Boolean)
+  );
 
 export type ItemWithPermissionsConfig<T> = T & {
+  id?: string;
   permissions?: AnyNavItemPermission | AnyNavItemPermission[];
   isHidden?: boolean;
   groupId?: string;
@@ -22,7 +43,7 @@ export type ItemWithPermissionsConfig<T> = T & {
   expandable?: boolean;
 };
 
-export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T>) => {
+export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T>, context: VisibilityEvaluationContext = {}) => {
   /**
    * Skip evaluation for hidden items
    */
@@ -36,7 +57,7 @@ export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T
   };
 
   if (typeof result.permissions !== 'undefined') {
-    const visible = await isNavItemVisible(result.permissions);
+    const visible = await isNavItemVisible(result.permissions, { ...context, itemId: result.id ?? result.groupId ?? context.itemId });
     /**
      * Hide item visibility check failed
      */
@@ -49,7 +70,7 @@ export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T
   }
 
   if (Array.isArray(result.navItems)) {
-    result.navItems = await Promise.all(result.navItems.map(evaluateVisibility));
+    result.navItems = await Promise.all(result.navItems.map((item) => evaluateVisibility(item, context)));
   }
 
   return result;

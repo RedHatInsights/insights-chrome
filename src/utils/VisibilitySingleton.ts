@@ -167,7 +167,7 @@ const initialize = ({
       }
     },
     hasPermissions: checkPermissions,
-    hasLocalStorage: (key: string, value: unknown) => localStorage.get(key) === value,
+    hasLocalStorage: (key: string, value: unknown) => localStorage.getItem(key) === value,
     hasCookie: (cookieKey: string, cookieValue: string) => cookie.get(cookieKey) === cookieValue,
     apiRequest: async ({
       url,
