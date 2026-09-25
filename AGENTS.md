@@ -134,6 +134,7 @@ docs/              # Documentation (you are here)
 6. **PF5 vs PF6** — PF5 styles are still imported for backward compatibility. Prefer PF6 for new code but do not remove PF5 imports.
 7. **Environment-specific URLs** — Never hardcode URLs. Use `getEnv()`, `isProd()`, `getEnvDetails()` from `src/utils/common.ts`.
 8. **Global filter side effects** — `globalFilterAtom` changes propagate to ALL consuming applications. Test thoroughly.
+9. **Feature-flag and visibility changes** — Before editing Unleash, visibility helpers, or `GlobalFilter`, follow the [Unleash outage policy](docs/navigation.md#unleash-outage-policy). Preserve its cache, timeout, degraded-state, and Sentry-severity behavior; keep `GlobalFilter` permission lookup independent of flag health, and add outage/recovery regression tests.
 
 ## Build & Run Commands
 
