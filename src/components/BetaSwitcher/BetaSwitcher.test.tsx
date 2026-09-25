@@ -56,4 +56,20 @@ describe('BetaSwitcher', () => {
     const { container } = renderBetaSwitcher(false, false, true);
     expect(container.querySelector<HTMLInputElement>('#preview-toggle')?.disabled).toBe(true);
   });
+
+  it('does not mutate the render-root height (layout is handled by the .chr-c-shell flex column)', () => {
+    // Regression guard: the old implementation imperatively set an inline
+    // `height: calc(100vh - <bannerHeight>px)` on #chrome-app-render-root. The flex shell now owns
+    // the sizing, so the banner must leave the render-root's inline height untouched.
+    const renderRoot = document.createElement('div');
+    renderRoot.id = 'chrome-app-render-root';
+    document.body.appendChild(renderRoot);
+
+    try {
+      renderBetaSwitcher();
+      expect(renderRoot.style.height).toBe('');
+    } finally {
+      renderRoot.remove();
+    }
+  });
 });

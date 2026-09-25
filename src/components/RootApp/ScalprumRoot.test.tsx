@@ -53,7 +53,7 @@ jest.mock('../../hooks/useAllServices', () => ({
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlagsStatus: () => ({ flagsReady: true, flagsError: false }),
-  useFlag: () => false,
+  useFlag: jest.fn(() => false),
   useFlags: () => [],
 }));
 
@@ -161,6 +161,8 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { hidePreviewBannerAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { useFlag } from '@unleash/proxy-client-react';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import { navigationAtom } from '../../state/atoms/navigationAtom';
 
@@ -360,6 +362,66 @@ describe('ScalprumRoot', () => {
       expect(screen.getByRole('list', { name: 'Lightwell footer links' })).toBeTruthy();
     });
 
+    useLocationSpy.mockRestore();
+  });
+
+  // Redundant guard for the flex-shell layout: the JS banner-height calc was replaced by a CSS
+  // flexbox shell (.chr-c-shell => flex column; #chrome-app-render-root => flex: 1 1 0). That only
+  // works if .chr-c-shell is the DIRECT parent wrapping the banners and the render root together.
+  // If a future refactor moves the wrapper or nests it, the render root loses its sizing and the
+  // double-scrollbar / cut-off-content regression returns. This test fails loudly if that happens.
+  it('wraps the banners and the render root together as direct children of .chr-c-shell', async () => {
+    const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
+    useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
+    // Enable the degraded-state banner so BOTH shell banners are present in the DOM at once.
+    const useFlagMock = jest.mocked(useFlag);
+    useFlagMock.mockImplementation((flag: string) => flag === 'platform.chrome.degraded-state-banner');
+
+    const atomValues = [
+      ...defaultAtomValues,
+      [degradedStateAtom, { userPersonalization: true, entitlements: false, configFromCache: false, featureFlags: false }],
+    ];
+
+    let container!: HTMLElement;
+    await act(async () => {
+      const rendered = render(
+        <JotaiTestProvider initialValues={atomValues}>
+          <ChromeAuthContext.Provider value={chromeContextMockValue}>
+            <MemoryRouter initialEntries={['/insights']}>
+              <ScalprumRoot config={config} {...initialProps} />
+            </MemoryRouter>
+          </ChromeAuthContext.Provider>
+        </JotaiTestProvider>
+      );
+      container = rendered.container;
+    });
+
+    await waitFor(() => {
+      const shell = container.querySelector('.chr-c-shell');
+      expect(shell).toBeTruthy();
+
+      // Render root must be a DIRECT child of the shell so its `flex: 1 1 0` sizing applies.
+      const renderRoot = container.querySelector('#chrome-app-render-root');
+      expect(renderRoot).toBeTruthy();
+      expect(renderRoot?.parentElement).toBe(shell);
+
+      // BetaSwitcher banner: its outer wrapper <div> must be a direct child of the shell,
+      // so the Split (.chr-c-beta-switcher) sits two levels below the shell.
+      const betaSwitcher = container.querySelector('.chr-c-beta-switcher');
+      expect(betaSwitcher).toBeTruthy();
+      expect(betaSwitcher?.parentElement?.parentElement).toBe(shell);
+
+      // DegradedStateBanner must also be a direct child of the shell.
+      const degradedBanner = container.querySelector('[data-ouia-component-id="DegradedStateBanner"]');
+      expect(degradedBanner).toBeTruthy();
+      expect(degradedBanner?.parentElement).toBe(shell);
+
+      // Guard: no render root may live outside the shell (would escape flex sizing entirely).
+      const rootsOutsideShell = Array.from(container.querySelectorAll('#chrome-app-render-root')).filter((el) => !el.closest('.chr-c-shell'));
+      expect(rootsOutsideShell).toHaveLength(0);
+    });
+
+    useFlagMock.mockReturnValue(false);
     useLocationSpy.mockRestore();
   });
 
