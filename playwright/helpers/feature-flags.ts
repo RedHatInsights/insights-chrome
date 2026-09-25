@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 interface FeatureToggle {
   name: string;
@@ -7,7 +7,24 @@ interface FeatureToggle {
   variant: { name: string; enabled: boolean };
 }
 
+/** Start flag-mocked E2E tests without toggles persisted in the authenticated storage state. */
+export async function clearCachedFeatureFlags(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    try {
+      for (const key of Object.keys(localStorage)) {
+        if (key.startsWith('unleash:')) {
+          localStorage.removeItem(key);
+        }
+      }
+      localStorage.setItem('chrome:feature-flags:error', 'false');
+    } catch {
+      // Some cross-origin frames do not expose localStorage.
+    }
+  });
+}
+
 export async function mockFeatureFlags(page: Page, flags: string[]): Promise<void> {
+  await clearCachedFeatureFlags(page);
   await page.route('**/api/featureflags/v0**', async (route) => {
     let toggles: FeatureToggle[] = [];
     try {

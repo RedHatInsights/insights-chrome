@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
+import { FEATURE_FLAGS_INITIAL_TIMEOUT_MS, getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 export type CacheFetchResult<T> = { data: T; fromCache: boolean };
 export type CacheFetchOptions = { enabled: boolean };
@@ -117,8 +117,6 @@ export function isConfigCacheFallbackEnabled(): boolean {
   }
 }
 
-const FLAG_READY_TIMEOUT_MS = 5_000;
-
 const waitForFlagClientReady = (client: ReturnType<typeof getUnleashClient>): Promise<boolean> => {
   if (client.isReady?.() === true) {
     return Promise.resolve(true);
@@ -143,7 +141,7 @@ const waitForFlagClientReady = (client: ReturnType<typeof getUnleashClient>): Pr
 
     client.on('ready', onReady);
     client.on('error', onError);
-    timeout = setTimeout(() => finish(false), FLAG_READY_TIMEOUT_MS);
+    timeout = setTimeout(() => finish(false), FEATURE_FLAGS_INITIAL_TIMEOUT_MS);
   });
 };
 
