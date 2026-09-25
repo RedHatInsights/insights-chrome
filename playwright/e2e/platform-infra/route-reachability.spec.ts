@@ -11,6 +11,8 @@ test.describe('Route reachability', () => {
 
   test.beforeAll(async ({ playwright }) => {
     requestContext = await playwright.request.newContext({
+      // Infrastructure checks run without the shared authenticated user state.
+      storageState: { cookies: [], origins: [] },
       baseURL: config.baseUrl,
       ignoreHTTPSErrors: true,
       ...(config.proxy && { proxy: { server: config.proxy } }),
