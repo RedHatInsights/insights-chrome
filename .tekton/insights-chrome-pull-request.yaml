@@ -309,6 +309,18 @@ spec:
           computeResources: {}
           image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
           name: use-trusted-artifact
+          env:
+          - name: HOME
+            value: /var/workdir
+          # Skip the archive root entry so tar does not try to restore
+          # ownership/mode on the volume mount point (requires root).
+          - name: TAR_OPTIONS
+            value: "--no-recursion --anchored --exclude=."
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
         - computeResources:
             requests:
               cpu: "4"
@@ -320,6 +332,8 @@ spec:
           image: mcr.microsoft.com/playwright@sha256:b3251f7ff1a9fa559a28d1c67eaa15fc1a9800f7845e82756caea7842967f615
           name: e2e-tests
           env:
+          - name: HOME
+            value: /var/workdir
           - name: CHROME_ACCOUNT
             valueFrom:
               secretKeyRef:
@@ -341,8 +355,6 @@ spec:
           script: |
             #!/usr/bin/env bash
             set -e
-            # Keep npm and other caches writable for the CI-assigned user.
-            export HOME=$(mktemp -d)
             npm i >/dev/null 2>&1
             echo "Starting dev server in background..."
             KONFLUX_RUN=$KONFLUX_RUN DISABLE_CLIENT_OVERLAY=true npm run dev:beta &
@@ -363,6 +375,7 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
             runAsNonRoot: true
+            allowPrivilegeEscalation: false
           workingDir: /var/workdir
         volumes:
         - name: dshm
