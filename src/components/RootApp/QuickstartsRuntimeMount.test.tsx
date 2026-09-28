@@ -38,7 +38,7 @@ const chromeAuth = {
   },
 };
 
-const renderMount = (initialActiveQuickStartID = '') => {
+const renderMount = (initialActiveQuickStartID = '', children: React.ReactNode = <span>shell-child</span>) => {
   const store = createStore();
   store.set(activeModuleAtom, 'insights');
   store.set(remoteActiveQuickStartIDAtom, initialActiveQuickStartID);
@@ -54,9 +54,7 @@ const renderMount = (initialActiveQuickStartID = '') => {
     ...render(
       <JotaiProvider store={store}>
         <ChromeAuthContext.Provider value={chromeAuth as never}>
-          <QuickstartsRuntimeMount>
-            <span>shell-child</span>
-          </QuickstartsRuntimeMount>
+          <QuickstartsRuntimeMount>{children}</QuickstartsRuntimeMount>
         </ChromeAuthContext.Provider>
       </JotaiProvider>
     ),
@@ -93,12 +91,17 @@ describe('QuickstartsRuntimeMount', () => {
     renderMount();
 
     expect(screen.getByTestId('remote-runtime')).toBeInTheDocument();
+    expect(screen.getByText('shell-child')).toBeInTheDocument();
     expect(screen.queryByTestId('legacy-runtime')).not.toBeInTheDocument();
     expect(MockedScalprumComponent).toHaveBeenCalled();
     const props = MockedScalprumComponent.mock.calls[0][0];
     expect(props.scope).toBe('learningResources');
     expect(props.module).toBe('./QuickstartsRuntime');
     expect(props.accountId).toBe('123');
+    expect(props.fallback).toBeNull();
+    expect(React.isValidElement(props.children)).toBe(true);
+    expect((props.children as React.ReactElement).props['data-ouia-component-id']).toBe('chrome-quickstarts-slot');
+    expect(screen.getByTestId('remote-runtime')).toHaveTextContent('shell-child');
   });
 
   it('loads the remote when localStorage override is set', () => {
@@ -158,5 +161,66 @@ describe('QuickstartsRuntimeMount', () => {
 
     expect(store.get(degradedStateAtom).quickstarts).toBe(true);
     expect(store.get(remoteActiveQuickStartIDAtom)).toBe('');
+    expect(screen.getByText('shell-child')).toBeInTheDocument();
+  });
+
+  it('portals chrome children into the remote placeholder', () => {
+    mockedUseFlag.mockReturnValue(true);
+    renderMount();
+
+    expect(screen.getByTestId('remote-runtime')).toHaveTextContent('shell-child');
+  });
+
+  it('keeps chrome children mounted when the remote goes loading -> ready -> failed', () => {
+    mockedUseFlag.mockReturnValue(true);
+    let setRemoteReady: ((ready: boolean) => void) | undefined;
+    MockedScalprumComponent.mockImplementation(({ children }: { children?: React.ReactNode }) => {
+      const [ready, setReady] = React.useState(false);
+      setRemoteReady = setReady;
+      return <div data-testid="remote-runtime">{ready ? children : null}</div>;
+    });
+
+    const observed: { mounts: number; nodes: (HTMLElement | null)[] } = { mounts: 0, nodes: [] };
+    const Probe = () => {
+      const ref = React.useRef<HTMLDivElement>(null);
+      React.useLayoutEffect(() => {
+        observed.mounts += 1;
+        observed.nodes.push(ref.current);
+      }, []);
+      return <div ref={ref}>shell-child</div>;
+    };
+
+    renderMount('', <Probe />);
+    const initialNode = observed.nodes[0];
+    expect(observed.mounts).toBe(1);
+    expect(initialNode && document.contains(initialNode)).toBe(true);
+    expect(screen.getByTestId('remote-runtime')).not.toHaveTextContent('shell-child');
+
+    act(() => setRemoteReady?.(true));
+    expect(observed.mounts).toBe(1);
+    expect(screen.getByTestId('remote-runtime')).toHaveTextContent('shell-child');
+    expect(screen.getByTestId('remote-runtime').contains(initialNode)).toBe(true);
+
+    act(() => setRemoteReady?.(false));
+    expect(observed.mounts).toBe(1);
+    expect(initialNode && document.contains(initialNode)).toBe(true);
+    expect(screen.getByText('shell-child')).toBe(initialNode);
+    expect(screen.getByTestId('remote-runtime')).not.toHaveTextContent('shell-child');
+  });
+
+  it('mounts chrome children attached to the document so layout measurements work', () => {
+    mockedUseFlag.mockReturnValue(true);
+    let attachedDuringLayoutEffect: boolean | undefined;
+    const Probe = () => {
+      const ref = React.useRef<HTMLDivElement>(null);
+      React.useLayoutEffect(() => {
+        attachedDuringLayoutEffect = !!ref.current && document.contains(ref.current);
+      }, []);
+      return <div ref={ref}>shell-child</div>;
+    };
+
+    renderMount('', <Probe />);
+
+    expect(attachedDuringLayoutEffect).toBe(true);
   });
 });

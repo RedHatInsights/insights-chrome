@@ -1,4 +1,5 @@
-import React, { Component, ReactNode, useCallback, useContext, useEffect, useRef } from 'react';
+import React, { Component, ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChromeAPI } from '@redhat-cloud-services/types';
@@ -54,7 +55,7 @@ class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallba
   }
 }
 
-const QuickstartsRemoteError = ({ children }: { children?: ReactNode; error?: unknown }) => {
+const QuickstartsRemoteError = () => {
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
   const setRemoteActiveQSID = useSetAtom(remoteActiveQuickStartIDAtom);
   useEffect(() => {
@@ -63,7 +64,72 @@ const QuickstartsRemoteError = ({ children }: { children?: ReactNode; error?: un
       setServiceDegraded({ service: 'quickstarts', degraded: false });
     };
   }, [setRemoteActiveQSID, setServiceDegraded]);
-  return <>{children}</>;
+  return null;
+};
+
+const REMOTE_CHILDREN_SLOT_STYLE: React.CSSProperties = { display: 'contents' };
+
+/**
+ * Keep the console tree in one React position. Move only the DOM node into the
+ * remote drawer slot (or a fallback host while the remote is loading / failed).
+ * Merged LR already wraps `{children}` in the PF drawers, so Chrome passes a
+ * tiny placeholder as the remote's children and portals the console into it.
+ */
+const ChromeChildrenPortal = ({ children, slot }: { children: ReactNode; slot: HTMLElement | null }) => {
+  const fallbackRef = useRef<HTMLDivElement | null>(null);
+  const portalNodeRef = useRef<HTMLDivElement | null>(null);
+
+  if (!portalNodeRef.current && typeof document !== 'undefined') {
+    const node = document.createElement('div');
+    node.setAttribute('data-ouia-component-id', 'chrome-quickstarts-children');
+    node.style.display = 'contents';
+    portalNodeRef.current = node;
+  }
+
+  const portalNode = portalNodeRef.current;
+
+  /**
+   * Attach on ref commit rather than in a layout effect. A parent layout effect
+   * runs *after* the portal children's own layout effects, which would leave the
+   * whole console tree measuring a detached node on first mount. The fallback
+   * host's ref commits before the portal sibling, so children mount attached.
+   */
+  const attachFallbackHost = useCallback(
+    (node: HTMLDivElement | null) => {
+      fallbackRef.current = node;
+      if (node && portalNode && !portalNode.parentElement) {
+        node.appendChild(portalNode);
+      }
+    },
+    [portalNode]
+  );
+
+  useLayoutEffect(() => {
+    if (!portalNode) {
+      return;
+    }
+    const host = slot ?? fallbackRef.current;
+    if (host && portalNode.parentElement !== host) {
+      host.appendChild(portalNode);
+    }
+  }, [slot, portalNode]);
+
+  useLayoutEffect(() => {
+    return () => {
+      portalNode?.remove();
+    };
+  }, [portalNode]);
+
+  if (!portalNode) {
+    return <>{children}</>;
+  }
+
+  return (
+    <>
+      <div ref={attachFallbackHost} style={{ display: 'contents' }} />
+      {createPortal(children, portalNode)}
+    </>
+  );
 };
 
 const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
@@ -73,6 +139,10 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
   const useRemote = useLearningResourcesQuickstarts();
   const apiReadyRef = useRef(false);
+  const [childrenSlotEl, setChildrenSlotEl] = useState<HTMLDivElement | null>(null);
+  const setRemoteChildrenSlot = useCallback((node: HTMLDivElement | null) => {
+    setChildrenSlotEl(node);
+  }, []);
 
   const handleApiReady = useCallback(
     (api: { quickstartsAPI: LiveQuickstartsAPI; helpTopicsAPI: ChromeAPI['helpTopics'] }) => {
@@ -92,6 +162,7 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!useRemote) {
+      setChildrenSlotEl(null);
       return;
     }
     apiReadyRef.current = false;
@@ -114,20 +185,23 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <QuickstartsRuntimeBoundary fallback={children}>
-      <ScalprumComponent
-        scope="learningResources"
-        module="./QuickstartsRuntime"
-        ErrorComponent={<QuickstartsRemoteError>{children}</QuickstartsRemoteError>}
-        fallback={children}
-        accountId={accountId}
-        activeModule={activeModule}
-        onApiReady={handleApiReady}
-        onActiveQuickStartChanged={handleActiveQSChanged}
-      >
-        {children}
-      </ScalprumComponent>
-    </QuickstartsRuntimeBoundary>
+    <>
+      <ChromeChildrenPortal slot={childrenSlotEl}>{children}</ChromeChildrenPortal>
+      <QuickstartsRuntimeBoundary fallback={null}>
+        <ScalprumComponent
+          scope="learningResources"
+          module="./QuickstartsRuntime"
+          ErrorComponent={<QuickstartsRemoteError />}
+          fallback={null}
+          accountId={accountId}
+          activeModule={activeModule}
+          onApiReady={handleApiReady}
+          onActiveQuickStartChanged={handleActiveQSChanged}
+        >
+          <div ref={setRemoteChildrenSlot} data-ouia-component-id="chrome-quickstarts-slot" style={REMOTE_CHILDREN_SLOT_STYLE} />
+        </ScalprumComponent>
+      </QuickstartsRuntimeBoundary>
+    </>
   );
 };
 
