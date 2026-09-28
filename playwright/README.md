@@ -161,6 +161,18 @@ The job uses the Playwright `v1.62.1-jammy` image with browsers and system depen
 
 The test step explicitly runs as the image's `pwuser` (UID 1000, GID 1000), with `runAsNonRoot: true`. The script creates a temporary workspace and uses it for the checkout and home directory so npm and other caches remain writable. Tekton must permit this UID/GID and allow the step to write its test result.
 
+### Pull-request end-to-end tests
+
+The [pull-request pipeline](../.tekton/insights-chrome-pull-request.yaml) runs Playwright end-to-end tests against a local dev server for every PR to `master`.
+
+The test step uses the same Playwright `v1.62.1-jammy` image pinned to a SHA256 manifest digest. It runs as `pwuser` (UID 1000, GID 1000) with `runAsNonRoot: true`. A temporary directory is used as `HOME` so npm and other caches remain writable under the non-root user.
+
+### Ephemeral environment tests
+
+The [ephemeral test task](../.tekton/run-tests-task.yml) runs Playwright tests in `playwright/e2e/ephemeral/` against an ephemeral deployment.
+
+The task uses the same Playwright image pinned to a SHA256 manifest digest. It runs as `pwuser` (UID 1000, GID 1000) with `runAsNonRoot: true` and sets `HOME` to a writable temporary directory. When updating Playwright, update the image digest in this file alongside the other pipeline files, keeping the version aligned with `@playwright/test` in `package-lock.json`.
+
 ## Configuration
 
 See `playwright.config.ts` in the root directory for configuration options including:
