@@ -13,7 +13,7 @@
 
 The chrome service backend is the bridge between kafka and the browser client. It exposes a WS endpoint that allows the browser to connect to the service.
 
-> ****Note**** these steps start only the minimal required infrastructure.
+> **Note** these steps start only the minimal required infrastructure.
 
 To enable it for local development with chrome UI follow these steps:
 

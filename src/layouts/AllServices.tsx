@@ -83,6 +83,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     id: 'otherServices',
     title: 'Other Services',
     navItems: [
+      { id: 'redHatAiCatalog', title: 'Red Hat AI Catalog', href: 'https://catalog.redhat.com/en/ai', isExternal: true },
       { id: 'redhatProductTrials', title: 'Red Hat Product Trials', href: 'https://www.redhat.com/en/products/trials', isExternal: true },
       {
         id: 'trustedArtifactSigner',

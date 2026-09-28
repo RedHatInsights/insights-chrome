@@ -207,11 +207,6 @@ function initSentry() {
         project: 'registration-assistant-rhel',
       },
       {
-        appName: 'connector',
-        dsn: 'https://08c275222a74229dda763dec7c7c2fa8@o490301.ingest.us.sentry.io/4508683268128768',
-        project: 'sed-frontend-rhc',
-      },
-      {
         appName: 'image-builder',
         dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
         project: 'image-builder-rhel',

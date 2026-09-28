@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './playwright',
+  // Helper *.test.ts files run under Jest; Playwright runs only *.spec.ts files.
+  testMatch: '**/*.spec.ts',
   testIgnore: process.env.PLATFORM_INFRA_ENV ? [] : ['**/platform-infra/**'],
 
   /* Global setup for authentication */

@@ -9,6 +9,7 @@
  */
 import type { Page } from '@playwright/test';
 import { disableCookiePrompt, login as sharedLogin } from '@redhat-cloud-services/playwright-test-auth';
+import { AUTH_TIMEOUT } from '../setup/constants';
 
 /**
  * Performs Red Hat SSO login with analytics disabled.
@@ -30,8 +31,15 @@ export async function login(page: Page) {
   // Navigate to the login page
   await page.goto('/');
 
-  // Perform login using shared package
-  await sharedLogin(page, user, password);
+  // SSO may return directly to Console Home. The shared package expects a login form.
+  const userMenu = page.getByRole('button', { name: /User Avatar/ });
+  const username = page.getByLabel('Red Hat login').filter({ visible: true });
+  const lockdown = page.getByText('Lockdown', { exact: false }).filter({ visible: true });
+  await userMenu.or(username).or(lockdown).first().waitFor({ state: 'visible', timeout: AUTH_TIMEOUT });
+  if (!(await userMenu.isVisible())) {
+    // Keep credential entry and lockdown detection in the shared authentication package.
+    await sharedLogin(page, user, password);
+  }
 
   // Disable analytics integrations (insights-chrome specific)
   await page.evaluate(() => {

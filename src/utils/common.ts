@@ -367,7 +367,7 @@ function sanitizeSsoUrl(url: string) {
 
 export interface SSOConfig {
   ssoUrl: string;
-  ssoMapping: Record<string, string>;
+  ssoMapping?: Record<string, string>;
 }
 
 // Resolve SSO URL based on current hostname and operator config
@@ -410,17 +410,22 @@ function isSSOConfig(data: unknown): data is SSOConfig {
     data === null ||
     !('ssoUrl' in data) ||
     typeof (data as SSOConfig).ssoUrl !== 'string' ||
-    (data as SSOConfig).ssoUrl.length === 0 ||
-    !('ssoMapping' in data) ||
-    typeof (data as SSOConfig).ssoMapping !== 'object' ||
-    (data as SSOConfig).ssoMapping === null ||
-    Array.isArray((data as SSOConfig).ssoMapping)
+    (data as SSOConfig).ssoUrl.length === 0
   ) {
     return false;
   }
 
-  // Validate that all ssoMapping values are nonempty strings
+  // Frontend Operator omits ssoMapping when no hostname mappings are configured.
+  if (!('ssoMapping' in data)) {
+    return true;
+  }
+
   const mapping = (data as SSOConfig).ssoMapping;
+  if (typeof mapping !== 'object' || mapping === null || Array.isArray(mapping)) {
+    return false;
+  }
+
+  // Validate that all ssoMapping values are nonempty strings
   return Object.values(mapping).every((value) => typeof value === 'string' && value.length > 0);
 }
 

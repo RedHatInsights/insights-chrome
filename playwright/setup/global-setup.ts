@@ -4,6 +4,11 @@ import { disableCookiePrompt, login } from '@redhat-cloud-services/playwright-te
 import { AUTH_TIMEOUT, NAVIGATION_TIMEOUT } from './constants';
 
 async function globalSetup(config: FullConfig) {
+  // Infrastructure browser checks log in independently against their target environment.
+  if (process.env.PLATFORM_INFRA_ENV) {
+    return;
+  }
+
   const { storageState, baseURL } = config.projects[0].use;
 
   if (!storageState || !process.env.E2E_USER) {

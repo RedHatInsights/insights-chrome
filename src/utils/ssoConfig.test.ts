@@ -195,6 +195,22 @@ describe('loadSSOConfig', () => {
     expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
+  it('should use the operator SSO URL when the config omits ssoMapping', async () => {
+    const ephemeralSsoUrl = 'https://ephemeral-auth.apps.example.com/auth';
+    jsdomReconfigure({ url: 'https://ephemeral.apps.example.com' });
+    mockAxiosInstance.get.mockResolvedValue({
+      data: {
+        ssoUrl: ephemeralSsoUrl,
+        environment: 'env-ephemeral',
+      },
+    });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    expect(resolveSSOUrl(result)).toBe(`${ephemeralSsoUrl}/`);
+  });
+
   it('should generate fallback SSO config from DEFAULT_SSO_ROUTES when request fails', async () => {
     jsdomReconfigure({ url: 'https://cloud.redhat.com' });
     mockAxiosInstance.get.mockRejectedValue(new Error('Network error'));

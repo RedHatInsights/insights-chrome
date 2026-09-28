@@ -48,7 +48,7 @@ module.exports = {
       },
     ],
   },
-  roots: ['<rootDir>/src/'],
+  roots: ['<rootDir>/src/', '<rootDir>/playwright/helpers/'],
   moduleFileExtensions: ['js', 'ts', 'tsx'],
   setupFiles: ['<rootDir>/config/setupTests.js'],
   setupFilesAfterEnv: ['<rootDir>/config/jest.scripts.js'],

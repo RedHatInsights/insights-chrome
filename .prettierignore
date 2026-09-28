@@ -13,6 +13,9 @@ package-lock.json
 # Coverage
 coverage/
 
+# Python test cache
+.pytest_cache/
+
 # Logs
 *.log
 
