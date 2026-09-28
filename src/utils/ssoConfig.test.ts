@@ -50,6 +50,15 @@ describe('resolveSSOUrl', () => {
     expect(result).toBe('https://sso.custom.com/auth/');
   });
 
+  it('should return ssoUrl when ssoMapping is omitted (ephemeral operator config)', () => {
+    jsdomReconfigure({ url: 'https://ee-85i8olqb.apps.crc-eph.r9lp.p1.openshiftapps.com' });
+    const config: SSOConfig = {
+      ssoUrl: 'https://ee-85i8olqb-auth.apps.crc-eph.r9lp.p1.openshiftapps.com/auth/',
+    };
+    const result = resolveSSOUrl(config);
+    expect(result).toBe('https://ee-85i8olqb-auth.apps.crc-eph.r9lp.p1.openshiftapps.com/auth/');
+  });
+
   it('should return mapped SSO URL when hostname matches a pattern', () => {
     jsdomReconfigure({ url: 'https://console.stage.redhat.com' });
     const config: SSOConfig = {
@@ -209,6 +218,29 @@ describe('loadSSOConfig', () => {
     const result = await loadFn();
 
     expect(resolveSSOUrl(result)).toBe(`${ephemeralSsoUrl}/`);
+    // Must NOT fall back to DEFAULT_SSO_ROUTES
+    expect(result.ssoMapping).toBeUndefined();
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.anything());
+  });
+
+  it('should accept exact ephemeral operator config shape (ssoUrl + environment, no ssoMapping)', async () => {
+    // Exact shape served by Frontend Operator in ephemeral namespaces (RHCLOUD-51664)
+    const ephemeralConfig = {
+      ssoUrl: 'https://ee-85i8olqb-auth.apps.crc-eph.r9lp.p1.openshiftapps.com/auth/',
+      environment: 'env-ephemeral-coohmk',
+    };
+    jsdomReconfigure({ url: 'https://ee-85i8olqb.apps.crc-eph.r9lp.p1.openshiftapps.com' });
+    mockAxiosInstance.get.mockResolvedValue({ data: ephemeralConfig });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    expect(result.ssoUrl).toBe(ephemeralConfig.ssoUrl);
+    expect(resolveSSOUrl(result)).toBe(ephemeralConfig.ssoUrl);
+    // Verify the config was accepted (not fallback), and no warnings
+    expect(result.ssoMapping).toBeUndefined();
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.anything());
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('unexpected shape'));
   });
 
   it('should generate fallback SSO config from DEFAULT_SSO_ROUTES when request fails', async () => {
@@ -252,7 +284,8 @@ describe('loadSSOConfig', () => {
     expect(result.ssoUrl).toBe('https://sso.stage.redhat.com/auth/');
   });
 
-  it('should reject SSO config with array ssoMapping values', async () => {
+  it('should return live config with invalid ssoMapping values without caching it', async () => {
+    // cacheFetch returns live data even when payloadGuard rejects (origin is authoritative)
     const invalidConfig = {
       ssoUrl: 'https://sso.redhat.com/auth',
       ssoMapping: {
@@ -265,12 +298,14 @@ describe('loadSSOConfig', () => {
     const { loadSSOConfig: loadFn } = await import('./common');
     const result = await loadFn();
 
-    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
-    expect(result.ssoMapping).toBeDefined();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+    // Live response is authoritative — returned as-is, ssoUrl still usable
+    expect(result.ssoUrl).toBe('https://sso.redhat.com/auth');
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('unexpected shape'));
+    // Must NOT trigger the static fallback
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.anything());
   });
 
-  it('should reject SSO config with empty string ssoMapping values', async () => {
+  it('should return live config with empty string ssoMapping values without caching it', async () => {
     const invalidConfig = {
       ssoUrl: 'https://sso.redhat.com/auth',
       ssoMapping: {
@@ -283,12 +318,12 @@ describe('loadSSOConfig', () => {
     const { loadSSOConfig: loadFn } = await import('./common');
     const result = await loadFn();
 
-    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
-    expect(result.ssoMapping).toBeDefined();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+    expect(result.ssoUrl).toBe('https://sso.redhat.com/auth');
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('unexpected shape'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.anything());
   });
 
-  it('should reject SSO config with non-string ssoMapping values', async () => {
+  it('should return live config with non-string ssoMapping values without caching it', async () => {
     const invalidConfig = {
       ssoUrl: 'https://sso.redhat.com/auth',
       ssoMapping: {
@@ -301,12 +336,12 @@ describe('loadSSOConfig', () => {
     const { loadSSOConfig: loadFn } = await import('./common');
     const result = await loadFn();
 
-    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
-    expect(result.ssoMapping).toBeDefined();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+    expect(result.ssoUrl).toBe('https://sso.redhat.com/auth');
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('unexpected shape'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.anything());
   });
 
-  it('should reject SSO config with array ssoMapping instead of object', async () => {
+  it('should return live config with array ssoMapping instead of object without caching it', async () => {
     const invalidConfig = {
       ssoUrl: 'https://sso.redhat.com/auth',
       ssoMapping: [] as unknown as Record<string, string>,
@@ -317,9 +352,9 @@ describe('loadSSOConfig', () => {
     const { loadSSOConfig: loadFn } = await import('./common');
     const result = await loadFn();
 
-    // Should fall back to DEFAULT_SSO_ROUTES due to validation failure
-    expect(result.ssoMapping).toBeDefined();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+    expect(result.ssoUrl).toBe('https://sso.redhat.com/auth');
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('unexpected shape'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.anything());
   });
 
   it('should accept SSO config when cached data has valid mapping values', async () => {

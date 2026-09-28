@@ -438,12 +438,7 @@ export const loadSSOConfig = async (): Promise<SSOConfig> => {
       () =>
         getSSOConfigAxios()
           .get<SSOConfig>(ssoConfigPath, { headers: fedModulesheaders })
-          .then((r) => {
-            if (!isSSOConfig(r.data)) {
-              throw new Error('SSO config validation failed: invalid shape or mapping values');
-            }
-            return r.data;
-          }),
+          .then((r) => r.data),
       undefined,
       isSSOConfig,
       { enabled: true }
