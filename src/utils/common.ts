@@ -384,7 +384,7 @@ export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
   if (ssoConfig.ssoMapping && typeof ssoConfig.ssoMapping === 'object') {
     // Try exact match first
     const directMatch = ssoConfig.ssoMapping[currentHostname];
-    if (directMatch) {
+    if (typeof directMatch === 'string' && directMatch.length > 0) {
       return sanitizeSsoUrl(directMatch);
     }
 
@@ -393,7 +393,7 @@ export const resolveSSOUrl = (ssoConfig: SSOConfig): string => {
     // broader ones (e.g. "cloud.redhat.com")
     const sortedEntries = Object.entries(ssoConfig.ssoMapping).sort(([a], [b]) => b.length - a.length);
     for (const [pattern, ssoUrl] of sortedEntries) {
-      if (currentHostname.includes(pattern)) {
+      if (currentHostname.includes(pattern) && typeof ssoUrl === 'string' && ssoUrl.length > 0) {
         return sanitizeSsoUrl(ssoUrl);
       }
     }

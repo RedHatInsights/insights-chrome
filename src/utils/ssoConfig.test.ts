@@ -130,6 +130,44 @@ describe('resolveSSOUrl', () => {
     expect(result).toBe('https://sso.qa.redhat.com/auth/');
   });
 
+  it('should skip non-string mapping values and fall back to ssoUrl', () => {
+    jsdomReconfigure({ url: 'https://cloud.redhat.com' });
+    const config: SSOConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': 123 as unknown as string,
+      },
+    };
+    const result = resolveSSOUrl(config);
+    // Non-string value skipped → falls back to ssoUrl
+    expect(result).toBe('https://sso.redhat.com/auth/');
+  });
+
+  it('should skip empty string mapping values and fall back to ssoUrl', () => {
+    jsdomReconfigure({ url: 'https://cloud.redhat.com' });
+    const config: SSOConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'cloud.redhat.com': '',
+      },
+    };
+    const result = resolveSSOUrl(config);
+    expect(result).toBe('https://sso.redhat.com/auth/');
+  });
+
+  it('should skip non-string pattern-matched values and fall back to ssoUrl', () => {
+    jsdomReconfigure({ url: 'https://console.stage.redhat.com' });
+    const config: SSOConfig = {
+      ssoUrl: 'https://sso.redhat.com/auth',
+      ssoMapping: {
+        'stage.redhat': ['https://sso.stage.redhat.com/auth'] as unknown as string,
+      },
+    };
+    const result = resolveSSOUrl(config);
+    // Array value skipped → falls back to ssoUrl
+    expect(result).toBe('https://sso.redhat.com/auth/');
+  });
+
   it('should prefer exact hostname match over partial pattern match', () => {
     jsdomReconfigure({ url: 'https://cloud.redhat.com' });
     const config: SSOConfig = {
