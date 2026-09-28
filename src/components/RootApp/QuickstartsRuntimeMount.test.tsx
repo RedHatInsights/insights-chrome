@@ -11,6 +11,8 @@ import QuickstartsRuntimeMount, {
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
+import { resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
@@ -36,9 +38,10 @@ const chromeAuth = {
   },
 };
 
-const renderMount = () => {
+const renderMount = (initialActiveQuickStartID = '') => {
   const store = createStore();
   store.set(activeModuleAtom, 'insights');
+  store.set(remoteActiveQuickStartIDAtom, initialActiveQuickStartID);
   store.set(degradedStateAtom, {
     userPersonalization: false,
     entitlements: false,
@@ -65,11 +68,14 @@ describe('QuickstartsRuntimeMount', () => {
     mockedUseFlag.mockReturnValue(false);
     window.localStorage.removeItem(LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY);
     MockedScalprumComponent.mockClear();
+    resetDelegatedChromeQuickstartsState();
   });
 
   afterEach(() => {
     jest.useRealTimers();
     window.localStorage.removeItem(LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY);
+    resetDelegatedChromeQuickstartsState();
+    MockedScalprumComponent.mockImplementation(({ children }: { children?: React.ReactNode }) => <div data-testid="remote-runtime">{children}</div>);
   });
 
   it('uses leftover Chrome providers when the flag is off', () => {
@@ -129,5 +135,28 @@ describe('QuickstartsRuntimeMount', () => {
     });
 
     expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+  });
+
+  it('clears a stale remote quickstart id if the remote never becomes ready', () => {
+    mockedUseFlag.mockReturnValue(true);
+    jest.useFakeTimers();
+    const { store } = renderMount();
+
+    act(() => {
+      store.set(remoteActiveQuickStartIDAtom, 'stale-quickstart');
+      jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
+    });
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+    expect(store.get(remoteActiveQuickStartIDAtom)).toBe('');
+  });
+
+  it('clears a stale remote quickstart id when the remote ErrorComponent mounts', () => {
+    mockedUseFlag.mockReturnValue(true);
+    MockedScalprumComponent.mockImplementation(({ ErrorComponent }: { ErrorComponent?: React.ReactNode }) => <>{ErrorComponent}</>);
+    const { store } = renderMount('stale-quickstart');
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+    expect(store.get(remoteActiveQuickStartIDAtom)).toBe('');
   });
 });

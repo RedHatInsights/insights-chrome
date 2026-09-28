@@ -6,7 +6,8 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import chromeStore from '../../state/chromeStore';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
-import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
+import { LiveQuickstartsAPI, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
+import { dropPendingLiveChromeQuickstartsApis, publishLiveChromeQuickstartsApis } from '../../state/atoms/delegatedChromeQuickstarts';
 import LegacyQuickstartsRuntime from './LegacyQuickstartsRuntime';
 import { useLearningResourcesQuickstarts } from './useLearningResourcesQuickstarts';
 
@@ -21,6 +22,21 @@ function setQuickstartsDegraded(degraded: boolean) {
   chromeStore.set(setServiceDegradedAtom, { service: 'quickstarts', degraded });
 }
 
+function clearRemoteActiveQuickStartID(setRemoteActiveQSID?: (id: string) => void) {
+  chromeStore.set(remoteActiveQuickStartIDAtom, '');
+  setRemoteActiveQSID?.('');
+}
+
+function failQuickstartsRuntime(
+  setRemoteActiveQSID?: (id: string) => void,
+  setServiceDegraded?: (update: { service: 'quickstarts'; degraded: boolean }) => void
+) {
+  setQuickstartsDegraded(true);
+  setServiceDegraded?.({ service: 'quickstarts', degraded: true });
+  clearRemoteActiveQuickStartID(setRemoteActiveQSID);
+  dropPendingLiveChromeQuickstartsApis();
+}
+
 class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
   static getDerivedStateFromError() {
@@ -28,7 +44,7 @@ class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallba
   }
   componentDidCatch(error: unknown) {
     console.error('Quickstarts runtime failed:', error);
-    setQuickstartsDegraded(true);
+    failQuickstartsRuntime();
   }
   render() {
     if (this.state.hasError) {
@@ -40,12 +56,13 @@ class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallba
 
 const QuickstartsRemoteError = ({ children }: { children?: ReactNode; error?: unknown }) => {
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
+  const setRemoteActiveQSID = useSetAtom(remoteActiveQuickStartIDAtom);
   useEffect(() => {
-    setServiceDegraded({ service: 'quickstarts', degraded: true });
+    failQuickstartsRuntime(setRemoteActiveQSID, setServiceDegraded);
     return () => {
       setServiceDegraded({ service: 'quickstarts', degraded: false });
     };
-  }, [setServiceDegraded]);
+  }, [setRemoteActiveQSID, setServiceDegraded]);
   return <>{children}</>;
 };
 
@@ -60,8 +77,7 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   const handleApiReady = useCallback(
     (api: { quickstartsAPI: LiveQuickstartsAPI; helpTopicsAPI: ChromeAPI['helpTopics'] }) => {
       apiReadyRef.current = true;
-      liveQuickstartsAPIRef.current = api.quickstartsAPI;
-      liveHelpTopicsAPIRef.current = api.helpTopicsAPI;
+      publishLiveChromeQuickstartsApis(api);
       setServiceDegraded({ service: 'quickstarts', degraded: false });
     },
     [setServiceDegraded]
@@ -81,11 +97,11 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
     apiReadyRef.current = false;
     const timeout = window.setTimeout(() => {
       if (!apiReadyRef.current) {
-        setServiceDegraded({ service: 'quickstarts', degraded: true });
+        failQuickstartsRuntime(setRemoteActiveQSID, setServiceDegraded);
       }
     }, REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
     return () => window.clearTimeout(timeout);
-  }, [useRemote, setServiceDegraded]);
+  }, [useRemote, setRemoteActiveQSID, setServiceDegraded]);
 
   const accountId = user?.identity?.internal?.account_id;
 

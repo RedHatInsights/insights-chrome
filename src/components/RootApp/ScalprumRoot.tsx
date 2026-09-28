@@ -42,8 +42,7 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
-import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef } from '../../state/atoms/remoteQuickstartsAtom';
-import type { QuickStart } from '@patternfly/quickstarts';
+import { delegatedHelpTopicsAPI, delegatedQuickstartsAPI } from '../../state/atoms/delegatedChromeQuickstarts';
 import { preloadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
 
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
@@ -120,27 +119,6 @@ ScalprumRoot.displayName = 'MemoizedScalprumRoot';
 
 export type ChromeApiRootProps = {
   config: ScalprumConfig;
-};
-
-const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
-  version: 1,
-  set: (...args: Parameters<ChromeAPI['quickStarts']['set']>) => liveQuickstartsAPIRef.current?.set(...args),
-  activateQuickstart: (name: string) => liveQuickstartsAPIRef.current?.activateQuickstart(name) ?? Promise.resolve(),
-  toggle: (...args: Parameters<ChromeAPI['quickStarts']['toggle']>) => liveQuickstartsAPIRef.current?.toggle(...args),
-  Catalog: ((props: Record<string, unknown>) => {
-    const Catalog = liveQuickstartsAPIRef.current?.Catalog;
-    return Catalog ? <Catalog {...props} /> : null;
-  }) as ChromeAPI['quickStarts']['Catalog'],
-  updateQuickStarts: (key: string, quickstarts: QuickStart[]) => liveQuickstartsAPIRef.current?.updateQuickStarts?.(key, quickstarts),
-  add: (key: string, qs: QuickStart) => liveQuickstartsAPIRef.current?.add?.(key, qs) ?? false,
-};
-
-const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
-  addHelpTopics: (...args) => liveHelpTopicsAPIRef.current?.addHelpTopics(...args),
-  disableTopics: (...args) => liveHelpTopicsAPIRef.current?.disableTopics(...args),
-  enableTopics: (...args: Parameters<ChromeAPI['helpTopics']['enableTopics']>) => liveHelpTopicsAPIRef.current?.enableTopics(...args) ?? Promise.resolve([]),
-  setActiveTopic: (...args) => liveHelpTopicsAPIRef.current?.setActiveTopic(...args) ?? Promise.resolve(),
-  closeHelpTopic: () => liveHelpTopicsAPIRef.current?.closeHelpTopic(),
 };
 
 const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
