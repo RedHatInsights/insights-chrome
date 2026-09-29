@@ -70,9 +70,28 @@ spec:
           computeResources: {}
           image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
           name: use-trusted-artifact
-        - computeResources: {}
-          image: "mcr.microsoft.com/playwright:v1.62.1-jammy"
           env:
+          - name: HOME
+            value: /var/workdir
+          - name: TAR_OPTIONS
+            value: "--no-recursion --anchored --exclude=."
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+        - computeResources: {}
+          # Playwright v1.62.1-jammy; keep in sync with @playwright/test in package-lock.json.
+          image: mcr.microsoft.com/playwright@sha256:b3251f7ff1a9fa559a28d1c67eaa15fc1a9800f7845e82756caea7842967f615
+          securityContext:
+            # UID and GID of pwuser in the Playwright Jammy image.
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          env:
+            - name: HOME
+              value: /var/workdir
             - name: EE_HOSTNAME
               value: $(params.EPHEMERAL_ENV_URL)
             - name: EE_USERNAME
