@@ -174,15 +174,8 @@ describe('Lightwell', () => {
     expect(store.get(notificationDrawerExpandedAtom)).toBe(false);
   });
 
-  it('should add pf-v6-theme-felt class to document root on mount', () => {
+  it('should not add pf-v6-theme-felt class to document root on mount', () => {
     renderLightwell();
-    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
-  });
-
-  it('should remove pf-v6-theme-felt class from document root on unmount', () => {
-    const { unmount } = renderLightwell();
-    expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
-    unmount();
     expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(false);
   });
 

@@ -21,7 +21,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { isPreviewAtom, layoutForceFeltThemeAtom, layoutForceGlassThemeAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
+import { isPreviewAtom, layoutForceGlassThemeAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
@@ -92,7 +92,6 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
   const isGlassForced = useAtomValue(layoutForceGlassThemeAtom);
-  const isFeltForced = useAtomValue(layoutForceFeltThemeAtom);
   const isGlassModeEnabled = useFlag('platform.chrome.glass-theme');
   const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
   const { user, token } = useContext(ChromeAuthContext);
@@ -114,7 +113,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
   const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
   const isFeltAutoEnabled = useFlag('platform.chrome-felt-auto');
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {
@@ -226,7 +225,6 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
             isSelected={!isFeltTheme}
             onChange={setFeltDisabled}
             aria-label={intl.formatMessage(messages.themeDefault)}
-            isDisabled={isFeltForced}
           />
           <ToggleGroupItem
             text={intl.formatMessage(messages.themeFelt)}

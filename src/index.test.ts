@@ -4,7 +4,7 @@ import themeBootstrap from '../config/theme-bootstrap';
 import { THEME_STORAGE_KEY } from './utils/consts';
 
 const templates = ['index.ejs', 'indexRes.ejs'] as const;
-const themeClasses = ['pf-v6-theme-felt', 'pf-v6-theme-glass'];
+const themeClasses = ['pf-v6-theme-glass'];
 
 const getBootstrapScript = (template: string): string => {
   const match = template.match(/<script type="text\/javascript">\s*([\s\S]*?)\s*<\/script>/);

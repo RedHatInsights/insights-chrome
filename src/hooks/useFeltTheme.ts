@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const FELT_THEME_KEY = 'chrome:felt-theme';
 const FELT_THEME_CLASS = 'pf-v6-theme-felt';
@@ -27,44 +27,26 @@ const applyFeltTheme = (enabled: boolean) => {
   }
 };
 
-const getInitialFeltTheme = (forceEnabled: boolean): boolean => {
-  if (forceEnabled) {
-    applyFeltTheme(true);
-    return true;
-  }
+const getInitialFeltTheme = (): boolean => {
   const enabled = readFeltThemePreference();
   applyFeltTheme(enabled);
   return enabled;
 };
 
-export const useFeltTheme = (forceEnabled = false) => {
-  const [isFeltTheme, setIsFeltTheme] = useState<boolean>(() => getInitialFeltTheme(forceEnabled));
-
-  useEffect(() => {
-    if (forceEnabled) {
-      setIsFeltTheme(true);
-      applyFeltTheme(true);
-    } else {
-      const saved = readFeltThemePreference();
-      setIsFeltTheme(saved);
-      applyFeltTheme(saved);
-    }
-  }, [forceEnabled]);
+export const useFeltTheme = () => {
+  const [isFeltTheme, setIsFeltTheme] = useState<boolean>(() => getInitialFeltTheme());
 
   const setFeltEnabled = () => {
-    if (forceEnabled) return;
     setIsFeltTheme(true);
     applyFeltTheme(true);
     writeFeltThemePreference(true);
   };
 
   const setFeltDisabled = () => {
-    if (!forceEnabled) {
-      setIsFeltTheme(false);
-      applyFeltTheme(false);
-      writeFeltThemePreference(false);
-    }
+    setIsFeltTheme(false);
+    applyFeltTheme(false);
+    writeFeltThemePreference(false);
   };
 
-  return { isFeltTheme, setFeltEnabled, setFeltDisabled, forceEnabled };
+  return { isFeltTheme, setFeltEnabled, setFeltDisabled };
 };
