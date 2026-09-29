@@ -3,16 +3,15 @@ import { APIFactory } from '@redhat-cloud-services/javascript-clients-shared';
 import { servicesGet } from '@redhat-cloud-services/entitlements-client';
 import { setupCache } from 'axios-cache-interceptor';
 import { deleteLocalStorageItems, lastActive } from '../utils/common';
-
-const BASE_PATH = '/api/entitlements/v1';
+import { ENTITLEMENTS_BASE_PATH, ENTITLEMENTS_SERVICES_PATH, ENTITLEMENTS_TIMEOUT_MS } from './entitlementsConstants';
 
 export default () => {
-  const instance = axios.create();
+  const instance = axios.create({ timeout: ENTITLEMENTS_TIMEOUT_MS });
   setupCache(instance, {});
   instance.interceptors.response.use((response) => {
     if (response && response.request && response.request.fromCache !== true) {
-      const last = lastActive('/api/entitlements/v1/services', 'fallback');
-      const keys = Object.keys(localStorage).filter((key) => key.endsWith('/api/entitlements/v1/services') && key !== last);
+      const last = lastActive(ENTITLEMENTS_SERVICES_PATH, 'fallback');
+      const keys = Object.keys(localStorage).filter((key) => key.endsWith(ENTITLEMENTS_SERVICES_PATH) && key !== last);
 
       deleteLocalStorageItems(keys);
     }
@@ -20,7 +19,7 @@ export default () => {
     return response;
   });
   const ServicesApi = APIFactory(
-    BASE_PATH,
+    ENTITLEMENTS_BASE_PATH,
     {
       servicesGet,
     },
