@@ -135,6 +135,12 @@ docs/              # Documentation (you are here)
 7. **Environment-specific URLs** — Never hardcode URLs. Use `getEnv()`, `isProd()`, `getEnvDetails()` from `src/utils/common.ts`.
 8. **Global filter side effects** — `globalFilterAtom` changes propagate to ALL consuming applications. Test thoroughly.
 
+## Pull requests
+
+- For ticketed pull requests, title must contain exactly one Jira issue key, including the project prefix and numeric ID (`<PROJECT>-<NUMBER>`); do not put the full Jira URL in the title. Jira+GitHub integration uses this key to link the PR to its Jira ticket.
+- For no-ticket pull requests, use a descriptive title without a Jira key and include a standalone `No Jira ticket: <reason>` declaration in the pull request body.
+- For ticketed pull requests, include the full Jira issue URL for the title's key in the pull request body; additional related keys are allowed. The `.github/workflows/pr-title-jira.yml` workflow enforces these title/description rules.
+
 ## Build & Run Commands
 
 ```bash
