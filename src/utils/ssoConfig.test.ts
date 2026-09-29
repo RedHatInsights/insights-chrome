@@ -322,6 +322,25 @@ describe('loadSSOConfig', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
   });
 
+  // A malformed 200 response must use the hostname-aware static fallback. Passing it
+  // through as live data sends production users to stage SSO or crashes resolveSSOUrl.
+  it.each([
+    ['an HTML body', '<!doctype html><html><body>Service unavailable</body></html>'],
+    ['an empty object', {}],
+    ['null', null],
+    ['an empty ssoUrl', { ssoUrl: '' }],
+    ['a non-string ssoUrl', { ssoUrl: 123 }],
+  ])('should resolve production SSO on console.redhat.com when the live response is %s', async (_label, payload) => {
+    jsdomReconfigure({ url: 'https://console.redhat.com' });
+    mockAxiosInstance.get.mockResolvedValue({ data: payload });
+
+    const { loadSSOConfig: loadFn } = await import('./common');
+    const result = await loadFn();
+
+    expect(resolveSSOUrl(result)).toBe('https://sso.redhat.com/auth/');
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to load SSO config'), expect.any(Error));
+  });
+
   it('should accept SSO config when cached data has valid mapping values', async () => {
     // Simulate a valid cached response
     const validCachedConfig: SSOConfig = {
