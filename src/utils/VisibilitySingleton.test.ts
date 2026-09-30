@@ -455,6 +455,33 @@ describe('VisibilitySingleton', () => {
     });
   });
 
+  describe('featureFlag outage policy', () => {
+    beforeEach(() => {
+      mockedGetFeatureFlagsError.mockReset().mockReturnValue(true);
+      mockedGetUnleashClient.mockReset();
+    });
+
+    test.each([
+      [true, true, true],
+      [true, false, false],
+      [false, true, false],
+      [false, false, true],
+    ])('compares cached/default flag state %s against expected=%s', (enabled, expectedValue, result) => {
+      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => enabled });
+      expect(visibilityFunctions.featureFlag('some.flag', expectedValue)).toBe(result);
+    });
+
+    test.each([
+      [true, false],
+      [false, true],
+    ])('defaults an unavailable client to disabled for expected=%s', (expectedValue, result) => {
+      mockedGetUnleashClient.mockImplementation(() => {
+        throw new Error('UnleashClient not initialized!');
+      });
+      expect(visibilityFunctions.featureFlag('some.flag', expectedValue)).toBe(result);
+    });
+  });
+
   describe('isKesselEnabled', () => {
     const mockedITLess = ITLess as jest.Mock;
 
@@ -501,11 +528,11 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=true', () => {
+    test('uses the cached enabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => true });
-      expect(visibilityFunctions.isKesselEnabled(true)).toBe(false);
+      expect(visibilityFunctions.isKesselEnabled(true)).toBe(true);
     });
 
     test('should return false when unleash client is undefined with expected=true', () => {
@@ -522,11 +549,11 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=false', () => {
+    test('uses the cached disabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
+      expect(visibilityFunctions.isKesselEnabled(false)).toBe(true);
     });
 
     test('should return false when getUnleashClient throws', () => {
@@ -536,7 +563,7 @@ describe('VisibilitySingleton', () => {
         throw new Error('Unleash client not initialized');
       });
       expect(visibilityFunctions.isKesselEnabled(true)).toBe(false);
-      expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
+      expect(visibilityFunctions.isKesselEnabled(false)).toBe(true);
     });
   });
 
@@ -586,11 +613,11 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=true', () => {
+    test('uses the cached enabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => true });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(true);
     });
 
     test('should return false when unleash client is undefined with expected=true', () => {
@@ -607,11 +634,11 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=false', () => {
+    test('uses the cached disabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(true);
     });
 
     test('should return false when getUnleashClient throws', () => {
@@ -621,7 +648,7 @@ describe('VisibilitySingleton', () => {
         throw new Error('Unleash client not initialized');
       });
       expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(true);
     });
   });
 });

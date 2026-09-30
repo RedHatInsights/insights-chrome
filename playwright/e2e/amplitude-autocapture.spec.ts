@@ -1,4 +1,5 @@
 import { expect, test } from '../setup/test-setup';
+import { clearCachedFeatureFlags } from '../helpers/feature-flags';
 import { gunzipSync } from 'zlib';
 
 /**
@@ -25,6 +26,8 @@ const NEGATIVE_TEST_WAIT = 3000; // 3 seconds to ensure no requests in slow CI
 
 test.describe('Amplitude Autocapture - Enriched User Properties', () => {
   test('should send enriched user properties with autocapture events', async ({ page }) => {
+    await clearCachedFeatureFlags(page);
+
     // CRITICAL: Re-enable analytics for this test
     // The global setup disables analytics, but we need it enabled to test Amplitude
     await page.addInitScript(() => {
@@ -274,6 +277,8 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
   });
 
   test('should not send Amplitude requests when feature flag is disabled', async ({ page }) => {
+    await clearCachedFeatureFlags(page);
+
     // Intercept Unleash feature flags and DISABLE Amplitude autocapture
     await page.route('**/api/featureflags/v0**', async (route) => {
       let toggles: object[] = [];

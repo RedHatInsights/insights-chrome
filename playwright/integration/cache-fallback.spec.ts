@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '../setup/test-setup';
+import { clearCachedFeatureFlags } from '../helpers/feature-flags';
 import { CONFIG_SOURCES, type ConfigSource } from '../../src/utils/configCacheStatus';
 
 type CacheEntry = {
@@ -175,6 +176,8 @@ async function readCacheEntry(page: Page, key: string) {
 }
 
 async function setupConfigRoutes(page: Page, modes: ConfigRouteModes): Promise<RouteObservations> {
+  await clearCachedFeatureFlags(page);
+
   const observations: RouteObservations = {
     cached: new Set(),
     cacheWarnings: new Set(),
