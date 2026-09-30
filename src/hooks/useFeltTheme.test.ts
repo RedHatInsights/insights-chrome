@@ -53,4 +53,46 @@ describe('useFeltTheme', () => {
     unmount();
     expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
   });
+
+  describe('autoEnabled', () => {
+    it('should force felt theme on regardless of localStorage', () => {
+      localStorage.removeItem(FELT_THEME_KEY);
+      const { result } = renderHook(() => useFeltTheme(true));
+      expect(result.current.isFeltTheme).toBe(true);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
+    });
+
+    it('should make setFeltDisabled a no-op when auto is on', () => {
+      const { result } = renderHook(() => useFeltTheme(true));
+      act(() => result.current.setFeltDisabled());
+      expect(result.current.isFeltTheme).toBe(true);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
+    });
+
+    it('should make setFeltEnabled a no-op when auto is on', () => {
+      const { result } = renderHook(() => useFeltTheme(true));
+      act(() => result.current.setFeltEnabled());
+      // localStorage should not be written
+      expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+    });
+
+    it('should not write to localStorage when auto is on', () => {
+      const { result } = renderHook(() => useFeltTheme(true));
+      act(() => result.current.setFeltEnabled());
+      act(() => result.current.setFeltDisabled());
+      expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+    });
+
+    it('should revert to localStorage preference when auto toggles off', () => {
+      localStorage.setItem(FELT_THEME_KEY, 'false');
+      const { result, rerender } = renderHook(({ auto }) => useFeltTheme(auto), {
+        initialProps: { auto: true },
+      });
+      expect(result.current.isFeltTheme).toBe(true);
+
+      rerender({ auto: false });
+      expect(result.current.isFeltTheme).toBe(false);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
+    });
+  });
 });

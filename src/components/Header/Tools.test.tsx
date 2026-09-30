@@ -593,6 +593,16 @@ describe('Tools - theme toggle', () => {
     fireEvent.click(defaultBtn!);
     expect(mockSetFeltDisabled).toHaveBeenCalled();
   });
+
+  it('should hide theme section when felt-auto flag is enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should show theme section when felt-auto is off and felt-theme is on', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+  });
 });
 
 describe('Tools - forced glass mode', () => {
