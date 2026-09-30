@@ -160,6 +160,15 @@ aside {
 }
 
 /**
+* TrustArc injects #teconsent (the "Cookie preferences" link) directly onto
+* document.body. Hide it globally and only reveal it where it's explicitly
+* hosted inside the main chrome footer (see Footer/Footer.scss).
+*/
+#teconsent {
+  display: none !important;
+}
+
+/**
 * Cookies banner overrides
 */
 #truste-consent-track {
