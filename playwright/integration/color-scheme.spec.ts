@@ -1,5 +1,5 @@
 import { expect, test } from '../setup/test-setup';
-import { ChromeTopbar } from './pages/chrome-topbar';
+import { ChromeTopbar } from '../e2e/pages/chrome-topbar';
 import { mockFeatureFlags } from '../helpers/feature-flags';
 
 const DARK_THEME_CLASS = 'pf-v6-theme-dark';
