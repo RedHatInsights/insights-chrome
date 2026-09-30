@@ -101,7 +101,6 @@ const redirects: RedirectRoute[] = [
 // OpenShift Google Cloud cross-host redirects
 const crossHostRedirects: Record<string, CrossHostRedirectRoute[]> = {
   stage: [
-    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/overview', expectedUrl: 'https://console.stage.redhat.com/openshift/overview' },
     { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/osd/create', expectedUrl: 'https://console.stage.redhat.com/openshift/create/osdgcp' },
     { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/osd', expectedUrl: 'https://console.stage.redhat.com/openshift/overview/osd' },
     { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/ocp/create', expectedUrl: 'https://console.stage.redhat.com/openshift/install/gcp' },
