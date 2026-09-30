@@ -143,6 +143,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
   'platform.chrome.felt-theme': false,
+  'platform.chrome-felt-auto': false,
   'platform.chrome.glass-theme': false,
   'platform.chrome.high-contrast': false,
   'platform.chrome.notifications-drawer': false,
@@ -694,5 +695,47 @@ describe('Tools - about menu items', () => {
   it('should render learning resources link when flag is enabled', () => {
     renderTools({ 'platform.learning-resources.global-learning-resources': true });
     expect(screen.getByText('All learning resources')).toBeInTheDocument();
+  });
+});
+
+describe('Tools - felt auto mode (platform.chrome-felt-auto)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  it('should hide theme section when felt-auto flag is enabled, even if felt-theme flag is also enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+    expect(document.getElementById('theme-default')).not.toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).not.toBeInTheDocument();
+  });
+
+  it('should hide theme section when only felt-auto flag is enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': false, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should show theme section when felt-theme is enabled and felt-auto is disabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(document.getElementById('theme-default')).toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).toBeInTheDocument();
+  });
+
+  it('should preserve color scheme controls when felt-auto is enabled', () => {
+    renderTools({ 'platform.chrome.dark-mode': true, 'platform.chrome-felt-auto': true });
+    expect(screen.getByText('Color scheme')).toBeInTheDocument();
+    expect(document.getElementById('color-scheme-light')).toBeInTheDocument();
+    expect(document.getElementById('color-scheme-dark')).toBeInTheDocument();
+  });
+
+  it('should preserve contrast mode controls when felt-auto is enabled', () => {
+    renderTools({ 'platform.chrome.high-contrast': true, 'platform.chrome.glass-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.getByText('Contrast mode')).toBeInTheDocument();
+    expect(document.getElementById('contrast-default')).toBeInTheDocument();
+    expect(document.getElementById('contrast-high')).toBeInTheDocument();
+    expect(document.getElementById('contrast-glass')).toBeInTheDocument();
   });
 });
