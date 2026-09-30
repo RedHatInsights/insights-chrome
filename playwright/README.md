@@ -1,22 +1,38 @@
 # Playwright Tests
 
-This directory contains Playwright-based release-gate E2E tests and browser integration tests for insights-chrome.
+This directory contains Playwright-based tests for insights-chrome, organized into two categories:
+
+- **`e2e/`** — End-to-end tests that exercise real user flows without mocks or stubs. These tests interact with the live application exactly as a real user would.
+- **`integration/`** — Integration tests that use mocks, stubs, route interception (`page.route()`), or fixture data to test specific behaviors in isolation. These tests are valuable but do not qualify as pure end-to-end tests.
+
+> **Guideline:** Do not place tests that use mocks or stubs into the `e2e/` directory. If a test intercepts network requests, injects fixture data, or manipulates feature flags via `page.route()`, it belongs in `integration/`.
 
 ## Structure
 
 ```
 playwright/
 ├── helpers/
-│   └── auth.ts                     # Reusable login helper function
-├── e2e/
+│   ├── auth.ts                     # Reusable login helper function
+│   ├── feature-flags.ts            # Feature flag mocking utility (integration tests)
+│   ├── isolated-auth.ts            # Isolated browser context login
+│   ├── websocket-monitor.ts        # WebSocket observation helper
+│   └── websocket-test.ts           # WebSocket test fixture
+├── setup/
+│   ├── global-setup.ts             # Global SSO authentication setup
+│   └── test-setup.ts               # Test base with auth state
+├── e2e/                            # Pure E2E tests (no mocks/stubs)
+│   ├── pages/                      # Page object models
+│   ├── ephemeral/                  # Ephemeral environment smoke tests
+│   ├── platform-infra/             # Infrastructure tests (redirects, routes, websocket)
 │   └── release-gate/               # Release gate test suite
-│       ├── last-visited-pages.spec.ts
-│       ├── navigation.spec.ts
-│       ├── landing-page.spec.ts
-│       ├── favorite-services.spec.ts
-│       └── refresh-token.spec.ts
-├── integration/                    # Browser integration tests with controlled dependencies
-│   └── cache-fallback.spec.ts
+├── integration/                    # Integration tests (with mocks/stubs)
+│   ├── amplitude-autocapture.spec.ts
+│   ├── cache-fallback.spec.ts
+│   ├── color-scheme.spec.ts
+│   ├── contrast-mode.spec.ts
+│   ├── last-visited-pages.spec.ts
+│   ├── rbac-v2-gating.spec.ts
+│   └── theme-toggle.spec.ts
 └── README.md                       # This file
 ```
 
@@ -37,10 +53,22 @@ playwright/
 
 ## Running Tests
 
-Run all Playwright tests:
+Run all Playwright tests (both e2e and integration):
 
 ```bash
 npm run playwright
+```
+
+Run only e2e tests (no mocks/stubs):
+
+```bash
+npm run playwright:e2e
+```
+
+Run only integration tests (with mocks/stubs):
+
+```bash
+npm run playwright:integration
 ```
 
 Run with headed browser (see the browser):
@@ -83,6 +111,23 @@ Each test performs a full login using the `login()` helper function from `playwr
 
 The login helper uses environment variables `E2E_USER` and `E2E_PASSWORD` to perform authentication at the start of each test.
 
+## E2E vs Integration
+
+**E2E tests** (`playwright/e2e/`):
+
+- Test real user flows against the live stage environment
+- Use real authentication, real APIs, real feature flags
+- No `page.route()` for mocking, no `route.fulfill()` with fixture data
+- `page.evaluate()` for reading localStorage or calling real Chrome APIs is fine
+
+**Integration tests** (`playwright/integration/`):
+
+- Test specific behaviors using mocks, stubs, or fixture data
+- Use `page.route()` + `route.fulfill()` to intercept and mock API responses
+- Use `mockFeatureFlags()` helper to force-enable feature flags
+- Use `page.clock.install()` / `page.clock.fastForward()` for time manipulation
+- Inject fixture data (e.g., fake Amplitude keys, hardcoded user payloads)
+
 ## Key Differences from Cypress
 
 1. **Locators**: Uses Playwright's locator API instead of Cypress selectors
@@ -96,6 +141,7 @@ The login helper uses environment variables `E2E_USER` and `E2E_PASSWORD` to per
 3. **Route Interception**: Uses `page.route()` instead of `cy.intercept()`
    - Allows for more flexible request/response handling
    - Can inspect request bodies with `route.request().postDataJSON()`
+   - **Note:** Tests using `page.route()` to mock responses belong in `integration/`, not `e2e/`
 
 4. **Waits**: Uses explicit waits with proper async/await
    - `cy.wait('@alias')` → `await page.waitForResponse(...)`
@@ -104,36 +150,6 @@ The login helper uses environment variables `E2E_USER` and `E2E_PASSWORD` to per
 5. **Local Storage**: Direct evaluation instead of custom commands
    - `cy.setLocalStorage()` → `await page.evaluate(() => localStorage.setItem(...))`
    - `cy.getLocalStorage()` → `await page.evaluate(() => localStorage.getItem(...))`
-
-## Test Conversion Notes
-
-### last-visited-pages.spec.ts
-
-- Converted API interception from `cy.intercept()` to `page.route()`
-- Replaced custom `cy.clock()` and `cy.tick()` with `page.waitForTimeout()`
-- Tests involving long waits (3 minutes) may be slow
-
-### navigation.spec.ts
-
-- Simple conversion with straightforward locator updates
-- Added explicit visibility checks for dropdowns
-
-### landing-page.spec.ts
-
-- Converted hover interactions from `trigger('mouseenter')` to `.hover()`
-- Uses `toContainText()` for partial text matching
-
-### favorite-services.spec.ts
-
-- Converted complex user flow with multiple interactions
-- Uses XPath for ancestor navigation (finding parent containers)
-- Route handling captures both POST and GET requests
-
-### refresh-token.spec.ts
-
-- Accesses internal chrome API via `page.evaluate()`
-- Tracks token refresh requests with route interception
-- Test is skipped (same as Cypress version)
 
 ## CI Integration
 
