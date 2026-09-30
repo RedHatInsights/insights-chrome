@@ -10,6 +10,7 @@ describe('degradedStateAtom', () => {
       entitlements: false,
       configFromCache: false,
       featureFlags: false,
+      quickstarts: false,
     });
   });
 
@@ -51,6 +52,14 @@ describe('degradedStateAtom', () => {
     expect(state.entitlements).toBe(false);
     expect(state.configFromCache).toBe(false);
     expect(state.featureFlags).toBe(true);
+  });
+
+  it('should update quickstarts status', () => {
+    const store = createStore();
+    store.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: true });
+    const state = store.get(degradedStateAtom);
+    expect(state.quickstarts).toBe(true);
+    expect(state.userPersonalization).toBe(false);
   });
 
   it('should update multiple services independently', () => {
@@ -97,6 +106,7 @@ describe('degradedStateAtom', () => {
     store.set(setServiceDegradedAtom, { service: 'entitlements', degraded: true });
     store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: true });
     store.set(setServiceDegradedAtom, { service: 'featureFlags', degraded: true });
+    store.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: true });
     expect(store.get(isAnyServiceDegradedAtom)).toBe(true);
   });
 

@@ -28,11 +28,20 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
+  learningResourcesQuickstarts: () => functionBuilder('chrome:experimental:lr-quickstarts', true),
   degradedStateBanner: () => {
     chromeStore.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: true });
     console.log('✓ Degraded state banner triggered (user personalization degraded)');
     return () => {
       chromeStore.set(setServiceDegradedAtom, { service: 'userPersonalization', degraded: false });
+      console.log('✓ Degraded state banner cleared');
+    };
+  },
+  quickstartsDegraded: () => {
+    chromeStore.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: true });
+    console.log('✓ Degraded state banner triggered (quickstarts degraded)');
+    return () => {
+      chromeStore.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: false });
       console.log('✓ Degraded state banner cleared');
     };
   },

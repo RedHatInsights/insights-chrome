@@ -4,5 +4,7 @@
 @use '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
 @use '~@patternfly/patternfly/patternfly-charts.scss';
 
-// Quick starts
+// Keep in Chrome's pf-v6.css. The global Quick Start drawer needs these rules at
+// Chrome boot. Do not move this to a learning-resources CSS chunk — MiniCssExtract
+// + module federation 404s that file through the Chrome proxy (ChunkLoadError).
 @use '~@patternfly/quickstarts/dist/quickstarts.min';
