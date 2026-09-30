@@ -11,3 +11,9 @@
     --pf-v6-c-content--a--hover--Color: var(--pf-t--global--text--color--inverse);
   }
 }
+
+// Reveal the TrustArc "Cookie preferences" link only where it's hosted
+// in the main chrome footer (hidden globally by default, see chrome.scss).
+.chr-c-cookie-consent #teconsent {
+  display: revert !important;
+}

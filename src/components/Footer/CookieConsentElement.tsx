@@ -21,7 +21,7 @@ const CookieConsentElement = () => {
     };
   }, []);
 
-  return <li ref={consentRef}></li>;
+  return <li className="chr-c-cookie-consent" ref={consentRef}></li>;
 };
 
 export default CookieConsentElement;
