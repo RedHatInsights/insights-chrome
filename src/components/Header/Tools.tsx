@@ -113,7 +113,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
   const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
   const isFeltAutoEnabled = useFlag('platform.chrome-felt-auto');
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled);
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled, isGlassForced);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {

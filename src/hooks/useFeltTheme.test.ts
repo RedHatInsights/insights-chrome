@@ -95,4 +95,45 @@ describe('useFeltTheme', () => {
       expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
     });
   });
+
+  describe('disabled (Glass-forced guard)', () => {
+    it('should keep felt off when disabled, even if autoEnabled', () => {
+      const { result } = renderHook(() => useFeltTheme(true, true));
+      expect(result.current.isFeltTheme).toBe(false);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
+    });
+
+    it('should keep felt off when disabled and localStorage has true', () => {
+      localStorage.setItem(FELT_THEME_KEY, 'true');
+      const { result } = renderHook(() => useFeltTheme(false, true));
+      expect(result.current.isFeltTheme).toBe(false);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
+    });
+
+    it('should make setFeltEnabled a no-op when disabled', () => {
+      const { result } = renderHook(() => useFeltTheme(false, true));
+      act(() => result.current.setFeltEnabled());
+      expect(result.current.isFeltTheme).toBe(false);
+      expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+    });
+
+    it('should make setFeltDisabled a no-op when disabled', () => {
+      const { result } = renderHook(() => useFeltTheme(false, true));
+      act(() => result.current.setFeltDisabled());
+      expect(result.current.isFeltTheme).toBe(false);
+      expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+    });
+
+    it('should restore preference when disabled toggles off', () => {
+      localStorage.setItem(FELT_THEME_KEY, 'true');
+      const { result, rerender } = renderHook(({ disabled }) => useFeltTheme(false, disabled), {
+        initialProps: { disabled: true },
+      });
+      expect(result.current.isFeltTheme).toBe(false);
+
+      rerender({ disabled: false });
+      expect(result.current.isFeltTheme).toBe(true);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
+    });
+  });
 });

@@ -27,7 +27,11 @@ const applyFeltTheme = (enabled: boolean) => {
   }
 };
 
-const getInitialFeltTheme = (autoEnabled: boolean): boolean => {
+const getInitialFeltTheme = (autoEnabled: boolean, disabled: boolean): boolean => {
+  if (disabled) {
+    applyFeltTheme(false);
+    return false;
+  }
   if (autoEnabled) {
     applyFeltTheme(true);
     return true;
@@ -44,12 +48,18 @@ const getInitialFeltTheme = (autoEnabled: boolean): boolean => {
  *   feature flag), Felt is applied automatically and the manual toggle
  *   callbacks become no-ops.  The user's localStorage preference is left
  *   untouched so it takes effect again when the flag is later disabled.
+ * @param disabled When true (e.g. Glass is forced on a Lightwell route),
+ *   Felt is kept off regardless of autoEnabled or saved preference.
+ *   Prevents both theme classes coexisting on the document root.
  */
-export const useFeltTheme = (autoEnabled = false) => {
-  const [isFeltTheme, setIsFeltTheme] = useState<boolean>(() => getInitialFeltTheme(autoEnabled));
+export const useFeltTheme = (autoEnabled = false, disabled = false) => {
+  const [isFeltTheme, setIsFeltTheme] = useState<boolean>(() => getInitialFeltTheme(autoEnabled, disabled));
 
   useEffect(() => {
-    if (autoEnabled) {
+    if (disabled) {
+      setIsFeltTheme(false);
+      applyFeltTheme(false);
+    } else if (autoEnabled) {
       setIsFeltTheme(true);
       applyFeltTheme(true);
     } else {
@@ -57,17 +67,17 @@ export const useFeltTheme = (autoEnabled = false) => {
       setIsFeltTheme(saved);
       applyFeltTheme(saved);
     }
-  }, [autoEnabled]);
+  }, [autoEnabled, disabled]);
 
   const setFeltEnabled = () => {
-    if (autoEnabled) return;
+    if (autoEnabled || disabled) return;
     setIsFeltTheme(true);
     applyFeltTheme(true);
     writeFeltThemePreference(true);
   };
 
   const setFeltDisabled = () => {
-    if (autoEnabled) return;
+    if (autoEnabled || disabled) return;
     setIsFeltTheme(false);
     applyFeltTheme(false);
     writeFeltThemePreference(false);

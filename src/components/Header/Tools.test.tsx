@@ -698,7 +698,6 @@ describe('Tools - felt auto mode (platform.chrome-felt-auto)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeltThemeState.isFeltTheme = false;
-    mockFeltThemeState.forceEnabled = false;
   });
 
   it('should hide theme section when felt-auto flag is enabled, even if felt-theme flag is also enabled', () => {
