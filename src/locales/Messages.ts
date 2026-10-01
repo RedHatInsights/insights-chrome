@@ -703,4 +703,9 @@ export default defineMessages({
     description: 'Label for feature flags service',
     defaultMessage: 'Feature Flags',
   },
+  degradedServiceNavigation: {
+    id: 'degradedServiceNavigation',
+    description: 'Combined label for degraded bundle navigation and service catalog visibility or loading',
+    defaultMessage: 'Navigation',
+  },
 });

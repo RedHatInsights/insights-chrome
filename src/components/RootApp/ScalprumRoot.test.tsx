@@ -357,7 +357,7 @@ describe('ScalprumRoot', () => {
       expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
       expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
       expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
-      expect(screen.getByRole('list', { name: 'Lightwell footer links' })).toBeTruthy();
+      expect(screen.queryByRole('list', { name: 'Lightwell footer links' })).toBeFalsy();
     });
 
     useLocationSpy.mockRestore();

@@ -8,6 +8,16 @@ Chrome leverages [Cloud Services Config][CSC] (CSC) to build the navigation on a
 
 Along with static navigation set in CSC, apps can opt into dynamic navigation by updating the `<namespace-navigation>` file with a few options:
 
+### Visibility failures
+
+Visibility checks fail closed: a thrown exception or rejected promise hides the item whose own check failed, including its descendants if it is a parent. A failed child check leaves its ancestors and siblings eligible for rendering; groups left empty after filtering are not rendered. This applies to both live and cached navigation, independently of the configuration-cache feature flag, and to service tiles in All Services.
+
+Chrome reports exceptions to Sentry with the visibility method, source, available configuration identifiers and an allowlisted `errorName` (for example, `TypeError` or `SecurityError`; unrecognized names become `UnknownError`). The original error, message, stack, arguments and request data are not attached. A normal `false` result is not an error. Bundle and service-tile evaluations track degradation separately, without setting the bundle/tile load-error flag for an item exception. The existing service-health banner combines them under a single **Navigation** label: a missing navigation link or catalog entry does not mean the underlying service is down. A successful subsequent evaluation clears degradation only for that source; the label remains until both sources recover. Banner display remains controlled by `platform.chrome.degraded-state-banner`.
+
+`hasLocalStorage` expects a string comparison value and uses `localStorage.getItem` with strict comparison (no boolean/number coercion). Storage access exceptions are handled by the same visibility boundary, so they hide the affected item and report degradation rather than aborting initialization. Functions that already catch their own errors and return `false` retain that behavior. The separate experimental Quickstarts setting is also guarded in navigation and routing: unavailable storage disables that optional entry without preventing the rest of the UI from rendering.
+
+Local search does not cache failed visibility checks or query results affected by those failures, so subsequent queries can retry without a page reload. Working results remain available, and normal permission denials and error-free query results retain their existing caching behavior.
+
 ### Permissions
 
 List of available permissions methods:
@@ -20,7 +30,7 @@ List of available permissions methods:
 - `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
 - `isHidden` - hides item in navigation
 - `withEmail` - show nav only if user's email contains first argument
-- `hasLocalStorage` - test if value (passed as second argument) equals to localStorage key (passed as first arg) value
+- `hasLocalStorage` - test if the string value (passed as second argument) equals the stored value for the localStorage key (passed as first argument)
 - `hasCookie` - test if value (passed as second argument) equals to cookie key (passed as first arg) value
 - `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission'], uses logical AND to evaluate the permissions
 - `loosePermissions` - similar to `hasPermissions`, uses logical OR to evaluate the permissions
