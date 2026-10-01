@@ -9,6 +9,34 @@ export type VisibilityEvaluationContext = {
   onError?: () => void;
 };
 
+const SAFE_ERROR_NAMES = new Set([
+  'Error',
+  'TypeError',
+  'ReferenceError',
+  'SyntaxError',
+  'RangeError',
+  'URIError',
+  'EvalError',
+  'SecurityError',
+  'QuotaExceededError',
+  'InvalidStateError',
+  'AbortError',
+  'NetworkError',
+  'TimeoutError',
+  'AxiosError',
+]);
+
+const getSafeErrorName = (error: unknown): string => {
+  // Thrown values (including name getters) are not guaranteed to be safe to inspect.
+  try {
+    const name = (error as { name?: unknown } | null | undefined)?.name;
+    if (typeof name === 'string' && SAFE_ERROR_NAMES.has(name)) return name;
+  } catch {
+    // Keep reporting fail-safe even if reading the thrown value fails.
+  }
+  return 'UnknownError';
+};
+
 const visibilityHandler = async ({ method, args }: AnyNavItemPermission, context: VisibilityEvaluationContext) => {
   try {
     const visibilityFunctions = getVisibilityFunctions();
@@ -17,12 +45,19 @@ const visibilityHandler = async ({ method, args }: AnyNavItemPermission, context
       return false;
     }
     return (await visibilityFunctions[method]?.(...(args || []))) !== false;
-  } catch {
+  } catch (error) {
     // Do not attach the original error or arguments: API errors can contain
     // authorization headers, request payloads and other private data.
     Sentry.captureMessage('Visibility evaluation failed', {
       level: 'warning',
-      tags: { area: 'visibility', source: context.source ?? 'unknown', bundleId: context.bundleId, itemId: context.itemId, method },
+      tags: {
+        area: 'visibility',
+        source: context.source ?? 'unknown',
+        bundleId: context.bundleId,
+        itemId: context.itemId,
+        method,
+        errorName: getSafeErrorName(error),
+      },
     });
     context.onError?.();
     return false;

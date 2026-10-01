@@ -1,5 +1,5 @@
-import { expect, test } from '../../setup/test-setup';
-import { mockFeatureFlags } from '../../helpers/feature-flags';
+import { expect, test } from '../setup/test-setup';
+import { mockFeatureFlags } from '../helpers/feature-flags';
 
 test.describe('RBAC v2 feature flag gating', () => {
   test('should not make v1 RBAC access calls after feature flags are initialized', async ({ page }) => {

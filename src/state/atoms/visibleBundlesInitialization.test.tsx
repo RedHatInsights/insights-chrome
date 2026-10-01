@@ -230,4 +230,39 @@ describe('visible bundle initialization with real visibility evaluation', () => 
     expect(store.get(visibleServiceTilesErrorAtom)).toBe(true);
     expect(mockGetItem).not.toHaveBeenCalled();
   });
+
+  it.each(['unmount', 'supersede'])('ignores late navigation and tile fetch rejections after %s', async (cleanup) => {
+    mockCacheEnabled = false;
+    const rejectOldRequests: ((error: Error) => void)[] = [];
+    const pendingRequest = () => new Promise<never>((_resolve, reject) => rejectOldRequests.push(reject));
+    jest.mocked(axios.get).mockImplementationOnce(pendingRequest).mockImplementationOnce(pendingRequest);
+    const { rerender, unmount } = mount();
+    await waitFor(() => expect(rejectOldRequests).toHaveLength(2));
+
+    if (cleanup === 'unmount') {
+      unmount();
+    } else {
+      mockFlagsError = true;
+      rerender();
+      await waitUntilReady();
+    }
+
+    const readState = () => ({
+      health: store.get(degradedStateAtom),
+      bundles: store.get(visibleBundlesAtom),
+      tiles: store.get(visibleServiceTilesAtom),
+      bundlesReady: store.get(visibleBundlesReadyAtom),
+      tilesReady: store.get(visibleServiceTilesReadyAtom),
+      bundlesError: store.get(visibleBundlesErrorAtom),
+      tilesError: store.get(visibleServiceTilesErrorAtom),
+    });
+    const stateBeforeRejections = readState();
+    await act(async () => rejectOldRequests.forEach((reject) => reject(new Error('obsolete fetch failure'))));
+
+    expect(readState()).toEqual(stateBeforeRejections);
+    expect(store.get(degradedStateAtom)).toMatchObject({ navigation: false, serviceTiles: false });
+    expect(store.get(visibleBundlesErrorAtom)).toBe(false);
+    expect(store.get(visibleServiceTilesErrorAtom)).toBe(false);
+    expect(console.error).not.toHaveBeenCalled();
+  });
 });

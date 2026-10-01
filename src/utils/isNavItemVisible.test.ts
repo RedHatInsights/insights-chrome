@@ -192,7 +192,7 @@ describe('evaluateVisibility', () => {
     expect(Sentry.captureMessage).toHaveBeenCalledTimes(1);
     expect(Sentry.captureMessage).toHaveBeenCalledWith('Visibility evaluation failed', {
       level: 'warning',
-      tags: { area: 'visibility', source: 'navigation', bundleId: 'settings', itemId: 'broken', method: 'isOrgAdmin' },
+      tags: { area: 'visibility', source: 'navigation', bundleId: 'settings', itemId: 'broken', method: 'isOrgAdmin', errorName: 'Error' },
     });
     expect(JSON.stringify(jest.mocked(Sentry.captureMessage).mock.calls)).not.toContain('private request data');
   });
@@ -247,9 +247,42 @@ describe('evaluateVisibility', () => {
 
     expect(result.isHidden).toBe(true);
     expect(mockIsOrgAdmin).toHaveBeenCalled();
+    expect(mockFeatureFlag).toHaveBeenCalledTimes(1);
+    expect(Sentry.captureMessage).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(Sentry.captureMessage).mock.calls[0][1]).toMatchObject({ tags: { method: 'featureFlag', errorName: 'UnknownError' } });
     const report = JSON.stringify(jest.mocked(Sentry.captureMessage).mock.calls);
     expect(report).not.toContain('secret-token');
     expect(report).not.toContain('private-argument');
+  });
+
+  it.each([
+    { error: new TypeError('private message'), expectedName: 'TypeError' },
+    { error: new ReferenceError('private message'), expectedName: 'ReferenceError' },
+    { error: new DOMException('private message', 'SecurityError'), expectedName: 'SecurityError' },
+    { error: { name: 'AxiosError', config: { headers: { Authorization: 'private token' } } }, expectedName: 'AxiosError' },
+    { error: { name: 'private custom error name', message: 'private message' }, expectedName: 'UnknownError' },
+    { error: 'private thrown string', expectedName: 'UnknownError' },
+    { error: null, expectedName: 'UnknownError' },
+    { error: undefined, expectedName: 'UnknownError' },
+    {
+      error: {
+        get name() {
+          throw new Error('private name getter failure');
+        },
+      },
+      expectedName: 'UnknownError',
+    },
+  ])('reports only the safe error name $expectedName while failing closed', async ({ error, expectedName }) => {
+    mockIsOrgAdmin.mockRejectedValue(error);
+    const onError = jest.fn();
+
+    const result = await evaluateVisibility({ id: 'restricted', permissions: { method: 'isOrgAdmin', args: [] } } as NavItem, { onError });
+
+    expect(result.isHidden).toBe(true);
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(Sentry.captureMessage).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(Sentry.captureMessage).mock.calls[0][1]).toMatchObject({ tags: { errorName: expectedName } });
+    expect(JSON.stringify(jest.mocked(Sentry.captureMessage).mock.calls)).not.toContain('private');
   });
 
   it('does not report normal permission denial as degradation', async () => {

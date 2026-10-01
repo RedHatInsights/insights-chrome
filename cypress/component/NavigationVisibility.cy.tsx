@@ -178,7 +178,7 @@ describe('navigation visibility failure isolation', () => {
     cy.get('[data-testid="load-error"]').should('have.text', 'false');
   };
 
-  const blockStorage = (keys = [STORAGE_KEY, TILE_STORAGE_KEY]) => {
+  const blockStorage = (keys = [STORAGE_KEY, TILE_STORAGE_KEY, 'chrome:experimental:quickstarts']) => {
     cy.window().then((win) => {
       const getItem = win.Storage.prototype.getItem;
       cy.stub(win.Storage.prototype, 'getItem').callsFake(function (this: Storage, key: string) {
@@ -202,6 +202,7 @@ describe('navigation visibility failure isolation', () => {
       cy.contains('a', 'Working Tile').should('be.visible');
       cy.contains('Working group').should('be.visible');
       cy.contains('a', 'Restricted').should('not.exist');
+      cy.contains('a', 'Quickstarts').should('not.exist');
       cy.contains('Empty group').should('not.exist');
       if (bannerEnabled) {
         cy.get(BANNER_SELECTOR).should('be.visible').and('not.contain', 'All Services');
