@@ -1,4 +1,4 @@
-import { test } from '../../setup/test-setup';
+import { test } from '../setup/test-setup';
 
 const userPayload = {
   data: {

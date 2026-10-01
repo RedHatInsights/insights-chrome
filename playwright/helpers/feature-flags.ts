@@ -7,7 +7,7 @@ interface FeatureToggle {
   variant: { name: string; enabled: boolean };
 }
 
-export async function mockFeatureFlags(page: Page, flags: string[]): Promise<void> {
+export async function mockFeatureFlags(page: Page, enabledFlags: string[], disabledFlags: string[] = []): Promise<void> {
   await page.route('**/api/featureflags/v0**', async (route) => {
     let toggles: FeatureToggle[] = [];
     try {
@@ -16,9 +16,13 @@ export async function mockFeatureFlags(page: Page, flags: string[]): Promise<voi
     } catch {
       // noop
     }
-    const filtered = toggles.filter((t) => !flags.includes(t.name));
-    for (const name of flags) {
+    const overridden = [...enabledFlags, ...disabledFlags];
+    const filtered = toggles.filter((t) => !overridden.includes(t.name));
+    for (const name of enabledFlags) {
       filtered.push({ name, enabled: true, impressionData: false, variant: { name: 'disabled', enabled: false } });
+    }
+    for (const name of disabledFlags) {
+      filtered.push({ name, enabled: false, impressionData: false, variant: { name: 'disabled', enabled: false } });
     }
     await route.fulfill({ json: { toggles: filtered } });
   });

@@ -63,6 +63,38 @@ describe('VisibilitySingleton', () => {
     jsdomReset();
   });
 
+  describe('hasLocalStorage', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      localStorage.removeItem('visibility-test');
+    });
+
+    test('uses getItem and matches the stored string', () => {
+      localStorage.setItem('visibility-test', 'enabled');
+      const getItem = jest.spyOn(localStorage, 'getItem');
+
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 'enabled')).toBe(true);
+      expect(getItem).toHaveBeenCalledWith('visibility-test');
+    });
+
+    test('rejects a missing or different value without coercing types', () => {
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 'true')).toBe(false);
+      localStorage.setItem('visibility-test', 'true');
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 'false')).toBe(false);
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', true)).toBe(false);
+      localStorage.setItem('visibility-test', '1');
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 1)).toBe(false);
+    });
+
+    test('propagates unavailable storage to the item evaluation boundary', () => {
+      jest.spyOn(localStorage, 'getItem').mockImplementation(() => {
+        throw new DOMException('Storage is unavailable', 'SecurityError');
+      });
+
+      expect(() => visibilityFunctions.hasLocalStorage('visibility-test', 'enabled')).toThrow('Storage is unavailable');
+    });
+  });
+
   test('isOrgAdmin', async () => {
     getUser.mockImplementationOnce(() =>
       Promise.resolve({
