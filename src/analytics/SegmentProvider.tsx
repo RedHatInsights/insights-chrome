@@ -57,7 +57,7 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
 
 const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
 
-const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLowerCase() : null);
+export const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLowerCase() : null);
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
@@ -154,6 +154,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         account_id: user.identity.internal?.org_id,
         cloud_org_id: user.identity.internal?.org_id,
         cloud_ebs_id: user.identity.account_number,
+        email_domain: emailDomain(user.identity.user?.email),
       };
       if (!initialized.current && analytics.current) {
         const hash = await fetchIntercomHash();
