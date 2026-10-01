@@ -99,17 +99,11 @@ const redirects: RedirectRoute[] = [
 ];
 
 // OpenShift Google Cloud cross-host redirects
+// Stage redirects are excluded: openshift.googlecloud.stage.redhat.com does not
+// perform cross-host redirects — this only works in production via Akamai.
+// See RHCLOUD-51747 and RHCLOUD-51776.
 const crossHostRedirects: Record<string, CrossHostRedirectRoute[]> = {
-  stage: [
-    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/osd/create', expectedUrl: 'https://console.stage.redhat.com/openshift/create/osdgcp' },
-    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/osd', expectedUrl: 'https://console.stage.redhat.com/openshift/overview/osd' },
-    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/ocp/create', expectedUrl: 'https://console.stage.redhat.com/openshift/install/gcp' },
-    {
-      sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/list',
-      expectedUrl: 'https://console.stage.redhat.com/openshift/cluster-list?plan_id=OSD,OCP',
-    },
-    { sourceUrl: 'https://openshift.googlecloud.stage.redhat.com/', expectedUrl: 'https://console.stage.redhat.com/openshift/' },
-  ],
+  stage: [],
   prod: [
     { sourceUrl: 'https://openshift.googlecloud.redhat.com/overview', expectedUrl: 'https://console.redhat.com/openshift/overview' },
     { sourceUrl: 'https://openshift.googlecloud.redhat.com/osd/create', expectedUrl: 'https://console.redhat.com/openshift/create/osdgcp' },
