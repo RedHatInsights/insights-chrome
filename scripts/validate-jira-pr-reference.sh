@@ -28,7 +28,7 @@ while IFS= read -r key; do
   fi
 done < <(extract_jira_keys "$PR_TITLE")
 
-jira_url_pattern='https?://issues\.redhat\.com/browse/[A-Za-z][A-Za-z0-9]{1,9}-[0-9]+'
+jira_url_pattern='https?://(issues\.redhat\.com|redhat\.atlassian\.net)/browse/[A-Za-z][A-Za-z0-9]{1,9}-[0-9]+'
 title_has_jira_url=false
 if grep -Eiq "$jira_url_pattern" <<<"$PR_TITLE"; then
   title_has_jira_url=true
@@ -65,7 +65,7 @@ if ((${#title_keys[@]} == 0)); then
 fi
 
 title_key=${title_keys[0]}
-jira_description_url_pattern="https?://issues\\.redhat\\.com/browse/${title_key}([^[:alnum:]]|$)"
+jira_description_url_pattern="https?://(issues\\.redhat\\.com|redhat\\.atlassian\\.net)/browse/${title_key}([^[:alnum:]]|$)"
 if grep -Eiq "$jira_description_url_pattern" <<<"$PR_BODY"; then
   info "Full Jira URL for issue key $title_key found in description."
   exit 0
