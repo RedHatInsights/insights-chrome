@@ -29,4 +29,8 @@
   .pf-v6-c-drawer__content {
     background-color: transparent;
   }
+
+  .pf-v6-c-drawer__panel {
+    background-color: var(--pf-t--global--background--color--primary--default);
+  }
 }
