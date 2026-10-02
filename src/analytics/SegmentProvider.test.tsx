@@ -154,6 +154,7 @@ describe('SegmentProvider', () => {
     const traits = groupCall[1];
     expect(traits).toHaveProperty('email_domain', 'example.com');
     expect(traits).toHaveProperty('organization_name', 'Test Org');
+    expect(traits).toHaveProperty('name', 'Test Org');
     expect(traits).toHaveProperty('account_number', 'EBS-789');
     expect(traits).toHaveProperty('cloud_org_id', 'org-123');
   });
@@ -175,6 +176,6 @@ describe('SegmentProvider', () => {
     );
 
     render(<Consumer />);
-    await waitFor(() => expect(mockGroup).toHaveBeenCalledWith('org-123', expect.objectContaining({ organization_name: 'Insights QA' })));
+    await waitFor(() => expect(mockGroup).toHaveBeenCalledWith('org-123', expect.objectContaining({ name: 'Insights QA', organization_name: 'Insights QA' })));
   });
 });
