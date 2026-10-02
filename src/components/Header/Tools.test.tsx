@@ -97,7 +97,7 @@ jest.mock('../../hooks/useGlassTheme', () => ({
 }));
 const mockSetFeltEnabled = jest.fn();
 const mockSetFeltDisabled = jest.fn();
-const mockFeltThemeState = { isFeltTheme: false, forceEnabled: false };
+const mockFeltThemeState = { isFeltTheme: false };
 jest.mock('../../hooks/useFeltTheme', () => ({
   useFeltTheme: () => ({
     ...mockFeltThemeState,
@@ -154,7 +154,7 @@ const mockInternalChromeContext = {
   drawerActions: { toggleDrawerContent: jest.fn() },
 };
 
-import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
+import { layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import type { ToolbarConfig } from './Header';
@@ -566,7 +566,6 @@ describe('Tools - theme toggle', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeltThemeState.isFeltTheme = false;
-    mockFeltThemeState.forceEnabled = false;
   });
 
   it('should not render theme section when felt-theme flag is disabled', () => {
@@ -595,15 +594,14 @@ describe('Tools - theme toggle', () => {
     expect(mockSetFeltDisabled).toHaveBeenCalled();
   });
 
-  it('should disable theme-default when felt is forced', () => {
-    mockFeltThemeState.isFeltTheme = true;
-    mockFeltThemeState.forceEnabled = true;
-    const store = createStore();
-    store.set(layoutForceFeltThemeAtom, true);
-    renderTools({ 'platform.chrome.felt-theme': true }, undefined, store);
+  it('should hide theme section when felt-auto flag is enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
 
-    const themeDefaultBtn = document.getElementById('theme-default');
-    expect(themeDefaultBtn).toBeDisabled();
+  it('should show theme section when felt-auto is off and felt-theme is on', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    expect(screen.getByText('Theme')).toBeInTheDocument();
   });
 });
 
@@ -611,7 +609,6 @@ describe('Tools - forced glass mode', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeltThemeState.isFeltTheme = false;
-    mockFeltThemeState.forceEnabled = false;
   });
 
   it('should disable contrast items when glass is forced', () => {
@@ -637,7 +634,6 @@ describe('Tools - glass ↔ high contrast mutual exclusivity', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeltThemeState.isFeltTheme = false;
-    mockFeltThemeState.forceEnabled = false;
   });
 
   it('should call setDefaultContrast and enableGlass when Glass is clicked', () => {
@@ -702,7 +698,6 @@ describe('Tools - felt auto mode (platform.chrome-felt-auto)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeltThemeState.isFeltTheme = false;
-    mockFeltThemeState.forceEnabled = false;
   });
 
   it('should hide theme section when felt-auto flag is enabled, even if felt-theme flag is also enabled', () => {

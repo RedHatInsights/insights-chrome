@@ -27,8 +27,12 @@ const applyFeltTheme = (enabled: boolean) => {
   }
 };
 
-const getInitialFeltTheme = (forceEnabled: boolean): boolean => {
-  if (forceEnabled) {
+const getInitialFeltTheme = (autoEnabled: boolean, disabled: boolean): boolean => {
+  if (disabled) {
+    applyFeltTheme(false);
+    return false;
+  }
+  if (autoEnabled) {
     applyFeltTheme(true);
     return true;
   }
@@ -37,11 +41,25 @@ const getInitialFeltTheme = (forceEnabled: boolean): boolean => {
   return enabled;
 };
 
-export const useFeltTheme = (forceEnabled = false) => {
-  const [isFeltTheme, setIsFeltTheme] = useState<boolean>(() => getInitialFeltTheme(forceEnabled));
+/**
+ * Hook managing the Felt theme CSS class and localStorage persistence.
+ *
+ * @param autoEnabled When true (driven by the `platform.chrome-felt-auto`
+ *   feature flag), Felt is applied automatically and the manual toggle
+ *   callbacks become no-ops.  The user's localStorage preference is left
+ *   untouched so it takes effect again when the flag is later disabled.
+ * @param disabled When true (e.g. Glass is forced on a Lightwell route),
+ *   Felt is kept off regardless of autoEnabled or saved preference.
+ *   Prevents both theme classes coexisting on the document root.
+ */
+export const useFeltTheme = (autoEnabled = false, disabled = false) => {
+  const [isFeltTheme, setIsFeltTheme] = useState<boolean>(() => getInitialFeltTheme(autoEnabled, disabled));
 
   useEffect(() => {
-    if (forceEnabled) {
+    if (disabled) {
+      setIsFeltTheme(false);
+      applyFeltTheme(false);
+    } else if (autoEnabled) {
       setIsFeltTheme(true);
       applyFeltTheme(true);
     } else {
@@ -49,22 +67,21 @@ export const useFeltTheme = (forceEnabled = false) => {
       setIsFeltTheme(saved);
       applyFeltTheme(saved);
     }
-  }, [forceEnabled]);
+  }, [autoEnabled, disabled]);
 
   const setFeltEnabled = () => {
-    if (forceEnabled) return;
+    if (autoEnabled || disabled) return;
     setIsFeltTheme(true);
     applyFeltTheme(true);
     writeFeltThemePreference(true);
   };
 
   const setFeltDisabled = () => {
-    if (!forceEnabled) {
-      setIsFeltTheme(false);
-      applyFeltTheme(false);
-      writeFeltThemePreference(false);
-    }
+    if (autoEnabled || disabled) return;
+    setIsFeltTheme(false);
+    applyFeltTheme(false);
+    writeFeltThemePreference(false);
   };
 
-  return { isFeltTheme, setFeltEnabled, setFeltDisabled, forceEnabled };
+  return { isFeltTheme, setFeltEnabled, setFeltDisabled };
 };

@@ -8,7 +8,7 @@ const initializeTheme = function () {
     var isLightwellRoute = window.location.pathname === '/lightwell' || window.location.pathname.indexOf('/lightwell/') === 0;
 
     if (isLightwellRoute) {
-      document.documentElement.classList.add('pf-v6-theme-felt', 'pf-v6-theme-glass');
+      document.documentElement.classList.add('pf-v6-theme-glass');
     }
 
     var savedTheme = localStorage.getItem('chrome:theme');

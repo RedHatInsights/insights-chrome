@@ -69,3 +69,24 @@ test.describe('Theme Toggle — Default / Project Felt', () => {
     await expect(page.locator('html')).toHaveClass(new RegExp(FELT_THEME_CLASS));
   });
 });
+
+test.describe('Felt Auto — platform.chrome-felt-auto', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockFeatureFlags(page, ['platform.chrome-felt-auto']);
+    await page.goto('/');
+    await page.evaluate((key) => localStorage.removeItem(key), FELT_STORAGE_KEY);
+    await page.reload();
+  });
+
+  test('should apply Felt theme automatically when auto flag is enabled', async ({ page }) => {
+    await expect(page.locator('html')).toHaveClass(new RegExp(FELT_THEME_CLASS));
+  });
+
+  test('should hide theme switcher when auto flag is enabled', async ({ page }) => {
+    const topbar = new ChromeTopbar(page);
+    await topbar.openSettings();
+
+    await expect(page.locator('#theme-default')).not.toBeVisible();
+    await expect(page.locator('#theme-felt')).not.toBeVisible();
+  });
+});
