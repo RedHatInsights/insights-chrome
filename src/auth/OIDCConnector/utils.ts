@@ -1,6 +1,7 @@
 import { AuthContextProps } from 'react-oidc-context';
 import { ITLess, LOGIN_SCOPES_STORAGE_KEY, deleteLocalStorageItems } from '../../utils/common';
 import { GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY, OIDC_RESERVED_PARAMS } from '../../utils/consts';
+import { clearEntitlementsCache } from '../fetchEntitlements';
 import Cookies from 'js-cookie';
 import logger from '../logger';
 import createUUID from './createUUID';
@@ -44,6 +45,7 @@ export async function logout(auth: AuthContextProps, bounce?: boolean) {
       key.startsWith(GLOBAL_FILTER_KEY)
   );
   deleteLocalStorageItems([...keys, OFFLINE_REDIRECT_STORAGE_KEY, LOGIN_SCOPES_STORAGE_KEY]);
+  await clearEntitlementsCache();
   if (bounce) {
     const eightSeconds = new Date(new Date().getTime() + 8 * 1000);
     Cookies.set('cs_loggedOut', 'true', {

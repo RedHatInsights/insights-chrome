@@ -7,7 +7,6 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext'
 import { generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
-import entitlementsApi from '../entitlementsApi';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import logger from '../logger';
@@ -23,18 +22,17 @@ import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
+import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import useManageSilentRenew from './useManageSilentRenew';
-import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
+import { EntitlementsMap, fetchEntitlements } from '../fetchEntitlements';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
-const serviceAPI = entitlementsApi();
 const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: ServicesGetReturnType): ChromeUser {
+function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: EntitlementsMap): ChromeUser {
   return {
-    // The client is missing the trial type on the response
     entitlements: entitlements as Record<string, Entitlement>,
     identity: {
       org_id: user.profile?.org_id as any,
@@ -60,25 +58,11 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-async function fetchEntitlements(user: User) {
-  let entitlements: ServicesGetReturnType = {};
-  try {
-    if (user.profile.org_id) {
-      entitlements = (await serviceAPI.servicesGet({})).data;
-      return entitlements;
-    } else {
-      console.log('Cannot call entitlements API, no account number');
-      return entitlements;
-    }
-  } catch {
-    // let's swallow error from services API
-    return entitlements;
-  }
-}
-
 export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
+  const previousEntitlementsRef = useRef<EntitlementsMap | undefined>(undefined);
+  const fetchGenerationRef = useRef(0);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -144,10 +128,26 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   };
 
   async function onUserAuthenticated(user: User) {
+    const generation = ++fetchGenerationRef.current;
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(chromeStore, authRef);
-    const entitlements = await fetchEntitlements(user);
+    let entitlements: EntitlementsMap = previousEntitlementsRef.current ?? {};
+    let degraded = false;
+    try {
+      const result = await fetchEntitlements(user, { previous: previousEntitlementsRef.current });
+      entitlements = result.entitlements;
+      degraded = result.degraded;
+    } catch {
+      // fetchEntitlements is not supposed to throw; keep bootstrap unblocked.
+      entitlements = previousEntitlementsRef.current ?? {};
+      degraded = Boolean(user.profile?.org_id);
+    }
+    if (generation !== fetchGenerationRef.current) {
+      return;
+    }
+    previousEntitlementsRef.current = entitlements;
+    chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded });
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
     setState((prev) => ({
@@ -182,6 +182,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
         }
       };
     }
+    return () => {
+      fetchGenerationRef.current += 1;
+    };
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
   useEffect(() => {

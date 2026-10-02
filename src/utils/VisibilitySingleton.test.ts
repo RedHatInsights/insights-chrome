@@ -250,6 +250,29 @@ describe('VisibilitySingleton', () => {
       expect((await visibilityFunctions.isEntitled()).another).toBe(false);
     });
 
+    test('isEntitled on Option B defaults', async () => {
+      const { getMinimumViableEntitlements } = await import('../auth/getMinimumViableEntitlements');
+      const defaults = getMinimumViableEntitlements({
+        profile: { org_id: '123', account_number: '1', email: 'user@example.com', is_internal: false },
+      });
+      getUser.mockImplementation(() => Promise.resolve({ entitlements: defaults }));
+
+      expect(await visibilityFunctions.isEntitled('insights')).toBe(true);
+      expect(await visibilityFunctions.isEntitled('ansible')).toBe(false);
+      const all = await visibilityFunctions.isEntitled();
+      expect(all.insights).toBe(true);
+      expect(all.ansible).toBe(false);
+
+      getUser.mockImplementation(() =>
+        Promise.resolve({
+          entitlements: {
+            some: { is_entitled: true },
+            another: { is_entitled: false },
+          },
+        })
+      );
+    });
+
     describe('loose permissions', () => {
       beforeAll(() => {
         getUser.mockImplementation(() => Promise.resolve());

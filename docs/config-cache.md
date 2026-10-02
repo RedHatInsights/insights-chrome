@@ -16,6 +16,14 @@ SSO and federated-module configuration load before the authenticated Unleash pro
 
 The bootstrap fallback is part of every build and has no separate Webpack or environment toggle. The runtime feature flag controls only post-authenticated configuration requests.
 
+## Entitlements last-known-good
+
+`GET /api/entitlements/v1/services` uses the same IndexedDB instance (`chrome-config-cache`) with key `v1:entitlements-services` and a **24 hour** TTL.
+
+This fallback is always enabled (`{ enabled: true }`). It is not gated on `platform.chrome.config-cache-fallback`, because entitlements last-known-good is most needed when Unleash is also down.
+
+A 200 with `X-Entitlements-Degraded: true` is used but must not overwrite a richer SKU cache. Logout deletes only this entitlements key; navigation and fed-modules entries stay.
+
 ## Flag scope
 
 The feature flag controls persistent cache fallback only. It is not a rollback switch for configuration validation, sanitization, filtering, URL checks, or Sentry reporting. Those protections run for live and cached configuration regardless of the cache flag state.

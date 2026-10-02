@@ -2,7 +2,19 @@ import localforage from 'localforage';
 import { getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 export type CacheFetchResult<T> = { data: T; fromCache: boolean };
-export type CacheFetchOptions = { enabled: boolean };
+export type CacheFetchOptions<T = unknown> = {
+  enabled: boolean;
+  /**
+   * When set, a successful live payload is only written if this returns true.
+   * `cached` is null when nothing valid and unexpired is stored.
+   */
+  shouldPersist?: (data: T, cached: T | null) => boolean;
+  /**
+   * When true, aborted/canceled live requests may replay last-known-good.
+   * Default false: abort means the caller gave up, so do not serve cache.
+   */
+  fallbackOnAbort?: boolean;
+};
 
 /** Bump when cached payload shapes change incompatibly. */
 export const CACHE_SCHEMA_VERSION = 1;
@@ -74,12 +86,17 @@ function purgeStaleVersions(store: LocalForage): void {
  * Cache is used only for origin failures (5xx) and network errors.
  * Client errors (4xx) propagate immediately — stale SSO config for 401 is worse than failure.
  */
-function shouldUseCacheFallback(err: unknown): boolean {
-  if (typeof err === 'object' && err !== null) {
-    const error = err as { code?: unknown; name?: unknown };
-    if (error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError') {
-      return false;
-    }
+function isAbortError(err: unknown): boolean {
+  if (typeof err !== 'object' || err === null) {
+    return false;
+  }
+  const error = err as { code?: unknown; name?: unknown };
+  return error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError';
+}
+
+function shouldUseCacheFallback(err: unknown, fallbackOnAbort = false): boolean {
+  if (isAbortError(err)) {
+    return fallbackOnAbort;
   }
 
   // Axios errors have a response property
@@ -92,6 +109,18 @@ function shouldUseCacheFallback(err: unknown): boolean {
   }
   // Network errors (no response) qualify for fallback
   return true;
+}
+
+/**
+ * Best-effort delete of one versioned cache key (logout, tenant switch).
+ * Storage errors are swallowed — failing to clear must not block logout.
+ */
+export async function deleteCacheKey(key: string): Promise<void> {
+  try {
+    await getCache().removeItem(storageKey(key));
+  } catch {
+    // ignore
+  }
 }
 
 /**
@@ -176,13 +205,15 @@ const getConfigCacheFallbackPolicy = (): Promise<boolean> => {
  *                       still returned (the origin is authoritative) but is NOT cached. A cached read that fails the
  *                       guard is discarded so the caller falls through to rethrowing the original error.
  * @param options - Cache policy. Disabled mode calls fetcher directly and never initializes or accesses storage.
+ *                  `shouldPersist` skips writing a live body that must not replace a richer last-known-good.
+ *                  `fallbackOnAbort` lets aborted requests use cache (entitlements bootstrap only).
  */
 export async function cacheFetch<T>(
   key: string,
   fetcher: () => Promise<T>,
   ttlMs: number = CACHE_TTL_MS,
   payloadGuard?: (data: unknown) => data is T,
-  options?: CacheFetchOptions
+  options?: CacheFetchOptions<T>
 ): Promise<CacheFetchResult<T>> {
   const cacheFallbackPolicy = options ? Promise.resolve(options.enabled) : getConfigCacheFallbackPolicy();
   const liveFetch = Promise.resolve().then(fetcher);
@@ -201,6 +232,20 @@ export async function cacheFetch<T>(
       return { data, fromCache: false };
     }
 
+    if (options?.shouldPersist) {
+      const persistEnabled = await cacheFallbackPolicy;
+      if (!persistEnabled) {
+        return { data, fromCache: false };
+      }
+      const cached = await getCache()
+        .getItem<unknown>(sk)
+        .catch(() => null);
+      const cachedData = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached.data : null;
+      if (!options.shouldPersist(data, cachedData)) {
+        return { data, fromCache: false };
+      }
+    }
+
     const envelope: CacheEnvelope<T> = { data, cachedAt: Date.now() };
     // Fire-and-forget: never block the bootstrap-critical path on the IndexedDB
     // write, and swallow storage errors — the fetch succeeded, that's what matters.
@@ -217,7 +262,7 @@ export async function cacheFetch<T>(
     return { data, fromCache: false };
   } catch (err) {
     // Reject client errors and canceled requests immediately; only origin/network failures need flag readiness.
-    if (!shouldUseCacheFallback(err)) {
+    if (!shouldUseCacheFallback(err, options?.fallbackOnAbort === true)) {
       throw err;
     }
 
