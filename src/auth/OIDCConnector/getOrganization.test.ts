@@ -18,6 +18,18 @@ describe('getOrganization', () => {
     expect(getOrganization({}, token({ organization: { name: 'Insights QA' } }))).toEqual({ name: 'Insights QA' });
   });
 
+  it('falls back when the profile organization name is not a string', () => {
+    expect(getOrganization({ name: 123 } as never, token({ organization: { name: 'Token Org' } }))).toEqual({ name: 'Token Org' });
+  });
+
+  it('preserves profile organization fields when adding the token name', () => {
+    expect(getOrganization({ id: '42' } as never, token({ organization: { name: 'Token Org' } }))).toEqual({ id: '42', name: 'Token Org' });
+  });
+
+  it('rejects tokens without exactly three segments', () => {
+    expect(getOrganization(undefined, 'header.payload')).toBeUndefined();
+  });
+
   it('decodes Unicode organization names', () => {
     expect(getOrganization(undefined, token({ organization: { name: 'Societe 日本' } }))).toEqual({ name: 'Societe 日本' });
   });
