@@ -27,7 +27,7 @@ permissions: {}
 jobs:
   validate:
     name: Validate catalogs
-    uses: RedHatInsights/i18n-tooling/.github/workflows/i18n-validate.yml@af54af16d72c9d9f49da3b5a7f88d4246994f3f5
+    uses: RedHatInsights/i18n-tooling/.github/workflows/i18n-validate.yml@9b9141a3a537f28627c00005d983f67daf78ff2e
     with:
       node-version: '24'
       package-manager: npm

@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "tmsConfig": ".github/i18n/phrase-tms.json",
   "checks": [
     {
       "source": {

@@ -366,9 +366,9 @@ More detailed documentation can be found in the [docs section](https://github.co
 
 ## Internationalization
 
-English FormatJS messages are declared in `src/locales/Messages.ts`. Run `npm run translations` to regenerate the extraction template and compiled `src/locales/en.json` catalog. Locale catalogs are loaded asynchronously based on the browser locale, with fallback to English. Shared validation is configured in `.github/i18n/catalog-validation.json` and runs in CI through the pinned `i18n-tooling` workflow.
+English FormatJS messages are declared in `src/locales/Messages.ts`. Run `npm run translations` to regenerate the extraction template and compiled `src/locales/en.json` catalog. Locale catalogs are loaded asynchronously based on the browser locale, with fallback to English. Shared validation is configured in `.github/i18n/catalog-validation.json` and runs in CI through the pinned `i18n-tooling` workflow. Phrase TMS submission and reconciliation also use reusable `i18n-tooling` workflows (no Phrase CLI): source-catalog changes on `master` submit to the project in `.github/i18n/phrase-tms.json`, and a weekday 05:00 UTC workflow reconciles completed jobs into per-locale PRs. Both require a protected `phrase-tms` Actions environment with a `PHRASE_PLATFORM_API_TOKEN` secret.
 
-For local validation, `npm run translations:validate` needs the `frontend-i18n` CLI from a checkout of [i18n-tooling](https://github.com/RedHatInsights/i18n-tooling) on `PATH`. The CLI is not published to npm; follow [its consumer onboarding guide](https://github.com/RedHatInsights/i18n-tooling/blob/main/docs/consumer-onboarding.md#4-wire-the-package-scripts) to build it.
+For local catalog validation, `npm run translations:validate` needs the `frontend-i18n` command from a checkout of [i18n-tooling](https://github.com/RedHatInsights/i18n-tooling) on `PATH`. It is not published to npm; follow [its consumer onboarding guide](https://github.com/RedHatInsights/i18n-tooling/blob/main/docs/consumer-onboarding.md#4-wire-the-package-scripts) to build it.
 
 ## Staleness
 
