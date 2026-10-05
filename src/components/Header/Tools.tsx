@@ -226,7 +226,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     {
       groupKey: 'showTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
-      isHidden: !isFeltThemeEnabled || isFeltAutoEnabled,
+      isHidden: !isFeltThemeEnabled || isFeltAutoEnabled || isGlassForced,
       customContent: (
         <ToggleGroup aria-label={intl.formatMessage(messages.theme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem
