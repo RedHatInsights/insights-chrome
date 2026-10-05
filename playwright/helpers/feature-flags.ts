@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 interface FeatureToggle {
   name: string;
@@ -7,7 +7,32 @@ interface FeatureToggle {
   variant: { name: string; enabled: boolean };
 }
 
-export async function mockFeatureFlags(page: Page, enabledFlags: string[], disabledFlags: string[] = []): Promise<void> {
+const CHROME_BASE_URL = process.env.PLAYWRIGHT_BASE_URL || process.env.BASE || 'https://stage.foo.redhat.com:1337';
+
+/** Start flag-mocked E2E tests without toggles persisted in the authenticated storage state. */
+export async function clearCachedFeatureFlags(page: Page, chromeBaseUrl?: string): Promise<void> {
+  const chromeOrigin = new URL(chromeBaseUrl ?? CHROME_BASE_URL).origin;
+  await page.addInitScript((expectedOrigin: string) => {
+    if (window.location.origin !== expectedOrigin) {
+      return;
+    }
+
+    try {
+      for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+        const key = localStorage.key(index);
+        if (key?.startsWith('unleash:')) {
+          localStorage.removeItem(key);
+        }
+      }
+      localStorage.setItem('chrome:feature-flags:error', 'false');
+    } catch {
+      // Browser storage may be unavailable.
+    }
+  }, chromeOrigin);
+}
+
+export async function mockFeatureFlags(page: Page, enabledFlags: string[], disabledFlags: string[] = [], chromeBaseUrl?: string): Promise<void> {
+  await clearCachedFeatureFlags(page, chromeBaseUrl);
   await page.route('**/api/featureflags/v0**', async (route) => {
     let toggles: FeatureToggle[] = [];
     try {

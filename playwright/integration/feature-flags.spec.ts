@@ -43,7 +43,7 @@ test.afterAll(async () => {
 });
 
 test('legacy enabled-only overrides preserve the live automatic-mode flag', async ({ page }) => {
-  await mockFeatureFlags(page, ['platform.chrome.felt-theme']);
+  await mockFeatureFlags(page, ['platform.chrome.felt-theme'], [], origin);
   await page.goto(origin);
 
   const result = await page.evaluate(async () => (await fetch('/api/featureflags/v0')).json());
@@ -55,7 +55,7 @@ test('manual-mode overrides win over live flags and survive page reload', async 
   const upstream = await request.get(`${origin}/api/featureflags/v0`);
   expect((await upstream.json()).toggles).toEqual(upstreamToggles);
 
-  await mockFeatureFlags(page, ['platform.chrome.felt-theme'], ['platform.chrome-felt-auto']);
+  await mockFeatureFlags(page, ['platform.chrome.felt-theme'], ['platform.chrome-felt-auto'], origin);
   await page.goto(origin);
 
   const expected = [toggle('unrelated-feature', true), toggle('platform.chrome.felt-theme', true), toggle('platform.chrome-felt-auto', false)];
