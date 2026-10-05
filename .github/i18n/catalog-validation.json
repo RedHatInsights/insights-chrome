@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "checks": [
+    {
+      "source": {
+        "path": "locales/translation-template.json",
+        "adapter": "formatjs-json",
+        "locale": "en"
+      },
+      "targets": [
+        {
+          "path": "src/locales/en.json",
+          "adapter": "formatjs-json",
+          "locale": "en"
+        }
+      ]
+    }
+  ],
+  "generated": [
+    {
+      "path": "locales/translation-template.json",
+      "adapter": "formatjs-json",
+      "role": "source",
+      "locale": "en",
+      "command": "npm",
+      "args": ["run", "--silent", "translations:extract", "--", "--out-file", "{output}"],
+      "updateCommand": "npm run translations:extract"
+    },
+    {
+      "path": "src/locales/en.json",
+      "adapter": "formatjs-json",
+      "role": "target",
+      "locale": "en",
+      "command": "npm",
+      "args": ["run", "--silent", "translations:compile", "--", "--out-file", "{output}"],
+      "updateCommand": "npm run translations:compile"
+    }
+  ],
+  "catalogDirectories": [{ "path": "locales" }, { "path": "src/locales" }]
+}

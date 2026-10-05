@@ -364,6 +364,12 @@ document.documentElement.classList.remove('pf-v6-theme-glass');
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
 
+## Internationalization
+
+English FormatJS messages are declared in `src/locales/Messages.ts`. Run `npm run translations` to regenerate the extraction template and compiled `src/locales/en.json` catalog. Locale catalogs are loaded asynchronously based on the browser locale, with fallback to English. Shared validation is configured in `.github/i18n/catalog-validation.json` and runs in CI through the pinned `i18n-tooling` workflow.
+
+For local validation, `npm run translations:validate` needs the `frontend-i18n` CLI from a checkout of [i18n-tooling](https://github.com/RedHatInsights/i18n-tooling) on `PATH`. The CLI is not published to npm; follow [its consumer onboarding guide](https://github.com/RedHatInsights/i18n-tooling/blob/main/docs/consumer-onboarding.md#4-wire-the-package-scripts) to build it.
+
 ## Staleness
 
 A bot will post a comment after 60 days of inactivity giving the opener 5 days to update their issue/PR before it's closed.
