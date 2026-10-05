@@ -1,6 +1,11 @@
 import { AuthContextProps } from 'react-oidc-context';
-import { login, sanitizeRedirectUri } from './utils';
+import { login, logout, sanitizeRedirectUri } from './utils';
 import { OIDC_RESERVED_PARAMS } from '../../utils/consts';
+import { clearEntitlementsCache } from '../fetchEntitlements';
+
+jest.mock('../fetchEntitlements', () => ({
+  clearEntitlementsCache: jest.fn().mockResolvedValue(undefined),
+}));
 
 describe('sanitizeRedirectUri', () => {
   afterEach(() => {
@@ -91,5 +96,19 @@ describe('login', () => {
     expect(arg.scope).toContain('openid');
     expect(arg.scope).toContain('api.graphql');
     expect(arg.nonce).toEqual(expect.any(String));
+  });
+});
+
+describe('logout', () => {
+  it('clears the entitlements IndexedDB key', async () => {
+    const mockedClear = jest.mocked(clearEntitlementsCache);
+    const auth = {
+      revokeTokens: jest.fn().mockResolvedValue(undefined),
+    } as unknown as AuthContextProps;
+
+    await logout(auth, false);
+
+    expect(mockedClear).toHaveBeenCalledTimes(1);
+    expect(auth.revokeTokens).toHaveBeenCalledWith(['access_token', 'refresh_token']);
   });
 });

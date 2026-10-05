@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 import { getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
-import { CACHE_SCHEMA_VERSION, CACHE_TTL_MS, CONFIG_CACHE_FALLBACK_FLAG, cacheFetch } from './cacheFetch';
+import { CACHE_SCHEMA_VERSION, CACHE_TTL_MS, CONFIG_CACHE_FALLBACK_FLAG, cacheFetch, deleteCacheKey } from './cacheFetch';
 
 const mockSetItem = jest.fn();
 const mockGetItem = jest.fn();
@@ -374,12 +374,86 @@ describe('cacheFetch', () => {
       expect(mockGetItem).not.toHaveBeenCalled();
     });
 
+    it('uses cache for canceled requests when fallbackOnAbort is true', async () => {
+      const error = { code: 'ERR_CANCELED' };
+      const fetcher = jest.fn().mockRejectedValue(error);
+      mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+
+      const result = await cacheFetch('test-key', fetcher, undefined, undefined, { enabled: true, fallbackOnAbort: true });
+      expect(result).toEqual({ data: { foo: 'cached' }, fromCache: true });
+    });
+
     it('rethrows 5xx error when no cache exists', async () => {
       const error = { response: { status: 500 }, message: 'Internal Server Error' };
       const fetcher = jest.fn().mockRejectedValue(error);
       mockGetItem.mockResolvedValue(null);
 
       await expect(cacheFetch('test-key', fetcher)).rejects.toEqual(error);
+    });
+  });
+
+  describe('shouldPersist', () => {
+    it('skips setItem when shouldPersist returns false', async () => {
+      mockGetItem.mockResolvedValue({ data: { sku: true }, cachedAt: Date.now() });
+      const fetcher = jest.fn().mockResolvedValue({ sku: false });
+      const result = await cacheFetch('test-key', fetcher, CACHE_TTL_MS, undefined, {
+        enabled: true,
+        shouldPersist: () => false,
+      });
+
+      expect(result).toEqual({ data: { sku: false }, fromCache: false });
+      expect(mockGetItem).toHaveBeenCalled();
+      expect(mockSetItem).not.toHaveBeenCalled();
+    });
+
+    it('writes when shouldPersist returns true', async () => {
+      mockGetItem.mockResolvedValue({ data: { sku: false }, cachedAt: Date.now() });
+      const fetcher = jest.fn().mockResolvedValue({ sku: true });
+      const shouldPersist = jest.fn().mockReturnValue(true);
+      const result = await cacheFetch('test-key', fetcher, CACHE_TTL_MS, undefined, { enabled: true, shouldPersist });
+
+      expect(result).toEqual({ data: { sku: true }, fromCache: false });
+      expect(shouldPersist).toHaveBeenCalledWith({ sku: true }, { sku: false });
+      expect(mockSetItem).toHaveBeenCalled();
+    });
+
+    it('passes null cached data when nothing is stored', async () => {
+      mockGetItem.mockResolvedValue(null);
+      const shouldPersist = jest.fn().mockReturnValue(true);
+      await cacheFetch('test-key', jest.fn().mockResolvedValue({ sku: false }), CACHE_TTL_MS, undefined, { enabled: true, shouldPersist });
+      expect(shouldPersist).toHaveBeenCalledWith({ sku: false }, null);
+    });
+
+    it('still returns live data when cache fallback is disabled', async () => {
+      const shouldPersist = jest.fn();
+      const result = await cacheFetch('test-key', jest.fn().mockResolvedValue({ sku: true }), CACHE_TTL_MS, undefined, {
+        enabled: false,
+        shouldPersist,
+      });
+      expect(result).toEqual({ data: { sku: true }, fromCache: false });
+      expect(shouldPersist).not.toHaveBeenCalled();
+      expect(mockSetItem).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteCacheKey', () => {
+    it('removes the versioned key', async () => {
+      await jest.isolateModulesAsync(async () => {
+        const lf = (await import('localforage')).default;
+        const removeItem = jest.fn().mockResolvedValue(undefined);
+        jest.mocked(lf.createInstance).mockReturnValue({
+          setItem: jest.fn().mockResolvedValue(undefined),
+          getItem: jest.fn().mockResolvedValue(null),
+          removeItem,
+        } as unknown as LocalForage);
+        const { deleteCacheKey: isolatedDelete } = await import('./cacheFetch');
+        await isolatedDelete('entitlements-services');
+        expect(removeItem).toHaveBeenCalledWith(`v${CACHE_SCHEMA_VERSION}:entitlements-services`);
+      });
+    });
+
+    it('swallows storage errors', async () => {
+      await expect(deleteCacheKey('entitlements-services')).resolves.toBeUndefined();
     });
   });
 });
