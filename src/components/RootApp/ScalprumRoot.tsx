@@ -16,7 +16,6 @@ import { FlagTagsFilter } from '../../@types/types';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
 import ChromeFooter from '../Footer/Footer';
-import LightwellFooter from '../Footer/LightwellFooter';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
@@ -101,7 +100,7 @@ const ScalprumRoot = memo(
               path={`${LIGHTWELL_PATH}/*`}
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <Lightwell Footer={<LightwellFooter />} />
+                  <Lightwell />
                 </Suspense>
               }
             />

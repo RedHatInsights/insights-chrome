@@ -144,6 +144,7 @@ const defaultFlags: Record<string, boolean> = {
   'platform.chrome.dark-mode': false,
   'platform.chrome.dark-mode_system': false,
   'platform.chrome.felt-theme': false,
+  'platform.chrome-felt-auto': false,
   'platform.chrome.glass-theme': false,
   'platform.chrome.high-contrast': false,
   'platform.chrome.notifications-drawer': false,
@@ -157,6 +158,7 @@ const mockInternalChromeContext = {
 import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../../state/atoms/releaseAtom';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
+import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import type { ToolbarConfig } from './Header';
 
 const renderTools = (flagOverrides: Partial<typeof defaultFlags> = {}, toolbarConfig?: ToolbarConfig, store?: ReturnType<typeof createStore>) => {
@@ -311,8 +313,18 @@ describe('Tools - dark mode system feature flag', () => {
     it('should mark Scheduler item as selected when the scheduler drawer is open', () => {
       const store = createStore();
       store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './SchedulerPanelContent' });
+      store.set(notificationDrawerExpandedAtom, true);
       renderTools({ 'console.chrome-scheduler_drawer': true }, undefined, store);
       expect(screen.getByTestId('settings-menu-scheduler')).toHaveAttribute('data-selected', 'true');
+    });
+
+    it('should not mark Scheduler item as selected when the drawer is collapsed via the panel close button', () => {
+      const store = createStore();
+      // Closing via the panel "x" collapses the drawer but leaves drawerPanelContentAtom set.
+      store.set(drawerPanelContentAtom, { scope: 'schedulerUi', module: './SchedulerPanelContent' });
+      store.set(notificationDrawerExpandedAtom, false);
+      renderTools({ 'console.chrome-scheduler_drawer': true }, undefined, store);
+      expect(screen.getByTestId('settings-menu-scheduler')).not.toHaveAttribute('data-selected');
     });
 
     it('should not mark Scheduler item as selected when a different drawer is open', () => {
@@ -695,5 +707,47 @@ describe('Tools - about menu items', () => {
   it('should render learning resources link when flag is enabled', () => {
     renderTools({ 'platform.learning-resources.global-learning-resources': true });
     expect(screen.getByText('All learning resources')).toBeInTheDocument();
+  });
+});
+
+describe('Tools - felt auto mode (platform.chrome-felt-auto)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  it('should hide theme section when felt-auto flag is enabled, even if felt-theme flag is also enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+    expect(document.getElementById('theme-default')).not.toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).not.toBeInTheDocument();
+  });
+
+  it('should hide theme section when only felt-auto flag is enabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': false, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should show theme section when felt-theme is enabled and felt-auto is disabled', () => {
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(document.getElementById('theme-default')).toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).toBeInTheDocument();
+  });
+
+  it('should preserve color scheme controls when felt-auto is enabled', () => {
+    renderTools({ 'platform.chrome.dark-mode': true, 'platform.chrome-felt-auto': true });
+    expect(screen.getByText('Color scheme')).toBeInTheDocument();
+    expect(document.getElementById('color-scheme-light')).toBeInTheDocument();
+    expect(document.getElementById('color-scheme-dark')).toBeInTheDocument();
+  });
+
+  it('should preserve contrast mode controls when felt-auto is enabled', () => {
+    renderTools({ 'platform.chrome.high-contrast': true, 'platform.chrome.glass-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.getByText('Contrast mode')).toBeInTheDocument();
+    expect(document.getElementById('contrast-default')).toBeInTheDocument();
+    expect(document.getElementById('contrast-high')).toBeInTheDocument();
+    expect(document.getElementById('contrast-glass')).toBeInTheDocument();
   });
 });

@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { describe, expect, it } from '@jest/globals';
 import DegradedStateBanner from './DegradedStateBanner';
-import { ServiceHealthStatus, degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { ServiceHealthStatus, degradedStateAtom, setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(),
@@ -122,6 +122,56 @@ describe('DegradedStateBanner', () => {
     mockedUseFlag.mockReturnValue(false);
     const { container } = renderBanner(healthy({ userPersonalization: true }));
 
+    expect(container.firstChild).toBeNull();
+  });
+
+  it.each(['navigation', 'serviceTiles'] as const)('reports %s as Navigation and respects the banner flag', (service) => {
+    const state = healthy({ [service]: true });
+    const { container, unmount } = renderBanner(state);
+    expect(container.querySelector('strong')).toHaveTextContent(/^Navigation$/);
+    expect(container.textContent).not.toContain('All Services');
+    expect(container.textContent).not.toContain('Navigation Configuration');
+    unmount();
+
+    mockedUseFlag.mockReturnValue(false);
+    expect(renderBanner(state).container.firstChild).toBeNull();
+  });
+
+  it('lists Navigation only once when both navigation and service tiles are degraded', () => {
+    const { container } = renderBanner(healthy({ navigation: true, serviceTiles: true }));
+
+    expect(container.querySelector('strong')).toHaveTextContent(/^Navigation$/);
+    expect(container.querySelector('.pf-v6-screen-reader')).toHaveTextContent(
+      'Core functionality is available, but some services are degraded: Navigation. Try again later.'
+    );
+    expect(container.textContent).not.toContain('All Services');
+  });
+
+  it.each(['navigation', 'serviceTiles'] as const)('keeps the shared label after %s recovers until both sources are healthy', (service) => {
+    const { container, store } = renderBanner(healthy({ navigation: true, serviceTiles: true }));
+
+    act(() => store.set(setServiceDegradedAtom, { service, degraded: false }));
+    expect(container.querySelector('strong')).toHaveTextContent(/^Navigation$/);
+
+    const otherService = service === 'navigation' ? 'serviceTiles' : 'navigation';
+    expect(store.get(degradedStateAtom)[otherService]).toBe(true);
+    act(() => store.set(setServiceDegradedAtom, { service: otherService, degraded: false }));
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('preserves unrelated degraded services after navigation and service tiles recover', () => {
+    const { container, store } = renderBanner(healthy({ configFromCache: true, quickstarts: true, navigation: true, serviceTiles: true }));
+    expect(container.querySelector('strong')).toHaveTextContent(/^Navigation Configuration, Quick starts, Navigation$/);
+
+    act(() => {
+      store.set(setServiceDegradedAtom, { service: 'navigation', degraded: false });
+      store.set(setServiceDegradedAtom, { service: 'serviceTiles', degraded: false });
+    });
+    expect(container.querySelector('strong')).toHaveTextContent(/^Navigation Configuration, Quick starts$/);
+
+    act(() => store.set(setServiceDegradedAtom, { service: 'configFromCache', degraded: false }));
+    expect(container.querySelector('strong')).toHaveTextContent(/^Quick starts$/);
+    act(() => store.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: false }));
     expect(container.firstChild).toBeNull();
   });
 });

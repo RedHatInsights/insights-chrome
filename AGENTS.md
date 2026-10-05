@@ -134,6 +134,13 @@ docs/              # Documentation (you are here)
 6. **PF5 vs PF6** — PF5 styles are still imported for backward compatibility. Prefer PF6 for new code but do not remove PF5 imports.
 7. **Environment-specific URLs** — Never hardcode URLs. Use `getEnv()`, `isProd()`, `getEnvDetails()` from `src/utils/common.ts`.
 8. **Global filter side effects** — `globalFilterAtom` changes propagate to ALL consuming applications. Test thoroughly.
+9. **Feature-flag and visibility changes** — Before editing Unleash, visibility helpers, or `GlobalFilter`, follow the [Unleash outage policy](docs/navigation.md#unleash-outage-policy). Preserve its cache, timeout, degraded-state, and Sentry-severity behavior; keep `GlobalFilter` permission lookup independent of flag health, and add outage/recovery regression tests.
+
+## Pull requests
+
+- For ticketed pull requests, title must contain exactly one Jira issue key, including the project prefix and numeric ID (`<PROJECT>-<NUMBER>`); do not put the full Jira URL in the title. Jira+GitHub integration uses this key to link the PR to its Jira ticket.
+- For no-ticket pull requests, use a descriptive title without a Jira key and include a standalone `No Jira ticket: <reason>` declaration in the pull request body.
+- For ticketed pull requests, include the full Jira issue URL for the title's key in the pull request body; additional related keys are allowed. The `.github/workflows/pr-title-jira.yml` workflow enforces these title/description rules.
 
 ## Build & Run Commands
 

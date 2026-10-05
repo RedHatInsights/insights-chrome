@@ -106,14 +106,19 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
   const { contrastMode, setDefaultContrast, setHighContrast, setSystemContrast } = useHighContrast();
   const schedulerDrawerEnabled = useFlag('console.chrome-scheduler_drawer');
-  const schedulerDrawerActive = useAtomValue(drawerPanelContentAtom)?.scope === 'schedulerUi';
+  const drawerContent = useAtomValue(drawerPanelContentAtom);
+  const isNotificationDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
+  // Checkmark reflects an actually-visible panel: matching content AND expanded drawer.
+  // Closing via the panel "x" only collapses the drawer, leaving drawerContent set.
+  const schedulerDrawerActive = drawerContent?.scope === 'schedulerUi' && isNotificationDrawerExpanded;
 
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
   const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
   const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced);
+  const isFeltAutoEnabled = useFlag('platform.chrome-felt-auto');
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {
@@ -216,7 +221,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     {
       groupKey: 'showTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
-      isHidden: !isFeltThemeEnabled,
+      isHidden: !isFeltThemeEnabled || isFeltAutoEnabled,
       customContent: (
         <ToggleGroup aria-label={intl.formatMessage(messages.theme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem
@@ -494,14 +499,12 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   );
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-  const isNotificationDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
   const toggleDrawer = () => {
     toggleDrawerContent({
       scope: 'notifications',
       module: './DrawerPanel',
     });
   };
-  const drawerContent = useAtomValue(drawerPanelContentAtom);
 
   const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
     scope: 'notifications',

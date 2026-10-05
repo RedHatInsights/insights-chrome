@@ -8,6 +8,16 @@ Chrome leverages [Cloud Services Config][CSC] (CSC) to build the navigation on a
 
 Along with static navigation set in CSC, apps can opt into dynamic navigation by updating the `<namespace-navigation>` file with a few options:
 
+### Visibility failures
+
+Visibility checks fail closed: a thrown exception or rejected promise hides the item whose own check failed, including its descendants if it is a parent. A failed child check leaves its ancestors and siblings eligible for rendering; groups left empty after filtering are not rendered. This applies to both live and cached navigation, independently of the configuration-cache feature flag, and to service tiles in All Services.
+
+Chrome reports exceptions to Sentry with the visibility method, source, available configuration identifiers and an allowlisted `errorName` (for example, `TypeError` or `SecurityError`; unrecognized names become `UnknownError`). The original error, message, stack, arguments and request data are not attached. A normal `false` result is not an error. Bundle and service-tile evaluations track degradation separately, without setting the bundle/tile load-error flag for an item exception. The existing service-health banner combines them under a single **Navigation** label: a missing navigation link or catalog entry does not mean the underlying service is down. A successful subsequent evaluation clears degradation only for that source; the label remains until both sources recover. Banner display remains controlled by `platform.chrome.degraded-state-banner`.
+
+`hasLocalStorage` expects a string comparison value and uses `localStorage.getItem` with strict comparison (no boolean/number coercion). Storage access exceptions are handled by the same visibility boundary, so they hide the affected item and report degradation rather than aborting initialization. Functions that already catch their own errors and return `false` retain that behavior. The separate experimental Quickstarts setting is also guarded in navigation and routing: unavailable storage disables that optional entry without preventing the rest of the UI from rendering.
+
+Local search does not cache failed visibility checks or query results affected by those failures, so subsequent queries can retry without a page reload. Working results remain available, and normal permission denials and error-free query results retain their existing caching behavior.
+
 ### Permissions
 
 List of available permissions methods:
@@ -20,7 +30,7 @@ List of available permissions methods:
 - `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
 - `isHidden` - hides item in navigation
 - `withEmail` - show nav only if user's email contains first argument
-- `hasLocalStorage` - test if value (passed as second argument) equals to localStorage key (passed as first arg) value
+- `hasLocalStorage` - test if the string value (passed as second argument) equals the stored value for the localStorage key (passed as first argument)
 - `hasCookie` - test if value (passed as second argument) equals to cookie key (passed as first arg) value
 - `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission'], uses logical AND to evaluate the permissions
 - `loosePermissions` - similar to `hasPermissions`, uses logical OR to evaluate the permissions
@@ -36,6 +46,12 @@ List of available permissions methods:
 - `isITLess` - test if current environment is ITLess (FedRAMP/Commercial). First argument is the expected value (`true` or `false`)
 - `isKesselEnabled` - test if Kessel is deployed in the current environment. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.chrome.kessel` feature flag. First argument is the expected value (`true` or `false`)
 - `isKesselOrgOnboarded` - test if the current user's org is onboarded to the Kessel V2 experience. Returns `false` on FedRAMP (ITLess short-circuits). Checks the `platform.rbac.workspaces` feature flag. First argument is the expected value (`true` or `false`). Use to gate V2-only nav items (e.g. Access Management vs User Access)
+
+#### Unleash outage policy
+
+Visibility checks use the Unleash client's last successfully stored toggles when a toggle request fails. Stored toggles are keyed by internal org ID and internal account ID (Chrome's per-user ID), so a shared browser never evaluates one user's navigation with another user's toggles; without a complete identity, toggles are kept in memory only. Toggles cached by older Chrome versions under the unscoped `unleash:repository:*` keys are removed on startup. If the client is initialized but has no value for a flag, the flag is treated as disabled: checks expecting `true` return `false`, while checks expecting `false` return `true`. If the client itself is unavailable, visibility checks fail closed. `isKesselEnabled` and `isKesselOrgOnboarded` use the same policy, except ITLess mode continues to return `false`. The first toggle request times out after 5 seconds because it gates the initial navigation; background refreshes time out after 15 seconds, since stored toggles are served meanwhile.
+
+Unexpected toggle-fetch 4xx/5xx, network, or timeout errors mark feature flags degraded; metrics POST failures and requests intentionally cancelled by the client do not. The degraded state clears after the client is ready or recovers. The visibility helpers (`getVisible` and `getInvisible`) are public APIs used by consuming product apps, so each toggle HTTP response with status `>= 400` (4xx and 5xx) is reported to Sentry as a warning, not an error. Keep exception-level reporting for network, timeout, and invalid-content-type failures that explain what went wrong; do not duplicate HTTP-status warnings as errors. Feature-flag health must not gate `GlobalFilter` permission lookup; the filter should continue its own permission fetch when `flagsError` is set.
 
 #### apiRequest example
 

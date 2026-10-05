@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
-import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
+import { getUnleashClient } from '../components/FeatureFlags/unleashClient';
 
 const matcherMapper = {
   isEmpty,
@@ -71,6 +71,19 @@ const initialize = ({
     return (
       userPermissions && permissions[require] && permissions[require]((item) => userPermissions.find(({ permission }) => matchPermission(permission, item)))
     );
+  };
+
+  const isFeatureFlagEnabled = (flagName: string): boolean | undefined => {
+    try {
+      return getUnleashClient().isEnabled(flagName);
+    } catch {
+      return undefined;
+    }
+  };
+
+  const matchesFeatureFlag = (flagName: string, expectedValue: boolean) => {
+    const enabled = isFeatureFlagEnabled(flagName);
+    return enabled !== undefined && enabled === expectedValue;
   };
 
   const visibilityFunctions = {
@@ -167,7 +180,7 @@ const initialize = ({
       }
     },
     hasPermissions: checkPermissions,
-    hasLocalStorage: (key: string, value: unknown) => localStorage.get(key) === value,
+    hasLocalStorage: (key: string, value: string) => localStorage.getItem(key) === value,
     hasCookie: (cookieKey: string, cookieValue: string) => cookie.get(cookieKey) === cookieValue,
     apiRequest: async ({
       url,
@@ -200,7 +213,7 @@ const initialize = ({
         return false;
       }
     },
-    featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
+    featureFlag: (flagName: string, expectedValue: boolean) => matchesFeatureFlag(flagName, expectedValue),
     scope: (requiredScope: string) => {
       try {
         const parsed: unknown = JSON.parse(localStorage.getItem(LOGIN_SCOPES_STORAGE_KEY) || '[]');
@@ -213,28 +226,8 @@ const initialize = ({
       }
     },
     isITLess: (expected: boolean) => ITLess() === expected,
-    isKesselEnabled: (expected: boolean) => {
-      if (ITLess() || getFeatureFlagsError()) {
-        return false;
-      }
-
-      try {
-        return getUnleashClient().isEnabled('platform.chrome.kessel') === expected;
-      } catch {
-        return false;
-      }
-    },
-    isKesselOrgOnboarded: (expected: boolean) => {
-      if (ITLess() || getFeatureFlagsError()) {
-        return false;
-      }
-
-      try {
-        return getUnleashClient().isEnabled('platform.rbac.workspaces') === expected;
-      } catch {
-        return false;
-      }
-    },
+    isKesselEnabled: (expected: boolean) => (ITLess() ? false : matchesFeatureFlag('platform.chrome.kessel', expected)),
+    isKesselOrgOnboarded: (expected: boolean) => (ITLess() ? false : matchesFeatureFlag('platform.rbac.workspaces', expected)),
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
@@ -265,3 +258,9 @@ export const updateVisibilityFunctionsBeta = (isPreview: boolean) => {
 };
 
 export const initializeVisibilityFunctions = initialize;
+
+/** Remove the shared visibility callbacks so test-specific auth state cannot leak into later mounts. */
+export const resetVisibilityFunctions = () => {
+  const scope = getSharedScope();
+  delete scope['@chrome/visibilityFunctions'];
+};

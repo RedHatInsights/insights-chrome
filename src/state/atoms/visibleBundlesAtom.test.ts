@@ -134,6 +134,18 @@ describe('filterHiddenItems', () => {
     const result = filterHiddenItems(items);
     expect(result).toEqual([{ title: 'leaf', href: '/a', appId: 'foo' }]);
   });
+
+  it('prunes groups that become empty through nested expandable containers', () => {
+    const items: NavItem[] = [
+      {
+        groupId: 'outer',
+        navItems: [{ expandable: true, navItems: [{ title: 'hidden', href: '/hidden', isHidden: true }] }],
+      },
+      { title: 'working', href: '/working' },
+    ];
+
+    expect(filterHiddenItems(items)).toEqual([{ title: 'working', href: '/working' }]);
+  });
 });
 
 describe('loadServiceTiles', () => {

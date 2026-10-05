@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { SEARCH_TIMEOUT } from '../../setup/constants';
+import { SEARCH_TIMEOUT } from '../setup/constants';
 
 /**
  * Page Object for Chrome Search functionality

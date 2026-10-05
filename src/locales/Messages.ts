@@ -708,4 +708,9 @@ export default defineMessages({
     description: 'Label for quickstarts / learning-resources runtime',
     defaultMessage: 'Quick starts',
   },
+  degradedServiceNavigation: {
+    id: 'degradedServiceNavigation',
+    description: 'Combined label for degraded bundle navigation and service catalog visibility or loading',
+    defaultMessage: 'Navigation',
+  },
 });

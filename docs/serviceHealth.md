@@ -59,6 +59,8 @@ type ServiceHealthStatus = {
   configFromCache: boolean;
   featureFlags: boolean;
   quickstarts: boolean;
+  navigation?: boolean;
+  serviceTiles?: boolean;
 };
 ```
 
@@ -69,6 +71,7 @@ type ServiceHealthStatus = {
 - **Icon:** Exclamation triangle icon
 - **Dismissal:** Not dismissible - persists until services recover
 - **Placement:** Above header, below preview banner
+- **Navigation label:** `navigation` and `serviceTiles` share one **Navigation** entry, shown while either is degraded. This describes service discovery rather than suggesting all underlying services are unavailable. Their health and recovery remain independent.
 
 ## Use Cases
 
@@ -100,6 +103,8 @@ if (getFeatureFlagsError()) {
 ```
 
 ## Recovery
+
+Chrome tracks navigation and All Services evaluation failures separately from `configFromCache`. Item-level exceptions set `navigation` or `serviceTiles`, while normal visibility denials do not. Each source clears its own degraded state after a successful re-evaluation; recovery of another source cannot clear it. These optional fields preserve compatibility with consumers constructing older health snapshots.
 
 Mark service as recovered when API succeeds:
 
