@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
-import { getDarkModeStore, useDarkModeStore } from '../state/stores/darkModeStore';
+import { getCachedDarkModeStore } from '../chrome/darkModeStoreBridge';
 import { THEME_STORAGE_KEY } from '../utils/consts';
-
-// Force webpack to treat useDarkModeStore as a used export so the module cache
-// includes it when remote modules load it via Module Federation.
-void useDarkModeStore;
 
 export enum ThemeVariants {
   light = 'light',
@@ -25,9 +21,11 @@ export const useTheme = () => {
     } else {
       document.documentElement.classList.remove('pf-v6-theme-dark');
     }
-    // Sync dark mode state to scalprum shared store for remote modules
-    const darkModeStore = getDarkModeStore();
-    darkModeStore.updateState(isDark ? 'SET_DARK' : 'SET_LIGHT');
+    // Sync dark mode state to scalprum shared store for remote modules.
+    // Uses the MF bridge (self-consumption) — the store may not be cached yet
+    // during initial render, but getInitialIsDark in the store reads the DOM
+    // class, so the store will pick up the correct state when it initializes.
+    getCachedDarkModeStore()?.updateState(isDark ? 'SET_DARK' : 'SET_LIGHT');
   };
 
   const getInitialTheme = (): ThemeVariants => {

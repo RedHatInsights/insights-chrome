@@ -19,6 +19,10 @@ jest.mock('@unleash/proxy-client-react', () => ({
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div />,
 }));
+jest.mock('../../chrome/darkModeStoreBridge', () => ({
+  getCachedDarkModeStore: jest.fn(),
+  useDarkModeIsDark: () => false,
+}));
 jest.mock('./UserToggle', () => ({
   __esModule: true,
   default: ({ extraItems }: { extraItems?: React.ReactNode }) => <div>{extraItems}</div>,
