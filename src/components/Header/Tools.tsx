@@ -123,7 +123,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   // Keep auto-Felt enabled while flags are loading to prevent theme flicker.
   // Once flags resolve, follow the actual flag value.
   const isFeltAutoEnabled = flagsResolved ? isFeltAutoFlag : true;
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {
@@ -226,7 +226,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     {
       groupKey: 'showTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
-      isHidden: !isFeltThemeEnabled || isFeltAutoEnabled || isGlassForced,
+      isHidden: !isFeltThemeEnabled || isFeltAutoEnabled,
       customContent: (
         <ToggleGroup aria-label={intl.formatMessage(messages.theme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem

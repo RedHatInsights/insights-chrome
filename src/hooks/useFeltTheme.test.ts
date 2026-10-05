@@ -45,51 +45,54 @@ describe('useFeltTheme', () => {
     expect(localStorage.getItem(FELT_THEME_KEY)).toBe('false');
   });
 
-  it('should force felt enabled when forceEnabled is true', () => {
-    const { result } = renderHook(() => useFeltTheme(true));
-    expect(result.current.isFeltTheme).toBe(true);
-    expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
-  });
-
-  it('should not allow disabling when forceEnabled is true', () => {
-    const { result } = renderHook(() => useFeltTheme(true));
-    act(() => result.current.setFeltDisabled());
-    expect(result.current.isFeltTheme).toBe(true);
-    expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
-  });
-
-  it('should not persist to localStorage when setFeltEnabled is called in forced mode', () => {
-    const { result } = renderHook(() => useFeltTheme(true));
-    act(() => result.current.setFeltEnabled());
-    expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
-  });
-
-  it('should restore saved preference when forceEnabled transitions to false', () => {
-    const { result, rerender } = renderHook(({ force }: { force: boolean }) => useFeltTheme(force), {
-      initialProps: { force: true },
-    });
-    expect(result.current.isFeltTheme).toBe(true);
-    expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
-
-    rerender({ force: false });
-    expect(result.current.isFeltTheme).toBe(false);
-    expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
-  });
-
-  it('should expose forceEnabled state', () => {
-    const { result: normalResult } = renderHook(() => useFeltTheme());
-    expect(normalResult.current.forceEnabled).toBe(false);
-
-    const { result: forcedResult } = renderHook(() => useFeltTheme(true));
-    expect(forcedResult.current.forceEnabled).toBe(true);
-  });
-
-  it('should remove class on unmount when not forced', () => {
+  it('should remove class on unmount when disabled', () => {
     localStorage.setItem(FELT_THEME_KEY, 'true');
     const { unmount, result } = renderHook(() => useFeltTheme());
     expect(result.current.isFeltTheme).toBe(true);
     act(() => result.current.setFeltDisabled());
     unmount();
     expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
+  });
+
+  describe('autoEnabled', () => {
+    it('should force felt theme on regardless of localStorage', () => {
+      localStorage.removeItem(FELT_THEME_KEY);
+      const { result } = renderHook(() => useFeltTheme(true));
+      expect(result.current.isFeltTheme).toBe(true);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
+    });
+
+    it('should make setFeltDisabled a no-op when auto is on', () => {
+      const { result } = renderHook(() => useFeltTheme(true));
+      act(() => result.current.setFeltDisabled());
+      expect(result.current.isFeltTheme).toBe(true);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(true);
+    });
+
+    it('should make setFeltEnabled a no-op when auto is on', () => {
+      const { result } = renderHook(() => useFeltTheme(true));
+      act(() => result.current.setFeltEnabled());
+      // localStorage should not be written
+      expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+    });
+
+    it('should not write to localStorage when auto is on', () => {
+      const { result } = renderHook(() => useFeltTheme(true));
+      act(() => result.current.setFeltEnabled());
+      act(() => result.current.setFeltDisabled());
+      expect(localStorage.getItem(FELT_THEME_KEY)).toBeNull();
+    });
+
+    it('should revert to localStorage preference when auto toggles off', () => {
+      localStorage.setItem(FELT_THEME_KEY, 'false');
+      const { result, rerender } = renderHook(({ auto }) => useFeltTheme(auto), {
+        initialProps: { auto: true },
+      });
+      expect(result.current.isFeltTheme).toBe(true);
+
+      rerender({ auto: false });
+      expect(result.current.isFeltTheme).toBe(false);
+      expect(document.documentElement.classList.contains(FELT_THEME_CLASS)).toBe(false);
+    });
   });
 });
