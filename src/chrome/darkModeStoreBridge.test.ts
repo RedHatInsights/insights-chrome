@@ -1,10 +1,5 @@
 import { getCachedModule, getModule, preloadModule } from '@scalprum/core';
-import {
-  _resetDarkModeStoreBridge,
-  getCachedDarkModeStore,
-  loadDarkModeStore,
-  preloadDarkModeStore,
-} from './darkModeStoreBridge';
+import { _resetDarkModeStoreBridge, getCachedDarkModeStore, loadDarkModeStore, preloadDarkModeStore } from './darkModeStoreBridge';
 
 jest.mock('@scalprum/core', () => ({
   getCachedModule: jest.fn(),

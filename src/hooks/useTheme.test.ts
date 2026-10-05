@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { ThemeVariants, useTheme } from './useTheme';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
-import { getCachedDarkModeStore } from '../chrome/darkModeStoreBridge';
 import { THEME_STORAGE_KEY } from '../utils/consts';
 
 jest.mock('@unleash/proxy-client-react', () => ({
