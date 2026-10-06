@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import { waitFor } from '@testing-library/react';
 import { getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 import { CACHE_SCHEMA_VERSION, CACHE_TTL_MS, CONFIG_CACHE_FALLBACK_FLAG, cacheFetch, deleteCacheKey } from './cacheFetch';
 
@@ -393,6 +394,33 @@ describe('cacheFetch', () => {
   });
 
   describe('shouldPersist', () => {
+    it('returns live data without waiting for a stalled persistence read', async () => {
+      mockGetItem.mockImplementation(() => new Promise(() => {}));
+      const result = await cacheFetch('test-key', jest.fn().mockResolvedValue({ sku: true }), CACHE_TTL_MS, undefined, {
+        enabled: true,
+        shouldPersist: () => true,
+      });
+      expect(result).toEqual({ data: { sku: true }, fromCache: false });
+      expect(mockSetItem).not.toHaveBeenCalled();
+    });
+
+    it('handles a rejected persistence decision in the background', async () => {
+      const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+      try {
+        const result = await cacheFetch('test-key', jest.fn().mockResolvedValue({ sku: true }), CACHE_TTL_MS, undefined, {
+          enabled: true,
+          shouldPersist: () => {
+            throw new Error('predicate failed');
+          },
+        });
+        expect(result).toEqual({ data: { sku: true }, fromCache: false });
+        await waitFor(() => expect(warning).toHaveBeenCalled());
+        expect(mockSetItem).not.toHaveBeenCalled();
+      } finally {
+        warning.mockRestore();
+      }
+    });
+
     it('skips setItem when shouldPersist returns false', async () => {
       mockGetItem.mockResolvedValue({ data: { sku: true }, cachedAt: Date.now() });
       const fetcher = jest.fn().mockResolvedValue({ sku: false });
@@ -413,15 +441,17 @@ describe('cacheFetch', () => {
       const result = await cacheFetch('test-key', fetcher, CACHE_TTL_MS, undefined, { enabled: true, shouldPersist });
 
       expect(result).toEqual({ data: { sku: true }, fromCache: false });
-      expect(shouldPersist).toHaveBeenCalledWith({ sku: true }, { sku: false });
-      expect(mockSetItem).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(shouldPersist).toHaveBeenCalledWith({ sku: true }, { sku: false });
+        expect(mockSetItem).toHaveBeenCalled();
+      });
     });
 
     it('passes null cached data when nothing is stored', async () => {
       mockGetItem.mockResolvedValue(null);
       const shouldPersist = jest.fn().mockReturnValue(true);
       await cacheFetch('test-key', jest.fn().mockResolvedValue({ sku: false }), CACHE_TTL_MS, undefined, { enabled: true, shouldPersist });
-      expect(shouldPersist).toHaveBeenCalledWith({ sku: false }, null);
+      await waitFor(() => expect(shouldPersist).toHaveBeenCalledWith({ sku: false }, null));
     });
 
     it('still returns live data when cache fallback is disabled', async () => {

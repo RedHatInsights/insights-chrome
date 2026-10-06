@@ -35,7 +35,7 @@ function getPartnerScope(pathname: string) {
   return undefined;
 }
 
-export async function logout(auth: AuthContextProps, bounce?: boolean) {
+export async function logout(auth: AuthContextProps, bounce?: boolean, entitlementsFallbackEnabled = false) {
   const keys = Object.keys(localStorage).filter(
     (key) =>
       key.endsWith('/api/entitlements/v1/services') ||
@@ -45,7 +45,9 @@ export async function logout(auth: AuthContextProps, bounce?: boolean) {
       key.startsWith(GLOBAL_FILTER_KEY)
   );
   deleteLocalStorageItems([...keys, OFFLINE_REDIRECT_STORAGE_KEY, LOGIN_SCOPES_STORAGE_KEY]);
-  await clearEntitlementsCache();
+  if (entitlementsFallbackEnabled) {
+    await clearEntitlementsCache(auth.user?.profile.org_id);
+  }
   if (bounce) {
     const eightSeconds = new Date(new Date().getTime() + 8 * 1000);
     Cookies.set('cs_loggedOut', 'true', {

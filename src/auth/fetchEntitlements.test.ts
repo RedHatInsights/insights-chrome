@@ -1,8 +1,14 @@
 import { AxiosResponse } from 'axios';
 import { cacheFetch } from '../utils/cacheFetch';
 import { DEGRADED_HEADERS, failureA, healthyPaid, healthyUnsubscribed, orgIdUserProfile } from './entitlementsContract.fixture';
-import { ENTITLEMENTS_CACHE_KEY, ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS } from './entitlementsConstants';
-import { EntitlementsClient, FetchEntitlementsResult, clearEntitlementsCache, fetchEntitlements } from './fetchEntitlements';
+import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
+import {
+  EntitlementsClient,
+  FetchEntitlementsOptions,
+  FetchEntitlementsResult,
+  clearEntitlementsCache,
+  fetchEntitlements as fetchEntitlementsRequest,
+} from './fetchEntitlements';
 import { EntitlementsMap, getMinimumViableEntitlements, isEntitlementsMap } from './getMinimumViableEntitlements';
 
 jest.mock('../utils/cacheFetch', () => ({
@@ -15,6 +21,10 @@ const { deleteCacheKey: mockedDeleteCacheKey } = jest.requireMock('../utils/cach
 
 function userWith(profile: Record<string, unknown> = orgIdUserProfile) {
   return { profile };
+}
+
+function fetchEntitlements(user: ReturnType<typeof userWith>, options: FetchEntitlementsOptions = {}) {
+  return fetchEntitlementsRequest(user, { ...options, enabled: true });
 }
 
 function axiosResponse(data: EntitlementsMap, headers: Record<string, string> = {}): AxiosResponse<EntitlementsMap> {
@@ -78,7 +88,7 @@ describe('fetchEntitlements', () => {
     const result = await fetchEntitlements(userWith(), { client });
     expect(result).toEqual({ entitlements: healthyPaid, degraded: false, source: 'live' });
     expect(mockedCacheFetch).toHaveBeenCalledWith(
-      ENTITLEMENTS_CACHE_KEY,
+      getEntitlementsCacheKey(orgIdUserProfile.org_id),
       expect.any(Function),
       ENTITLEMENTS_CACHE_TTL_MS,
       isEntitlementsMap,
@@ -229,19 +239,69 @@ describe('fetchEntitlements', () => {
     expect(result.source).toBe('defaults');
   });
 
-  it('never persists Option B through cacheFetch success', async () => {
+  it('returns Option B when cacheFetch rejects', async () => {
     mockedCacheFetch.mockRejectedValue({ response: { status: 503 } });
-    await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() } });
-    const successWrites = mockedCacheFetch.mock.calls.filter(() => false);
-    expect(successWrites).toEqual([]);
+    const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() } });
+    expect(result.source).toBe('defaults');
     expect(mockedCacheFetch).toHaveBeenCalled();
   });
 });
 
 describe('clearEntitlementsCache', () => {
   it('deletes the entitlements cache key', async () => {
-    await clearEntitlementsCache();
-    expect(mockedDeleteCacheKey).toHaveBeenCalledWith(ENTITLEMENTS_CACHE_KEY);
+    await clearEntitlementsCache(orgIdUserProfile.org_id);
+    expect(mockedDeleteCacheKey).toHaveBeenCalledWith(getEntitlementsCacheKey(orgIdUserProfile.org_id));
+  });
+
+  it('does not delete a shared key when the org is unavailable', async () => {
+    mockedDeleteCacheKey.mockClear();
+    await clearEntitlementsCache(undefined);
+    expect(mockedDeleteCacheKey).not.toHaveBeenCalled();
+  });
+});
+
+describe('fetchEntitlements with the feature disabled', () => {
+  beforeEach(() => mockedCacheFetch.mockClear());
+
+  it('uses the original request options and ignores degraded headers and previous data', async () => {
+    const client = clientWith(axiosResponse(healthyUnsubscribed, DEGRADED_HEADERS));
+    const result = await fetchEntitlementsRequest(userWith(), { client, previous: healthyPaid });
+    expect(client.servicesGet).toHaveBeenCalledWith({});
+    expect(result).toEqual({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' });
+    expect(mockedCacheFetch).not.toHaveBeenCalled();
+  });
+
+  it.each([401, 503])('returns the original empty map on HTTP %s without retry or storage', async (status) => {
+    const client = clientWith({ response: { status } });
+    const result = await fetchEntitlementsRequest(userWith(), { enabled: false, client, previous: healthyPaid });
+    expect(result).toEqual({ entitlements: {}, degraded: false, source: 'empty' });
+    expect(client.servicesGet).toHaveBeenCalledTimes(1);
+    expect(mockedCacheFetch).not.toHaveBeenCalled();
+  });
+
+  it('does not impose a new timeout on a hung legacy request', async () => {
+    jest.useFakeTimers();
+    try {
+      let resolve!: (value: { data: EntitlementsMap }) => void;
+      const client = {
+        servicesGet: jest.fn(
+          () =>
+            new Promise<{ data: EntitlementsMap }>((done) => {
+              resolve = done;
+            })
+        ),
+      };
+      const settled = jest.fn();
+      const pending = fetchEntitlementsRequest(userWith(), { client }).then(settled);
+      await jest.advanceTimersByTimeAsync(ENTITLEMENTS_TIMEOUT_MS * 2);
+      expect(settled).not.toHaveBeenCalled();
+      expect(jest.getTimerCount()).toBe(0);
+      resolve({ data: healthyPaid });
+      await pending;
+      expect(settled).toHaveBeenCalledWith({ entitlements: healthyPaid, degraded: false, source: 'live' });
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
 

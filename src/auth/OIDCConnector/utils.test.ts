@@ -104,11 +104,24 @@ describe('logout', () => {
     const mockedClear = jest.mocked(clearEntitlementsCache);
     const auth = {
       revokeTokens: jest.fn().mockResolvedValue(undefined),
+      user: { profile: { org_id: '12345' } },
     } as unknown as AuthContextProps;
 
-    await logout(auth, false);
+    await logout(auth, false, true);
 
     expect(mockedClear).toHaveBeenCalledTimes(1);
+    expect(mockedClear).toHaveBeenCalledWith('12345');
     expect(auth.revokeTokens).toHaveBeenCalledWith(['access_token', 'refresh_token']);
+  });
+
+  it.each([true, false])('does not clean up IndexedDB when disabled (bounce=%s)', async (bounce) => {
+    jest.mocked(clearEntitlementsCache).mockClear();
+    const auth = {
+      signoutRedirect: jest.fn().mockResolvedValue(undefined),
+      revokeTokens: jest.fn().mockResolvedValue(undefined),
+    } as unknown as AuthContextProps;
+    await logout(auth, bounce);
+    expect(clearEntitlementsCache).not.toHaveBeenCalled();
+    expect(bounce ? auth.signoutRedirect : auth.revokeTokens).toHaveBeenCalled();
   });
 });

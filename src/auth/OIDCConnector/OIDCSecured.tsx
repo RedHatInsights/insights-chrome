@@ -24,7 +24,10 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import useManageSilentRenew from './useManageSilentRenew';
-import { EntitlementsMap, fetchEntitlements } from '../fetchEntitlements';
+import { EntitlementsMap, fetchEntitlements, getMinimumViableEntitlements } from '../fetchEntitlements';
+import { ENTITLEMENTS_FALLBACK_FLAG } from '../entitlementsConstants';
+import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const authChannel = new BroadcastChannel('auth');
@@ -62,6 +65,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const auth = useAuth();
   const authRef = useRef(auth);
   const previousEntitlementsRef = useRef<EntitlementsMap | undefined>(undefined);
+  const previousEntitlementsOrgRef = useRef<unknown>(undefined);
+  const entitlementsFallbackEnabledRef = useRef(false);
   const fetchGenerationRef = useRef(0);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
@@ -74,10 +79,18 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     ready: false,
     logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });
-      logout(authRef.current, bounce);
+      if (entitlementsFallbackEnabledRef.current) {
+        fetchGenerationRef.current += 1;
+        previousEntitlementsRef.current = undefined;
+      }
+      logout(authRef.current, bounce, entitlementsFallbackEnabledRef.current);
     },
     logout: () => {
-      logout(authRef.current, true);
+      if (entitlementsFallbackEnabledRef.current) {
+        fetchGenerationRef.current += 1;
+        previousEntitlementsRef.current = undefined;
+      }
+      logout(authRef.current, true, entitlementsFallbackEnabledRef.current);
     },
     login: (requiredScopes) => login(authRef.current, requiredScopes),
     loginAllTabs: () => {
@@ -132,22 +145,41 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(chromeStore, authRef);
-    let entitlements: EntitlementsMap = previousEntitlementsRef.current ?? {};
-    let degraded = false;
-    try {
-      const result = await fetchEntitlements(user, { previous: previousEntitlementsRef.current });
-      entitlements = result.entitlements;
-      degraded = result.degraded;
-    } catch {
-      // fetchEntitlements is not supposed to throw; keep bootstrap unblocked.
-      entitlements = previousEntitlementsRef.current ?? {};
-      degraded = Boolean(user.profile?.org_id);
+    const enabled = user.profile?.org_id
+      ? await getBootstrapFeatureFlag(mapOIDCUserToChromeUser(user, {}), chromeStore.get(isPreviewAtom), ENTITLEMENTS_FALLBACK_FLAG)
+      : false;
+    let entitlements: EntitlementsMap;
+    if (enabled) {
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
+      entitlementsFallbackEnabledRef.current = true;
+      if (previousEntitlementsOrgRef.current !== user.profile?.org_id) {
+        previousEntitlementsRef.current = undefined;
+        previousEntitlementsOrgRef.current = user.profile?.org_id;
+      }
+      let degraded = false;
+      try {
+        const result = await fetchEntitlements(user, { enabled: true, previous: previousEntitlementsRef.current });
+        entitlements = result.entitlements;
+        degraded = result.degraded;
+      } catch {
+        entitlements = previousEntitlementsRef.current ?? getMinimumViableEntitlements(user);
+        degraded = Boolean(user.profile?.org_id);
+      }
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
+      previousEntitlementsRef.current = entitlements;
+      chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded });
+    } else {
+      if (entitlementsFallbackEnabledRef.current) {
+        chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
+      }
+      entitlementsFallbackEnabledRef.current = false;
+      previousEntitlementsRef.current = undefined;
+      entitlements = (await fetchEntitlements(user)).entitlements;
     }
-    if (generation !== fetchGenerationRef.current) {
-      return;
-    }
-    previousEntitlementsRef.current = entitlements;
-    chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded });
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
     setState((prev) => ({

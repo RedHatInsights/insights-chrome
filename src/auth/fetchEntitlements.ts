@@ -1,6 +1,6 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import entitlementsApi from './entitlementsApi';
-import { ENTITLEMENTS_CACHE_KEY, ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS } from './entitlementsConstants';
+import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_STORAGE_TIMEOUT_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
 import {
   EntitlementsMap,
   EntitlementsUserProfile,
@@ -10,6 +10,7 @@ import {
   shouldPersistEntitlements,
 } from './getMinimumViableEntitlements';
 import { cacheFetch, deleteCacheKey } from '../utils/cacheFetch';
+import { withTimeout } from '../utils/withTimeout';
 
 export type { EntitlementsMap };
 export { getMinimumViableEntitlements } from './getMinimumViableEntitlements';
@@ -24,10 +25,12 @@ export type FetchEntitlementsResult = {
 };
 
 export type EntitlementsClient = {
-  servicesGet: (params: { options?: AxiosRequestConfig }) => Promise<{ data: unknown; headers?: AxiosResponse['headers'] }>;
+  servicesGet: (params: { options?: AxiosRequestConfig & { cache?: false } }) => Promise<{ data: unknown; headers?: AxiosResponse['headers'] }>;
 };
 
 export type FetchEntitlementsOptions = {
+  /** Default off: retain the pre-fallback request and error handling exactly. */
+  enabled?: boolean;
   previous?: EntitlementsMap;
   client?: EntitlementsClient;
   signal?: AbortSignal;
@@ -83,6 +86,9 @@ async function requestServices(client: EntitlementsClient, controller: AbortCont
     try {
       const response = await client.servicesGet({
         options: {
+          // The legacy interceptor's URL-only HTTP cache is not tenant-scoped.
+          // Enabled requests use only our organization-scoped last-known-good cache.
+          cache: false,
           timeout: ENTITLEMENTS_TIMEOUT_MS,
           signal: controller.signal,
         },
@@ -109,6 +115,16 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
   }
 
   const client = options.client ?? defaultClient;
+  if (options.enabled !== true) {
+    try {
+      const response = await client.servicesGet({});
+      return { entitlements: response.data as EntitlementsMap, degraded: false, source: 'live' };
+    } catch {
+      return { entitlements: {}, degraded: false, source: 'empty' };
+    }
+  }
+
+  const cacheKey = getEntitlementsCacheKey(user.profile.org_id);
   const controller = new AbortController();
   const onOuterAbort = () => controller.abort();
   if (options.signal) {
@@ -119,22 +135,32 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
     }
   }
   const timer = setTimeout(() => controller.abort(), ENTITLEMENTS_TIMEOUT_MS);
+  let rejectAbort: (error: Error) => void = () => undefined;
+  const aborted = new Promise<never>((_resolve, reject) => {
+    rejectAbort = reject;
+  });
+  const onAbort = () => rejectAbort(Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' }));
+  controller.signal.addEventListener('abort', onAbort, { once: true });
+  if (controller.signal.aborted) {
+    onAbort();
+  }
 
   let liveDegraded = false;
 
   try {
     const { data, fromCache } = await cacheFetch(
-      ENTITLEMENTS_CACHE_KEY,
+      cacheKey ?? '',
       async () => {
-        const live = await requestServices(client, controller);
+        const live = await Promise.race([requestServices(client, controller), aborted]);
         liveDegraded = live.degraded;
         return live.entitlements;
       },
       ENTITLEMENTS_CACHE_TTL_MS,
       isEntitlementsMap,
       {
-        enabled: true,
+        enabled: Boolean(cacheKey),
         fallbackOnAbort: true,
+        cacheReadTimeoutMs: ENTITLEMENTS_STORAGE_TIMEOUT_MS,
         shouldPersist: (live, cached) => shouldPersistEntitlements(live, cached, liveDegraded),
       }
     );
@@ -147,10 +173,15 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
     return fallbackResult(user, options.previous);
   } finally {
     clearTimeout(timer);
+    controller.signal.removeEventListener('abort', onAbort);
     options.signal?.removeEventListener('abort', onOuterAbort);
   }
 }
 
-export async function clearEntitlementsCache(): Promise<void> {
-  await deleteCacheKey(ENTITLEMENTS_CACHE_KEY);
+/** Invalidate pending writes immediately; bound only the wait, not the deletion itself. */
+export async function clearEntitlementsCache(orgId: unknown): Promise<void> {
+  const key = getEntitlementsCacheKey(orgId);
+  if (key) {
+    await withTimeout(deleteCacheKey(key), ENTITLEMENTS_STORAGE_TIMEOUT_MS, undefined);
+  }
 }

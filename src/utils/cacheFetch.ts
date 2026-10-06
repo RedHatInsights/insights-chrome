@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import { withTimeout } from './withTimeout';
 import { getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 export type CacheFetchResult<T> = { data: T; fromCache: boolean };
@@ -14,6 +15,8 @@ export type CacheFetchOptions<T = unknown> = {
    * Default false: abort means the caller gave up, so do not serve cache.
    */
   fallbackOnAbort?: boolean;
+  /** Opt-in bound for fallback reads. Persistence reads always run in the background. */
+  cacheReadTimeoutMs?: number;
 };
 
 /** Bump when cached payload shapes change incompatibly. */
@@ -30,6 +33,9 @@ type CacheEnvelope<T> = {
 };
 
 let cache: LocalForage | undefined;
+const generations = new Map<string, number>();
+const pendingWrites = new Map<string, Set<Promise<unknown>>>();
+const pendingDeletes = new Map<string, Promise<void>>();
 
 function getCache(): LocalForage {
   if (!cache) {
@@ -116,10 +122,24 @@ function shouldUseCacheFallback(err: unknown, fallbackOnAbort = false): boolean 
  * Storage errors are swallowed — failing to clear must not block logout.
  */
 export async function deleteCacheKey(key: string): Promise<void> {
-  try {
-    await getCache().removeItem(storageKey(key));
-  } catch {
-    // ignore
+  const sk = storageKey(key);
+  generations.set(sk, (generations.get(sk) ?? 0) + 1);
+  const writes = [...(pendingWrites.get(sk) ?? [])];
+  const remove = () =>
+    Promise.resolve()
+      .then(() => getCache().removeItem(sk))
+      .catch(() => undefined);
+  // Delete immediately, then again after any already-started writes. New writes
+  // wait for this barrier; older fetches cannot persist after invalidation.
+  const deletion = Promise.all([pendingDeletes.get(sk), remove(), ...writes]).then(async () => {
+    if (writes.length) {
+      await remove();
+    }
+  });
+  pendingDeletes.set(sk, deletion);
+  await deletion;
+  if (pendingDeletes.get(sk) === deletion) {
+    pendingDeletes.delete(sk);
   }
 }
 
@@ -218,6 +238,8 @@ export async function cacheFetch<T>(
   const cacheFallbackPolicy = options ? Promise.resolve(options.enabled) : getConfigCacheFallbackPolicy();
   const liveFetch = Promise.resolve().then(fetcher);
   const sk = storageKey(key);
+  const generation = generations.get(sk) ?? 0;
+  const isCurrent = () => generation === (generations.get(sk) ?? 0);
   try {
     const data = await liveFetch;
 
@@ -232,33 +254,44 @@ export async function cacheFetch<T>(
       return { data, fromCache: false };
     }
 
-    if (options?.shouldPersist) {
-      const persistEnabled = await cacheFallbackPolicy;
-      if (!persistEnabled) {
-        return { data, fromCache: false };
-      }
-      const cached = await getCache()
-        .getItem<unknown>(sk)
-        .catch(() => null);
-      const cachedData = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached.data : null;
-      if (!options.shouldPersist(data, cachedData)) {
-        return { data, fromCache: false };
-      }
-    }
-
     const envelope: CacheEnvelope<T> = { data, cachedAt: Date.now() };
     // Fire-and-forget: never block the bootstrap-critical path on the IndexedDB
     // write, and swallow storage errors — the fetch succeeded, that's what matters.
-    void cacheFallbackPolicy.then((enabled) => {
-      if (!enabled) {
-        return;
-      }
-      void getCache()
-        .setItem(sk, envelope)
-        .catch((err) => {
-          console.warn(`[chrome] Failed to cache ${key}:`, err);
-        });
-    });
+    void cacheFallbackPolicy
+      .then(async (enabled) => {
+        if (!enabled || !isCurrent()) {
+          return;
+        }
+        if (pendingDeletes.has(sk)) {
+          await pendingDeletes.get(sk);
+        }
+        if (options?.shouldPersist) {
+          const cached = await getCache()
+            .getItem<unknown>(sk)
+            .catch(() => null);
+          const cachedData = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached.data : null;
+          if (!options.shouldPersist(data, cachedData)) {
+            return;
+          }
+        }
+        if (!isCurrent()) {
+          return;
+        }
+        const write = getCache()
+          .setItem(sk, envelope)
+          .catch((err) => {
+            console.warn(`[chrome] Failed to cache ${key}:`, err);
+          });
+        const writes = pendingWrites.get(sk) ?? new Set<Promise<unknown>>();
+        writes.add(write);
+        pendingWrites.set(sk, writes);
+        await write;
+        writes.delete(write);
+        if (!writes.size) {
+          pendingWrites.delete(sk);
+        }
+      })
+      .catch((err) => console.warn(`[chrome] Failed to cache ${key}:`, err));
     return { data, fromCache: false };
   } catch (err) {
     // Reject client errors and canceled requests immediately; only origin/network failures need flag readiness.
@@ -267,14 +300,15 @@ export async function cacheFetch<T>(
     }
 
     const cacheFallbackEnabled = await cacheFallbackPolicy;
-    if (!cacheFallbackEnabled) {
+    if (!cacheFallbackEnabled || !isCurrent() || pendingDeletes.has(sk)) {
       throw err;
     }
 
-    const cached = await getCache()
-      .getItem<unknown>(sk)
+    const read = Promise.resolve()
+      .then(() => getCache().getItem<unknown>(sk))
       .catch(() => null);
-    if (isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs) {
+    const cached = options?.cacheReadTimeoutMs === undefined ? await read : await withTimeout(read, options.cacheReadTimeoutMs, null);
+    if (isCurrent() && !pendingDeletes.has(sk) && isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs) {
       return { data: cached.data, fromCache: true };
     }
     throw err;
