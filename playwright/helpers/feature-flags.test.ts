@@ -1,5 +1,5 @@
 import type { Page, Route } from '@playwright/test';
-import { mockFeatureFlags } from './feature-flags';
+import { clearCachedFeatureFlags, mockFeatureFlags } from './feature-flags';
 
 const toggle = (name: string, enabled: boolean) => ({
   name,
@@ -14,12 +14,37 @@ const createRoute = (toggles = [toggle('platform.chrome-felt-auto', true)]) => {
     fulfill: jest.fn().mockResolvedValue(undefined),
   };
   const page = {
+    addInitScript: jest.fn().mockResolvedValue(undefined),
     route: jest.fn(async (_pattern: string, handler: (route: Route) => Promise<void>) => handler(route as unknown as Route)),
   };
   return { page: page as unknown as Page, route };
 };
 
 describe('mockFeatureFlags', () => {
+  afterEach(() => {
+    localStorage.clear();
+    jsdomReset();
+  });
+
+  it('limits cache clearing to the Chrome application origin', async () => {
+    const { page } = createRoute();
+    await clearCachedFeatureFlags(page, 'https://chrome.example.test/insights');
+
+    expect(page.addInitScript).toHaveBeenCalledWith(expect.any(Function), 'https://chrome.example.test');
+    const [initScript, expectedOrigin] = (page.addInitScript as jest.Mock).mock.calls[0] as [(origin: string) => void, string];
+
+    jsdomReconfigure({ url: 'https://embedded.example.test/' });
+    localStorage.setItem('unleash:repository:embedded', 'preserve');
+    initScript(expectedOrigin);
+    expect(localStorage.getItem('unleash:repository:embedded')).toBe('preserve');
+
+    jsdomReconfigure({ url: expectedOrigin });
+    localStorage.setItem('unleash:repository:chrome', 'clear');
+    initScript(expectedOrigin);
+    expect(localStorage.getItem('unleash:repository:chrome')).toBeNull();
+    expect(localStorage.getItem('chrome:feature-flags:error')).toBe('false');
+  });
+
   it('keeps the enabled-flag array API and preserves unrelated live flags', async () => {
     const unrelated = { ...toggle('unrelated', true), variant: { name: 'experiment', enabled: true } };
     const { page, route } = createRoute([toggle('manual-theme', false), unrelated]);
