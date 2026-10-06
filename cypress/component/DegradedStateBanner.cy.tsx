@@ -47,14 +47,14 @@ describe('DegradedStateBanner', () => {
     );
   };
   it('should not render when all services healthy', () => {
-    mountBanner({ userPersonalization: false, entitlements: false, configFromCache: false, featureFlags: false });
+    mountBanner({ userPersonalization: false, entitlements: false, configFromCache: false, featureFlags: false, quickstarts: false });
 
     cy.get('[data-ouia-component-id="DegradedStateBanner"]').should('not.exist');
     cy.contains(/some services are degraded/i).should('not.exist');
   });
 
   it('should render banner with single degraded service', () => {
-    mountBanner({ userPersonalization: true, entitlements: false, configFromCache: false, featureFlags: false });
+    mountBanner({ userPersonalization: true, entitlements: false, configFromCache: false, featureFlags: false, quickstarts: false });
 
     cy.get('[data-ouia-component-id="DegradedStateBanner"]')
       .should('be.visible')
@@ -64,25 +64,26 @@ describe('DegradedStateBanner', () => {
   });
 
   it('should render banner with multiple degraded services', () => {
-    mountBanner({ userPersonalization: true, entitlements: true, configFromCache: false, featureFlags: false });
+    mountBanner({ userPersonalization: true, entitlements: true, configFromCache: false, featureFlags: false, quickstarts: false });
 
     cy.get('[data-ouia-component-id="DegradedStateBanner"]').should('be.visible').should('contain', 'User Preferences').should('contain', 'Entitlements');
   });
 
   it('should always show warning variant', () => {
-    mountBanner({ userPersonalization: true, entitlements: false, configFromCache: false, featureFlags: false });
+    mountBanner({ userPersonalization: true, entitlements: false, configFromCache: false, featureFlags: false, quickstarts: false });
 
     cy.get('[data-ouia-component-id="DegradedStateBanner"]').should('exist').should('have.attr', 'data-ouia-component-id', 'DegradedStateBanner');
   });
 
   it('should list all degraded services', () => {
-    mountBanner({ userPersonalization: true, entitlements: true, configFromCache: true, featureFlags: true });
+    mountBanner({ userPersonalization: true, entitlements: true, configFromCache: true, featureFlags: true, quickstarts: true });
 
     cy.get('[data-ouia-component-id="DegradedStateBanner"]')
       .should('be.visible')
       .should('contain', 'User Preferences')
       .should('contain', 'Entitlements')
       .should('contain', 'Navigation Configuration')
-      .should('contain', 'Feature Flags');
+      .should('contain', 'Feature Flags')
+      .should('contain', 'Quick starts');
   });
 });

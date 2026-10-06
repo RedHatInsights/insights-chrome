@@ -1,9 +1,8 @@
-import { Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { PluginManifest, RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { ScalprumProvider, ScalprumProviderConfigurableProps } from '@scalprum/react-core';
 import { Route, Routes } from 'react-router-dom';
-import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
-import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import { useAtomValue, useSetAtom } from 'jotai';
 import chromeHistory from '../../utils/chromeHistory';
@@ -13,10 +12,9 @@ import FavoritedServices from '../../layouts/FavoritedServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
-import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
+import { FlagTagsFilter } from '../../@types/types';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
-import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
@@ -37,12 +35,15 @@ import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 import transformScalprumManifest from './transformScalprumManifest';
+import QuickstartsRuntimeMount from './QuickstartsRuntimeMount';
 import { segmentPageOptionsAtom } from '../../state/atoms/segmentPageOptionsAtom';
 import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
+import { delegatedHelpTopicsAPI, delegatedQuickstartsAPI } from '../../state/atoms/delegatedChromeQuickstarts';
 import { preloadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
+
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
 
@@ -62,48 +63,50 @@ const ScalprumRoot = memo(
   () => {
     return (
       <ChromeProvider>
-        <BetaSwitcher />
-        <DegradedStateBanner />
-        <Routes>
-          <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
-          <Route
-            path="/connect/products"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <ProductSelection />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/allservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<ChromeFooter />} />
-              </Suspense>
-            }
-          />
-          {!ITLess() && (
+        <QuickstartsRuntimeMount>
+          <BetaSwitcher />
+          <DegradedStateBanner />
+          <Routes>
+            <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
             <Route
-              path="/favoritedservices"
+              path="/connect/products"
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <FavoritedServices Footer={<ChromeFooter />} />
+                  <ProductSelection />
                 </Suspense>
               }
             />
-          )}
-          <Route path="/security" element={<DefaultLayout />} />
-          {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
-          <Route
-            path={`${LIGHTWELL_PATH}/*`}
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <Lightwell />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
-        </Routes>
+            <Route
+              path="/allservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <AllServices Footer={<ChromeFooter />} />
+                </Suspense>
+              }
+            />
+            {!ITLess() && (
+              <Route
+                path="/favoritedservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <FavoritedServices Footer={<ChromeFooter />} />
+                  </Suspense>
+                }
+              />
+            )}
+            <Route path="/security" element={<DefaultLayout />} />
+            {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
+            <Route
+              path={`${LIGHTWELL_PATH}/*`}
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <Lightwell />
+                </Suspense>
+              }
+            />
+            <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
+          </Routes>
+        </QuickstartsRuntimeMount>
       </ChromeProvider>
     );
     // no props, no need to ever render based on parent changes
@@ -115,18 +118,14 @@ ScalprumRoot.displayName = 'MemoizedScalprumRoot';
 
 export type ChromeApiRootProps = {
   config: ScalprumConfig;
-  helpTopicsAPI: HelpTopicsAPI;
-  quickstartsAPI: QuickstartsApi;
 };
 
-const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootProps) => {
+const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
   const chromeAuth = useContext(ChromeAuthContext);
   const mutableChromeApi = useRef<ChromeAPI>(undefined);
   const isPreview = useAtomValue(isPreviewAtom);
   const addNavListener = useSetAtom(addNavListenerAtom);
   const deleteNavListener = useSetAtom(deleteNavListenerAtom);
-  const { setFilteredHelpTopics } = useContext(HelpTopicContext);
-  const internalFilteredTopics = useRef<HelpTopic[]>([]);
   const { analytics } = useContext(SegmentContext);
   const registerModule = useSetAtom(onRegisterModuleWriteAtom);
   const activeModule = useAtomValue(activeModuleAtom);
@@ -174,53 +173,11 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
     setPageOptions(pageOptions);
   }, []);
 
-  const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
-
-  function isStringArray(arr: EnableTopicsArgs): arr is string[] {
-    return typeof arr[0] === 'string';
-  }
-  async function enableTopics(...names: EnableTopicsArgs) {
-    let internalNames: string[] = [];
-    let shouldAppend = false;
-    if (isStringArray(names)) {
-      internalNames = names;
-    } else {
-      internalNames = names[0].names;
-      shouldAppend = !!names[0].append;
-    }
-    return helpTopicsAPI.enableTopics(...internalNames).then((res) => {
-      internalFilteredTopics.current = shouldAppend
-        ? [...internalFilteredTopics.current, ...res.filter((topic) => !internalFilteredTopics.current.find(({ name }) => name === topic.name))]
-        : res;
-      setFilteredHelpTopics?.(internalFilteredTopics.current);
-      return res;
-    });
-  }
-
-  function disableTopics(...topicsNames: string[]) {
-    helpTopicsAPI.disableTopics(...topicsNames);
-    internalFilteredTopics.current = internalFilteredTopics.current.filter((topic) => !topicsNames.includes(topic.name));
-    setFilteredHelpTopics?.(internalFilteredTopics.current);
-  }
-
-  const helpTopicsChromeApi = useMemo(
-    () => ({
-      ...helpTopicsAPI,
-      setActiveTopic,
-      enableTopics,
-      disableTopics,
-      closeHelpTopic: () => {
-        setActiveTopic('');
-      },
-    }),
-    []
-  );
-
   useMemo(() => {
     mutableChromeApi.current = createChromeContext({
       analytics: analytics!,
-      helpTopics: helpTopicsChromeApi,
-      quickstartsAPI,
+      helpTopics: delegatedHelpTopicsAPI,
+      quickstartsAPI: delegatedQuickstartsAPI,
       useGlobalFilter,
       setPageMetadata,
       chromeAuth,
@@ -250,8 +207,6 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       },
       pluginSDKOptions: {
         pluginLoaderOptions: {
-          // sharedScope: scope,
-          // Chrome only ever loads remote plugin manifests (fed-mods.json); pass through anything else untouched.
           transformPluginManifest: (manifest) =>
             isRemotePluginManifest(manifest) ? (transformScalprumManifest(manifest, config) as typeof manifest) : manifest,
         },
