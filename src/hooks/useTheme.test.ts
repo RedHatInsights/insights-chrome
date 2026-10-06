@@ -8,12 +8,20 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
 }));
 
-const mockUpdateState = jest.fn();
-jest.mock('../chrome/darkModeStoreBridge', () => ({
-  getCachedDarkModeStore: jest.fn(() => ({
-    updateState: mockUpdateState,
-  })),
-}));
+jest.mock('../chrome/darkModeStoreBridge', () => {
+  const mockUpdateState = jest.fn();
+  return {
+    getCachedDarkModeStore: jest.fn(() => ({
+      updateState: mockUpdateState,
+    })),
+    __mockUpdateState: mockUpdateState,
+  };
+});
+const mockUpdateState = (
+  jest.requireMock('../chrome/darkModeStoreBridge') as {
+    __mockUpdateState: jest.Mock;
+  }
+).__mockUpdateState;
 
 const mockedUseFlag = useFlag as unknown as jest.Mock;
 const mockedUseFlagsStatus = useFlagsStatus as unknown as jest.Mock;
