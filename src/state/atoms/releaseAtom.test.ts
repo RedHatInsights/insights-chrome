@@ -53,12 +53,12 @@ describe('Lightwell layout atoms', () => {
   });
 });
 
-describe('Lightwell layout atoms initialized from pathname', () => {
+describe('Lightwell layout atoms initialized from active bundle ID', () => {
   afterEach(() => {
     window.history.pushState({}, '', '/');
   });
 
-  it('should default to true when pathname starts with /lightwell', () => {
+  it('should default to true when active bundle is lightwell', () => {
     window.history.pushState({}, '', '/lightwell/some-page');
 
     /* eslint-disable @typescript-eslint/no-require-imports */
@@ -75,7 +75,24 @@ describe('Lightwell layout atoms initialized from pathname', () => {
     /* eslint-enable @typescript-eslint/no-require-imports */
   });
 
-  it('should default to false when pathname does not start with /lightwell', () => {
+  it('should default to true on the bare /lightwell route', () => {
+    window.history.pushState({}, '', '/lightwell');
+
+    /* eslint-disable @typescript-eslint/no-require-imports */
+    jest.isolateModules(() => {
+      const { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutForceFeltThemeAtom, layoutLightwellHeaderAtom } = require('./releaseAtom');
+      const { createStore } = require('jotai');
+      const store = createStore();
+
+      expect(store.get(layoutBannerHiddenAtom)).toBe(true);
+      expect(store.get(layoutForceGlassThemeAtom)).toBe(true);
+      expect(store.get(layoutForceFeltThemeAtom)).toBe(true);
+      expect(store.get(layoutLightwellHeaderAtom)).toBe(true);
+    });
+    /* eslint-enable @typescript-eslint/no-require-imports */
+  });
+
+  it('should default to false when active bundle is not lightwell', () => {
     window.history.pushState({}, '', '/insights/dashboard');
 
     /* eslint-disable @typescript-eslint/no-require-imports */
