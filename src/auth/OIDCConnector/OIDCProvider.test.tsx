@@ -268,8 +268,10 @@ describe('OIDCProvider', () => {
     // Must include base scopes so implicit signinSilent calls (automaticSilentRenew,
     // forceRefresh, BroadcastChannel refresh) don't downgrade to "openid" only
     expect(userManagerConfig.scope).toBe('openid api.console api.ask_red_hat api.graphql');
-    // Silent auth iframe timeout must be short to avoid delaying cold loads
-    // when no SSO session exists (default is 10s, we cap at 2s)
-    expect(userManagerConfig.silentRequestTimeoutInSeconds).toBe(2);
+    // silentRequestTimeoutInSeconds must NOT be set on the shared UserManager.
+    // A short timeout here would affect ALL silent requests including
+    // automaticSilentRenew — if the token endpoint takes longer than 2s,
+    // renewal fails.  The cold-load timeout is applied per-call in OIDCSecured.
+    expect(userManagerConfig).not.toHaveProperty('silentRequestTimeoutInSeconds');
   });
 });

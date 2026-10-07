@@ -147,7 +147,12 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       // refreshed token is not downgraded to the default "openid" scope.
       const silentScope = Array.from(new Set([...getBaseScopes(), ...(initialModuleConfig?.ssoScopes || [])])).join(' ');
       try {
-        const user = await auth.signinSilent({ scope: silentScope });
+        // Keep the iframe timeout short (2s vs default 10s) so cold loads
+        // without an SSO session are not visibly delayed before falling back
+        // to a full signinRedirect.  This timeout is intentionally per-call
+        // so it does not affect automaticSilentRenew or other signinSilent
+        // callers that should use the default 10s.
+        const user = await auth.signinSilent({ scope: silentScope, silentRequestTimeoutInSeconds: 2 });
         if (!user) {
           // signinSilent can resolve null/undefined without throwing when the
           // SSO session is gone — treat as failure and redirect to login.
