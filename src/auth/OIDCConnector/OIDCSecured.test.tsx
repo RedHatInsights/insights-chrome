@@ -371,7 +371,9 @@ describe('OIDCSecured', () => {
     );
 
     await waitFor(() => {
-      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
+      expect(signinSilent).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat'), silentRequestTimeoutInSeconds: 2 })
+      );
       // Null/undefined resolution must trigger login redirect
       expect(mockLogin).toHaveBeenCalled();
     });
@@ -396,7 +398,9 @@ describe('OIDCSecured', () => {
     );
 
     await waitFor(() => {
-      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
+      expect(signinSilent).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat'), silentRequestTimeoutInSeconds: 2 })
+      );
     });
 
     // Valid user returned → no login redirect
@@ -422,7 +426,9 @@ describe('OIDCSecured', () => {
     );
 
     await waitFor(() => {
-      expect(signinSilent).toHaveBeenCalledWith(expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat') }));
+      expect(signinSilent).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat'), silentRequestTimeoutInSeconds: 2 })
+      );
       // signinSilent failed → falls back to login redirect
       expect(mockLogin).toHaveBeenCalled();
     });
