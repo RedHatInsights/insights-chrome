@@ -57,7 +57,7 @@ export async function login(page: Page) {
 /**
  * Extracts the logged-in user's full name from the Chrome runtime API.
  *
- * Uses window.insights.chrome.getUser() which works regardless of whether
+ * Uses window.insights.chrome.auth.getUser() which works regardless of whether
  * OIDC tokens are stored in localStorage or in-memory (InMemoryWebStorage).
  *
  * @param page - Playwright Page object
@@ -67,10 +67,10 @@ export async function login(page: Page) {
 export async function getUserFullName(page: Page): Promise<string> {
   return page.evaluate(async () => {
     const chrome = (window as any).insights?.chrome;
-    if (!chrome?.getUser) {
-      throw new Error('Chrome API (window.insights.chrome.getUser) is not available — page may not be fully loaded');
+    if (!chrome?.auth?.getUser) {
+      throw new Error('Chrome API (window.insights.chrome.auth.getUser) is not available — page may not be fully loaded');
     }
-    const user = await chrome.getUser();
+    const user = await chrome.auth.getUser();
     const firstName = user?.identity?.user?.first_name;
     const lastName = user?.identity?.user?.last_name;
     if (!firstName || !lastName) {
