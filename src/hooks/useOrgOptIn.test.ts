@@ -90,11 +90,117 @@ describe('useOrgOptIn', () => {
   });
 
   test('clears shared state when orgId disappears', async () => {
-    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper(undefined) });
+    // First, resolve an org successfully
+    mockedFetchOrgOptIn.mockResolvedValue(true);
+    const store = createStore();
 
-    // With no orgId, atom should be reset to idle
-    expect(result.current.isLoading).toBe(true);
+    const makeWrapper = (orgId?: string) => {
+      const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
+      const Wrapper = ({ children }: { children: React.ReactNode }) =>
+        React.createElement(Provider, { store }, React.createElement(ChromeAuthContext.Provider, { value: authValue }, children));
+      Wrapper.displayName = 'OrgOptInTestWrapper';
+      return Wrapper;
+    };
+
+    const { result, unmount } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-1') });
+    await waitFor(() => expect(result.current.isResolved).toBe(true));
+    expect(result.current.v2OptedIn).toBe(true);
+    unmount();
+
+    // Now render without orgId — old resolved result must not be exposed
+    const { result: result2 } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper(undefined) });
+    expect(result2.current.isLoading).toBe(true);
+    expect(result2.current.v2OptedIn).toBeNull();
+    expect(result2.current.isResolved).toBe(false);
+  });
+
+  test('rejects stale A request in A→B→A identity change', async () => {
+    // Simulate: identity A starts fetch → identity changes to B → back to A.
+    // First A request resolves AFTER the second A request.
+    // The stale first-A result must be discarded.
+    let resolveFirstA: (v: boolean) => void;
+    const firstAPromise = new Promise<boolean>((r) => {
+      resolveFirstA = r;
+    });
+    let resolveSecondA: (v: boolean) => void;
+    const secondAPromise = new Promise<boolean>((r) => {
+      resolveSecondA = r;
+    });
+
+    const store = createStore();
+    const makeWrapper = (orgId?: string) => {
+      const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
+      const Wrapper = ({ children }: { children: React.ReactNode }) =>
+        React.createElement(Provider, { store }, React.createElement(ChromeAuthContext.Provider, { value: authValue }, children));
+      Wrapper.displayName = 'OrgOptInTestWrapper';
+      return Wrapper;
+    };
+
+    // Step 1: render with org-A, first fetch starts
+    mockedFetchOrgOptIn.mockReturnValue(firstAPromise);
+    const { unmount: unmount1 } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-A') });
+
+    // Step 2: identity changes to B (unmount + remount simulates re-render with new identity)
+    unmount1();
+    mockedFetchOrgOptIn.mockResolvedValue(false);
+    const { unmount: unmount2 } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-B') });
+
+    // Step 3: back to A — second A fetch starts
+    unmount2();
+    mockedFetchOrgOptIn.mockReturnValue(secondAPromise);
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-A') });
+
+    // Step 4: second A resolves first with expected value
+    resolveSecondA!(true);
+    await waitFor(() => expect(result.current.isResolved).toBe(true));
+    expect(result.current.v2OptedIn).toBe(true);
+
+    // Step 5: first A resolves late — must NOT overwrite
+    resolveFirstA!(false);
+    // Allow microtask to process
+    await waitFor(() => expect(result.current.v2OptedIn).toBe(true));
+    expect(result.current.isResolved).toBe(true);
+  });
+
+  test('treats stale result for different identity as loading', async () => {
+    // When identity changes A→B before effect fires, status flags from A
+    // should not leak through as isResolved/isError.
+    mockedFetchOrgOptIn.mockResolvedValue(true);
+
+    const store = createStore();
+    const makeWrapper = (orgId?: string) => {
+      const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
+      const Wrapper = ({ children }: { children: React.ReactNode }) =>
+        React.createElement(Provider, { store }, React.createElement(ChromeAuthContext.Provider, { value: authValue }, children));
+      Wrapper.displayName = 'OrgOptInTestWrapper';
+      return Wrapper;
+    };
+
+    // Resolve org-A
+    const { unmount } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-A') });
+    await waitFor(() => {
+      // wait for fetch to complete
+    });
+    unmount();
+
+    // Render with org-B — atom still has org-A result until effect runs
+    let resolveB: (v: boolean) => void;
+    mockedFetchOrgOptIn.mockReturnValue(
+      new Promise<boolean>((r) => {
+        resolveB = r;
+      })
+    );
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-B') });
+
+    // Before B resolves, status should show loading (not A's resolved)
+    await waitFor(() => expect(result.current.isLoading).toBe(true));
+    expect(result.current.isResolved).toBe(false);
     expect(result.current.v2OptedIn).toBeNull();
+
+    // Resolve B
+    resolveB!(false);
+    await waitFor(() => expect(result.current.isResolved).toBe(true));
+    expect(result.current.v2OptedIn).toBe(false);
   });
 
   test('resets lastFetchedOrgRef on error to allow retry on remount', async () => {

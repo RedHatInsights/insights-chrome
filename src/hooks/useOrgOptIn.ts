@@ -14,6 +14,7 @@ import { ITLess } from '../utils/common';
  * - Failures are not cached; components can retry on remount.
  * - Pending/error state is NOT treated as confirmed V1.
  * - Clears shared state when identity disappears.
+ * - Uses a request token per effect to prevent A→B→A race conditions.
  */
 export function useOrgOptIn() {
   const state = useAtomValue(orgOptInAtom);
@@ -22,10 +23,15 @@ export function useOrgOptIn() {
   const { user } = useContext(ChromeAuthContext);
   const orgId = user?.identity?.org_id ?? null;
   const lastFetchedOrgRef = useRef<string | null>(null);
-  const cancelledRef = useRef(false);
+  /**
+   * Monotonically increasing token. Each effect execution gets its own value;
+   * an earlier request whose token no longer matches is silently discarded.
+   */
+  const requestTokenRef = useRef(0);
 
   useEffect(() => {
-    cancelledRef.current = false;
+    // Mint a new token for this effect execution, invalidating all prior ones.
+    const token = ++requestTokenRef.current;
 
     // ITLess environments: never send opt-in request
     if (ITLess()) {
@@ -49,8 +55,8 @@ export function useOrgOptIn() {
     setState({ status: 'loading', v2OptedIn: null, identityKey: orgId });
 
     fetchOrgOptIn(orgId).then((result) => {
-      // Guard against unmounted hook or stale response after identity change
-      if (cancelledRef.current || lastFetchedOrgRef.current !== orgId) {
+      // Discard if a newer effect execution has since started
+      if (requestTokenRef.current !== token) {
         return;
       }
 
@@ -69,22 +75,24 @@ export function useOrgOptIn() {
       }
     });
 
+    // Cleanup: increment token so late-arriving responses are discarded
     return () => {
-      cancelledRef.current = true;
+      requestTokenRef.current++;
     };
   }, [orgId, setState, store]);
 
-  // Only expose result when identityKey matches current orgId
+  // Status flags are scoped to the current identity: a stale result for a
+  // different org is treated as loading/unresolved until the new request lands.
   const matchesCurrent = state.identityKey === orgId || state.identityKey === null;
 
   return {
     /** `true` if org is V2 opted in, `false` if not, `null` if unknown (loading/error). */
     v2OptedIn: matchesCurrent ? state.v2OptedIn : null,
-    /** `true` while the initial fetch is in progress. */
-    isLoading: state.status === 'idle' || state.status === 'loading',
-    /** `true` if the API call failed. */
-    isError: state.status === 'error',
-    /** `true` once the status is known (success). */
-    isResolved: state.status === 'resolved',
+    /** `true` while the initial fetch is in progress or result is stale. */
+    isLoading: !matchesCurrent || state.status === 'idle' || state.status === 'loading',
+    /** `true` if the API call failed for the current identity. */
+    isError: matchesCurrent && state.status === 'error',
+    /** `true` once the status is known (success) for the current identity. */
+    isResolved: matchesCurrent && state.status === 'resolved',
   };
 }
