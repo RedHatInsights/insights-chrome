@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 jest.mock('@scalprum/core', () => ({
   getCachedModule: jest.fn(),
@@ -17,8 +17,8 @@ import {
   getCachedDarkModeStore,
   loadDarkModeStore,
   preloadDarkModeStore,
-  useDarkModeStoreRef,
   useDarkModeIsDark,
+  useDarkModeStoreRef,
 } from './darkModeStoreBridge';
 
 const mockGetModule = jest.mocked(getModule);
