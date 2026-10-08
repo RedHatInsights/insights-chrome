@@ -727,5 +727,17 @@ describe('VisibilitySingleton', () => {
       mockedFetchOrgOptIn.mockRejectedValue(new Error('unexpected'));
       expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
     });
+
+    test('should return false for malformed HTTP 200 response (null result) for expected=true', async () => {
+      // Malformed response causes fetchOrgOptIn to return null
+      mockedFetchOrgOptIn.mockResolvedValue(null);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+    });
+
+    test('should return false for malformed HTTP 200 response (null result) for expected=false', async () => {
+      // Malformed response causes fetchOrgOptIn to return null
+      mockedFetchOrgOptIn.mockResolvedValue(null);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+    });
   });
 });

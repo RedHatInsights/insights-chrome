@@ -1,11 +1,10 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
 import React from 'react';
 import { useOrgOptIn } from './useOrgOptIn';
-import { fetchOrgOptIn, resetOrgOptInCache } from '../utils/orgOptInApi';
+import { fetchOrgOptIn } from '../utils/orgOptInApi';
 import { ITLess } from '../utils/common';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
-import { orgOptInAtom } from '../state/atoms/orgOptInAtom';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 
 jest.mock('../utils/orgOptInApi', () => ({
   fetchOrgOptIn: jest.fn(),
@@ -18,29 +17,27 @@ jest.mock('../utils/common', () => ({
 }));
 
 const mockedFetchOrgOptIn = fetchOrgOptIn as jest.Mock;
-const mockedResetOrgOptInCache = resetOrgOptInCache as jest.Mock;
 const mockedITLess = ITLess as jest.Mock;
 
-const createWrapper =
-  (orgId?: string) =>
-  ({ children }: { children: React.ReactNode }) => {
-    const store = createStore();
-    const authValue = {
-      ready: true,
-      user: orgId
-        ? {
-            identity: { org_id: orgId, account_number: '456', type: 'User' },
-            entitlements: {},
-          }
-        : undefined,
-    } as any;
+const createAuthValue = (orgId?: string): Partial<ChromeAuthContextValue> => ({
+  ready: true,
+  user: orgId
+    ? {
+        identity: { org_id: orgId, account_number: '456', type: 'User' },
+        entitlements: {},
+      }
+    : undefined,
+});
 
-    return React.createElement(
-      Provider,
-      { store },
-      React.createElement(ChromeAuthContext.Provider, { value: authValue }, children)
-    );
+function CreateWrapper(orgId?: string) {
+  const WrapperComponent = ({ children }: { children: React.ReactNode }) => {
+    const store = createStore();
+    const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
+    return React.createElement(Provider, { store }, React.createElement(ChromeAuthContext.Provider, { value: authValue }, children));
   };
+  WrapperComponent.displayName = 'OrgOptInTestWrapper';
+  return WrapperComponent;
+}
 
 describe('useOrgOptIn', () => {
   beforeEach(() => {
@@ -50,7 +47,7 @@ describe('useOrgOptIn', () => {
 
   test('fetches opt-in status and returns resolved state', async () => {
     mockedFetchOrgOptIn.mockResolvedValue(true);
-    const { result } = renderHook(() => useOrgOptIn(), { wrapper: createWrapper('org-1') });
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-1') });
 
     await waitFor(() => expect(result.current.isResolved).toBe(true));
     expect(result.current.v2OptedIn).toBe(true);
@@ -61,7 +58,7 @@ describe('useOrgOptIn', () => {
 
   test('returns false for ITLess environments without calling API', async () => {
     mockedITLess.mockReturnValue(true);
-    const { result } = renderHook(() => useOrgOptIn(), { wrapper: createWrapper('org-1') });
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-1') });
 
     await waitFor(() => expect(result.current.isResolved).toBe(true));
     expect(result.current.v2OptedIn).toBe(false);
@@ -70,7 +67,7 @@ describe('useOrgOptIn', () => {
 
   test('returns error state when API fails', async () => {
     mockedFetchOrgOptIn.mockResolvedValue(null);
-    const { result } = renderHook(() => useOrgOptIn(), { wrapper: createWrapper('org-1') });
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-1') });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.v2OptedIn).toBeNull();
@@ -78,7 +75,7 @@ describe('useOrgOptIn', () => {
   });
 
   test('does not fetch when no org ID available', async () => {
-    const { result } = renderHook(() => useOrgOptIn(), { wrapper: createWrapper(undefined) });
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper(undefined) });
 
     // Should stay in idle/loading state
     expect(result.current.isLoading).toBe(true);
@@ -87,9 +84,33 @@ describe('useOrgOptIn', () => {
 
   test('returns not opted-in when API returns false', async () => {
     mockedFetchOrgOptIn.mockResolvedValue(false);
-    const { result } = renderHook(() => useOrgOptIn(), { wrapper: createWrapper('org-2') });
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-2') });
 
     await waitFor(() => expect(result.current.isResolved).toBe(true));
     expect(result.current.v2OptedIn).toBe(false);
+  });
+
+  test('clears shared state when orgId disappears', async () => {
+    const { result } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper(undefined) });
+
+    // With no orgId, atom should be reset to idle
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.v2OptedIn).toBeNull();
+  });
+
+  test('resets lastFetchedOrgRef on error to allow retry on remount', async () => {
+    mockedFetchOrgOptIn.mockResolvedValue(null);
+    const { result, unmount } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-1') });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    unmount();
+
+    // Remount — should attempt fetch again since error reset the ref
+    mockedFetchOrgOptIn.mockResolvedValue(true);
+    const { result: result2 } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-1') });
+
+    await waitFor(() => expect(result2.current.isResolved).toBe(true));
+    expect(result2.current.v2OptedIn).toBe(true);
+    expect(mockedFetchOrgOptIn).toHaveBeenCalledTimes(2);
   });
 });

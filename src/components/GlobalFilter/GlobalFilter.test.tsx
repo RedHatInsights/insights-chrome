@@ -126,6 +126,22 @@ describe('GlobalFilterWrapper', () => {
     await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
   });
 
+  it('should not call getUserPermissions while org opt-in is loading', async () => {
+    mockedUseOrgOptIn.mockReturnValue({ v2OptedIn: null, isLoading: true, isError: false, isResolved: false });
+    render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+  });
+
+  it('should call getUserPermissions after org opt-in resolves as not opted-in', async () => {
+    mockedUseOrgOptIn.mockReturnValue({ v2OptedIn: null, isLoading: true, isError: false, isResolved: false });
+    const { rerender } = render(<GlobalFilterWrapper />, { wrapper: Wrapper });
+    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+
+    mockedUseOrgOptIn.mockReturnValue({ v2OptedIn: false, isLoading: false, isError: false, isResolved: true });
+    rerender(<GlobalFilterWrapper />);
+    await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
+  });
+
   it('should hide the global filter when platform.chrome.hide.global-filter is enabled', async () => {
     // First establish that the dropdown renders when the flag is off, proving the test
     // setup (auth, active module, allowed URL) is sufficient to show the component.

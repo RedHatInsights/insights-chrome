@@ -35,10 +35,16 @@ describe('orgOptInApi', () => {
     expect(mockedAxios.get).not.toHaveBeenCalled();
   });
 
-  test('returns false for malformed response (missing v2_opted_in)', async () => {
+  test('returns null for malformed response (missing v2_opted_in)', async () => {
     mockedAxios.get.mockResolvedValueOnce({ data: { something_else: true } });
     const result = await fetchOrgOptIn('org-123');
-    expect(result).toBe(false);
+    expect(result).toBeNull();
+  });
+
+  test('returns null for malformed response (non-boolean v2_opted_in)', async () => {
+    mockedAxios.get.mockResolvedValueOnce({ data: { v2_opted_in: 'yes' } });
+    const result = await fetchOrgOptIn('org-123');
+    expect(result).toBeNull();
   });
 
   test('caches successful result for same identity', async () => {
@@ -108,6 +114,35 @@ describe('orgOptInApi', () => {
 
     const r2 = await p2;
     expect(r2).toBe(false);
+    expect(mockedAxios.get).toHaveBeenCalledTimes(2);
+  });
+
+  test('stale request does not overwrite newer cached result', async () => {
+    let resolveOld!: (value: { data: { v2_opted_in: boolean } }) => void;
+    mockedAxios.get.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveOld = resolve;
+      })
+    );
+
+    // Start request for org-old
+    const pOld = fetchOrgOptIn('org-old');
+
+    // Identity changes — new request for org-new resolves first
+    mockedAxios.get.mockResolvedValueOnce({ data: { v2_opted_in: false } });
+    const pNew = fetchOrgOptIn('org-new');
+    const rNew = await pNew;
+    expect(rNew).toBe(false);
+
+    // Old request resolves after — should NOT overwrite the cache
+    resolveOld({ data: { v2_opted_in: true } });
+    const rOld = await pOld;
+    // Old request returns its own value but cache belongs to org-new
+    expect(rOld).toBe(true);
+
+    // Verify cache still serves org-new's result
+    const cached = await fetchOrgOptIn('org-new');
+    expect(cached).toBe(false);
     expect(mockedAxios.get).toHaveBeenCalledTimes(2);
   });
 

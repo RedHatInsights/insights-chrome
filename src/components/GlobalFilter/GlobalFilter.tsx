@@ -177,7 +177,7 @@ const GlobalFilterWrapper = () => {
   const chromeAuth = useContext(ChromeAuthContext);
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
-  const { v2OptedIn: isRbacV2 } = useOrgOptIn();
+  const { v2OptedIn: isRbacV2, isLoading: isOrgOptInLoading } = useOrgOptIn();
   const isHbiRbacV2 = useFlag('hbi.rbac-v2');
   const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
   const { flagsReady, flagsError } = useFlagsStatus();
@@ -202,6 +202,11 @@ const GlobalFilterWrapper = () => {
       return;
     }
 
+    // Wait for opt-in status to resolve before falling through to V1 path
+    if (isOrgOptInLoading) {
+      return;
+    }
+
     if (!flagsResolved) {
       return;
     }
@@ -221,7 +226,7 @@ const GlobalFilterWrapper = () => {
     return () => {
       mounted = false;
     };
-  }, [isRbacV2, isHbiRbacV2, flagsResolved]);
+  }, [isRbacV2, isHbiRbacV2, isOrgOptInLoading, flagsResolved]);
   return isGlobalFilterEnabled && chromeAuth.ready ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 

@@ -12,6 +12,7 @@ interface CacheEntry {
 let cachedResult: CacheEntry | null = null;
 let inflightPromise: Promise<boolean | null> | null = null;
 let inflightIdentityKey: string | null = null;
+let requestGeneration = 0;
 
 /**
  * Reset the org opt-in cache. Call on identity change or for testing.
@@ -20,6 +21,7 @@ export function resetOrgOptInCache(): void {
   cachedResult = null;
   inflightPromise = null;
   inflightIdentityKey = null;
+  requestGeneration++;
 }
 
 /**
@@ -55,26 +57,35 @@ export async function fetchOrgOptIn(identityKey: string): Promise<boolean | null
     return inflightPromise;
   }
 
+  const generation = ++requestGeneration;
   inflightIdentityKey = identityKey;
   inflightPromise = (async () => {
     try {
       const response = await axios.get('/api/rbac/v1/tenant/opt-in/', {
         timeout: REQUEST_TIMEOUT_MS,
       });
-      const v2OptedIn = response.data?.v2_opted_in === true;
-      cachedResult = {
-        v2OptedIn,
-        expiresAt: Date.now() + CACHE_TTL_MS,
-        identityKey,
-      };
-      return v2OptedIn;
+      const rawValue = response.data?.v2_opted_in;
+      if (typeof rawValue !== 'boolean') {
+        console.error('Malformed org opt-in response: v2_opted_in is not a boolean');
+        return null;
+      }
+      if (generation === requestGeneration) {
+        cachedResult = {
+          v2OptedIn: rawValue,
+          expiresAt: Date.now() + CACHE_TTL_MS,
+          identityKey,
+        };
+      }
+      return rawValue;
     } catch (error) {
       console.error('Failed to fetch org opt-in status:', error);
       // Don't cache failure — allow retry on next call
       return null;
     } finally {
-      inflightPromise = null;
-      inflightIdentityKey = null;
+      if (generation === requestGeneration) {
+        inflightPromise = null;
+        inflightIdentityKey = null;
+      }
     }
   })();
 
