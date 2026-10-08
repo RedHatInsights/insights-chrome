@@ -17,7 +17,7 @@ import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
 import { ITLess, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
@@ -116,8 +116,13 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
   const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const { flagsReady, flagsError } = useFlagsStatus();
+  const flagsResolved = flagsReady || !!flagsError;
   const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
-  const isFeltAutoEnabled = useFlag('platform.chrome-felt-auto');
+  const isFeltAutoFlag = useFlag('platform.chrome-felt-auto');
+  // Keep auto-Felt enabled while flags are loading to prevent theme flicker.
+  // Once flags resolve, follow the actual flag value.
+  const isFeltAutoEnabled = flagsResolved ? isFeltAutoFlag : true;
   const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
