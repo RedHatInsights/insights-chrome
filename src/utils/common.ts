@@ -23,6 +23,12 @@ export const LIGHTWELL_BUNDLE_ID = 'lightwell';
  */
 export const LIGHTWELL_PATH = `/${LIGHTWELL_BUNDLE_ID}`;
 
+/**
+ * Temporary base path for new Lightwell tenant (lightwell-experience-frontend) to use during migration.
+ * Remove when that app migrates to {@link LIGHTWELL_PATH}.
+ */
+export const LIGHTWELL_NEXT_PATH = '/lightwell-next';
+
 export const DEFAULT_SSO_ROUTES = {
   prod: {
     url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com', 'us.console.redhat.com'],

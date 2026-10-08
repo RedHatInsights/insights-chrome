@@ -21,7 +21,7 @@ import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess, LIGHTWELL_PATH } from '../../utils/common';
+import { ITLess, LIGHTWELL_NEXT_PATH, LIGHTWELL_PATH } from '../../utils/common';
 import { lazyWithRetry } from '../../utils/chunkLoadErrorUtils';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
@@ -100,6 +100,15 @@ const ScalprumRoot = memo(
               element={
                 <Suspense fallback={LoadingFallback}>
                   <Lightwell />
+                </Suspense>
+              }
+            />
+            {/* TODO: Temporary route for lightwell-experience-frontend; remove after content-sources (/lightwell) migration to lightwell-experience. */}
+            <Route
+              path={`${LIGHTWELL_NEXT_PATH}/*`}
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <Lightwell scope="lightwellExperience" module="./RootApp" appId="lightwellExperience" showNav={false} />
                 </Suspense>
               }
             />

@@ -21,10 +21,14 @@ import './Lightwell.scss';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
+  scope?: string;
+  module?: string;
+  appId?: string;
+  showNav?: boolean;
 };
 
 // TODO: Temporary layout for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
-const Lightwell = ({ Footer }: LightwellProps) => {
+const Lightwell = ({ Footer, scope = 'contentSources', module = './LightwellApp', appId = 'contentSources', showNav = true }: LightwellProps) => {
   useLightwellRouteSetup();
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
@@ -42,11 +46,11 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
 
   useEffect(() => {
-    setActiveModule('contentSources');
+    setActiveModule(appId);
     return () => {
       setActiveModule(undefined);
     };
-  }, [setActiveModule]);
+  }, [appId, setActiveModule]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -94,7 +98,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
               }}
             />
           </Masthead>,
-          <LightwellNavigation />
+          showNav ? <LightwellNavigation /> : undefined
         )}
         {...(isDrawerEnabled && {
           onNotificationDrawerExpand: focusDrawer,
@@ -106,13 +110,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           <Breadcrumbs />
         </ToolbarGroup>
         <RedirectBanner />
-        <ScalprumComponent
-          scope="contentSources"
-          module="./LightwellApp"
-          appId="contentSources"
-          ErrorComponent={<ErrorComponent />}
-          fallback={LoadingFallback}
-        />
+        <ScalprumComponent scope={scope} module={module} appId={appId} ErrorComponent={<ErrorComponent />} fallback={LoadingFallback} />
       </Page>
       {Footer}
     </div>
