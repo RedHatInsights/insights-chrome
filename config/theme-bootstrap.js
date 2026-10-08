@@ -5,7 +5,7 @@
  */
 const initializeTheme = function () {
   try {
-    var isLightwellRoute = window.location.pathname === '/lightwell' || window.location.pathname.indexOf('/lightwell/') === 0;
+    var isLightwellRoute = window.location.pathname.split('/')[1] === 'lightwell';
 
     // Apply Felt theme on ALL routes before PatternFly CSS loads.
     // This prevents a flash of non-Felt styles while Unleash feature flags
