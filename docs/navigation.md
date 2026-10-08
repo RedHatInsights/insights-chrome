@@ -18,6 +18,16 @@ Chrome reports exceptions to Sentry with the visibility method, source, availabl
 
 Local search does not cache failed visibility checks or query results affected by those failures, so subsequent queries can retry without a page reload. Working results remain available, and normal permission denials and error-free query results retain their existing caching behavior.
 
+### Visibility request timeouts
+
+RBAC permission requests, Kessel `checkself`/`checkselfbulk`, and `apiRequest` use a client-side timeout of **5,000 ms per HTTP request**, defined by `VISIBILITY_REQUEST_TIMEOUT_MS` in `src/utils/visibilityRequestConfig.ts`. RBAC pagination applies the limit to every page; the initial page and subsequent parallel page requests can therefore take more than one timeout interval overall. This is not a deadline for the entire shell or a nested navigation tree. The shared RBAC client also applies the limit to uncached `chrome.getUserPermissions` requests.
+
+`apiRequest` callers may specify a shorter positive finite `timeout`. Longer values are capped at 5,000 ms; missing, zero, negative or invalid values use the default. Positive fractional values are rounded up to whole milliseconds, so a sub-millisecond value cannot disable the XHR timeout. URL, method, payload, query parameters, authentication headers and cancellation options retain their existing behavior.
+
+Timeouts (`ECONNABORTED`, or `ETIMEDOUT` when Axios's `clarifyTimeoutError` option is enabled) and network failures follow the existing failure policy: RBAC returns an empty permission list to its callers, and Kessel and `apiRequest` return `false`. Nonempty permission requirements therefore hide the affected items while healthy siblings remain available and navigation/service-tile initialization completes. A matcher is not applied to a failed `apiRequest`. These handled failures retain the existing behavior of not reaching the item-exception/degradation boundary.
+
+No automatic retry is added. Failed RBAC fetches remain distinguishable internally from successful empty permissions and do not populate the permission watcher's successful-result cache. A later call can retry and use recovered data. Existing successful HTTP caching, including stale-response behavior, is unchanged. Recovery requires another call/evaluation; these timeouts do not add polling, invalidate consumers' own cached visibility results, or automatically restore hidden items in an already evaluated navigation. Negative caching of RBAC failures is tracked separately in RHCLOUD-51467. SSO, entitlements, feature flags and user-personalization requests retain their separate timeout and bootstrap policies.
+
 ### Permissions
 
 List of available permissions methods:

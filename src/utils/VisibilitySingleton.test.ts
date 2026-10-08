@@ -2,6 +2,7 @@ import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions, resetVisibilityFunctions } from './VisibilitySingleton';
 import axios from 'axios';
 import { ITLess } from './common';
+import { VISIBILITY_REQUEST_TIMEOUT_MS } from './visibilityRequestConfig';
 import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
 
 jest.mock('axios');
@@ -402,7 +403,8 @@ describe('VisibilitySingleton', () => {
         expect.objectContaining({
           object: { resourceId: 'redhat/123', resourceType: 'tenant', reporter: { type: 'rbac' } },
           relation: 'rbac_roles_read',
-        })
+        }),
+        { timeout: VISIBILITY_REQUEST_TIMEOUT_MS }
       );
     });
 
@@ -422,7 +424,8 @@ describe('VisibilitySingleton', () => {
         '/api/kessel/v1beta2/checkselfbulk',
         expect.objectContaining({
           items: [expect.objectContaining({ relation: 'rbac_roles_write' }), expect.objectContaining({ relation: 'rbac_groups_read' })],
-        })
+        }),
+        { timeout: VISIBILITY_REQUEST_TIMEOUT_MS }
       );
     });
 
@@ -438,7 +441,9 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_TRUE' } });
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read', 'rbac_roles_read']);
       expect(result).toBe(true);
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/kessel/v1beta2/checkself', expect.objectContaining({ relation: 'rbac_roles_read' }));
+      expect(mockedAxios.post).toHaveBeenCalledWith('/api/kessel/v1beta2/checkself', expect.objectContaining({ relation: 'rbac_roles_read' }), {
+        timeout: VISIBILITY_REQUEST_TIMEOUT_MS,
+      });
     });
 
     test('should return true when at least one relation is allowed (OR logic)', async () => {
