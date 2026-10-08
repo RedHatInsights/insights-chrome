@@ -6,6 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { getUnleashClient } from '../components/FeatureFlags/unleashClient';
+import { VISIBILITY_REQUEST_TIMEOUT_MS, getVisibilityRequestTimeout } from './visibilityRequestConfig';
 
 const matcherMapper = {
   isEmpty,
@@ -164,14 +165,22 @@ const initialize = ({
         const dedupedRelations = [...new Set(relations)];
 
         if (dedupedRelations.length === 1) {
-          const response = await axios.post('/api/kessel/v1beta2/checkself', { object: resource, relation: dedupedRelations[0] });
+          const response = await axios.post(
+            '/api/kessel/v1beta2/checkself',
+            { object: resource, relation: dedupedRelations[0] },
+            { timeout: VISIBILITY_REQUEST_TIMEOUT_MS }
+          );
           return response.data?.allowed === 'ALLOWED_TRUE';
         }
 
-        const response = await axios.post('/api/kessel/v1beta2/checkselfbulk', {
-          items: dedupedRelations.map((relation) => ({ object: resource, relation })),
-          consistency: { minimizeLatency: true },
-        });
+        const response = await axios.post(
+          '/api/kessel/v1beta2/checkselfbulk',
+          {
+            items: dedupedRelations.map((relation) => ({ object: resource, relation })),
+            consistency: { minimizeLatency: true },
+          },
+          { timeout: VISIBILITY_REQUEST_TIMEOUT_MS }
+        );
         const pairs = response.data?.pairs ?? [];
         return Array.isArray(pairs) && pairs.some((r: { item?: { allowed: string } }) => r.item?.allowed === 'ALLOWED_TRUE');
       } catch (error) {
@@ -198,6 +207,7 @@ const initialize = ({
           url,
           method,
           ...options,
+          timeout: getVisibilityRequestTimeout(options.timeout),
           headers: {
             Authorization: `Bearer ${token}`,
             ...options.headers,

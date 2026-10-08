@@ -9,10 +9,19 @@ import { CONFIG_SOURCES, reportConfigSource } from './configCacheStatus';
 import * as Sentry from '@sentry/react';
 
 /**
- * Base path for the Lightwell route.
- * Used in ScalprumRoot.tsx (route definition) and Tools.tsx (pathname check).
+ * Bundle identifier for the Lightwell experience.
+ * All Lightwell-specific presentation checks should compare against this
+ * constant via {@link getUrl}('bundle') rather than raw pathname matching.
  */
-export const LIGHTWELL_PATH = '/lightwell';
+export const LIGHTWELL_BUNDLE_ID = 'lightwell';
+
+/**
+ * Base path for the Lightwell route.
+ * Derived from {@link LIGHTWELL_BUNDLE_ID}.
+ * Used for route definitions and URL construction only — NOT for runtime
+ * detection.  Use `getUrl('bundle') === LIGHTWELL_BUNDLE_ID` instead.
+ */
+export const LIGHTWELL_PATH = `/${LIGHTWELL_BUNDLE_ID}`;
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {
