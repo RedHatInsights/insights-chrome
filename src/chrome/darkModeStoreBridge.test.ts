@@ -115,13 +115,13 @@ describe('darkModeStoreBridge', () => {
 
   describe('useDarkModeStoreRef', () => {
     it('should return the store once useModule resolves the getter', () => {
-      mockUseModule.mockReturnValue(mockGetDarkModeStore as any);
+      mockUseModule.mockReturnValue(mockGetDarkModeStore);
       const { result } = renderHook(() => useDarkModeStoreRef());
       expect(result.current).toBe(mockStore);
     });
 
     it('should return undefined until the getter resolves', () => {
-      mockUseModule.mockReturnValue(undefined as any);
+      mockUseModule.mockReturnValue(undefined);
       const { result } = renderHook(() => useDarkModeStoreRef());
       expect(result.current).toBeUndefined();
     });
@@ -129,7 +129,7 @@ describe('darkModeStoreBridge', () => {
 
   describe('useDarkModeIsDark', () => {
     it('should fall back to DOM class when no store is available', () => {
-      mockUseModule.mockReturnValue(undefined as any);
+      mockUseModule.mockReturnValue(undefined);
       document.documentElement.classList.add('pf-v6-theme-dark');
 
       const { result } = renderHook(() => useDarkModeIsDark());
@@ -139,7 +139,7 @@ describe('darkModeStoreBridge', () => {
     });
 
     it('should return false when no store and no DOM dark class', () => {
-      mockUseModule.mockReturnValue(undefined as any);
+      mockUseModule.mockReturnValue(undefined);
       document.documentElement.classList.remove('pf-v6-theme-dark');
 
       const { result } = renderHook(() => useDarkModeIsDark());
@@ -148,7 +148,7 @@ describe('darkModeStoreBridge', () => {
 
     it('should adopt the store value once the federated getter becomes available', () => {
       // Start without store — DOM fallback (light)
-      mockUseModule.mockReturnValue(undefined as any);
+      mockUseModule.mockReturnValue(undefined);
       document.documentElement.classList.remove('pf-v6-theme-dark');
 
       const { result, rerender } = renderHook(() => useDarkModeIsDark());
@@ -157,7 +157,7 @@ describe('darkModeStoreBridge', () => {
       // Federated store becomes available with isDark: true
       mockStore.getState.mockReturnValue({ isDark: true });
       mockStore.subscribeAll.mockReturnValue(jest.fn());
-      mockUseModule.mockReturnValue(mockGetDarkModeStore as any);
+      mockUseModule.mockReturnValue(mockGetDarkModeStore);
 
       rerender();
       expect(result.current).toBe(true);
@@ -170,7 +170,7 @@ describe('darkModeStoreBridge', () => {
         subscriber = cb;
         return jest.fn();
       });
-      mockUseModule.mockReturnValue(mockGetDarkModeStore as any);
+      mockUseModule.mockReturnValue(mockGetDarkModeStore);
 
       const { result } = renderHook(() => useDarkModeIsDark());
       expect(result.current).toBe(false);
