@@ -1,5 +1,4 @@
-import { getCachedModule, getModule, preloadModule } from '@scalprum/core';
-import { _resetDarkModeStoreBridge, getCachedDarkModeStore, loadDarkModeStore, preloadDarkModeStore } from './darkModeStoreBridge';
+import { renderHook, act } from '@testing-library/react';
 
 jest.mock('@scalprum/core', () => ({
   getCachedModule: jest.fn(),
@@ -11,9 +10,21 @@ jest.mock('@scalprum/react-core', () => ({
   useModule: jest.fn(),
 }));
 
-const mockGetModule = getModule as jest.Mock;
-const mockGetCachedModule = getCachedModule as jest.Mock;
-const mockPreloadModule = preloadModule as jest.Mock;
+import { getCachedModule, getModule, preloadModule } from '@scalprum/core';
+import { useModule } from '@scalprum/react-core';
+import {
+  _resetDarkModeStoreBridge,
+  getCachedDarkModeStore,
+  loadDarkModeStore,
+  preloadDarkModeStore,
+  useDarkModeStoreRef,
+  useDarkModeIsDark,
+} from './darkModeStoreBridge';
+
+const mockGetModule = jest.mocked(getModule);
+const mockGetCachedModule = jest.mocked(getCachedModule);
+const mockPreloadModule = jest.mocked(preloadModule);
+const mockUseModule = jest.mocked(useModule);
 
 const SCOPE = 'chrome';
 const MODULE = './theme/useDarkModeStore';
@@ -99,6 +110,85 @@ describe('darkModeStoreBridge', () => {
       await preloadDarkModeStore();
 
       expect(mockPreloadModule).toHaveBeenCalledWith(SCOPE, MODULE);
+    });
+  });
+
+  describe('useDarkModeStoreRef', () => {
+    it('should return the store once useModule resolves the getter', () => {
+      mockUseModule.mockReturnValue(mockGetDarkModeStore as any);
+      const { result } = renderHook(() => useDarkModeStoreRef());
+      expect(result.current).toBe(mockStore);
+    });
+
+    it('should return undefined until the getter resolves', () => {
+      mockUseModule.mockReturnValue(undefined as any);
+      const { result } = renderHook(() => useDarkModeStoreRef());
+      expect(result.current).toBeUndefined();
+    });
+  });
+
+  describe('useDarkModeIsDark', () => {
+    it('should fall back to DOM class when no store is available', () => {
+      mockUseModule.mockReturnValue(undefined as any);
+      document.documentElement.classList.add('pf-v6-theme-dark');
+
+      const { result } = renderHook(() => useDarkModeIsDark());
+      expect(result.current).toBe(true);
+
+      document.documentElement.classList.remove('pf-v6-theme-dark');
+    });
+
+    it('should return false when no store and no DOM dark class', () => {
+      mockUseModule.mockReturnValue(undefined as any);
+      document.documentElement.classList.remove('pf-v6-theme-dark');
+
+      const { result } = renderHook(() => useDarkModeIsDark());
+      expect(result.current).toBe(false);
+    });
+
+    it('should adopt the store value once the federated getter becomes available', () => {
+      // Start without store — DOM fallback (light)
+      mockUseModule.mockReturnValue(undefined as any);
+      document.documentElement.classList.remove('pf-v6-theme-dark');
+
+      const { result, rerender } = renderHook(() => useDarkModeIsDark());
+      expect(result.current).toBe(false);
+
+      // Federated store becomes available with isDark: true
+      mockStore.getState.mockReturnValue({ isDark: true });
+      mockStore.subscribeAll.mockReturnValue(jest.fn());
+      mockUseModule.mockReturnValue(mockGetDarkModeStore as any);
+
+      rerender();
+      expect(result.current).toBe(true);
+    });
+
+    it('should subscribe to store updates and reflect later changes', () => {
+      let subscriber: (() => void) | undefined;
+      mockStore.getState.mockReturnValue({ isDark: false });
+      mockStore.subscribeAll.mockImplementation((cb: () => void) => {
+        subscriber = cb;
+        return jest.fn();
+      });
+      mockUseModule.mockReturnValue(mockGetDarkModeStore as any);
+
+      const { result } = renderHook(() => useDarkModeIsDark());
+      expect(result.current).toBe(false);
+      expect(subscriber).toBeDefined();
+
+      // Simulate store update — dark mode toggled on
+      mockStore.getState.mockReturnValue({ isDark: true });
+      act(() => {
+        subscriber!();
+      });
+      expect(result.current).toBe(true);
+
+      // Simulate another update — dark mode toggled off
+      mockStore.getState.mockReturnValue({ isDark: false });
+      act(() => {
+        subscriber!();
+      });
+      expect(result.current).toBe(false);
     });
   });
 });
