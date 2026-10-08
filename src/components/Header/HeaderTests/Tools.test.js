@@ -21,11 +21,13 @@ jest.mock('../SettingsToggle', () => {
             <div key={groupIndex}>
               {group.customContent
                 ? group.customContent
-                : group.items?.map((item, itemIndex) => (
-                    <a key={itemIndex} href={item.url} data-testid={item.ouiaId}>
-                      {item.title}
-                    </a>
-                  ))}
+                : group.items
+                    ?.filter((item) => !item.isHidden)
+                    .map((item, itemIndex) => (
+                      <a key={itemIndex} href={item.url} data-testid={item.ouiaId}>
+                        {item.title}
+                      </a>
+                    ))}
             </div>
           ))}
         </div>
@@ -235,6 +237,65 @@ describe('Tools', () => {
       const iamLink = screen.getByRole('link', { name: /My User Access/i });
       expect(iamLink).toBeInTheDocument();
       expect(iamLink).toHaveAttribute('href', '/iam/my-user-access');
+    });
+
+    it('should hide UserAccess item while opt-in is loading for org admin', async () => {
+      mockOrgOptInResult = { v2OptedIn: null, isLoading: true, isError: false, isResolved: false };
+
+      const mockAuthContext = createMockAuthContext({
+        user: { is_org_admin: true },
+      });
+
+      await renderTools(mockAuthContext);
+
+      const settingsButton = screen.getByRole('button', { name: 'Settings menu' });
+      await act(async () => {
+        settingsButton.click();
+      });
+
+      // UserAccess link should not be in the DOM while loading
+      const iamLink = screen.queryByTestId('UserAccess');
+      expect(iamLink).not.toBeInTheDocument();
+    });
+
+    it('should show UserAccess for non-org-admin even while opt-in is loading', async () => {
+      mockOrgOptInResult = { v2OptedIn: null, isLoading: true, isError: false, isResolved: false };
+
+      const mockAuthContext = createMockAuthContext({
+        user: { is_org_admin: false },
+      });
+
+      await renderTools(mockAuthContext);
+
+      const settingsButton = screen.getByRole('button', { name: 'Settings menu' });
+      await act(async () => {
+        settingsButton.click();
+      });
+
+      // Non-admin path does not depend on opt-in — item should be visible
+      const iamLink = screen.getByTestId('UserAccess');
+      expect(iamLink).toBeInTheDocument();
+      expect(iamLink).toHaveAttribute('href', '/iam/my-user-access');
+    });
+
+    it('should fall back to V1 path on opt-in error for org admin', async () => {
+      mockOrgOptInResult = { v2OptedIn: null, isLoading: false, isError: true, isResolved: false };
+
+      const mockAuthContext = createMockAuthContext({
+        user: { is_org_admin: true },
+      });
+
+      await renderTools(mockAuthContext);
+
+      const settingsButton = screen.getByRole('button', { name: 'Settings menu' });
+      await act(async () => {
+        settingsButton.click();
+      });
+
+      // On error, show V1 fallback (not hidden, since loading is false)
+      const iamLink = screen.getByRole('link', { name: /User Access/i });
+      expect(iamLink).toBeInTheDocument();
+      expect(iamLink).toHaveAttribute('href', '/iam/user-access/overview');
     });
   });
 });

@@ -55,7 +55,12 @@ export function useOrgOptIn() {
     setState({ status: 'loading', v2OptedIn: null, identityKey: orgId });
 
     fetchOrgOptIn(orgId).then((result) => {
-      // Discard if a newer effect execution has since started
+      // Discard if a newer effect execution has since started.
+      // Token minting at the top of this effect (++requestTokenRef.current)
+      // already ensures stale responses from prior identity changes are
+      // discarded.  No cleanup function is needed — removing it prevents
+      // subscriber unmount from discarding a valid in-flight response that
+      // other mounted consumers depend on (the atom is shared).
       if (requestTokenRef.current !== token) {
         return;
       }
@@ -74,11 +79,6 @@ export function useOrgOptIn() {
         setState({ status: 'error', v2OptedIn: null, identityKey: orgId });
       }
     });
-
-    // Cleanup: increment token so late-arriving responses are discarded
-    return () => {
-      requestTokenRef.current++;
-    };
   }, [orgId, setState, store]);
 
   // Status flags are scoped to the current identity: a stale result for a

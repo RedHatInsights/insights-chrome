@@ -203,6 +203,50 @@ describe('useOrgOptIn', () => {
     expect(result.current.v2OptedIn).toBe(false);
   });
 
+  test('unmount of one subscriber does not leave shared atom stuck in loading', async () => {
+    // Regression: after cache expires (120s), a second subscriber mounts and
+    // triggers a refresh.  If it unmounts before the response arrives, the
+    // shared atom must still be updated — other mounted consumers depend on it.
+    const store = createStore();
+    const makeWrapper = (orgId?: string) => {
+      const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
+      const Wrapper = ({ children }: { children: React.ReactNode }) =>
+        React.createElement(Provider, { store }, React.createElement(ChromeAuthContext.Provider, { value: authValue }, children));
+      Wrapper.displayName = 'OrgOptInTestWrapper';
+      return Wrapper;
+    };
+
+    // Step 1: First subscriber resolves successfully
+    mockedFetchOrgOptIn.mockResolvedValue(true);
+    const { result: result1 } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-1') });
+    await waitFor(() => expect(result1.current.isResolved).toBe(true));
+    expect(result1.current.v2OptedIn).toBe(true);
+
+    // Step 2: Simulate cache expiry — second subscriber triggers a fresh fetch
+    let resolveSecondFetch: (v: boolean) => void;
+    mockedFetchOrgOptIn.mockReturnValue(
+      new Promise<boolean>((r) => {
+        resolveSecondFetch = r;
+      })
+    );
+    const { result: result2, unmount: unmountSecond } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-1') });
+
+    // Second subscriber sees loading while fetch is in-flight
+    await waitFor(() => expect(result2.current.isLoading).toBe(true));
+
+    // Step 3: Second subscriber unmounts (e.g. dropdown closes)
+    unmountSecond();
+
+    // Step 4: Response arrives AFTER unmount — must still publish to shared atom
+    resolveSecondFetch!(true);
+
+    // Step 5: First subscriber (still mounted) should see the resolved state
+    await waitFor(() => expect(result1.current.isResolved).toBe(true));
+    expect(result1.current.v2OptedIn).toBe(true);
+    // Atom should NOT be stuck in 'loading'
+    expect(result1.current.isLoading).toBe(false);
+  });
+
   test('resets lastFetchedOrgRef on error to allow retry on remount', async () => {
     mockedFetchOrgOptIn.mockResolvedValue(null);
     const { result, unmount } = renderHook(() => useOrgOptIn(), { wrapper: CreateWrapper('org-1') });

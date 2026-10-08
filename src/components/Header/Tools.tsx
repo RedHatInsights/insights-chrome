@@ -85,7 +85,8 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const { userPersonalization: userConfigDegraded } = useAtomValue(degradedStateAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
-  const { v2OptedIn: workspacesEnabled } = useOrgOptIn();
+  const { v2OptedIn, isLoading: isOrgOptInLoading } = useOrgOptIn();
+  const workspacesEnabled = v2OptedIn === true;
   const helpPanelEnabled = useFlag('platform.chrome.help-panel');
   const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
@@ -203,6 +204,10 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
               Workspaces model available
             </Label>
           ) : null,
+          // Hide while opt-in status is loading for org admins to prevent
+          // flashing V1 link before V2 resolves.  Non-admins always see
+          // the same path (/iam/my-user-access), so no hiding needed.
+          isHidden: isOrgOptInLoading && !!isOrgAdmin,
         },
         {
           ouiaId: 'settings-menu-identity-provider',
