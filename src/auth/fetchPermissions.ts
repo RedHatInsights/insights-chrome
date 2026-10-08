@@ -10,6 +10,12 @@ const perPage = 1000;
 const rbacApi = createRbacAPI();
 
 const fetchPermissions = async (_userToken: string, app = '') => {
+  // V1 fetch suppression: when platform.rbac.workspaces flag is enabled, V1 /access/ reads
+  // are skipped entirely. This flag-gated suppression is intentionally preserved pending
+  // confirmation that RBAC V1 /access/ remains supported for opted-in orgs (RHCLOUD-49749).
+  // The opt-in API replaces org-onboarding detection (isKesselOrgOnboarded) but does NOT
+  // replace this environment-level V1 fetch gate. A separate design/backend decision is
+  // needed before changing this suppression logic.
   if (unleashClientExists() && getUnleashClient().isEnabled('platform.rbac.workspaces')) {
     return [];
   }

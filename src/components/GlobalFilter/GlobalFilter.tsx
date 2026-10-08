@@ -12,6 +12,7 @@ import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
+import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   globalFilterDataAtom,
@@ -176,7 +177,7 @@ const GlobalFilterWrapper = () => {
   const chromeAuth = useContext(ChromeAuthContext);
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
-  const isRbacV2 = useFlag('platform.rbac.workspaces');
+  const { v2OptedIn: isRbacV2 } = useOrgOptIn();
   const isHbiRbacV2 = useFlag('hbi.rbac-v2');
   const hideGlobalFilterFlag = useFlag('platform.chrome.hide.global-filter');
   const { flagsReady, flagsError } = useFlagsStatus();

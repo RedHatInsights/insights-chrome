@@ -61,6 +61,11 @@ jest.mock('../../../state/atoms/releaseAtom', () => {
   };
 });
 
+let mockOrgOptInResult = { v2OptedIn: false, isLoading: false, isError: false, isResolved: true };
+jest.mock('../../../hooks/useOrgOptIn', () => ({
+  useOrgOptIn: () => mockOrgOptInResult,
+}));
+
 let mockFlagValues = {};
 
 jest.mock('@unleash/proxy-client-react', () => ({
@@ -116,6 +121,7 @@ describe('Tools', () => {
 
   beforeEach(() => {
     mockFlagValues = {};
+    mockOrgOptInResult = { v2OptedIn: false, isLoading: false, isError: false, isResolved: true };
   });
 
   afterEach(() => {
@@ -163,7 +169,7 @@ describe('Tools', () => {
 
   describe('identityAndAccessManagmentPath routing', () => {
     it('should use /iam/overview for org admin with workspaces enabled', async () => {
-      mockFlagValues['platform.rbac.workspaces'] = true;
+      mockOrgOptInResult = { v2OptedIn: true, isLoading: false, isError: false, isResolved: true };
 
       const mockAuthContext = createMockAuthContext({
         user: { is_org_admin: true },
@@ -186,7 +192,7 @@ describe('Tools', () => {
     });
 
     it('should use /iam/user-access/overview for org admin with workspaces disabled', async () => {
-      mockFlagValues['platform.rbac.workspaces'] = false;
+      mockOrgOptInResult = { v2OptedIn: false, isLoading: false, isError: false, isResolved: true };
 
       const mockAuthContext = createMockAuthContext({
         user: { is_org_admin: true },
@@ -209,7 +215,7 @@ describe('Tools', () => {
     });
 
     it('should use /iam/my-user-access for non-org-admin', async () => {
-      mockFlagValues['platform.rbac.workspaces'] = true;
+      mockOrgOptInResult = { v2OptedIn: true, isLoading: false, isError: false, isResolved: true };
 
       const mockAuthContext = createMockAuthContext({
         user: { is_org_admin: false },

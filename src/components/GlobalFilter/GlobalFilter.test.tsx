@@ -8,11 +8,18 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { ChromeAPI } from '@redhat-cloud-services/types';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
   useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: false })),
 }));
+
+const mockOrgOptInDefault = { v2OptedIn: false, isLoading: false, isError: false, isResolved: true };
+jest.mock('../../hooks/useOrgOptIn', () => ({
+  useOrgOptIn: jest.fn(() => mockOrgOptInDefault),
+}));
+const mockedUseOrgOptIn = useOrgOptIn as jest.Mock;
 
 jest.mock('../../utils/common', () => ({
   ...jest.requireActual('../../utils/common'),
@@ -77,6 +84,7 @@ describe('GlobalFilterWrapper', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseFlag.mockReturnValue(false);
+    mockedUseOrgOptIn.mockReturnValue(mockOrgOptInDefault);
   });
 
   it('should call getUserPermissions when rbac.workspaces flag is disabled', async () => {
@@ -84,8 +92,8 @@ describe('GlobalFilterWrapper', () => {
     await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
   });
 
-  it('should skip getUserPermissions when rbac.workspaces flag is enabled', async () => {
-    mockedUseFlag.mockImplementation((flag: string) => flag === 'platform.rbac.workspaces');
+  it('should skip getUserPermissions when org is V2 opted-in', async () => {
+    mockedUseOrgOptIn.mockReturnValue({ v2OptedIn: true, isLoading: false, isError: false, isResolved: true });
     render(<GlobalFilterWrapper />, { wrapper: Wrapper });
     await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
   });
