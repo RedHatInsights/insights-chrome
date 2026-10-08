@@ -52,7 +52,14 @@ export function useOrgOptIn() {
     }
 
     lastFetchedOrgRef.current = orgId;
-    setState({ status: 'loading', v2OptedIn: null, identityKey: orgId });
+    // Preserve an already-resolved shared state for the same org so that a
+    // newly mounted subscriber doesn't flash 'loading' while the background
+    // refresh is in flight (the atom is shared across all consumers).
+    const current = store.get(orgOptInAtom);
+    const alreadyResolved = current.status === 'resolved' && current.identityKey === orgId;
+    if (!alreadyResolved) {
+      setState({ status: 'loading', v2OptedIn: null, identityKey: orgId });
+    }
 
     fetchOrgOptIn(orgId).then((result) => {
       // Discard if a newer effect execution has since started.

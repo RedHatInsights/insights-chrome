@@ -203,10 +203,10 @@ describe('useOrgOptIn', () => {
     expect(result.current.v2OptedIn).toBe(false);
   });
 
-  test('unmount of one subscriber does not leave shared atom stuck in loading', async () => {
-    // Regression: after cache expires (120s), a second subscriber mounts and
-    // triggers a refresh.  If it unmounts before the response arrives, the
-    // shared atom must still be updated — other mounted consumers depend on it.
+  test('second subscriber preserves resolved state and refreshes in background', async () => {
+    // When the atom is already resolved for an org, a newly mounted subscriber
+    // must NOT overwrite the shared state with 'loading'.  The background
+    // refresh should still happen, and both consumers see the updated result.
     const store = createStore();
     const makeWrapper = (orgId?: string) => {
       const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
@@ -222,7 +222,7 @@ describe('useOrgOptIn', () => {
     await waitFor(() => expect(result1.current.isResolved).toBe(true));
     expect(result1.current.v2OptedIn).toBe(true);
 
-    // Step 2: Simulate cache expiry — second subscriber triggers a fresh fetch
+    // Step 2: Second subscriber mounts (e.g. dropdown opens after cache expiry)
     let resolveSecondFetch: (v: boolean) => void;
     mockedFetchOrgOptIn.mockReturnValue(
       new Promise<boolean>((r) => {
@@ -231,19 +231,20 @@ describe('useOrgOptIn', () => {
     );
     const { result: result2, unmount: unmountSecond } = renderHook(() => useOrgOptIn(), { wrapper: makeWrapper('org-1') });
 
-    // Second subscriber sees loading while fetch is in-flight
-    await waitFor(() => expect(result2.current.isLoading).toBe(true));
+    // Second subscriber should still see resolved — NOT loading
+    await waitFor(() => expect(result2.current.isResolved).toBe(true));
+    expect(result2.current.v2OptedIn).toBe(true);
+    expect(result2.current.isLoading).toBe(false);
 
     // Step 3: Second subscriber unmounts (e.g. dropdown closes)
     unmountSecond();
 
-    // Step 4: Response arrives AFTER unmount — must still publish to shared atom
+    // Step 4: Background refresh completes AFTER unmount — still publishes
     resolveSecondFetch!(true);
 
-    // Step 5: First subscriber (still mounted) should see the resolved state
+    // Step 5: First subscriber (still mounted) should see resolved state
     await waitFor(() => expect(result1.current.isResolved).toBe(true));
     expect(result1.current.v2OptedIn).toBe(true);
-    // Atom should NOT be stuck in 'loading'
     expect(result1.current.isLoading).toBe(false);
   });
 
