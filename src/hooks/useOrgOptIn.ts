@@ -1,8 +1,8 @@
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom, useStore } from 'jotai';
 import { useContext, useEffect, useRef } from 'react';
 import { orgOptInAtom } from '../state/atoms/orgOptInAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
-import { fetchOrgOptIn, resetOrgOptInCache } from '../utils/orgOptInApi';
+import { fetchOrgOptIn } from '../utils/orgOptInApi';
 import { ITLess } from '../utils/common';
 
 /**
@@ -18,6 +18,7 @@ import { ITLess } from '../utils/common';
 export function useOrgOptIn() {
   const state = useAtomValue(orgOptInAtom);
   const setState = useSetAtom(orgOptInAtom);
+  const store = useStore();
   const { user } = useContext(ChromeAuthContext);
   const orgId = user?.identity?.org_id ?? null;
   const lastFetchedOrgRef = useRef<string | null>(null);
@@ -44,11 +45,6 @@ export function useOrgOptIn() {
       return;
     }
 
-    // Identity changed — reset module-level cache
-    if (lastFetchedOrgRef.current !== null && lastFetchedOrgRef.current !== orgId) {
-      resetOrgOptInCache();
-    }
-
     lastFetchedOrgRef.current = orgId;
     setState({ status: 'loading', v2OptedIn: null, identityKey: orgId });
 
@@ -63,6 +59,12 @@ export function useOrgOptIn() {
       } else {
         // Error — reset ref so a remount can retry
         lastFetchedOrgRef.current = null;
+        // Preserve an already-resolved result for the same identity
+        // (another hook instance may have resolved successfully)
+        const currentState = store.get(orgOptInAtom);
+        if (currentState.status === 'resolved' && currentState.identityKey === orgId) {
+          return;
+        }
         setState({ status: 'error', v2OptedIn: null, identityKey: orgId });
       }
     });
@@ -70,7 +72,7 @@ export function useOrgOptIn() {
     return () => {
       cancelledRef.current = true;
     };
-  }, [orgId, setState]);
+  }, [orgId, setState, store]);
 
   // Only expose result when identityKey matches current orgId
   const matchesCurrent = state.identityKey === orgId || state.identityKey === null;

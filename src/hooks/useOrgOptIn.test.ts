@@ -8,7 +8,6 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../auth/ChromeAuthCon
 
 jest.mock('../utils/orgOptInApi', () => ({
   fetchOrgOptIn: jest.fn(),
-  resetOrgOptInCache: jest.fn(),
 }));
 
 jest.mock('../utils/common', () => ({
@@ -30,9 +29,9 @@ const createAuthValue = (orgId?: string): Partial<ChromeAuthContextValue> => ({
 });
 
 function CreateWrapper(orgId?: string) {
+  const store = createStore();
+  const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
   const WrapperComponent = ({ children }: { children: React.ReactNode }) => {
-    const store = createStore();
-    const authValue = createAuthValue(orgId) as ChromeAuthContextValue;
     return React.createElement(Provider, { store }, React.createElement(ChromeAuthContext.Provider, { value: authValue }, children));
   };
   WrapperComponent.displayName = 'OrgOptInTestWrapper';
