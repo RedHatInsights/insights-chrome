@@ -5,7 +5,7 @@
  */
 const initializeTheme = function () {
   try {
-    var isLightwellRoute = window.location.pathname === '/lightwell' || window.location.pathname.indexOf('/lightwell/') === 0;
+    var isLightwellRoute = window.location.pathname.split('/')[1] === 'lightwell';
 
     if (isLightwellRoute) {
       document.documentElement.classList.add('pf-v6-theme-felt', 'pf-v6-theme-glass');
