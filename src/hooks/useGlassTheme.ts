@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { notifyThemeTelemetryPreferencesChanged } from '../utils/themeTelemetry';
 
 const GLASS_THEME_KEY = 'chrome:glass-theme';
 const GLASS_THEME_CLASS = 'pf-v6-theme-glass';
@@ -14,6 +15,7 @@ const readGlassThemePreference = (): boolean => {
 const writeGlassThemePreference = (checked: boolean): void => {
   try {
     localStorage.setItem(GLASS_THEME_KEY, String(checked));
+    notifyThemeTelemetryPreferencesChanged();
   } catch {
     // no-op: persistence unavailable
   }
