@@ -3,12 +3,18 @@ import { render, waitFor } from '@testing-library/react';
 import { emailDomain } from './SegmentProvider';
 import getOrganization from '../auth/OIDCConnector/getOrganization';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { notifyThemeTelemetryPreferencesChanged } from '../utils/themeTelemetry';
 
 // Mock all dependencies before importing the component
 const mockIdentify = jest.fn();
 const mockGroup = jest.fn();
 const mockPage = jest.fn();
 const mockLoad = jest.fn();
+const mockFlags = new Set<string>();
+
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: (flag: string) => mockFlags.has(flag),
+}));
 
 jest.mock('@segment/analytics-next', () => ({
   AnalyticsBrowser: jest.fn().mockImplementation(() => ({
@@ -134,6 +140,7 @@ describe('emailDomain', () => {
 describe('SegmentProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFlags.clear();
     localStorage.clear();
   });
 
@@ -157,6 +164,68 @@ describe('SegmentProvider', () => {
     expect(traits).toHaveProperty('name', 'Test Org');
     expect(traits).toHaveProperty('account_number', 'EBS-789');
     expect(traits).toHaveProperty('cloud_org_id', 'org-123');
+  });
+
+  it('includes default theme preferences in Segment identify traits', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'light', contrastModeSetting: 'default' }),
+        expect.any(Object)
+      );
+    });
+  });
+
+  it('uses system defaults when Chrome system theme settings are enabled', async () => {
+    mockFlags.add('platform.chrome.dark-mode');
+    mockFlags.add('platform.chrome.dark-mode_system');
+    mockFlags.add('platform.chrome.high-contrast');
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'system' }),
+        expect.any(Object)
+      );
+    });
+  });
+
+  it('updates Segment identify traits when theme preferences change', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockIdentify).toHaveBeenCalled());
+    mockIdentify.mockClear();
+    localStorage.setItem('chrome:theme', 'system');
+    localStorage.setItem('chrome:high-contrast', 'high');
+    notifyThemeTelemetryPreferencesChanged();
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'high-contrast' }),
+        expect.objectContaining({ context: expect.objectContaining({ groupId: 'org-123', Intercom: { user_hash: 'mock-hash' } }) })
+      );
+    });
   });
 
   it('sends the organization name recovered from the access token', async () => {
