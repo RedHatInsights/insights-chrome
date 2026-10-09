@@ -97,7 +97,7 @@ const DropdownItems = ({
       {!isITLessEnv && userMenu?.showMyProfile && (
         <DropdownItem
           key="My Profile"
-          to={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
+          to={`https://sso.${prefix}redhat.com/auth/realms/redhat-external/account/`}
           target="_blank"
           rel="noopener noreferrer"
           component="a"

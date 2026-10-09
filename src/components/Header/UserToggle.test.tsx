@@ -102,6 +102,16 @@ describe('UserToggle - userMenu config', () => {
     expect(screen.queryByText('Log out')).not.toBeInTheDocument();
   });
 
+  it('should link My Profile to SSO account console instead of UGC', () => {
+    renderUserToggle({ showMyProfile: true });
+    const profileLink = screen.getByText('My profile').closest('a');
+    expect(profileLink).toHaveAttribute('href', expect.stringContaining('sso.'));
+    expect(profileLink).toHaveAttribute('href', expect.stringContaining('/auth/realms/redhat-external/account/'));
+    expect(profileLink).not.toHaveAttribute('href', expect.stringContaining('ugc'));
+    expect(profileLink).toHaveAttribute('target', '_blank');
+    expect(profileLink).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('should show only My User Access when showMyUserAccess is true', () => {
     renderUserToggle({ showMyUserAccess: true });
     expect(screen.queryByText('My profile')).not.toBeInTheDocument();
