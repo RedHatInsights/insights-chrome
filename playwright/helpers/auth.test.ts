@@ -1,10 +1,9 @@
 import type { Page } from '@playwright/test';
-import { disableCookiePrompt, login as sharedLogin } from '@redhat-cloud-services/playwright-test-auth';
+import { disableCookiePrompt } from '@redhat-cloud-services/playwright-test-auth';
 import { login } from './auth';
 
 jest.mock('@redhat-cloud-services/playwright-test-auth', () => ({
   disableCookiePrompt: jest.fn(),
-  login: jest.fn(),
 }));
 
 describe('login wrapper', () => {
@@ -31,9 +30,13 @@ describe('login wrapper', () => {
       first: jest.fn().mockReturnThis(),
       waitFor: jest.fn().mockResolvedValue(undefined),
       isVisible: jest.fn().mockResolvedValue(authenticated),
+      fill: jest.fn().mockResolvedValue(undefined),
+      click: jest.fn().mockResolvedValue(undefined),
+      count: jest.fn().mockResolvedValue(0),
     };
     const page = {
       goto: jest.fn(),
+      locator: jest.fn().mockReturnValue(locator),
       getByRole: jest.fn().mockReturnValue(locator),
       getByLabel: jest.fn().mockReturnValue(locator),
       getByText: jest.fn().mockReturnValue(locator),
@@ -47,22 +50,29 @@ describe('login wrapper', () => {
     await login(page as unknown as Page);
     expect(disableCookiePrompt).toHaveBeenCalledWith(page);
     expect(page.goto).toHaveBeenCalledWith('/');
-    expect(sharedLogin).not.toHaveBeenCalled();
+    expect(locator.fill).not.toHaveBeenCalled();
     expect(page.evaluate).toHaveBeenCalledTimes(1);
     expect(locator.waitFor).toHaveBeenCalledTimes(2);
   });
 
-  it('delegates login to the shared package when there is no authenticated user menu', async () => {
-    const { page } = createPage(false);
+  it('performs SSO two-step login when there is no authenticated user menu', async () => {
+    const { page, locator } = createPage(false);
     await login(page as unknown as Page);
-    expect(sharedLogin).toHaveBeenCalledWith(page, 'test-user', 'test-password');
+    // Should fill username and password (2 fill calls)
+    expect(locator.fill).toHaveBeenCalledTimes(2);
+    expect(locator.fill).toHaveBeenCalledWith('test-user');
+    expect(locator.fill).toHaveBeenCalledWith('test-password');
+    // Should click Next and Log in (2 click calls)
+    expect(locator.click).toHaveBeenCalledTimes(2);
+    // Should navigate to landing page after login
+    expect(page.goto).toHaveBeenCalledWith('/', { waitUntil: 'load', timeout: 60000 });
     expect(page.evaluate).toHaveBeenCalledTimes(1);
   });
 
-  it('propagates shared authentication failures', async () => {
-    const { page } = createPage(false);
-    jest.mocked(sharedLogin).mockRejectedValue(new Error('Invalid login credentials'));
-    await expect(login(page as unknown as Page)).rejects.toThrow('Invalid login credentials');
-    expect(page.evaluate).not.toHaveBeenCalled();
+  it('throws when lockdown page is detected', async () => {
+    const { page, locator } = createPage(false);
+    locator.count.mockResolvedValue(1);
+    await expect(login(page as unknown as Page)).rejects.toThrow('Proxy config incorrect - Lockdown page detected');
+    expect(locator.fill).not.toHaveBeenCalled();
   });
 });
