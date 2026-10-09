@@ -123,7 +123,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   // Keep auto-Felt enabled while flags are loading to prevent theme flicker.
   // Once flags resolve, follow the actual flag value.
   const isFeltAutoEnabled = flagsResolved ? isFeltAutoFlag : true;
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {

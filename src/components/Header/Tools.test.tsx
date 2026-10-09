@@ -637,6 +637,16 @@ describe('Tools - forced glass mode', () => {
     expect(document.getElementById('contrast-high')).toBeDisabled();
   });
 
+  it('should show theme section when glass is forced (Glass and Felt coexist)', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.felt-theme': true }, undefined, store);
+
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(document.getElementById('theme-default')).toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).toBeInTheDocument();
+  });
+
   it('should not disable glass button when glass is forced', () => {
     const store = createStore();
     store.set(layoutForceGlassThemeAtom, true);
