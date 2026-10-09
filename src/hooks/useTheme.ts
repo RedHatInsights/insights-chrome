@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import { getDarkModeStore, useDarkModeStore } from '../state/stores/darkModeStore';
 import { THEME_STORAGE_KEY } from '../utils/consts';
+import { notifyThemeTelemetryPreferencesChanged } from '../utils/themeTelemetry';
 
 // Force webpack to treat useDarkModeStore as a used export so the module cache
 // includes it when remote modules load it via Module Federation.
@@ -52,6 +53,7 @@ export const useTheme = () => {
     } else if (isDarkModeSystemEnabled) {
       // Default to system mode
       localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.system);
+      notifyThemeTelemetryPreferencesChanged();
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
       return ThemeVariants.system;
@@ -84,12 +86,14 @@ export const useTheme = () => {
     setThemeMode(ThemeVariants.light);
     applyTheme(false);
     localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.light);
+    notifyThemeTelemetryPreferencesChanged();
   };
 
   const setDarkMode = () => {
     setThemeMode(ThemeVariants.dark);
     applyTheme(true);
     localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.dark);
+    notifyThemeTelemetryPreferencesChanged();
   };
 
   const setSystemMode = () => {
@@ -97,6 +101,7 @@ export const useTheme = () => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     applyTheme(prefersDark);
     localStorage.setItem(THEME_STORAGE_KEY, ThemeVariants.system);
+    notifyThemeTelemetryPreferencesChanged();
   };
 
   return {

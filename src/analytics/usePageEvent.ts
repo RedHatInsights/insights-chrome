@@ -10,6 +10,7 @@ import chromeStore from '../state/chromeStore';
 import { segmentPageOptionsAtom } from '../state/atoms/segmentPageOptionsAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { getThemeTelemetryRendered } from '../utils/themeTelemetry';
 
 export function getPageEventOptions({ pathname, search: searchString = '', user }: { pathname: string; search: string; user: ChromeUser }) {
   const isPreview = chromeStore.get(isPreviewAtom);
@@ -25,6 +26,7 @@ export function getPageEventOptions({ pathname, search: searchString = '', user 
     {
       ...trackingContext,
       ...chromeStore.get(segmentPageOptionsAtom),
+      ...getThemeTelemetryRendered(),
       isBeta: isPreview,
       path: pathname,
       url: `${window.location.origin}${pathname}${search}`,

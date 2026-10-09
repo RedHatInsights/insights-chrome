@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
+import { useFlag } from '@unleash/proxy-client-react';
 import { ITLess, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -12,6 +13,7 @@ import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import usePageEvent, { getPageEventOptions } from './usePageEvent';
+import { type ColorSchemeSetting, type ContrastModeSetting, THEME_TELEMETRY_PREFERENCES_CHANGE, getThemeTelemetrySettings } from '../utils/themeTelemetry';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -61,7 +63,13 @@ export const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '', isPreview: boolean) => {
+const getIdentityTraits = (
+  user: ChromeUser,
+  pathname: string,
+  activeModule = '',
+  isPreview: boolean,
+  themeTelemetryDefaults: { colorSchemeSetting: ColorSchemeSetting; contrastModeSetting: ContrastModeSetting }
+) => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -95,6 +103,7 @@ const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = ''
       {}
     ),
     ...entitlements,
+    ...getThemeTelemetrySettings(themeTelemetryDefaults),
   };
 };
 
@@ -105,6 +114,14 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
   const analytics = useRef<AnalyticsBrowser>(undefined);
   const analyticsLoaded = useRef(false);
+  const intercomHash = useRef<string | undefined>();
+  const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
+  const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
+  const themeTelemetryDefaults = {
+    colorSchemeSetting: (isDarkModeEnabled && isDarkModeSystemEnabled ? 'system' : 'light') as ColorSchemeSetting,
+    contrastModeSetting: (isHighContrastEnabled ? 'system' : 'default') as ContrastModeSetting,
+  };
   const { user } = useContext(ChromeAuthContext);
   const isPreview = useAtomValue(isPreviewAtom);
 
@@ -142,7 +159,6 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const handleModuleUpdate = async () => {
     if (!isDisabled && activeModule && user) {
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
-      const identityTraits = getIdentityTraits(user, pathname, activeModule, isPreview);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,
@@ -158,15 +174,15 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         email_domain: emailDomain(user.identity.user?.email),
       };
       if (!initialized.current && analytics.current) {
-        const hash = await fetchIntercomHash();
+        intercomHash.current = await fetchIntercomHash();
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
+        analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
           ...identityOptions,
           context: {
             ...identityOptions.context,
-            ...(hash
+            ...(intercomHash.current
               ? {
-                  Intercom: { user_hash: hash },
+                  Intercom: { user_hash: intercomHash.current },
                 }
               : {}),
           },
@@ -182,15 +198,15 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
         );
         resetIntegrations(analytics.current);
-        const hash = await fetchIntercomHash();
+        intercomHash.current = await fetchIntercomHash();
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
+        analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
           ...identityOptions,
           context: {
             ...identityOptions.context,
-            ...(hash
+            ...(intercomHash.current
               ? {
-                  Intercom: { user_hash: hash },
+                  Intercom: { user_hash: intercomHash.current },
                 }
               : {}),
           },
@@ -204,6 +220,23 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     handleModuleUpdate();
     // need the json stringify to prevent the effect from running on every user update if not necessary
   }, [activeModule, JSON.stringify(user)]);
+
+  useEffect(() => {
+    const updateThemeTraits = () => {
+      if (!initialized.current || isDisabled || !user || !analytics.current) {
+        return;
+      }
+      analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
+        context: {
+          groupId: user.identity.internal?.org_id,
+          ...(intercomHash.current ? { Intercom: { user_hash: intercomHash.current } } : {}),
+        },
+      });
+    };
+
+    window.addEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
+    return () => window.removeEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
+  }, [activeModule, isDisabled, isPreview, pathname, themeTelemetryDefaults.colorSchemeSetting, themeTelemetryDefaults.contrastModeSetting, user]);
 
   /**
    * This needs to happen in a condition and during first valid render!
