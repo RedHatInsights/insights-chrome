@@ -91,12 +91,8 @@ test.describe('Segment theme telemetry', () => {
       expect(['dark', 'light']).toContain(event.properties?.colorSchemeRendered);
       expect(['default', 'high-contrast', 'glass']).toContain(event.properties?.contrastModeRendered);
     }
-    const renderedThemes = [
-      ...new Set(initialPageEvents.map((event) => `${event.properties?.colorSchemeRendered}/${event.properties?.contrastModeRendered}`)),
-    ];
-    reportPassedAssertion(
-      `initial Page events include rendered theme fields (${renderedThemes.join(', ')}; ${initialPageEvents.length} event(s))`
-    );
+    const renderedThemes = [...new Set(initialPageEvents.map((event) => `${event.properties?.colorSchemeRendered}/${event.properties?.contrastModeRendered}`))];
+    reportPassedAssertion(`initial Page events include rendered theme fields (${renderedThemes.join(', ')}; ${initialPageEvents.length} event(s))`);
 
     expect(initialIdentify?.traits).toEqual(
       expect.objectContaining({
