@@ -34,3 +34,14 @@
     background-color: var(--pf-t--global--background--color--primary--default);
   }
 }
+
+:root.pf-v6-theme-glass {
+  .pf-v6-c-page__drawer .pf-v6-c-drawer__panel {
+    // Override glass-mode transparency: force the drawer panel and all child
+    // components (notification list items, etc.) to use the solid floating
+    // background color instead of the semi-transparent primary token.
+    --pf-t--global--background--color--primary--default: var(--pf-t--global--background--color--floating--default);
+    background-color: var(--pf-t--global--background--color--floating--default);
+    backdrop-filter: none;
+  }
+}
