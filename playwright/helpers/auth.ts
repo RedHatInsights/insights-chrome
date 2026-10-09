@@ -40,7 +40,8 @@ async function ssoLogin(page: Page, user: string, password: string) {
   // Verify login was valid
   const invalidLoginVisible = await page
     .getByText('Invalid login')
-    .isVisible()
+    .waitFor({ state: 'visible', timeout: 5000 })
+    .then(() => true)
     .catch(() => false);
   if (invalidLoginVisible) {
     throw new Error('Invalid login credentials');

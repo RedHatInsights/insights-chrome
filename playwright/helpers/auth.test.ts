@@ -23,7 +23,7 @@ describe('login wrapper', () => {
     else process.env.E2E_PASSWORD = originalPassword;
   });
 
-  function createPage(authenticated: boolean) {
+  function createPage(authenticated: boolean, invalidLogin = false) {
     const locator = {
       or: jest.fn().mockReturnThis(),
       filter: jest.fn().mockReturnThis(),
@@ -34,12 +34,17 @@ describe('login wrapper', () => {
       click: jest.fn().mockResolvedValue(undefined),
       count: jest.fn().mockResolvedValue(0),
     };
+    // "Invalid login" locator — waitFor rejects unless invalidLogin is true
+    const invalidLoginLocator = {
+      ...locator,
+      waitFor: jest.fn().mockImplementation(() => (invalidLogin ? Promise.resolve() : Promise.reject(new Error('Timeout')))),
+    };
     const page = {
       goto: jest.fn(),
       locator: jest.fn().mockReturnValue(locator),
       getByRole: jest.fn().mockReturnValue(locator),
       getByLabel: jest.fn().mockReturnValue(locator),
-      getByText: jest.fn().mockReturnValue(locator),
+      getByText: jest.fn().mockImplementation((text: string) => (text === 'Invalid login' ? invalidLoginLocator : locator)),
       evaluate: jest.fn(),
     };
     return { page, locator };
