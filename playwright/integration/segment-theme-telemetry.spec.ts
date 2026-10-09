@@ -34,6 +34,15 @@ const reportPassedAssertion = (message: string) => {
   console.log(`[Segment theme telemetry] PASS ${message}`);
 };
 
+const renderedThemeVariants = [
+  { colorSchemeRendered: 'dark', contrastModeRendered: 'default' },
+  { colorSchemeRendered: 'dark', contrastModeRendered: 'high-contrast' },
+  { colorSchemeRendered: 'dark', contrastModeRendered: 'glass' },
+  { colorSchemeRendered: 'light', contrastModeRendered: 'default' },
+  { colorSchemeRendered: 'light', contrastModeRendered: 'high-contrast' },
+  { colorSchemeRendered: 'light', contrastModeRendered: 'glass' },
+] as const;
+
 test.describe('Segment theme telemetry', () => {
   test('sends rendered theme on Page events and preference settings on Identify events', async ({ page }) => {
     await clearCachedFeatureFlags(page);
@@ -115,15 +124,37 @@ test.describe('Segment theme telemetry', () => {
       .toBe(true);
     reportPassedAssertion('Identify updates to colorSchemeSetting=dark and contrastModeSetting=glass after preferences change');
 
-    const pageEventCount = getEvents(segmentRequests).filter((event) => event.type === 'page').length;
-    await page.evaluate(() => {
-      window.history.pushState({}, '', `${window.location.pathname}?theme-telemetry-navigation=1`);
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    });
+    for (const [index, renderedTheme] of renderedThemeVariants.entries()) {
+      const pageEventCount = getEvents(segmentRequests).filter((event) => event.type === 'page').length;
+      await page.evaluate(
+        ({ colorSchemeRendered, contrastModeRendered, navigationIndex }) => {
+          const rootClasses = document.documentElement.classList;
+          rootClasses.remove('pf-v6-theme-dark', 'pf-v6-theme-high-contrast', 'pf-v6-theme-glass');
+          if (colorSchemeRendered === 'dark') rootClasses.add('pf-v6-theme-dark');
+          if (contrastModeRendered === 'high-contrast') rootClasses.add('pf-v6-theme-high-contrast');
+          if (contrastModeRendered === 'glass') rootClasses.add('pf-v6-theme-glass');
 
-    await expect
-      .poll(() => getEvents(segmentRequests).filter((event) => event.type === 'page').length, { timeout: SEGMENT_REQUEST_TIMEOUT })
-      .toBeGreaterThan(pageEventCount);
-    reportPassedAssertion('a Page event is sent after SPA navigation');
+          window.history.pushState({}, '', `${window.location.pathname}?theme-telemetry-navigation=${navigationIndex}`);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        },
+        { ...renderedTheme, navigationIndex: index + 1 }
+      );
+
+      await expect
+        .poll(
+          () =>
+            getEvents(segmentRequests)
+              .filter((event) => event.type === 'page')
+              .slice(pageEventCount)
+              .some(
+                (event) =>
+                  event.properties?.colorSchemeRendered === renderedTheme.colorSchemeRendered &&
+                  event.properties?.contrastModeRendered === renderedTheme.contrastModeRendered
+              ),
+          { timeout: SEGMENT_REQUEST_TIMEOUT }
+        )
+        .toBe(true);
+    }
+    reportPassedAssertion('navigation Page events include all six rendered color scheme and contrast mode combinations');
   });
 });
