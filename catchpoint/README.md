@@ -42,16 +42,15 @@ Leave the operational production monitor configured for production.
    The dashboard URL and WebSocket URL are derived from this value; no other URL
    changes are needed.
 2. Assign **stage** account credentials to this new test.
-3. Select a Catchpoint node that can resolve and reach
+3. Run the test on an **internal Catchpoint node** that can resolve and reach
    `squid.corp.redhat.com:3128`, typically an Enterprise Node on the corporate
-   network. Your workstation's VPN connection does not give a remote Catchpoint
-   node access to the proxy.
-4. Where supported by your account and agent version, create/select an HTTP proxy
-   definition for `http://squid.corp.redhat.com:3128` in Catchpoint's proxy
-   configuration library and associate it with the stage test. Otherwise, have
-   the node administrator configure the Enterprise Node's proxy settings.
-   Configure any required proxy credentials there, separately from the stage SSO
-   credentials.
+   network. Stage tests require an internal node; your workstation's VPN
+   connection does not give a remote Catchpoint node access to the proxy.
+4. Select and associate the **corporate proxy configuration provided by this
+   Catchpoint instance** with the stage test. It routes through
+   `http://squid.corp.redhat.com:3128`; use its managed proxy credentials if
+   required. Do not run the stage test without this proxy configuration. Keep
+   proxy credentials separate from the stage SSO credentials.
 5. Ensure the proxy routing covers the Console, stage SSO, and the secure
    WebSocket connection. Squid must permit HTTPS CONNECT to the required hosts
    on port 443. If using a PAC file, verify that it routes `wss:` traffic as well
