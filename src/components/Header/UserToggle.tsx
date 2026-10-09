@@ -52,7 +52,7 @@ const DropdownItems = ({
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
   const enableMyAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const { v2OptedIn, isLoading: isOrgOptInLoading } = useOrgOptIn();
+  const { v2OptedIn } = useOrgOptIn();
   const v2WorkspacesEnabled = v2OptedIn === true;
   const myAccessPath = enableMyAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
@@ -109,7 +109,7 @@ const DropdownItems = ({
       )}
     </React.Fragment>,
     <React.Fragment key="My user access wrapper">
-      {userMenu?.showMyUserAccess && !isOrgOptInLoading && (
+      {userMenu?.showMyUserAccess && (
         <DropdownItem
           component={({ className }) => (
             <ChromeLink className={className} href={myAccessPath} appId="rbac">
