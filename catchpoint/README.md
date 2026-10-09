@@ -28,8 +28,10 @@ validation files and should not be pasted.
    an API, retain the exact error so the script can be adjusted to that runner.
 
 The authentication selectors and consent suppression follow the repository's
-shared authentication flow. They are inlined because this script must run without
-installing the shared npm package in Catchpoint.
+shared authentication flow. The script blocks both TrustArc's consent endpoint
+and the loader served from `static.dev.redhat.com` on stage (or
+`static.redhat.com` in production). They are inlined because this script must run
+without installing the shared npm package in Catchpoint.
 
 ## Staging through Squid
 
