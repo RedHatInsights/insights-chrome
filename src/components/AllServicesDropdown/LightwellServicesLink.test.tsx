@@ -8,6 +8,15 @@ import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import { _resetDarkModeStore, getDarkModeStore } from '../../state/stores/darkModeStore';
 import LightwellServicesLink from './LightwellServicesLink';
 
+// Mock the bridge to delegate to the real globalThis-anchored store.
+jest.mock('../../chrome/darkModeStoreBridge', () => {
+  const { getDarkModeStore: getStore } = jest.requireActual('../../state/stores/darkModeStore');
+  const { useGetState } = jest.requireActual('@scalprum/react-core');
+  return {
+    useDarkModeIsDark: () => useGetState(getStore()).isDark,
+  };
+});
+
 const renderWithProviders = () => {
   const store = createStore();
   store.set(activeModuleAtom, 'testModule');

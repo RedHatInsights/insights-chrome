@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { ThemeVariants, useTheme } from './useTheme';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
-import { getDarkModeStore } from '../state/stores/darkModeStore';
 import { THEME_STORAGE_KEY } from '../utils/consts';
 
 jest.mock('@unleash/proxy-client-react', () => ({
@@ -9,18 +8,23 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
 }));
 
-jest.mock('../state/stores/darkModeStore', () => {
+jest.mock('../chrome/darkModeStoreBridge', () => {
   const mockUpdateState = jest.fn();
   return {
-    getDarkModeStore: jest.fn(() => ({
+    getCachedDarkModeStore: jest.fn(() => ({
       updateState: mockUpdateState,
     })),
+    __mockUpdateState: mockUpdateState,
   };
 });
+const mockUpdateState = (
+  jest.requireMock('../chrome/darkModeStoreBridge') as {
+    __mockUpdateState: jest.Mock;
+  }
+).__mockUpdateState;
 
 const mockedUseFlag = useFlag as unknown as jest.Mock;
 const mockedUseFlagsStatus = useFlagsStatus as unknown as jest.Mock;
-const mockUpdateState = getDarkModeStore().updateState as jest.Mock;
 
 describe('useTheme hook', () => {
   let originalMatchMedia: typeof window.matchMedia;

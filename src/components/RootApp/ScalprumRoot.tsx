@@ -43,6 +43,7 @@ import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
 import { preloadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
+import { preloadDarkModeStore } from '../../chrome/darkModeStoreBridge';
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
 
@@ -166,10 +167,11 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   }, []);
 
   useEffect(() => {
-    // Warm the breadcrumb store from the `chrome` federated remote so useBreadcrumbStoreRef
-    // and ChromeRoute's loadBreadcrumbStore resolve immediately. Best-effort, idempotent.
+    // Warm the breadcrumb and dark mode stores from the `chrome` federated remote so
+    // bridge hooks resolve immediately. Best-effort, idempotent.
     // Scalprum is already initialized by the child ScalprumProvider before this effect runs.
     preloadBreadcrumbStore().catch(() => {});
+    preloadDarkModeStore().catch(() => {});
   }, []);
 
   const setPageMetadata = useCallback((pageOptions: any) => {
