@@ -16,6 +16,7 @@ import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useFlag } from '@unleash/proxy-client-react';
+import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
@@ -51,7 +52,8 @@ const DropdownItems = ({
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
   const enableMyAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const v2WorkspacesEnabled = useFlag('platform.rbac.workspaces');
+  const { v2OptedIn } = useOrgOptIn();
+  const v2WorkspacesEnabled = v2OptedIn === true;
   const myAccessPath = enableMyAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
   return [

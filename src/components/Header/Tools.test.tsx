@@ -16,6 +16,9 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
   useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
 }));
+jest.mock('../../hooks/useOrgOptIn', () => ({
+  useOrgOptIn: () => ({ v2OptedIn: false, isLoading: false, isError: false, isResolved: true }),
+}));
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div />,
 }));
@@ -137,7 +140,7 @@ const mockUser = {
 
 const defaultFlags: Record<string, boolean> = {
   'platform.sources.integrations': false,
-  'platform.rbac.workspaces': false,
+  // platform.rbac.workspaces replaced by useOrgOptIn hook
   'platform.chrome.help-panel': false,
   'platform.chrome.ask-redhat-help': false,
   'platform.learning-resources.global-learning-resources': false,

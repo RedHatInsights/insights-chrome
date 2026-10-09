@@ -6,7 +6,10 @@ import { VISIBILITY_REQUEST_TIMEOUT_MS } from './visibilityRequestConfig';
 
 jest.unmock('axios');
 jest.mock('./common', () => ({ ITLess: () => false, isProd: () => true }));
-jest.mock('../components/FeatureFlags/unleashClient', () => ({ getUnleashClient: jest.fn() }));
+jest.mock('../components/FeatureFlags/unleashClient', () => ({
+  getUnleashClient: jest.fn(() => ({ isEnabled: (name: string) => name === 'platform.chrome.kessel' })),
+  getFeatureFlagsError: jest.fn(() => false),
+}));
 jest.mock('@scalprum/core', () => ({ initSharedScope: jest.fn(), getSharedScope: jest.fn().mockReturnValue({}) }));
 
 const transport = new MockAdapter(axios);
