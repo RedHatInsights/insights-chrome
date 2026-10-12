@@ -17,7 +17,7 @@ import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
 import { ITLess, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
@@ -106,14 +106,24 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
   const { contrastMode, setDefaultContrast, setHighContrast, setSystemContrast } = useHighContrast();
   const schedulerDrawerEnabled = useFlag('console.chrome-scheduler_drawer');
-  const schedulerDrawerActive = useAtomValue(drawerPanelContentAtom)?.scope === 'schedulerUi';
+  const drawerContent = useAtomValue(drawerPanelContentAtom);
+  const isNotificationDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
+  // Checkmark reflects an actually-visible panel: matching content AND expanded drawer.
+  // Closing via the panel "x" only collapses the drawer, leaving drawerContent set.
+  const schedulerDrawerActive = drawerContent?.scope === 'schedulerUi' && isNotificationDrawerExpanded;
 
   const {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
   const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const { flagsReady, flagsError } = useFlagsStatus();
+  const flagsResolved = flagsReady || !!flagsError;
   const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced);
+  const isFeltAutoFlag = useFlag('platform.chrome-felt-auto');
+  // Keep auto-Felt enabled while flags are loading to prevent theme flicker.
+  // Once flags resolve, follow the actual flag value.
+  const isFeltAutoEnabled = flagsResolved ? isFeltAutoFlag : true;
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {
@@ -216,7 +226,7 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     {
       groupKey: 'showTheme' satisfies keyof SettingsGroupConfig,
       title: intl.formatMessage(messages.theme),
-      isHidden: !isFeltThemeEnabled,
+      isHidden: !isFeltThemeEnabled || isFeltAutoEnabled,
       customContent: (
         <ToggleGroup aria-label={intl.formatMessage(messages.theme)} className="pf-v6-u-mx-md pf-v6-u-my-sm">
           <ToggleGroupItem
@@ -494,14 +504,12 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   );
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-  const isNotificationDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
   const toggleDrawer = () => {
     toggleDrawerContent({
       scope: 'notifications',
       module: './DrawerPanel',
     });
   };
-  const drawerContent = useAtomValue(drawerPanelContentAtom);
 
   const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
     scope: 'notifications',

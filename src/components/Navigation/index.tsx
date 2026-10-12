@@ -14,6 +14,7 @@ import type { Navigation as NavigationSchema } from '../../@types/types';
 import { useFlag } from '@unleash/proxy-client-react';
 import { getUrl } from '../../hooks/useBundle';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { isExperimentalQuickstartsEnabled } from '../../utils/isExperimentalQuickstartsEnabled';
 
 export type NavigationProps = { loaded: boolean; schema: NavigationSchema };
 
@@ -25,7 +26,7 @@ const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
     undefined,
     undefined,
   ]);
-  const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
+  const showBundleCatalog = isExperimentalQuickstartsEnabled();
   const breadcrumbsDisabled = !useFlag('platform.chrome.bredcrumbs.enabled');
 
   const onLinkClick = (origEvent: React.MouseEvent<HTMLAnchorElement, MouseEvent>, href: string) => {

@@ -28,6 +28,7 @@ import { EntitlementsMap, fetchEntitlements, getMinimumViableEntitlements } from
 import { ENTITLEMENTS_FALLBACK_FLAG } from '../entitlementsConstants';
 import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import getOrganization from './getOrganization';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const authChannel = new BroadcastChannel('auth');
@@ -55,7 +56,7 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
         locale: user.profile?.locale as any,
         username: user.profile?.username as any,
       },
-      organization: user.profile?.organization as any,
+      organization: getOrganization(user.profile?.organization as ChromeUser['identity']['organization'], user.access_token),
     },
   };
 }

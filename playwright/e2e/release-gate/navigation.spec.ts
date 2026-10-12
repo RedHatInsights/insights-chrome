@@ -1,6 +1,6 @@
 import { test, expect } from '../../setup/test-setup';
-import { ChromeNavigation } from '../pages/chrome-navigation';
-import { ChromeTopbar } from '../pages/chrome-topbar';
+import { ChromeNavigation } from '../../pages/chrome-navigation';
+import { ChromeTopbar } from '../../pages/chrome-topbar';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {

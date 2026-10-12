@@ -8,12 +8,14 @@ import ChromeFooter from '../Footer/Footer';
 import Logo from '../Header/Logo';
 import NavLoader from '../Navigation/Loader';
 import { getUrl } from '../../hooks/useBundle';
+import { LIGHTWELL_BUNDLE_ID } from '../../utils/common';
 import LoadingFallback from '../../utils/loading-fallback';
 
 // Component that is displayed as a placeholder before auth init is finished
 const AppPlaceholder = () => {
-  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices', 'learning-resources', 'lightwell'].includes(getUrl('bundle'));
-  const hideFooter = ['lightwell'].includes(getUrl('bundle'));
+  const bundle = getUrl('bundle');
+  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices', 'learning-resources', LIGHTWELL_BUNDLE_ID].includes(bundle);
+  const hideFooter = bundle === LIGHTWELL_BUNDLE_ID;
 
   return (
     <MemoryRouter>

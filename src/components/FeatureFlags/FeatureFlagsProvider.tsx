@@ -1,34 +1,88 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import { FlagProvider } from '@unleash/proxy-client-react';
+import { FlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { DeepRequired } from 'utility-types';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
-import { setUnleashClient } from './unleashClient';
-import { getFeatureFlagsClient, startFeatureFlagsClient, stopFeatureFlagsClient } from './featureFlagsClient';
+import { setFeatureFlagsError, setUnleashClient } from './unleashClient';
+import { getFeatureFlagsClient, isFeatureFlagsClientStarted, startFeatureFlagsClient, stopFeatureFlagsClient } from './featureFlagsClient';
+
+export { createFetchFeatureFlags } from './featureFlagsClient';
+
+const isMetricsError = (error: unknown) => typeof error === 'object' && error !== null && 'type' in error && error.type === 'metrics';
+
+const FeatureFlagsStateBridge = ({ client }: { client: UnleashClient }) => {
+  const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
+
+  useEffect(() => {
+    const notifyInitialFlags = () => {
+      // The SDK loads stored toggles during initialization without emitting `update`.
+      client.emit('update');
+    };
+    const markDegraded = (error?: unknown) => {
+      if (isMetricsError(error)) {
+        return;
+      }
+      setFeatureFlagsError(true);
+      setServiceDegraded({ service: 'featureFlags', degraded: true });
+    };
+    const markHealthy = () => {
+      setFeatureFlagsError(false);
+      setServiceDegraded({ service: 'featureFlags', degraded: false });
+    };
+
+    client.on('initialized', notifyInitialFlags);
+    client.on('error', markDegraded);
+    client.on('ready', markHealthy);
+    client.on('recovered', markHealthy);
+
+    // The entitlements bootstrap may have started this client before these listeners existed.
+    const startedEarly = isFeatureFlagsClientStarted(client);
+    void startFeatureFlagsClient(client).then(() => {
+      if (!startedEarly) {
+        return;
+      }
+      notifyInitialFlags();
+      const error = client.getError();
+      if (error) {
+        markDegraded(error);
+      } else if (client.isReady()) {
+        markHealthy();
+      }
+    }, markDegraded);
+
+    return () => {
+      client.off('initialized', notifyInitialFlags);
+      client.off('error', markDegraded);
+      client.off('ready', markHealthy);
+      client.off('recovered', markHealthy);
+      stopFeatureFlagsClient(client);
+    };
+  }, [client, setServiceDegraded]);
+
+  return null;
+};
 
 const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isPreview = useAtomValue(isPreviewAtom);
+  const orgId = user?.identity.internal?.org_id;
+  const userId = user?.identity.internal?.account_id;
+  const accountNumber = user?.identity.account_number;
+  const email = user?.identity.user?.email;
+  const hasUser = Boolean(user);
   const client = useMemo(() => {
-    const client = getFeatureFlagsClient(user, isPreview);
-    setUnleashClient(client);
-    return client;
-  }, [user?.identity.internal?.org_id, user?.identity.internal?.account_id, user?.identity.account_number, user?.identity.user?.email, isPreview]);
+    const unleashClient = getFeatureFlagsClient(user, isPreview);
+    setUnleashClient(unleashClient);
+    return unleashClient;
+  }, [orgId, userId, accountNumber, email, hasUser, isPreview]);
   // FlagProvider retains its initial client in a ref; remount it for a new scoped context.
   const clientKey = useMemo(() => JSON.stringify(client.getContext()), [client]);
-  useEffect(() => {
-    void startFeatureFlagsClient(client).then(() => {
-      // Bootstrap may have emitted these events before the provider's listeners mounted.
-      client.emit('update');
-      if (client.getError()) {
-        client.emit('error', client.getError());
-      }
-    });
-    return () => stopFeatureFlagsClient(client);
-  }, [client]);
+
   return (
     <FlagProvider key={clientKey} unleashClient={client} startClient={false} stopClient={false}>
+      <FeatureFlagsStateBridge client={client} />
       {children}
     </FlagProvider>
   );

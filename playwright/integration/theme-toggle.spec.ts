@@ -1,5 +1,5 @@
 import { expect, test } from '../setup/test-setup';
-import { ChromeTopbar } from './pages/chrome-topbar';
+import { ChromeTopbar } from '../pages/chrome-topbar';
 import { mockFeatureFlags } from '../helpers/feature-flags';
 
 const FELT_THEME_CLASS = 'pf-v6-theme-felt';
@@ -7,7 +7,9 @@ const FELT_STORAGE_KEY = 'chrome:felt-theme';
 
 test.describe('Theme Toggle — Default / Project Felt', () => {
   test.beforeEach(async ({ page }) => {
-    await mockFeatureFlags(page, ['platform.chrome.felt-theme']);
+    // platform.chrome-felt-auto hides the Theme section entirely when enabled (see Tools.tsx),
+    // so it must be forced off here regardless of what the live environment returns.
+    await mockFeatureFlags(page, ['platform.chrome.felt-theme'], ['platform.chrome-felt-auto']);
     await page.goto('/');
     await page.evaluate((key) => localStorage.removeItem(key), FELT_STORAGE_KEY);
     await page.reload();

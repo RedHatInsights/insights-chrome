@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { ChromeTopbar } from '../pages/chrome-topbar';
+import { ChromeTopbar } from '../../pages/chrome-topbar';
 import { createAuthenticatedPage } from '../../helpers/isolated-auth';
 import { AUTH_TIMEOUT } from '../../setup/constants';
 

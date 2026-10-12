@@ -7,6 +7,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useAtomValue } from 'jotai';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import useTrialRedirect from '../../hooks/useTrialRedirect';
+import { isExperimentalQuickstartsEnabled } from '../../utils/isExperimentalQuickstartsEnabled';
 
 const INTEGRATION_SOURCES = 'platform.sources.integrations';
 
@@ -69,7 +70,7 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
   const enableInventoryPOC = useFlag('platform.chrome.poc.inventory');
   const featureFlags = useMemo<Record<string, boolean>>(() => ({ INTEGRATION_SOURCES: enableIntegrations }), [enableIntegrations]);
   const moduleRoutes = useAtomValue(moduleRoutesAtom);
-  const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
+  const showBundleCatalog = isExperimentalQuickstartsEnabled();
   useTrialRedirect();
 
   return (

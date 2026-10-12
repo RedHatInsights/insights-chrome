@@ -6,17 +6,11 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { captureException, captureMessage } from '@sentry/react';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import FeatureFlagsProvider from './FeatureFlagsProvider';
-import {
-  FEATURE_FLAGS_INITIAL_TIMEOUT_MS,
-  createFeatureFlagsFetch,
-  getBootstrapFeatureFlag,
-  getFeatureFlagsClient,
-  startFeatureFlagsClient,
-  stopFeatureFlagsClient,
-} from './featureFlagsClient';
-import { getUnleashClient } from './unleashClient';
+import { createFetchFeatureFlags, getBootstrapFeatureFlag, getFeatureFlagsClient, startFeatureFlagsClient, stopFeatureFlagsClient } from './featureFlagsClient';
+import { FEATURE_FLAGS_INITIAL_TIMEOUT_MS, UNLEASH_ERROR_KEY, getUnleashClient } from './unleashClient';
 import { ENTITLEMENTS_FALLBACK_FLAG } from '../../auth/entitlementsConstants';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 
 jest.mock('../../utils/common', () => ({ getEnv: () => 'stage' }));
 jest.mock('@sentry/react', () => ({ captureException: jest.fn(), captureMessage: jest.fn() }));
@@ -218,14 +212,37 @@ it('clears a flag-fetch error on recovery', async () => {
   mockFetch.mockImplementationOnce(async () => new Response('', { status: 503 })).mockImplementation(async () => jsonResponse());
   const client = clientFor();
   expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(false);
+  expect(client.getError()).toBeDefined();
   await client.updateToggles();
   expect(client.isEnabled(ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
-  expect(localStorage.getItem('chrome:feature-flags:error')).toBe('false');
+  expect(client.getError()).toBeUndefined();
+});
+
+it.each([
+  ['degraded', async () => new Response('', { status: 503 }), true, 'true'],
+  ['healthy', async () => jsonResponse(), false, 'false'],
+])('reports a bootstrap-started client as %s once the provider mounts', async (_state, respond, degraded, errorFlag) => {
+  mockFetch.mockImplementation(respond);
+  clientFor();
+  await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG);
+  const store = createStore();
+  render(
+    <JotaiProvider store={store}>
+      <ChromeAuthContext.Provider value={{ user } as ChromeAuthContextValue}>
+        <FeatureFlagsProvider>
+          <div />
+        </FeatureFlagsProvider>
+      </ChromeAuthContext.Provider>
+    </JotaiProvider>
+  );
+  await waitFor(() => expect(store.get(degradedStateAtom).featureFlags).toBe(degraded));
+  expect(localStorage.getItem(UNLEASH_ERROR_KEY)).toBe(errorFlag);
+  expect(mockFetch).toHaveBeenCalledTimes(1);
 });
 
 it('uses the longer refresh timeout and ignores intentional cancellations', async () => {
   jest.useFakeTimers();
-  const fetch = createFeatureFlagsFetch();
+  const fetch = createFetchFeatureFlags();
   await fetch('https://test.com/api/featureflags/v0', {});
   mockFetch.mockImplementation(() => new Promise(() => {}));
   const pending = fetch('https://test.com/api/featureflags/v0', {}).catch((error: unknown) => error);

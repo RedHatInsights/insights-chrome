@@ -102,10 +102,10 @@ describe('GlobalFilterWrapper', () => {
     await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
   });
 
-  it('should not call getUserPermissions when flags fail to load', async () => {
+  it('should call getUserPermissions when flags fail to load', async () => {
     mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: true });
     render(<GlobalFilterWrapper />, { wrapper: Wrapper });
-    await waitFor(() => expect(mockGetUserPermissions).not.toHaveBeenCalled());
+    await waitFor(() => expect(mockGetUserPermissions).toHaveBeenCalledWith('inventory'));
   });
 
   it('should call getUserPermissions after feature flags become ready', async () => {

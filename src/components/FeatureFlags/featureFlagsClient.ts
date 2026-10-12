@@ -1,75 +1,131 @@
 import { InMemoryStorageProvider, LocalStorageProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { captureException, captureMessage } from '@sentry/react';
+import { captureException } from '@sentry/react';
+import * as Sentry from '@sentry/react';
 import { getEnv } from '../../utils/common';
 import { withTimeout } from '../../utils/withTimeout';
-import { UNLEASH_ERROR_KEY } from './unleashClient';
+import {
+  FEATURE_FLAGS_INITIAL_TIMEOUT_MS,
+  FEATURE_FLAGS_REFRESH_TIMEOUT_MS,
+  clearLegacyFeatureFlagsCache,
+  getFeatureFlagsStoragePrefix,
+} from './unleashClient';
 
-export const FEATURE_FLAGS_INITIAL_TIMEOUT_MS = 5000;
-const FEATURE_FLAGS_REFRESH_TIMEOUT_MS = 15000;
-const FEATURE_FLAGS_PATH = '/api/featureflags/v0';
+const FEATURE_FLAGS_URL = `${document.location.origin}/api/featureflags/v0`;
+const FEATURE_FLAGS_PATHNAME = new URL(FEATURE_FLAGS_URL).pathname;
 
-type ClientRecord = { key: string; client: UnleashClient; start?: Promise<void>; active: boolean; started: boolean };
+const createAbortError = () => Object.assign(new Error('Feature flag request was cancelled'), { name: 'AbortError' });
+
+const createTimeoutError = (timeoutMs: number) => Object.assign(new Error(`Feature flag request timed out after ${timeoutMs}ms`), { name: 'TimeoutError' });
+
+const fetchFeatureFlagsWithTimeout = (url: RequestInfo | URL, requestInit: RequestInit, timeoutMs: number): Promise<Response> => {
+  const requestSignal = requestInit.signal;
+  if (requestSignal?.aborted) {
+    return Promise.reject(createAbortError());
+  }
+
+  const controller = new AbortController();
+  const abortRequest = () => controller.abort();
+  requestSignal?.addEventListener('abort', abortRequest, { once: true });
+
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  let timedOut = false;
+  const fetchPromise = window.fetch(url, { ...requestInit, signal: controller.signal }).catch((error: unknown) => {
+    if (requestSignal?.aborted && !timedOut) {
+      throw createAbortError();
+    }
+    throw error;
+  });
+  const timeoutPromise = new Promise<Response>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+      reject(createTimeoutError(timeoutMs));
+    }, timeoutMs);
+  });
+
+  return Promise.race([fetchPromise, timeoutPromise]).finally(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    requestSignal?.removeEventListener('abort', abortRequest);
+  });
+};
+
+const validateFeatureFlagsResponse = (response: Response) => {
+  if (response.status >= 400) {
+    Sentry.captureMessage(`Feature loading error server error! ${response.status}: ${response.statusText}.`, 'warning');
+    throw new Error(`Feature flag request failed with HTTP ${response.status}`);
+  }
+
+  if (response.ok) {
+    const contentType = response.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      const error = new Error(`Feature loading error server error! Invalid response content type. Expected 'application/json, got: ${contentType}'`);
+      captureException(error);
+      throw error;
+    }
+  }
+
+  return response;
+};
+
+/**
+ * Only the first toggle request uses the short timeout, because it gates the initial navigation.
+ * Later refreshes run while stored toggles are served, so a slow proxy must not flap the degraded state.
+ */
+export const createFetchFeatureFlags = () => {
+  let initialRequestSettled = false;
+
+  return async (url: RequestInfo | URL, requestInit: RequestInit) => {
+    const requestUrl = typeof url === 'string' || url instanceof URL ? url.toString() : url.url;
+    const isFeatureFlagsRequest = new URL(requestUrl, document.location.origin).pathname === FEATURE_FLAGS_PATHNAME;
+    if (!isFeatureFlagsRequest) {
+      return window.fetch(url, requestInit);
+    }
+
+    const timeoutMs = initialRequestSettled ? FEATURE_FLAGS_REFRESH_TIMEOUT_MS : FEATURE_FLAGS_INITIAL_TIMEOUT_MS;
+    let response: Response;
+    try {
+      response = await fetchFeatureFlagsWithTimeout(url, requestInit, timeoutMs);
+    } catch (error) {
+      if (!requestInit.signal?.aborted) {
+        initialRequestSettled = true;
+        captureException(error);
+      }
+      throw error;
+    }
+
+    initialRequestSettled = true;
+    return validateFeatureFlagsResponse(response);
+  };
+};
+
+const config = {
+  url: FEATURE_FLAGS_URL,
+  clientKey: 'proxy-123',
+  appName: 'web',
+  headerName: 'X-Unleash-Auth',
+  refreshInterval: 60000,
+  metricsInterval: 120000,
+};
+
+const createStorageProvider = (orgId?: string, userId?: string) => {
+  const prefix = getFeatureFlagsStoragePrefix(orgId, userId);
+  // Without a complete identity, never read another account's toggles; fall back to flags-disabled on outage.
+  return prefix ? new LocalStorageProvider(prefix) : new InMemoryStorageProvider();
+};
+
+type ClientRecord = { key: string; client: UnleashClient; start?: Promise<void>; active: boolean; started: boolean; stopped: boolean };
 let current: ClientRecord | undefined;
 const records = new WeakMap<UnleashClient, ClientRecord>();
 
-/** The first toggle fetch gates authentication; background refreshes use the longer budget. */
-export function createFeatureFlagsFetch() {
-  let initial = true;
-  return async (url: RequestInfo | URL, requestInit: RequestInit): Promise<Response> => {
-    const requestUrl = typeof url === 'string' || url instanceof URL ? url.toString() : url.url;
-    if (new URL(requestUrl, document.location.origin).pathname !== FEATURE_FLAGS_PATH) {
-      return window.fetch(url, requestInit);
-    }
-    const controller = new AbortController();
-    const abort = () => controller.abort();
-    requestInit.signal?.addEventListener('abort', abort, { once: true });
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    let httpFailure = false;
-    try {
-      if (requestInit.signal?.aborted) {
-        controller.abort();
-        throw Object.assign(new Error('Feature flag request cancelled'), { name: 'AbortError' });
-      }
-      const timeoutMs = initial ? FEATURE_FLAGS_INITIAL_TIMEOUT_MS : FEATURE_FLAGS_REFRESH_TIMEOUT_MS;
-      const response = await Promise.race([
-        window.fetch(url, { ...requestInit, signal: controller.signal }),
-        new Promise<never>((_resolve, reject) => {
-          timer = setTimeout(() => {
-            controller.abort();
-            reject(Object.assign(new Error('Feature flag request timed out'), { name: 'TimeoutError' }));
-          }, timeoutMs);
-        }),
-      ]);
-      if (response.status >= 400) {
-        httpFailure = true;
-        captureMessage(`Feature loading error server error! ${response.status}: ${response.statusText}.`, 'warning');
-        throw new Error(`Feature flag request failed with HTTP ${response.status}`);
-      }
-      if (response.ok && !response.headers.get('content-type')?.includes('application/json')) {
-        throw new Error('Invalid feature flag response content type');
-      }
-      localStorage.setItem(UNLEASH_ERROR_KEY, 'false');
-      return response;
-    } catch (error) {
-      if (!requestInit.signal?.aborted) {
-        localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
-        if (!httpFailure) {
-          captureException(error);
-        }
-      }
-      // Keep the SDK's last-known-good toggles on outage instead of replacing them with [].
-      throw error;
-    } finally {
-      initial = false;
-      clearTimeout(timer);
-      requestInit.signal?.removeEventListener('abort', abort);
-    }
-  };
-}
-
-/** Shared bootstrap/provider client, using exactly the same identity and rollout context. */
+/**
+ * Shared bootstrap/provider client, using exactly the same identity and rollout context.
+ * A client stopped by provider cleanup is replaced, matching a fresh provider mount.
+ */
 export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: boolean): UnleashClient {
+  clearLegacyFeatureFlagsCache();
   const orgId = user?.identity.internal?.org_id;
   const userId = user?.identity.internal?.account_id;
   const accountNumber = user?.identity.account_number;
@@ -77,33 +133,40 @@ export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: b
   const context = {
     'platform.chrome.ui.preview': isPreview,
     'platform.chrome.ui.env': getEnv(),
-    orgId,
     userId,
+    orgId,
     accountNumber,
-    ...(user ? { properties: { ...(accountNumber ? { account_number: accountNumber } : {}), ...(email ? { email } : {}) } } : {}),
+    ...(user
+      ? {
+          // Typed as strings, as in the provider's DeepRequired user; the SDK drops undefined values.
+          properties: {
+            account_number: accountNumber,
+            email,
+          } as Record<string, string>,
+        }
+      : {}),
   };
   const key = JSON.stringify(context);
-  if (current?.key === key) {
+  if (current?.key === key && !current.stopped) {
     return current.client;
   }
   if (current) {
     stopFeatureFlagsClient(current.client);
   }
-  const storageProvider = orgId && userId ? new LocalStorageProvider(`unleash:repository:${orgId}:${userId}`) : new InMemoryStorageProvider();
   const client = new UnleashClient({
-    url: `${document.location.origin}${FEATURE_FLAGS_PATH}`,
-    clientKey: 'proxy-123',
-    appName: 'web',
-    headerName: 'X-Unleash-Auth',
-    refreshInterval: 60000,
-    metricsInterval: 120000,
-    fetch: createFeatureFlagsFetch(),
-    storageProvider,
+    ...config,
+    fetch: createFetchFeatureFlags(),
+    storageProvider: createStorageProvider(orgId, userId),
     context,
   });
-  current = { key, client, active: false, started: false };
+  current = { key, client, active: false, started: false, stopped: false };
   records.set(client, current);
   return client;
+}
+
+/** True once bootstrap or a previous provider mount has started this client. */
+export function isFeatureFlagsClientStarted(client: UnleashClient): boolean {
+  return Boolean(records.get(client)?.start);
 }
 
 /** Start once even when bootstrap and the React provider both need the client. */
@@ -113,15 +176,13 @@ export function startFeatureFlagsClient(client: UnleashClient): Promise<void> {
   }
   const record = current;
   record.active = true;
-  record.start ??= client
-    .start()
-    .catch(() => undefined)
-    .then(() => {
-      record.started = true;
-      if (!record.active) {
-        stopFeatureFlagsClient(client);
-      }
-    });
+  record.stopped = false;
+  record.start ??= client.start().finally(() => {
+    record.started = true;
+    if (!record.active) {
+      stopFeatureFlagsClient(client);
+    }
+  });
   return record.start;
 }
 
@@ -130,6 +191,7 @@ export function stopFeatureFlagsClient(client: UnleashClient): void {
   const record = records.get(client);
   if (record) {
     record.active = false;
+    record.stopped = true;
     if (record.started) {
       client.stop();
       record.start = undefined;

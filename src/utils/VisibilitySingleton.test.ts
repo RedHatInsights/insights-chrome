@@ -1,7 +1,8 @@
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
-import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
+import { getVisibilityFunctions, initializeVisibilityFunctions, resetVisibilityFunctions } from './VisibilitySingleton';
 import axios from 'axios';
 import { ITLess } from './common';
+import { VISIBILITY_REQUEST_TIMEOUT_MS } from './visibilityRequestConfig';
 import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
 
 jest.mock('axios');
@@ -61,6 +62,44 @@ describe('VisibilitySingleton', () => {
 
   afterEach(() => {
     jsdomReset();
+  });
+
+  test('reset removes the shared visibility callbacks', () => {
+    resetVisibilityFunctions();
+
+    expect(() => getVisibilityFunctions()).toThrow('Visibility functions were not initialized!');
+  });
+
+  describe('hasLocalStorage', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      localStorage.removeItem('visibility-test');
+    });
+
+    test('uses getItem and matches the stored string', () => {
+      localStorage.setItem('visibility-test', 'enabled');
+      const getItem = jest.spyOn(localStorage, 'getItem');
+
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 'enabled')).toBe(true);
+      expect(getItem).toHaveBeenCalledWith('visibility-test');
+    });
+
+    test('rejects a missing or different value without coercing types', () => {
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 'true')).toBe(false);
+      localStorage.setItem('visibility-test', 'true');
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 'false')).toBe(false);
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', true)).toBe(false);
+      localStorage.setItem('visibility-test', '1');
+      expect(visibilityFunctions.hasLocalStorage('visibility-test', 1)).toBe(false);
+    });
+
+    test('propagates unavailable storage to the item evaluation boundary', () => {
+      jest.spyOn(localStorage, 'getItem').mockImplementation(() => {
+        throw new DOMException('Storage is unavailable', 'SecurityError');
+      });
+
+      expect(() => visibilityFunctions.hasLocalStorage('visibility-test', 'enabled')).toThrow('Storage is unavailable');
+    });
   });
 
   test('isOrgAdmin', async () => {
@@ -387,7 +426,8 @@ describe('VisibilitySingleton', () => {
         expect.objectContaining({
           object: { resourceId: 'redhat/123', resourceType: 'tenant', reporter: { type: 'rbac' } },
           relation: 'rbac_roles_read',
-        })
+        }),
+        { timeout: VISIBILITY_REQUEST_TIMEOUT_MS }
       );
     });
 
@@ -407,7 +447,8 @@ describe('VisibilitySingleton', () => {
         '/api/kessel/v1beta2/checkselfbulk',
         expect.objectContaining({
           items: [expect.objectContaining({ relation: 'rbac_roles_write' }), expect.objectContaining({ relation: 'rbac_groups_read' })],
-        })
+        }),
+        { timeout: VISIBILITY_REQUEST_TIMEOUT_MS }
       );
     });
 
@@ -423,7 +464,9 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_TRUE' } });
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read', 'rbac_roles_read']);
       expect(result).toBe(true);
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/kessel/v1beta2/checkself', expect.objectContaining({ relation: 'rbac_roles_read' }));
+      expect(mockedAxios.post).toHaveBeenCalledWith('/api/kessel/v1beta2/checkself', expect.objectContaining({ relation: 'rbac_roles_read' }), {
+        timeout: VISIBILITY_REQUEST_TIMEOUT_MS,
+      });
     });
 
     test('should return true when at least one relation is allowed (OR logic)', async () => {
@@ -478,6 +521,45 @@ describe('VisibilitySingleton', () => {
     });
   });
 
+  describe('featureFlag outage policy', () => {
+    beforeEach(() => {
+      mockedGetFeatureFlagsError.mockReset().mockReturnValue(true);
+      mockedGetUnleashClient.mockReset();
+    });
+
+    test.each([
+      [true, true, true],
+      [true, false, false],
+      [false, true, false],
+      [false, false, true],
+    ])('compares cached/default flag state %s against expected=%s', (enabled, expectedValue, result) => {
+      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => enabled });
+      expect(visibilityFunctions.featureFlag('some.flag', expectedValue)).toBe(result);
+    });
+
+    test('uses the last successful toggle during an outage and the recovered value afterward', () => {
+      let enabled = true;
+      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => enabled });
+      mockedGetFeatureFlagsError.mockReturnValue(false);
+
+      expect(visibilityFunctions.featureFlag('some.flag', true)).toBe(true);
+
+      mockedGetFeatureFlagsError.mockReturnValue(true);
+      expect(visibilityFunctions.featureFlag('some.flag', true)).toBe(true);
+
+      enabled = false;
+      mockedGetFeatureFlagsError.mockReturnValue(false);
+      expect(visibilityFunctions.featureFlag('some.flag', true)).toBe(false);
+    });
+
+    test.each([true, false])('fails closed when the client is unavailable for expected=%s', (expectedValue) => {
+      mockedGetUnleashClient.mockImplementation(() => {
+        throw new Error('UnleashClient not initialized!');
+      });
+      expect(visibilityFunctions.featureFlag('some.flag', expectedValue)).toBe(false);
+    });
+  });
+
   describe('isKesselEnabled', () => {
     const mockedITLess = ITLess as jest.Mock;
 
@@ -524,18 +606,18 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=true', () => {
+    test('uses the cached enabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => true });
-      expect(visibilityFunctions.isKesselEnabled(true)).toBe(false);
+      expect(visibilityFunctions.isKesselEnabled(true)).toBe(true);
     });
 
-    test('should return false when unleash client is undefined with expected=true', () => {
+    test.each([true, false])('should return false when unleash client is undefined with expected=%s', (expected) => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(false);
       mockedGetUnleashClient.mockReturnValue(undefined);
-      expect(visibilityFunctions.isKesselEnabled(true)).toBe(false);
+      expect(visibilityFunctions.isKesselEnabled(expected)).toBe(false);
     });
 
     test('should return false when ITLess=true with expected=false', () => {
@@ -545,11 +627,11 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=false', () => {
+    test('uses the cached disabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselEnabled(false)).toBe(false);
+      expect(visibilityFunctions.isKesselEnabled(false)).toBe(true);
     });
 
     test('should return false when getUnleashClient throws', () => {
@@ -609,18 +691,18 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=true', () => {
+    test('uses the cached enabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => true });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(true);
     });
 
-    test('should return false when unleash client is undefined with expected=true', () => {
+    test.each([true, false])('should return false when unleash client is undefined with expected=%s', (expected) => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(false);
       mockedGetUnleashClient.mockReturnValue(undefined);
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+      expect(visibilityFunctions.isKesselOrgOnboarded(expected)).toBe(false);
     });
 
     test('should return false when ITLess=true with expected=false', () => {
@@ -630,11 +712,11 @@ describe('VisibilitySingleton', () => {
       expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
 
-    test('should return false when feature flags have error with expected=false', () => {
+    test('uses the cached disabled value when feature flags have an error', () => {
       mockedITLess.mockReturnValue(false);
       mockedGetFeatureFlagsError.mockReturnValue(true);
       mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(true);
     });
 
     test('should return false when getUnleashClient throws', () => {

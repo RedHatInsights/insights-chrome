@@ -59,7 +59,7 @@ Verifies that searching for whitespace displays the empty state UI and returns n
 - Supports expandable search input on mobile
 
 **Playwright Page Object:**
-Created `ChromeSearch` page object (`playwright/e2e/pages/chrome-search.ts`) with methods:
+Created `ChromeSearch` page object (`playwright/pages/chrome-search.ts`) with methods:
 
 - `open()` - Opens search input
 - `search(query)` - Enters search text and waits for results
@@ -205,7 +205,7 @@ Contains 2 test cases:
 
 ### 3. Page Object
 
-**Location:** `playwright/e2e/pages/chrome-topbar.ts`
+**Location:** `playwright/pages/chrome-topbar.ts`
 
 Reusable page object for Chrome topbar interactions:
 
@@ -430,7 +430,7 @@ The `ChromeTopbar` page object can be reused for other tests that need to intera
 ### Example Usage in Future Tests
 
 ```typescript
-import { ChromeTopbar } from '../pages/chrome-topbar';
+import { ChromeTopbar } from '../../pages/chrome-topbar';
 
 test('example test', async ({ page }) => {
   const topbar = new ChromeTopbar(page);

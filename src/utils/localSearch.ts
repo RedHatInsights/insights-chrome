@@ -103,16 +103,21 @@ function highlightText(term: string, text: string, category: HighlightCategories
   return markedText;
 }
 
-async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE) {
+async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE): Promise<{ hidden: boolean; failed: boolean }> {
   const cacheKey = `${env}-${id}`;
   const cacheHit = SearchPermissionsCache.get(cacheKey);
   if (cacheHit) {
-    return cacheHit;
+    return { hidden: cacheHit, failed: false };
   }
   const permissions = SearchPermissions.get(id);
-  const result = !!(await evaluateVisibility({ id, permissions }))?.isHidden;
-  SearchPermissionsCache.set(cacheKey, result);
-  return result;
+  let failed = false;
+  const result = await evaluateVisibility({ id, permissions }, { source: 'search', onError: () => (failed = true) });
+  const hidden = !!result?.isHidden;
+  // A transient failure hides the item for this query, but must allow a later retry.
+  if (!failed) {
+    SearchPermissionsCache.set(cacheKey, hidden);
+  }
+  return { hidden, failed };
 }
 
 export type SearchResultItem = ResultItem & { isExternal?: boolean };
@@ -147,6 +152,7 @@ export const localQuery = async (
     });
 
     const searches: (ResultItem & { isExternal?: boolean })[] = [];
+    let visibilityFailed = false;
     for (const hit of r.hits) {
       if (searches.length === 10) {
         break;
@@ -154,9 +160,10 @@ export const localQuery = async (
       const {
         document: { id },
       } = hit;
-      const res = await checkResultPermissions(String(id), ReleaseEnv.STABLE);
+      const { hidden, failed } = await checkResultPermissions(String(id), ReleaseEnv.STABLE);
+      visibilityFailed = visibilityFailed || failed;
       // skip hidden items
-      if (!res) {
+      if (!hidden) {
         searches.push({
           ...hit.document,
           id: String(hit.document.id),
@@ -177,7 +184,10 @@ export const localQuery = async (
       });
     }
 
-    resultCache[cacheKey] = results;
+    // Do not make a partial (or empty) result caused by visibility errors permanent.
+    if (!visibilityFailed) {
+      resultCache[cacheKey] = results;
+    }
     return results;
   } catch (error) {
     console.log(error);

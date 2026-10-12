@@ -10,6 +10,7 @@ import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup, isAllServicesLink } from '../../components/AllServices/allServicesLinks';
 import { cacheFetch } from '../../utils/cacheFetch';
 import { CONFIG_SOURCES, reportConfigSource } from '../../utils/configCacheStatus';
+import { setServiceDegradedAtom } from './degradedStateAtom';
 
 export const visibleBundlesAtom = atom<BundleNavigation[]>([]);
 export const visibleBundlesReadyAtom = atom(false);
@@ -19,33 +20,39 @@ export const visibleServiceTilesReadyAtom = atom(false);
 export const visibleServiceTilesErrorAtom = atom(false);
 
 export const filterHiddenItems = (navItems: NavItem[]): NavItem[] => {
-  return navItems
-    .filter((item) => !item.isHidden)
-    .map((item) => ({
-      ...item,
-      ...(item.navItems ? { navItems: filterHiddenItems(item.navItems) } : {}),
-    }));
+  return (
+    navItems
+      .filter((item) => !item.isHidden)
+      .map((item) => ({
+        ...item,
+        ...(item.navItems ? { navItems: filterHiddenItems(item.navItems) } : {}),
+      }))
+      // Prune containers bottom-up so an empty nested group cannot leave an empty heading.
+      .filter((item) => !(typeof item.groupId === 'string' || item.expandable) || !item.navItems || item.navItems.length > 0)
+  );
 };
 
-const evaluateBundleNavItems = async (bundles: BundleNavigation[]): Promise<BundleNavigation[]> => {
+export const evaluateBundleNavItems = async (bundles: BundleNavigation[], onError?: () => void): Promise<BundleNavigation[]> => {
   return Promise.all(
     bundles.map(async (bundle) => {
-      const evaluated = await Promise.all((bundle.navItems ?? []).map(evaluateVisibility));
+      const evaluated = await Promise.all(
+        (bundle.navItems ?? []).map((item) => evaluateVisibility(item, { source: 'navigation', bundleId: bundle.id, onError }))
+      );
       return { ...bundle, navItems: filterHiddenItems(evaluated) };
     })
   );
 };
 
-export const evaluateServiceTilesVisibility = async (sections: AllServicesSection[]): Promise<AllServicesSection[]> => {
+export const evaluateServiceTilesVisibility = async (sections: AllServicesSection[], onError?: () => void): Promise<AllServicesSection[]> => {
   return Promise.all(
     sections.map(async (section) => {
       const evaluatedLinks = await Promise.all(
         section.links.map(async (link) => {
           if (isAllServicesGroup(link) && link.links) {
-            const links = await Promise.all(link.links.map(evaluateVisibility));
+            const links = await Promise.all(link.links.map((item) => evaluateVisibility(item, { source: 'service-tiles', onError })));
             return { ...link, links } as AllServicesGroup;
           } else if (isAllServicesLink(link)) {
-            return evaluateVisibility(link);
+            return evaluateVisibility(link, { source: 'service-tiles', onError });
           }
           return link;
         })
@@ -154,6 +161,7 @@ export const useInitVisibleBundles = () => {
   const setTiles = useSetAtom(visibleServiceTilesAtom);
   const setTilesReady = useSetAtom(visibleServiceTilesReadyAtom);
   const setTilesError = useSetAtom(visibleServiceTilesErrorAtom);
+  const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
 
   useEffect(() => {
     if (!flagsReady && !flagsError) {
@@ -162,16 +170,19 @@ export const useInitVisibleBundles = () => {
 
     let cancelled = false;
     const controller = new AbortController();
+    let bundlesDegraded = false;
+    let tilesDegraded = false;
 
     setBundlesError(false);
     setTilesError(false);
 
     fetchNavigationFiles(feoGenerated)
-      .then(evaluateBundleNavItems)
+      .then((bundles) => evaluateBundleNavItems(bundles, () => (bundlesDegraded = true)))
       .then((result) => {
         if (!cancelled) {
           setBundles(result);
           setBundlesReady(true);
+          setServiceDegraded({ service: 'navigation', degraded: bundlesDegraded });
         }
       })
       .catch((error) => {
@@ -179,14 +190,16 @@ export const useInitVisibleBundles = () => {
         console.error('Failed to fetch and evaluate bundles', error);
         setBundlesError(true);
         setBundlesReady(true);
+        setServiceDegraded({ service: 'navigation', degraded: true });
       });
 
     loadServiceTiles(feoGenerated, controller.signal)
-      .then(evaluateServiceTilesVisibility)
+      .then((tiles) => evaluateServiceTilesVisibility(tiles, () => (tilesDegraded = true)))
       .then((result) => {
         if (!cancelled) {
           setTiles(result);
           setTilesReady(true);
+          setServiceDegraded({ service: 'serviceTiles', degraded: tilesDegraded });
         }
       })
       .catch((error) => {
@@ -194,6 +207,7 @@ export const useInitVisibleBundles = () => {
         console.error('Failed to fetch and evaluate service tiles', error);
         setTilesError(true);
         setTilesReady(true);
+        setServiceDegraded({ service: 'serviceTiles', degraded: true });
       });
 
     return () => {

@@ -24,7 +24,13 @@ export const test = base.extend<{ webSocketSession: WebSocketSession }>({
     const browser = await chromium.launch({ headless, args: [`--log-net-log=${logPath}`, ...(direct ? ['--no-proxy-server'] : [])] });
     let browserCloseAttempted = false;
     try {
-      const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, ...(!direct && proxy && { proxy }) });
+      const context = await browser.newContext({
+        baseURL,
+        ignoreHTTPSErrors: true,
+        // Override Playwright's shared state: infrastructure setup skips creating it, and this test logs in itself.
+        storageState: { cookies: [], origins: [] },
+        ...(!direct && proxy && { proxy }),
+      });
       const page = await context.newPage();
       page.setDefaultTimeout(AUTH_TIMEOUT);
       page.setDefaultNavigationTimeout(NAVIGATION_TIMEOUT);

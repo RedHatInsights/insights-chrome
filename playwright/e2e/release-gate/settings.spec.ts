@@ -1,5 +1,5 @@
 import { test, expect } from '../../setup/test-setup';
-import { ChromeTopbar } from '../pages/chrome-topbar';
+import { ChromeTopbar } from '../../pages/chrome-topbar';
 
 /**
  * Settings Gear Menu Tests

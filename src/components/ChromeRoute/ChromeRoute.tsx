@@ -38,7 +38,9 @@ const ChromeRoute = memo(
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {
-        const withResult = await Promise.all(permissions.map((permission) => evaluateVisibility({ permissions: permission })));
+        const withResult = await Promise.all(
+          permissions.map((permission) => evaluateVisibility({ permissions: permission }, { source: 'route', itemId: scope }))
+        );
         setIsHidden(withResult.some((result) => result.isHidden));
       } catch (error) {
         console.error('Error while checking route permissions', error);

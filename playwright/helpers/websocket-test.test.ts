@@ -57,6 +57,11 @@ describe('WebSocket browser cleanup', () => {
         await expect(result).resolves.toBeUndefined();
         expect(attach).toHaveBeenCalledTimes(scenario === 'no monitor' ? 0 : 1);
       }
+      expect(newContext).toHaveBeenCalledWith({
+        baseURL: 'https://console.example.test',
+        ignoreHTTPSErrors: true,
+        storageState: { cookies: [], origins: [] },
+      });
       expect(close).toHaveBeenCalledTimes(1);
       expect(rm).toHaveBeenCalledWith('/tmp/mock-netlog', { recursive: true, force: true });
     }

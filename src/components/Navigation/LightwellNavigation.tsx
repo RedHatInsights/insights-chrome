@@ -68,7 +68,7 @@ const LightwellNavigation = (): React.JSX.Element | null => {
             return { item, visible: true };
           }
           try {
-            const visible = await isNavItemVisible(item.permissions);
+            const visible = await isNavItemVisible(item.permissions, { source: 'lightwell', itemId: item.label });
             return { item, visible };
           } catch {
             return { item, visible: false };

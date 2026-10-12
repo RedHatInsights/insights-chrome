@@ -5,6 +5,9 @@ export type ServiceHealthStatus = {
   entitlements: boolean;
   configFromCache: boolean;
   featureFlags: boolean;
+  // Optional for consumers constructing health snapshots against older Chrome versions.
+  navigation?: boolean;
+  serviceTiles?: boolean;
 };
 
 const initialState: ServiceHealthStatus = {
@@ -12,6 +15,8 @@ const initialState: ServiceHealthStatus = {
   entitlements: false,
   configFromCache: false,
   featureFlags: false,
+  navigation: false,
+  serviceTiles: false,
 };
 
 export const degradedStateAtom = atom<ServiceHealthStatus>(initialState);
