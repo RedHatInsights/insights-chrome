@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import { useFlag } from '@unleash/proxy-client-react';
 import { ITLess, isProd } from '../utils/common';
@@ -135,7 +135,9 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const serializedUser = JSON.stringify(user);
   const moduleUpdateSequence = useRef(0);
   const latestModuleUpdate = useRef({ activeModule, serializedUser });
-  latestModuleUpdate.current = { activeModule, serializedUser };
+  useLayoutEffect(() => {
+    latestModuleUpdate.current = { activeModule, serializedUser };
+  }, [activeModule, serializedUser]);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
   const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
