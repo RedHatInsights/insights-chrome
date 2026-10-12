@@ -94,13 +94,7 @@ const DropdownItems = ({
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
       {!isITLessEnv && userMenu?.showMyProfile && (
-        <DropdownItem
-          key="My Profile"
-          to={`${ssoBase}/realms/redhat-external/account/`}
-          target="_blank"
-          rel="noopener noreferrer"
-          component="a"
-        >
+        <DropdownItem key="My Profile" to={`${ssoBase}/realms/redhat-external/account/`} target="_blank" rel="noopener noreferrer" component="a">
           {intl.formatMessage(messages.myProfile)}
         </DropdownItem>
       )}
