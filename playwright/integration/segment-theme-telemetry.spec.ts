@@ -85,12 +85,27 @@ test.describe('Segment theme telemetry', () => {
     const initialEvents = getEvents(segmentRequests);
     const initialPageEvents = initialEvents.filter((event) => event.type === 'page');
     const initialIdentify = initialEvents.find((event) => event.type === 'identify' && event.traits?.colorSchemeSetting !== undefined);
+    const renderedTheme = await page.evaluate(() => {
+      const rootClasses = document.documentElement.classList;
+      const isHighContrast = rootClasses.contains('pf-v6-theme-high-contrast');
+      const isGlass = rootClasses.contains('pf-v6-theme-glass');
+
+      return {
+        colorSchemeRendered: rootClasses.contains('pf-v6-theme-dark') ? 'dark' : 'light',
+        contrastModeRendered: isHighContrast && isGlass ? undefined : isHighContrast ? 'high-contrast' : isGlass ? 'glass' : 'default',
+      };
+    });
 
     expect(initialPageEvents.length).toBeGreaterThan(0);
     for (const event of initialPageEvents) {
-      expect(['dark', 'light']).toContain(event.properties?.colorSchemeRendered);
-      expect(['default', 'high-contrast', 'glass']).toContain(event.properties?.contrastModeRendered);
+      expect(event.properties?.colorSchemeRendered).toBe(renderedTheme.colorSchemeRendered);
+      if (renderedTheme.contrastModeRendered === undefined) {
+        expect(event.properties).not.toHaveProperty('contrastModeRendered');
+      } else {
+        expect(event.properties?.contrastModeRendered).toBe(renderedTheme.contrastModeRendered);
+      }
     }
+    reportPassedAssertion('initial Page events match the theme classes applied to the html root');
     const renderedThemes = [...new Set(initialPageEvents.map((event) => `${event.properties?.colorSchemeRendered}/${event.properties?.contrastModeRendered}`))];
     reportPassedAssertion(`initial Page events include rendered theme fields (${renderedThemes.join(', ')}; ${initialPageEvents.length} event(s))`);
 
