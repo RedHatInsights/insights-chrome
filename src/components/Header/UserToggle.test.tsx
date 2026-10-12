@@ -105,9 +105,8 @@ describe('UserToggle - userMenu config', () => {
   it('should link My Profile to SSO account console instead of UGC', () => {
     renderUserToggle({ showMyProfile: true });
     const profileLink = screen.getByText('My profile').closest('a');
-    expect(profileLink).toHaveAttribute('href', expect.stringContaining('sso.'));
-    expect(profileLink).toHaveAttribute('href', expect.stringContaining('/auth/realms/redhat-external/account/'));
-    expect(profileLink).not.toHaveAttribute('href', expect.stringContaining('ugc'));
+    // Falls back to QA SSO route when hostname is not in DEFAULT_SSO_ROUTES (e.g. localhost in tests)
+    expect(profileLink).toHaveAttribute('href', 'https://sso.qa.redhat.com/auth/realms/redhat-external/account/');
     expect(profileLink).toHaveAttribute('target', '_blank');
     expect(profileLink).toHaveAttribute('rel', 'noopener noreferrer');
   });

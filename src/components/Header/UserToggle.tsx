@@ -1,7 +1,7 @@
 import './UserToggle.scss';
 
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
+import { DEFAULT_SSO_ROUTES, ITLess, getEnvDetails, isProd as isProdEnv } from '../../utils/common';
 import React, { useContext, useRef, useState } from 'react';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -42,11 +42,10 @@ const DropdownItems = ({
   extraItems?: React.ReactNode[];
   userMenu?: UserMenuConfig;
 }) => {
-  const env = getEnv();
   const isProd = isProdEnv();
+  const ssoBase = getEnvDetails()?.sso ?? DEFAULT_SSO_ROUTES.qa.sso;
   const isITLessEnv = ITLess();
   const intl = useIntl();
-  const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
@@ -97,7 +96,7 @@ const DropdownItems = ({
       {!isITLessEnv && userMenu?.showMyProfile && (
         <DropdownItem
           key="My Profile"
-          to={`https://sso.${prefix}redhat.com/auth/realms/redhat-external/account/`}
+          to={`${ssoBase}/realms/redhat-external/account/`}
           target="_blank"
           rel="noopener noreferrer"
           component="a"
