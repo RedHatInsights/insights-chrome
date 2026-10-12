@@ -132,6 +132,10 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const isPreview = useAtomValue(isPreviewAtom);
 
   const activeModule = useAtomValue(activeModuleAtom);
+  const serializedUser = JSON.stringify(user);
+  const moduleUpdateSequence = useRef(0);
+  const latestModuleUpdate = useRef({ activeModule, serializedUser });
+  latestModuleUpdate.current = { activeModule, serializedUser };
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
   const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
@@ -162,7 +166,16 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     analytics.current = new AnalyticsBrowser();
   }
 
-  const handleModuleUpdate = async () => {
+  const handleModuleUpdate = async (operation: number) => {
+    const isCurrentOperation = () =>
+      operation === moduleUpdateSequence.current &&
+      latestModuleUpdate.current.activeModule === activeModule &&
+      latestModuleUpdate.current.serializedUser === serializedUser;
+
+    if (!isCurrentOperation()) {
+      return;
+    }
+
     if (!isDisabled && activeModule && user) {
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
       const identityOptions = {
@@ -180,7 +193,11 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         email_domain: emailDomain(user.identity.user?.email),
       };
       if (!initialized.current && analytics.current) {
-        intercomHash.current = await fetchIntercomHash();
+        const fetchedIntercomHash = await fetchIntercomHash();
+        if (!isCurrentOperation()) {
+          return;
+        }
+        intercomHash.current = fetchedIntercomHash;
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
           ...identityOptions,
@@ -195,6 +212,9 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
         await waitForRenderedThemeInitialization();
+        if (!isCurrentOperation()) {
+          return;
+        }
         analytics.current.page(...getPageEventOptions({ pathname, search, user }));
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -206,6 +226,9 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         );
         resetIntegrations(analytics.current);
         intercomHash.current = await fetchIntercomHash();
+        if (!isCurrentOperation()) {
+          return;
+        }
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
           ...identityOptions,
@@ -224,9 +247,15 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   };
 
   useEffect(() => {
-    handleModuleUpdate();
+    const operation = ++moduleUpdateSequence.current;
+    void handleModuleUpdate(operation);
+    return () => {
+      if (moduleUpdateSequence.current === operation) {
+        moduleUpdateSequence.current += 1;
+      }
+    };
     // need the json stringify to prevent the effect from running on every user update if not necessary
-  }, [activeModule, JSON.stringify(user)]);
+  }, [activeModule, serializedUser]);
 
   useEffect(() => {
     const updateThemeTraits = () => {

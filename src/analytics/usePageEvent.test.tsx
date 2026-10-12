@@ -61,16 +61,29 @@ describe('usePageEvent theme telemetry', () => {
     act(() => jest.advanceTimersByTime(500));
     expect(mockPage).not.toHaveBeenCalled();
 
+    document.documentElement.classList.remove('pf-v6-theme-dark', 'pf-v6-theme-glass');
+    document.documentElement.classList.add('pf-v6-theme-high-contrast');
+    mockLocation.pathname = '/insights/dashboard';
+    rerender(<TestPageEvents />);
+    act(() => jest.advanceTimersByTime(500));
+    expect(mockPage).not.toHaveBeenCalled();
+
     await act(async () => {
       markRenderedThemeInitialized();
       await Promise.resolve();
     });
     expect(mockPage).toHaveBeenCalledTimes(1);
-    expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ colorSchemeRendered: 'dark', contrastModeRendered: 'glass' }));
+    expect(mockPage.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        path: '/insights/dashboard',
+        colorSchemeRendered: 'light',
+        contrastModeRendered: 'high-contrast',
+      })
+    );
 
-    document.documentElement.classList.remove('pf-v6-theme-dark', 'pf-v6-theme-glass');
-    document.documentElement.classList.add('pf-v6-theme-high-contrast');
-    mockLocation.pathname = '/insights/dashboard';
+    document.documentElement.classList.remove('pf-v6-theme-high-contrast');
+    document.documentElement.classList.add('pf-v6-theme-dark');
+    mockLocation.pathname = '/insights/services';
     rerender(<TestPageEvents />);
 
     await act(async () => {
@@ -80,9 +93,9 @@ describe('usePageEvent theme telemetry', () => {
     expect(mockPage).toHaveBeenCalledTimes(2);
     expect(mockPage.mock.calls[1][0]).toEqual(
       expect.objectContaining({
-        path: '/insights/dashboard',
-        colorSchemeRendered: 'light',
-        contrastModeRendered: 'high-contrast',
+        path: '/insights/services',
+        colorSchemeRendered: 'dark',
+        contrastModeRendered: 'default',
       })
     );
   });
