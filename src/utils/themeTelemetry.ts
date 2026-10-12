@@ -9,6 +9,21 @@ export type ThemeTelemetryDefaults = {
 
 export const THEME_TELEMETRY_PREFERENCES_CHANGE = 'chrome:theme-telemetry-preferences-change';
 
+let renderedThemeInitialized = false;
+let resolveRenderedThemeInitialized: () => void = () => undefined;
+const renderedThemeInitializedPromise = new Promise<void>((resolve) => {
+  resolveRenderedThemeInitialized = resolve;
+});
+
+export const waitForRenderedThemeInitialization = () => (renderedThemeInitialized ? Promise.resolve() : renderedThemeInitializedPromise);
+
+export const markRenderedThemeInitialized = () => {
+  if (!renderedThemeInitialized) {
+    renderedThemeInitialized = true;
+    resolveRenderedThemeInitialized();
+  }
+};
+
 const COLOR_SCHEME_STORAGE_KEY = 'chrome:theme';
 const HIGH_CONTRAST_STORAGE_KEY = 'chrome:high-contrast';
 const GLASS_THEME_STORAGE_KEY = 'chrome:glass-theme';

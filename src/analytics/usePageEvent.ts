@@ -10,7 +10,7 @@ import chromeStore from '../state/chromeStore';
 import { segmentPageOptionsAtom } from '../state/atoms/segmentPageOptionsAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
-import { getThemeTelemetryRendered } from '../utils/themeTelemetry';
+import { getThemeTelemetryRendered, waitForRenderedThemeInitialization } from '../utils/themeTelemetry';
 
 export function getPageEventOptions({ pathname, search: searchString = '', user }: { pathname: string; search: string; user: ChromeUser }) {
   const isPreview = chromeStore.get(isPreviewAtom);
@@ -46,7 +46,8 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>)
   const { user } = useContext(ChromeAuthContext);
   const sendPageEvent = useCallback(
     // prevent sending the page event on instant redirects etc
-    debounce((pathname: string, search = '') => {
+    debounce(async (pathname: string, search = '') => {
+      await waitForRenderedThemeInitialization();
       try {
         window?.sendCustomEvent?.('pageBottom');
         analytics.current?.page(...getPageEventOptions({ pathname, search, user }));

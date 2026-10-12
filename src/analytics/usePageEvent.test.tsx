@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { act, render } from '@testing-library/react';
 import type { AnalyticsBrowser } from '@segment/analytics-next';
+import { markRenderedThemeInitialized } from '../utils/themeTelemetry';
 
 const mockLocation = { pathname: '/', search: '' };
 const mockPage = jest.fn();
@@ -53,11 +54,17 @@ describe('usePageEvent theme telemetry', () => {
     jest.useRealTimers();
   });
 
-  it('sends current rendered theme on the initial page event and navigation events', () => {
+  it('waits for initial theme classes and sends current rendered theme on page events', async () => {
     document.documentElement.classList.add('pf-v6-theme-dark', 'pf-v6-theme-glass');
     const { rerender } = render(<TestPageEvents />);
 
     act(() => jest.advanceTimersByTime(500));
+    expect(mockPage).not.toHaveBeenCalled();
+
+    await act(async () => {
+      markRenderedThemeInitialized();
+      await Promise.resolve();
+    });
     expect(mockPage).toHaveBeenCalledTimes(1);
     expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ colorSchemeRendered: 'dark', contrastModeRendered: 'glass' }));
 
@@ -66,7 +73,10 @@ describe('usePageEvent theme telemetry', () => {
     mockLocation.pathname = '/insights/dashboard';
     rerender(<TestPageEvents />);
 
-    act(() => jest.advanceTimersByTime(500));
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
     expect(mockPage).toHaveBeenCalledTimes(2);
     expect(mockPage.mock.calls[1][0]).toEqual(
       expect.objectContaining({

@@ -11,6 +11,7 @@ const mockGroup = jest.fn();
 const mockPage = jest.fn();
 const mockLoad = jest.fn();
 const mockFlags = new Set<string>();
+const mockWaitForRenderedThemeInitialization = jest.fn(() => Promise.resolve());
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: (flag: string) => mockFlags.has(flag),
@@ -28,6 +29,11 @@ jest.mock('@segment/analytics-next', () => ({
 jest.mock('../utils/common', () => ({
   ITLess: jest.fn(() => false),
   isProd: jest.fn(() => false),
+}));
+
+jest.mock('../utils/themeTelemetry', () => ({
+  ...jest.requireActual('../utils/themeTelemetry'),
+  waitForRenderedThemeInitialization: () => mockWaitForRenderedThemeInitialization(),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -141,6 +147,7 @@ describe('SegmentProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFlags.clear();
+    mockWaitForRenderedThemeInitialization.mockResolvedValue(undefined);
     localStorage.clear();
   });
 
@@ -203,6 +210,33 @@ describe('SegmentProvider', () => {
         expect.any(Object)
       );
     });
+  });
+
+  it('waits for rendered theme initialization before sending the initial Page event', async () => {
+    let resolveThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveThemeInitialization = resolve;
+      })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalled();
+      expect(mockGroup).toHaveBeenCalled();
+      expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalled();
+    });
+    expect(mockPage).not.toHaveBeenCalled();
+
+    resolveThemeInitialization();
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
   });
 
   it('updates Segment identify traits when theme preferences change', async () => {
