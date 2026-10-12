@@ -13,7 +13,13 @@ import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import usePageEvent, { getPageEventOptions } from './usePageEvent';
-import { type ColorSchemeSetting, type ContrastModeSetting, THEME_TELEMETRY_PREFERENCES_CHANGE, getThemeTelemetrySettings } from '../utils/themeTelemetry';
+import {
+  type ColorSchemeSetting,
+  type ContrastModeSetting,
+  THEME_TELEMETRY_PREFERENCES_CHANGE,
+  getThemeTelemetrySettings,
+  waitForRenderedThemeInitialization,
+} from '../utils/themeTelemetry';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -188,6 +194,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           },
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
+        await waitForRenderedThemeInitialization();
         analytics.current.page(...getPageEventOptions({ pathname, search, user }));
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
