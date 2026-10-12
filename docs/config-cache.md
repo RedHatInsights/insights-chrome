@@ -24,11 +24,29 @@ The authenticated Unleash client is initialized from the OIDC identity before th
 
 When disabled, the entitlement request uses the original `servicesGet({})` options, no added timeout or retry, errors produce `{}`, and there is no entitlement IndexedDB access, synthesized fallback, previous-map retention, degradation reporting, or logout cache deletion. A stalled legacy request still waits. The bootstrap flag lookup is the additional control step needed to select this path.
 
+The protection therefore depends on the flag backend. If Unleash and entitlements are both down for an identity with no stored toggle, the flag resolves off after five seconds and the unbounded legacy request can still hold Chrome on the loading placeholder. This is the intended cost of a default-off rollout gate.
+
 When enabled, `GET /api/entitlements/v1/services` has a five-second live-request budget shared by one eligible 5xx retry. It uses the same IndexedDB instance (`chrome-config-cache`) with key `v1:entitlements-services:org:<encoded-org-id>` and a **24 hour** TTL. The former unscoped `v1:entitlements-services` entry is never read. Failed live requests use a valid same-org cache, then the same-org previous map, then profile-derived defaults. Paid SKU defaults are explicitly false. Neither defaults nor previous-map fallback results are persisted.
 
 Enabled requests bypass the legacy Axios interceptor's URL-only HTTP cache so it cannot replay a response for a different organization. Disabled requests retain the original HTTP caching behavior.
 
-Live success returns before any persistence read/write. A 200 with `X-Entitlements-Degraded: true` is used but must not overwrite a richer SKU cache. A fallback cache read waits at most one second. Logout invalidates outstanding writes and waits at most one second for scoped deletion; delayed cleanup continues afterward. New writes wait for that cleanup barrier. Navigation and fed-modules keys are separate.
+A successful live response is returned without waiting for persistence. In the background, Chrome waits for any pending scoped cleanup, reads and validates the same-org cache, and persists valid healthy 200 responses, including ones with fewer entitled SKUs, so revocations take effect. A 200 with `X-Entitlements-Degraded: true` is used immediately but persisted only when its count of entitled known SKUs is at least the valid cached count; equal counts qualify, and a missing, expired, or invalid cache counts as zero. Persistence is best-effort and never delays readiness.
+
+The unfiltered request always returns every configured bundle, with unpaid SKUs set to `is_entitled: false`. An empty `{}` body is therefore treated as invalid (a synthetic 502): it is retried once, then follows the normal fallback order and is never persisted. Organizations with no paid SKUs receive a populated map and stay healthy.
+
+A fallback cache read waits at most one second. Logout invalidates outstanding writes and waits at most one second for scoped deletion; delayed cleanup continues afterward. New writes wait for that cleanup barrier. Navigation and fed-modules keys are separate.
+
+### Bootstrap time budget
+
+The flag lookup and the entitlement request run in sequence, because the flag selects which request runs. With the flag on, a cold start where every backend stalls waits at most about 11 seconds before Chrome is ready:
+
+| Step                                      | Upper bound |
+| ----------------------------------------- | ----------- |
+| Bootstrap flag lookup                     | 5s          |
+| Live request, including the one 5xx retry | 5s          |
+| Fallback cache read                       | 1s          |
+
+This covers configured waits only, not page load or browser scheduling. With the flag off, the legacy request has no timeout, so the total is unbounded. Running the two steps in parallel would require an entitlement request that matches both the flag-off and flag-on contracts, so it is left as a follow-up.
 
 See [the manual testing plan](entitlements-manual-test.md) for rollout, rollback, organization isolation, and outage checks.
 

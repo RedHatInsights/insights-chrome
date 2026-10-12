@@ -67,14 +67,12 @@ function isEntitlementsDegraded(headers: { get?: (key: string) => unknown } | Re
   return String(raw).toLowerCase() === 'true';
 }
 
+/** Only reached after the org ID check in fetchEntitlements, so defaults are always available. */
 function fallbackResult(user: { profile?: EntitlementsUserProfile }, previous?: EntitlementsMap): FetchEntitlementsResult {
   if (isNonEmptyEntitlementsMap(previous)) {
     return { entitlements: previous, degraded: true, source: 'memory' };
   }
-  if (user.profile?.org_id) {
-    return { entitlements: getMinimumViableEntitlements(user), degraded: true, source: 'defaults' };
-  }
-  return { entitlements: {}, degraded: false, source: 'empty' };
+  return { entitlements: getMinimumViableEntitlements(user), degraded: true, source: 'defaults' };
 }
 
 async function requestServices(client: EntitlementsClient, controller: AbortController): Promise<{ entitlements: EntitlementsMap; degraded: boolean }> {
@@ -110,7 +108,7 @@ async function requestServices(client: EntitlementsClient, controller: AbortCont
 
 export async function fetchEntitlements(user: { profile?: EntitlementsUserProfile }, options: FetchEntitlementsOptions = {}): Promise<FetchEntitlementsResult> {
   if (!user.profile?.org_id) {
-    console.log('Cannot call entitlements API, no account number');
+    console.log('Cannot call entitlements API, no org ID');
     return { entitlements: {}, degraded: false, source: 'empty' };
   }
 

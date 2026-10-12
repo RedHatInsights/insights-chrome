@@ -70,6 +70,11 @@ export function shouldPersistEntitlements(live: EntitlementsMap, cached: Entitle
   return countEntitledSkus(live) >= countEntitledSkus(cached);
 }
 
+/**
+ * `{}` is rejected on purpose. The unfiltered services request always returns every configured
+ * bundle, with unpaid SKUs as `is_entitled: false`, so an empty body is malformed rather than
+ * "no entitlements". Revisit this if the request ever sends bundle filters.
+ */
 export function isEntitlementsMap(data: unknown): data is EntitlementsMap {
   if (typeof data !== 'object' || data === null || Array.isArray(data)) {
     return false;

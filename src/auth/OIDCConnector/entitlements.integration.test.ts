@@ -100,6 +100,37 @@ describe('entitlements with real cacheFetch', () => {
     expect(entries.get(key)).toEqual({ data: healthyPaid, cachedAt: expect.any(Number) });
   });
 
+  it('treats an empty live body as invalid: retries once, falls back to defaults, never persists it', async () => {
+    servicesGet.mockResolvedValue(response({}));
+    const result = await fetchEntitlements(user, { enabled: true, client });
+    await flushBackground();
+    expect(servicesGet).toHaveBeenCalledTimes(2);
+    expect(result.source).toBe('defaults');
+    expect(result.degraded).toBe(true);
+    expect(result.entitlements.insights.is_entitled).toBe(true);
+    expect(result.entitlements.ansible.is_entitled).toBe(false);
+    expect(setItem).not.toHaveBeenCalled();
+  });
+
+  it('replays and keeps a healthy cache when the live body is empty', async () => {
+    entries.set(key, { data: healthyPaid, cachedAt: Date.now() });
+    servicesGet.mockResolvedValue(response({}));
+    const result = await fetchEntitlements(user, { enabled: true, client });
+    await flushBackground();
+    expect(servicesGet).toHaveBeenCalledTimes(2);
+    expect(result).toEqual({ entitlements: healthyPaid, degraded: true, source: 'cache' });
+    expect(setItem).not.toHaveBeenCalled();
+    expect(entries.get(key)).toEqual({ data: healthyPaid, cachedAt: expect.any(Number) });
+  });
+
+  it('keeps a populated no-paid-SKU body healthy and persists it', async () => {
+    servicesGet.mockResolvedValue(response(healthyUnsubscribed));
+    const result = await fetchEntitlements(user, { enabled: true, client });
+    await flushBackground();
+    expect(result).toEqual({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' });
+    expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number) });
+  });
+
   it.each(['server error', 'timeout'])('bounds a stalled fallback read after %s', async (kind) => {
     jest.useFakeTimers();
     getItem.mockImplementation(() => new Promise(() => {}));

@@ -274,6 +274,8 @@ export async function cacheFetch<T>(
             return;
           }
         }
+        // Keep the check and registration below free of awaits: deleteCacheKey either
+        // bumps the generation first or snapshots this write, never lands in between.
         if (!isCurrent()) {
           return;
         }
