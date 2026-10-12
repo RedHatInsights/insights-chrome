@@ -11,6 +11,7 @@ const mockGroup = jest.fn();
 const mockPage = jest.fn();
 const mockLoad = jest.fn();
 const mockFlags = new Set<string>();
+let mockActiveModule = 'test-app';
 const mockWaitForRenderedThemeInitialization = jest.fn(() => Promise.resolve());
 
 jest.mock('@unleash/proxy-client-react', () => ({
@@ -101,7 +102,7 @@ jest.mock('../auth/ChromeAuthContext', () => ({
 
 jest.mock('jotai', () => ({
   useAtomValue: jest.fn((atom: unknown) => {
-    if (atom === '__activeModuleAtom__') return 'test-app';
+    if (atom === '__activeModuleAtom__') return mockActiveModule;
     if (atom === '__activeModuleDefinitionReadAtom__') return undefined;
     if (atom === '__isPreviewAtom__') return false;
     return undefined;
@@ -147,6 +148,7 @@ describe('SegmentProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFlags.clear();
+    mockActiveModule = 'test-app';
     mockWaitForRenderedThemeInitialization.mockResolvedValue(undefined);
     localStorage.clear();
   });
@@ -237,6 +239,36 @@ describe('SegmentProvider', () => {
     resolveThemeInitialization();
 
     await waitFor(() => expect(mockPage).toHaveBeenCalled());
+  });
+
+  it('supersedes a pending initial Page operation when the active module changes', async () => {
+    let resolveFirstThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        resolveFirstThemeInitialization = resolve;
+      })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalledTimes(1));
+
+    mockActiveModule = 'acs';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalledTimes(1));
+    resolveFirstThemeInitialization();
+    await Promise.resolve();
+
+    expect(mockPage).toHaveBeenCalledTimes(1);
   });
 
   it('updates Segment identify traits when theme preferences change', async () => {

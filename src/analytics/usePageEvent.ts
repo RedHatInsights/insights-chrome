@@ -1,6 +1,6 @@
 import Cookie from 'js-cookie';
 import { useLocation } from 'react-router-dom';
-import { MutableRefObject, useCallback, useContext, useEffect } from 'react';
+import { MutableRefObject, useCallback, useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import debounce from 'lodash/debounce';
 import type { AnalyticsBrowser } from '@segment/analytics-next';
 import type { ChromeUser } from '@redhat-cloud-services/types';
@@ -44,10 +44,17 @@ export function getPageEventOptions({ pathname, search: searchString = '', user 
 const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>) => {
   const { pathname, search } = useLocation();
   const { user } = useContext(ChromeAuthContext);
+  const currentLocation = useRef({ pathname, search });
+  useLayoutEffect(() => {
+    currentLocation.current = { pathname, search };
+  }, [pathname, search]);
   const sendPageEvent = useCallback(
     // prevent sending the page event on instant redirects etc
     debounce(async (pathname: string, search = '') => {
       await waitForRenderedThemeInitialization();
+      if (currentLocation.current.pathname !== pathname || currentLocation.current.search !== search) {
+        return;
+      }
       try {
         window?.sendCustomEvent?.('pageBottom');
         analytics.current?.page(...getPageEventOptions({ pathname, search, user }));
