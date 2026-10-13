@@ -1,0 +1,18 @@
+name: Reconcile Phrase translations
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * 1-5'
+
+permissions: {}
+
+jobs:
+  reconcile:
+    uses: RedHatInsights/i18n-tooling/.github/workflows/phrase-reconcile.yml@9b9141a3a537f28627c00005d983f67daf78ff2e
+    with:
+      config-path: .github/i18n/phrase-tms.json
+      environment: phrase-tms
+    permissions:
+      contents: write
+      pull-requests: write

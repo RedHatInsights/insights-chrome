@@ -1,0 +1,21 @@
+name: Submit translations to Phrase
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - locales/translation-template.json
+
+permissions: {}
+
+jobs:
+  submit:
+    uses: RedHatInsights/i18n-tooling/.github/workflows/phrase-submit.yml@9b9141a3a537f28627c00005d983f67daf78ff2e
+    with:
+      config-path: .github/i18n/phrase-tms.json
+      environment: phrase-tms
+      base-ref: master
+    permissions:
+      contents: write
