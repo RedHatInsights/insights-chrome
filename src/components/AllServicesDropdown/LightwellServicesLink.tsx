@@ -1,13 +1,13 @@
 import React from 'react';
 import ChromeLink from '../ChromeLink';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { useDarkModeStore } from '../../state/stores/darkModeStore';
+import { useDarkModeIsDark } from '../../chrome/darkModeStoreBridge';
 
 const LIGHTWELL_LOGO_DARK = '/apps/frontend-assets/partners-icons/lightwell-logomark-dark.svg';
 const LIGHTWELL_LOGO_LIGHT = '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg';
 
 const LightwellIcon = () => {
-  const { isDark } = useDarkModeStore();
+  const isDark = useDarkModeIsDark();
   const src = isDark ? LIGHTWELL_LOGO_DARK : LIGHTWELL_LOGO_LIGHT;
   return <img src={src} alt="" width="22" height="22" />;
 };

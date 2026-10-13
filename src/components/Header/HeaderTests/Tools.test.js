@@ -43,11 +43,17 @@ jest.mock('@scalprum/react-core', () => ({
 }));
 jest.mock('@scalprum/core', () => ({
   preloadModule: jest.fn(() => Promise.resolve()),
+  getCachedModule: jest.fn(() => ({ cachedModule: undefined })),
+  getModule: jest.fn(() => Promise.resolve(jest.fn())),
   createSharedStore: jest.fn(() => ({
     getState: jest.fn(() => ({ isDark: false })),
     updateState: jest.fn(),
     subscribe: jest.fn(() => jest.fn()),
   })),
+}));
+jest.mock('../../../chrome/darkModeStoreBridge', () => ({
+  getCachedDarkModeStore: jest.fn(),
+  useDarkModeIsDark: () => false,
 }));
 jest.mock('../../../state/atoms/releaseAtom', () => {
   const { atom } = jest.requireActual('jotai');

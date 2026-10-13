@@ -21,6 +21,8 @@ if (!username || !password) throw new Error('Configure a username and password f
 
 // Matches the consent suppression used by our shared Playwright authentication helper.
 await page.route('**/consent.trustarc.com/**', (route) => route.abort());
+// Stage loads the TrustArc bootstrap from static.dev.redhat.com, so block that too.
+await page.route('**/libs/redhat/marketing/latest/trustarc/**', (route) => route.abort());
 await page.goto(new URL(CONFIG.dashboardPath, CONFIG.consoleUrl).href, { waitUntil: 'domcontentloaded', timeout: CONFIG.authTimeout });
 const userMenu = page.getByRole('button', { name: /User Avatar/ });
 const usernameInput = page.locator('input[name="username"]:visible').first();
