@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ITLess } from './common';
 import { VISIBILITY_REQUEST_TIMEOUT_MS } from './visibilityRequestConfig';
 import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
+import { fetchOrgOptIn } from './orgOptInApi';
 
 jest.mock('axios');
 jest.mock('./common', () => ({
@@ -14,9 +15,14 @@ jest.mock('../components/FeatureFlags/unleashClient', () => ({
   getFeatureFlagsError: jest.fn(() => false),
   getUnleashClient: jest.fn(),
 }));
+jest.mock('./orgOptInApi', () => ({
+  fetchOrgOptIn: jest.fn(),
+  resetOrgOptInCache: jest.fn(),
+}));
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 const mockedGetFeatureFlagsError = getFeatureFlagsError as jest.Mock;
 const mockedGetUnleashClient = getUnleashClient as jest.Mock;
+const mockedFetchOrgOptIn = fetchOrgOptIn as jest.Mock;
 
 jest.mock('@scalprum/core', () => {
   return {
@@ -47,7 +53,7 @@ describe('VisibilitySingleton', () => {
   let visibilityFunctions: VisibilityFunctions & {
     isITLess: (expected: boolean) => boolean;
     isKesselEnabled: (expected: boolean) => boolean;
-    isKesselOrgOnboarded: (expected: boolean) => boolean;
+    isKesselOrgOnboarded: (expected: boolean) => Promise<boolean>;
   };
 
   beforeEach(() => {
@@ -374,6 +380,9 @@ describe('VisibilitySingleton', () => {
     beforeEach(() => {
       getUser.mockImplementation(() => Promise.resolve(userMock));
       mockedAxios.post.mockReset();
+      // Enable Kessel flag so the availability guard passes
+      mockedGetFeatureFlagsError.mockReturnValue(false);
+      mockedGetUnleashClient.mockReturnValue({ isEnabled: (name: string) => name === 'platform.chrome.kessel' });
     });
 
     test('should return false if org_id is missing', async () => {
@@ -466,6 +475,30 @@ describe('VisibilitySingleton', () => {
       mockedAxios.post.mockRejectedValueOnce(new Error('Network Error'));
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
       expect(result).toBe(false);
+    });
+
+    test('should return false when ITLess is true (availability guard)', async () => {
+      const mockedITLess = ITLess as jest.Mock;
+      mockedITLess.mockReturnValueOnce(true);
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(false);
+      expect(mockedAxios.post).not.toHaveBeenCalled();
+    });
+
+    test('should return false when Kessel flag is disabled (availability guard)', async () => {
+      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(false);
+      expect(mockedAxios.post).not.toHaveBeenCalled();
+    });
+
+    test('should return false when Kessel flag client is unavailable (availability guard)', async () => {
+      mockedGetUnleashClient.mockImplementation(() => {
+        throw new Error('Unleash client not initialized');
+      });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(false);
+      expect(mockedAxios.post).not.toHaveBeenCalled();
     });
   });
 
@@ -625,85 +658,86 @@ describe('VisibilitySingleton', () => {
   describe('isKesselOrgOnboarded', () => {
     const mockedITLess = ITLess as jest.Mock;
 
+    beforeEach(() => {
+      mockedFetchOrgOptIn.mockReset();
+      getUser.mockImplementation(() => Promise.resolve(userMock));
+    });
+
     afterEach(() => {
       mockedITLess.mockReset();
       mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReset();
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReset();
     });
 
-    test('should return false when ITLess=true regardless of flag', () => {
+    test('should return false when ITLess=true regardless of API result', async () => {
       mockedITLess.mockReturnValue(true);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => true });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+      mockedFetchOrgOptIn.mockResolvedValue(true);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+      expect(mockedFetchOrgOptIn).not.toHaveBeenCalled();
     });
 
-    test('should return true when ITLess=false and flag is enabled with expected=true', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: (name: string) => name === 'platform.rbac.workspaces' });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(true);
+    test('should return true when API returns opted-in and expected=true', async () => {
+      mockedFetchOrgOptIn.mockResolvedValue(true);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(true);
+      expect(mockedFetchOrgOptIn).toHaveBeenCalledWith('123');
     });
 
-    test('should return false when ITLess=false and flag is disabled with expected=true', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+    test('should return false when API returns opted-in and expected=false', async () => {
+      mockedFetchOrgOptIn.mockResolvedValue(true);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
 
-    test('should return true when expected=false inverts result (flag disabled)', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(true);
+    test('should return false when API returns not opted-in and expected=true', async () => {
+      mockedFetchOrgOptIn.mockResolvedValue(false);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
     });
 
-    test('should return false when expected=false and flag is enabled', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: (name: string) => name === 'platform.rbac.workspaces' });
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+    test('should return true when API returns not opted-in and expected=false', async () => {
+      mockedFetchOrgOptIn.mockResolvedValue(false);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(false)).toBe(true);
     });
 
-    test('uses the cached enabled value when feature flags have an error', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(true);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => true });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(true);
+    test('should return false on API failure (null) for expected=true', async () => {
+      mockedFetchOrgOptIn.mockResolvedValue(null);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
     });
 
-    test.each([true, false])('should return false when unleash client is undefined with expected=%s', (expected) => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue(undefined);
-      expect(visibilityFunctions.isKesselOrgOnboarded(expected)).toBe(false);
+    test('should return false on API failure (null) for expected=false', async () => {
+      mockedFetchOrgOptIn.mockResolvedValue(null);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
 
-    test('should return false when ITLess=true with expected=false', () => {
+    test('should return false when ITLess=true with expected=false', async () => {
       mockedITLess.mockReturnValue(true);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+      expect(mockedFetchOrgOptIn).not.toHaveBeenCalled();
     });
 
-    test('uses the cached disabled value when feature flags have an error', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(true);
-      mockedGetUnleashClient.mockReturnValue({ isEnabled: () => false });
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(true);
+    test('should return false when org_id is missing', async () => {
+      getUser.mockImplementationOnce(() =>
+        Promise.resolve({
+          ...userMock,
+          identity: { ...userMock.identity, org_id: undefined },
+        })
+      );
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+      expect(mockedFetchOrgOptIn).not.toHaveBeenCalled();
     });
 
-    test('should return false when getUnleashClient throws', () => {
-      mockedITLess.mockReturnValue(false);
-      mockedGetFeatureFlagsError.mockReturnValue(false);
-      mockedGetUnleashClient.mockImplementation(() => {
-        throw new Error('Unleash client not initialized');
-      });
-      expect(visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
-      expect(visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
+    test('should return false when fetchOrgOptIn throws', async () => {
+      mockedFetchOrgOptIn.mockRejectedValue(new Error('unexpected'));
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+    });
+
+    test('should return false for malformed HTTP 200 response (null result) for expected=true', async () => {
+      // Malformed response causes fetchOrgOptIn to return null
+      mockedFetchOrgOptIn.mockResolvedValue(null);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(true)).toBe(false);
+    });
+
+    test('should return false for malformed HTTP 200 response (null result) for expected=false', async () => {
+      // Malformed response causes fetchOrgOptIn to return null
+      mockedFetchOrgOptIn.mockResolvedValue(null);
+      expect(await visibilityFunctions.isKesselOrgOnboarded(false)).toBe(false);
     });
   });
 });

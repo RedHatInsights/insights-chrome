@@ -7,6 +7,7 @@ import get from 'lodash/get';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { getUnleashClient } from '../components/FeatureFlags/unleashClient';
 import { VISIBILITY_REQUEST_TIMEOUT_MS, getVisibilityRequestTimeout } from './visibilityRequestConfig';
+import { fetchOrgOptIn } from './orgOptInApi';
 
 const matcherMapper = {
   isEmpty,
@@ -144,9 +145,16 @@ const initialize = ({
      * Check Kessel tenant-scoped permissions. Takes an array of Kessel relation
      * strings and returns true if the user has at least one (OR logic).
      * The caller's frontend.yaml provides native Kessel relation names.
+     *
+     * Availability guard: returns false on ITLess or when Kessel is disabled/unavailable.
      */
     loosePermissionsKessel: async (relations: string[]) => {
       try {
+        // Availability guard: ITLess or Kessel flag disabled → no request
+        if (ITLess() || !matchesFeatureFlag('platform.chrome.kessel', true)) {
+          return false;
+        }
+
         if (!Array.isArray(relations) || relations.length === 0) {
           return false;
         }
@@ -237,7 +245,34 @@ const initialize = ({
     },
     isITLess: (expected: boolean) => ITLess() === expected,
     isKesselEnabled: (expected: boolean) => (ITLess() ? false : matchesFeatureFlag('platform.chrome.kessel', expected)),
-    isKesselOrgOnboarded: (expected: boolean) => (ITLess() ? false : matchesFeatureFlag('platform.rbac.workspaces', expected)),
+    /**
+     * Check if the current user's org is onboarded to V2 via the RBAC opt-in API.
+     * Async — callers must await.
+     *
+     * - ITLess: returns false for either expected value (no request sent).
+     * - Failure/malformed response: returns false for either expected value.
+     * - Success: returns `v2_opted_in === expected`.
+     */
+    isKesselOrgOnboarded: async (expected: boolean) => {
+      if (ITLess()) {
+        return false;
+      }
+      try {
+        const user = await getUser();
+        const orgId = user?.identity?.org_id;
+        if (!orgId) {
+          return false;
+        }
+        const result = await fetchOrgOptIn(orgId);
+        // null = failure → false for either expected value
+        if (result === null) {
+          return false;
+        }
+        return result === expected;
+      } catch {
+        return false;
+      }
+    },
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
