@@ -120,6 +120,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
   const analytics = useRef<AnalyticsBrowser>(undefined);
   const analyticsLoaded = useRef(false);
+  const identifiedAnalytics = useRef<AnalyticsBrowser | undefined>();
   const intercomHash = useRef<string | undefined>();
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
@@ -199,6 +200,10 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         if (!isCurrentOperation()) {
           return;
         }
+        await waitForRenderedThemeInitialization();
+        if (!isCurrentOperation()) {
+          return;
+        }
         intercomHash.current = fetchedIntercomHash;
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
@@ -213,37 +218,42 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           },
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        await waitForRenderedThemeInitialization();
-        if (!isCurrentOperation()) {
-          return;
-        }
+        identifiedAnalytics.current = analytics.current;
         analytics.current.page(...getPageEventOptions({ pathname, search, user }));
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
-      } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        analytics.current = AnalyticsBrowser.load(
-          { writeKey: newKey },
-          { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
-        );
-        resetIntegrations(analytics.current);
-        intercomHash.current = await fetchIntercomHash();
-        if (!isCurrentOperation()) {
-          return;
+      } else if (initialized.current && !isDisabled && analytics.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
+        if (analytics.current.instance.settings.writeKey !== newKey) {
+          analytics.current = AnalyticsBrowser.load(
+            { writeKey: newKey },
+            { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
+          );
+          resetIntegrations(analytics.current);
         }
-        // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-        analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
-          ...identityOptions,
-          context: {
-            ...identityOptions.context,
-            ...(intercomHash.current
-              ? {
-                  Intercom: { user_hash: intercomHash.current },
-                }
-              : {}),
-          },
-        });
-        analytics.current.group(user.identity.internal?.org_id, groupTraits);
+        if (identifiedAnalytics.current !== analytics.current) {
+          const fetchedIntercomHash = await fetchIntercomHash();
+          if (!isCurrentOperation()) {
+            return;
+          }
+          intercomHash.current = fetchedIntercomHash;
+          // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+          analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
+            ...identityOptions,
+            context: {
+              ...identityOptions.context,
+              ...(intercomHash.current
+                ? {
+                    Intercom: { user_hash: intercomHash.current },
+                  }
+                : {}),
+            },
+          });
+          analytics.current.group(user.identity.internal?.org_id, groupTraits);
+          identifiedAnalytics.current = analytics.current;
+        }
       }
     }
   };
