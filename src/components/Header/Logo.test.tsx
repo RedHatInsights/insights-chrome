@@ -6,6 +6,16 @@ import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 import { _resetDarkModeStore, getDarkModeStore } from '../../state/stores/darkModeStore';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
+// Mock the bridge to delegate to the real globalThis-anchored store.
+// In tests there is no webpack MF split, so direct store access is safe.
+jest.mock('../../chrome/darkModeStoreBridge', () => {
+  const { getDarkModeStore: getStore } = jest.requireActual('../../state/stores/darkModeStore');
+  const { useGetState } = jest.requireActual('@scalprum/react-core');
+  return {
+    useDarkModeIsDark: () => useGetState(getStore()).isDark,
+  };
+});
+
 const renderLogo = (options: { lightwellHeader?: boolean } = {}) => {
   const { lightwellHeader = false } = options;
   const store = createStore();

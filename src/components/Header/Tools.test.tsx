@@ -16,8 +16,15 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
   useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
 }));
+jest.mock('../../hooks/useOrgOptIn', () => ({
+  useOrgOptIn: () => ({ v2OptedIn: false, isLoading: false, isError: false, isResolved: true }),
+}));
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div />,
+}));
+jest.mock('../../chrome/darkModeStoreBridge', () => ({
+  getCachedDarkModeStore: jest.fn(),
+  useDarkModeIsDark: () => false,
 }));
 jest.mock('./UserToggle', () => ({
   __esModule: true,
@@ -137,7 +144,7 @@ const mockUser = {
 
 const defaultFlags: Record<string, boolean> = {
   'platform.sources.integrations': false,
-  'platform.rbac.workspaces': false,
+  // platform.rbac.workspaces replaced by useOrgOptIn hook
   'platform.chrome.help-panel': false,
   'platform.chrome.ask-redhat-help': false,
   'platform.learning-resources.global-learning-resources': false,
@@ -635,6 +642,16 @@ describe('Tools - forced glass mode', () => {
     expect(document.getElementById('contrast-system')).toBeDisabled();
     expect(document.getElementById('contrast-default')).toBeDisabled();
     expect(document.getElementById('contrast-high')).toBeDisabled();
+  });
+
+  it('should show theme section when glass is forced (Glass and Felt coexist)', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.felt-theme': true }, undefined, store);
+
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(document.getElementById('theme-default')).toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).toBeInTheDocument();
   });
 
   it('should not disable glass button when glass is forced', () => {

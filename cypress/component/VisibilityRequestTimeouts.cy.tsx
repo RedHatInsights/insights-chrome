@@ -236,7 +236,10 @@ describe('visibility HTTP timeouts', () => {
           appName: 'visibility-timeout-test',
           disableMetrics: true,
           storageProvider: new InMemoryStorageProvider(),
-          bootstrap: [{ name: 'platform.chrome.consume-feo', enabled: true, impressionData: false, variant: { name: 'disabled', enabled: false } }],
+          bootstrap: [
+            { name: 'platform.chrome.consume-feo', enabled: true, impressionData: false, variant: { name: 'disabled', enabled: false } },
+            { name: 'platform.chrome.kessel', enabled: true, impressionData: false, variant: { name: 'disabled', enabled: false } },
+          ],
         });
         setUnleashClient(client);
         return new Promise<void>((resolve) => {
