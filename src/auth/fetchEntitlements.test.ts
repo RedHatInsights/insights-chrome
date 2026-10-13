@@ -76,10 +76,16 @@ describe('fetchEntitlements', () => {
 
   it('does not call the API when org_id is missing', async () => {
     const client = { servicesGet: jest.fn() };
-    const result = await fetchEntitlements(userWith({}), { client });
-    expect(client.servicesGet).not.toHaveBeenCalled();
-    expect(result).toEqual({ entitlements: {}, degraded: false, source: 'empty' });
-    expect(mockedCacheFetch).not.toHaveBeenCalled();
+    const diagnostic = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      const result = await fetchEntitlements(userWith({}), { client });
+      expect(client.servicesGet).not.toHaveBeenCalled();
+      expect(result).toEqual({ entitlements: {}, degraded: false, source: 'empty' });
+      expect(mockedCacheFetch).not.toHaveBeenCalled();
+      expect(diagnostic).toHaveBeenCalledWith('Cannot call entitlements API, no org ID');
+    } finally {
+      diagnostic.mockRestore();
+    }
   });
 
   it('uses a healthy 200 body, persists, and is not degraded', async () => {

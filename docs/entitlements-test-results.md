@@ -10,7 +10,7 @@ Tested on **2026-10-06**, branch `prevent-entitlement-outages`, in the `insights
 - `tsc --noEmit` and `git diff --check`: **passed**.
 - Authenticated stage follow-up: **15 scenarios passed, 1 failed** using the local branch, real stage SSO, the supplied account, full-page reloads, and real IndexedDB. Details below.
 - Additional paid-entitlement response simulations: **7 passed, 0 failed**, using the same real stage login with local response fixtures.
-- Pre-PR comparison: the same fresh flag-outage shell stall occurs on **`526089ab`**, before PR #3709, and on the current branch, with the same legacy navigation/service requests and a 60-second readiness timeout. Both reported findings pre-date this PR.
+- Pre-PR comparison: the same fresh flag-outage All Services failure occurs on **`526089ab`**, before PR #3709, and on the current branch, with the same legacy navigation/service requests and a 60-second readiness timeout. Both reported findings pre-date this PR. The All Services failure's root cause is described in the finding below and is tracked separately.
 - The Cypress component tests supply OIDC identity through a test provider and spy on redirect/revocation methods. The authenticated stage follow-up uses real SSO and real UI logout.
 
 Initial direct stage probes returned HTTP 403. After the credentials file was supplied, login through the branch's local dev proxy succeeded. The test process loaded `E2E_USER` and `E2E_PASSWORD` directly from the supplied `.env`; their values were not displayed, copied into test source, or saved in browser traces/authentication-state files. Temporary browsers and dev servers were stopped after the runs.
@@ -91,7 +91,7 @@ The diagnostic establishes a pre-existing auth issue rather than an entitlement 
 
 The normal header menu calls `logout()`, not `logoutAllTabs()`. Actual SSO-session propagation to another tab is a separate stage check; a successful stage logout would not by itself prove this internal broadcast handler works.
 
-## Finding: pre-existing full-shell startup stall without stored flags
+## Finding: pre-existing All Services crash without stored flags
 
 Reproduced repeatedly in the authenticated stage run:
 
@@ -103,7 +103,9 @@ Reproduced repeatedly in the authenticated stage run:
 
 The failing network responses recorded for that case were the two deliberately intercepted endpoints. The exact scenario was then repeated against the pre-PR commit `526089ab` and the current branch. Both returned the correct legacy `{}` entitlement map, made the same legacy navigation/service requests, and did not reach All Services readiness within 60 seconds. This reproduces the repository's existing general flag-outage behavior; it was not introduced by entitlement fallback or the shared bootstrap client.
 
-The provider's server-error and network-error tests additionally verify that `useFlagsStatus()` unblocks flag-dependent initialization after a failed bootstrap with no stored toggles. The baseline provider also permits initialization after failure, by synthesizing an empty toggle response. Current upstream flag handling uses the same ready-or-error condition for navigation initialization. Per the requested scope, this pre-existing shell behavior is not changed in this PR.
+The provider's server-error and network-error tests additionally verify that `useFlagsStatus()` unblocks flag-dependent initialization after a failed bootstrap with no stored toggles. The baseline provider also permits initialization after failure, by synthesizing an empty toggle response. Current upstream flag handling uses the same ready-or-error condition for navigation initialization.
+
+**Root cause (found 2026-10-13):** with no stored toggles, `platform.chrome.consume-feo` reads as off, so Chrome loads the legacy `services-generated.json`. Stage's legacy file contains groups with `links: null`, and `evaluateServiceTilesVisibility` threw `Cannot read properties of null (reading 'filter')`. That set the service-tiles error, and `AllServices` returned its error state before two later `useEffect` calls, so React threw `Rendered fewer hooks than expected` and the error boundary replaced the page. Both defects pre-date this PR and are tracked as a separate ticket rather than changed here. The fix is to treat null group links as empty and to move the error return below every hook.
 
 ## Remaining manual checks
 
