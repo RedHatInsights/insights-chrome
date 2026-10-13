@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
-import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Page } from 'pf-6-next/dist/dynamic/components/Page';
 import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -76,6 +76,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
     <div id="chrome-app-render-root" className="chr-m-footer-after-page">
       <Page
         className="chr-c-page--lightwell"
+        isPlain
         sidebar={null}
         onPageResize={null}
         masthead={withHorizontalSubnav(

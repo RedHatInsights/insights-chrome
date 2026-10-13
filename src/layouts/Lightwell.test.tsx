@@ -154,6 +154,11 @@ describe('Lightwell', () => {
     expect(page?.nextElementSibling).toBe(footer);
   });
 
+  it('should apply the plain Page variant', () => {
+    const { container } = renderLightwell();
+    expect(container.querySelector('.pf-v6-c-page')).toHaveClass('pf-m-plain');
+  });
+
   it('should not render sidebar navigation', () => {
     const { container } = renderLightwell();
     expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
