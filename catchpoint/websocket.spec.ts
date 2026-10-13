@@ -9,7 +9,13 @@ type Mode = 'healthy' | 'reject' | 'close' | 'wrong-protocol' | 'missing-cookie'
 
 async function runMonitor(page: Page, mode: Mode, authenticated = false, outcomes: string[] = []) {
   const handshakes: { hasCookie: boolean; protocol?: string }[] = [];
+  const trustArcRequests: string[] = [];
   const server = createServer((request, response) => {
+    if (request.url?.includes('/libs/redhat/marketing/latest/trustarc/')) {
+      trustArcRequests.push(request.url);
+      response.end('');
+      return;
+    }
     response.setHeader('Content-Type', 'text/html');
     if (mode === 'lockdown') {
       response.end('<!doctype html><h1>Lockdown</h1>');
@@ -20,6 +26,7 @@ async function runMonitor(page: Page, mode: Mode, authenticated = false, outcome
       return;
     }
     response.end(`<!doctype html>
+      <script src="/libs/redhat/marketing/latest/trustarc/trustarc.js"></script>
       <label>Red Hat login<input name="username"></label><button id="next">Next</button>
       <div id="password-step" hidden><label>Password<input type="password"></label><button id="login">Log in</button></div>
       <script>
@@ -79,7 +86,7 @@ async function runMonitor(page: Page, mode: Mode, authenticated = false, outcome
     // Execute exactly what is pasted into Catchpoint: no TypeScript transform or imports.
     const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
     await new AsyncFunction('page', 'Catchpoint', 'expect', source)(page, catchpoint, expect);
-    return { handshakes, steps, outcomes };
+    return { handshakes, steps, outcomes, trustArcRequests };
   } finally {
     for (const connection of sockets.clients) connection.terminate();
     for (const connection of connections) connection.destroy();
@@ -95,6 +102,7 @@ test('logs in and opens a cookie-authenticated socket', async ({ page }) => {
     'PASS: Negotiated cloudevents.json and stayed open for 0.1 seconds.',
   ]);
   expect(result.handshakes).toEqual([{ hasCookie: true, protocol: 'cloudevents.json' }]);
+  expect(result.trustArcRequests).toEqual([]);
   expect(result.steps).toEqual(['Log in to Console', 'Verify authenticated WebSocket availability', 'WebSocket result - PASS']);
 });
 
