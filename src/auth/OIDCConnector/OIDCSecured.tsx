@@ -174,12 +174,18 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       previousEntitlementsRef.current = entitlements;
       chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded });
     } else {
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
       if (entitlementsFallbackEnabledRef.current) {
         chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
       }
       entitlementsFallbackEnabledRef.current = false;
       previousEntitlementsRef.current = undefined;
       entitlements = (await fetchEntitlements(user)).entitlements;
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
     }
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
