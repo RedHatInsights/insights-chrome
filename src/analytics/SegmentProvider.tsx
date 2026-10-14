@@ -120,7 +120,9 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
   const analytics = useRef<AnalyticsBrowser>(undefined);
   const analyticsLoaded = useRef(false);
+  const selectedWriteKey = useRef<string | undefined>();
   const identifiedAnalytics = useRef<AnalyticsBrowser | undefined>();
+  const identifiedUser = useRef<string | undefined>();
   const intercomHash = useRef<string | undefined>();
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
@@ -195,6 +197,14 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         cloud_ebs_id: user.identity.account_number,
         email_domain: emailDomain(user.identity.user?.email),
       };
+      if (selectedWriteKey.current !== newKey) {
+        analytics.current = AnalyticsBrowser.load(
+          { writeKey: newKey },
+          { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
+        );
+        selectedWriteKey.current = newKey;
+        resetIntegrations(analytics.current);
+      }
       if (!initialized.current && analytics.current) {
         const fetchedIntercomHash = await fetchIntercomHash();
         if (!isCurrentOperation()) {
@@ -219,21 +229,11 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
         identifiedAnalytics.current = analytics.current;
+        identifiedUser.current = serializedUser;
         analytics.current.page(...getPageEventOptions({ pathname, search, user }));
         initialized.current = true;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
-        if (analytics.current.instance.settings.writeKey !== newKey) {
-          analytics.current = AnalyticsBrowser.load(
-            { writeKey: newKey },
-            { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
-          );
-          resetIntegrations(analytics.current);
-        }
-        if (identifiedAnalytics.current !== analytics.current) {
+        if (identifiedAnalytics.current !== analytics.current || identifiedUser.current !== serializedUser) {
           const fetchedIntercomHash = await fetchIntercomHash();
           if (!isCurrentOperation()) {
             return;
@@ -253,6 +253,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           });
           analytics.current.group(user.identity.internal?.org_id, groupTraits);
           identifiedAnalytics.current = analytics.current;
+          identifiedUser.current = serializedUser;
         }
       }
     }
@@ -271,7 +272,14 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     const updateThemeTraits = () => {
-      if (!initialized.current || isDisabled || !user || !analytics.current) {
+      if (
+        !initialized.current ||
+        isDisabled ||
+        !user ||
+        !analytics.current ||
+        identifiedAnalytics.current !== analytics.current ||
+        identifiedUser.current !== serializedUser
+      ) {
         return;
       }
       analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
@@ -284,7 +292,16 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
     window.addEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
     return () => window.removeEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
-  }, [activeModule, isDisabled, isPreview, pathname, themeTelemetryDefaults.colorSchemeSetting, themeTelemetryDefaults.contrastModeSetting, user]);
+  }, [
+    activeModule,
+    isDisabled,
+    isPreview,
+    pathname,
+    serializedUser,
+    themeTelemetryDefaults.colorSchemeSetting,
+    themeTelemetryDefaults.contrastModeSetting,
+    user,
+  ]);
 
   /**
    * This needs to happen in a condition and during first valid render!
@@ -293,10 +310,11 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
    */
   if (user && analytics.current && activeModule && !analyticsLoaded.current) {
     analyticsLoaded.current = true;
+    const writeKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
     analytics.current.load(
       {
         cdnURL: '/connections/cdn',
-        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev),
+        writeKey,
       },
       {
         initialPageview: false,
@@ -309,6 +327,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         },
       }
     );
+    selectedWriteKey.current = writeKey;
     resetIntegrations(analytics.current);
   }
 

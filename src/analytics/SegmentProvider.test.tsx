@@ -163,7 +163,7 @@ describe('SegmentProvider', () => {
       identify: mockReplacementIdentify,
       group: mockReplacementGroup,
       page: mockReplacementPage,
-      instance: { settings: { writeKey: 'Aoak9IFNixtkZJRatfZG9cY1RHxbATW1' } },
+      instance: undefined,
     });
     mockFlags.clear();
     mockActiveModule = 'test-app';
@@ -272,7 +272,7 @@ describe('SegmentProvider', () => {
     });
   });
 
-  it('supersedes a pending initial Page operation when the active module changes', async () => {
+  it('supersedes a pending initial operation and selects the latest module SDK', async () => {
     let resolveFirstThemeInitialization: () => void = () => undefined;
     mockWaitForRenderedThemeInitialization.mockReturnValueOnce(
       new Promise<void>((resolve) => {
@@ -295,14 +295,15 @@ describe('SegmentProvider', () => {
       </SegmentProvider>
     );
 
-    await waitFor(() => expect(mockPage).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockReplacementPage).toHaveBeenCalledTimes(1));
     resolveFirstThemeInitialization();
     await Promise.resolve();
 
-    expect(mockPage).toHaveBeenCalledTimes(1);
+    expect(mockReplacementPage).toHaveBeenCalledTimes(1);
+    expect(mockPage).not.toHaveBeenCalled();
   });
 
-  it('identifies a replacement SDK instance when the latest module reuses its write key', async () => {
+  it('identifies a replacement SDK instance before its instance is ready when the latest module reuses its write key', async () => {
     mockActiveModule = 'acs';
     const { default: SegmentProvider } = await import('./SegmentProvider');
     const view = render(
@@ -332,6 +333,11 @@ describe('SegmentProvider', () => {
 
     await waitFor(() => expect(mockLoad).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(mockIntercomGet).toHaveBeenCalledTimes(2));
+    localStorage.setItem('chrome:theme', 'dark');
+    localStorage.setItem('chrome:high-contrast', 'default');
+    localStorage.setItem('chrome:glass-theme', 'true');
+    notifyThemeTelemetryPreferencesChanged();
+    expect(mockReplacementIdentify).not.toHaveBeenCalled();
 
     mockActiveModule = 'dashboard';
     view.rerender(
@@ -343,7 +349,7 @@ describe('SegmentProvider', () => {
     await waitFor(() => {
       expect(mockReplacementIdentify).toHaveBeenCalledWith(
         'acct-456',
-        expect.any(Object),
+        expect.objectContaining({ colorSchemeSetting: 'dark', contrastModeSetting: 'glass' }),
         expect.objectContaining({ context: expect.objectContaining({ Intercom: { user_hash: 'latest-hash' } }) })
       );
       expect(mockReplacementGroup).toHaveBeenCalled();
@@ -353,6 +359,45 @@ describe('SegmentProvider', () => {
     await Promise.resolve();
     expect(mockReplacementIdentify).toHaveBeenCalledTimes(1);
     expect(mockReplacementGroup).toHaveBeenCalledTimes(1);
+  });
+
+  it('re-identifies a changed user even when the Segment write key stays the same', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const Consumer = ({ accountId }: { accountId: string }) => (
+      <ChromeAuthContext.Consumer>
+        {(auth) => (
+          <ChromeAuthContext.Provider
+            value={{
+              ...auth,
+              user: {
+                ...auth.user,
+                identity: {
+                  ...auth.user.identity,
+                  internal: { ...auth.user.identity.internal, account_id: accountId },
+                },
+              },
+            }}
+          >
+            <SegmentProvider>
+              <div>test child</div>
+            </SegmentProvider>
+          </ChromeAuthContext.Provider>
+        )}
+      </ChromeAuthContext.Consumer>
+    );
+    const view = render(<Consumer accountId="acct-456" />);
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+    mockIdentify.mockClear();
+    mockGroup.mockClear();
+
+    view.rerender(<Consumer accountId="acct-next" />);
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith('acct-next', expect.any(Object), expect.any(Object));
+      expect(mockGroup).toHaveBeenCalledWith('org-123', expect.any(Object));
+    });
+    expect(mockLoad).not.toHaveBeenCalled();
   });
 
   it('updates Segment identify traits when theme preferences change', async () => {

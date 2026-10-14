@@ -45,19 +45,25 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>)
   const { pathname, search } = useLocation();
   const { user } = useContext(ChromeAuthContext);
   const currentLocation = useRef({ pathname, search });
+  const navigationSequence = useRef(0);
+  const currentUser = useRef(user);
   useLayoutEffect(() => {
     currentLocation.current = { pathname, search };
+    navigationSequence.current += 1;
   }, [pathname, search]);
+  useLayoutEffect(() => {
+    currentUser.current = user;
+  }, [user]);
   const sendPageEvent = useCallback(
     // prevent sending the page event on instant redirects etc
-    debounce(async (pathname: string, search = '') => {
+    debounce(async (pathname: string, search: string, sequence: number) => {
       await waitForRenderedThemeInitialization();
-      if (currentLocation.current.pathname !== pathname || currentLocation.current.search !== search) {
+      if (navigationSequence.current !== sequence || currentLocation.current.pathname !== pathname || currentLocation.current.search !== search) {
         return;
       }
       try {
         window?.sendCustomEvent?.('pageBottom');
-        analytics.current?.page(...getPageEventOptions({ pathname, search, user }));
+        analytics.current?.page(...getPageEventOptions({ pathname, search, user: currentUser.current }));
       } catch (error) {
         console.error('unable to send page event', error);
       }
@@ -65,7 +71,7 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>)
     []
   );
   useEffect(() => {
-    sendPageEvent(pathname, search);
+    sendPageEvent(pathname, search, navigationSequence.current);
   }, [pathname, search]);
 };
 
