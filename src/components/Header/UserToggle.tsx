@@ -1,7 +1,7 @@
 import './UserToggle.scss';
 
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
+import { DEFAULT_SSO_ROUTES, ITLess, getEnvDetails, isProd as isProdEnv } from '../../utils/common';
 import React, { useContext, useRef, useState } from 'react';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -16,6 +16,7 @@ import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useFlag } from '@unleash/proxy-client-react';
+import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
@@ -42,16 +43,16 @@ const DropdownItems = ({
   extraItems?: React.ReactNode[];
   userMenu?: UserMenuConfig;
 }) => {
-  const env = getEnv();
   const isProd = isProdEnv();
+  const ssoBase = getEnvDetails()?.sso ?? DEFAULT_SSO_ROUTES.qa.sso;
   const isITLessEnv = ITLess();
   const intl = useIntl();
-  const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
   const enableMyAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const v2WorkspacesEnabled = useFlag('platform.rbac.workspaces');
+  const { v2OptedIn } = useOrgOptIn();
+  const v2WorkspacesEnabled = v2OptedIn === true;
   const myAccessPath = enableMyAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
   return [
@@ -95,13 +96,7 @@ const DropdownItems = ({
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
       {!isITLessEnv && userMenu?.showMyProfile && (
-        <DropdownItem
-          key="My Profile"
-          to={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
-          target="_blank"
-          rel="noopener noreferrer"
-          component="a"
-        >
+        <DropdownItem key="My Profile" to={`${ssoBase}/realms/redhat-external/account/`} target="_blank" rel="noopener noreferrer" component="a">
           {intl.formatMessage(messages.myProfile)}
         </DropdownItem>
       )}

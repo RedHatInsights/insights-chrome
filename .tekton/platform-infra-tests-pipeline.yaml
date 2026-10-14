@@ -24,12 +24,12 @@ spec:
             description: "Test output in Konflux standardized format"
         steps:
           - name: run-tests
-            # Playwright v1.62.1-jammy; keep in sync with @playwright/test in package-lock.json.
-            image: mcr.microsoft.com/playwright@sha256:b3251f7ff1a9fa559a28d1c67eaa15fc1a9800f7845e82756caea7842967f615
+            # Playwright v1.63.0-noble; keep in sync with @playwright/test in package-lock.json.
+            image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
             securityContext:
-              # UID and GID of pwuser in the Playwright Jammy image.
-              runAsUser: 1000
-              runAsGroup: 1000
+              # UID and GID of pwuser in the Playwright Noble image.
+              runAsUser: 1001
+              runAsGroup: 1001
               runAsNonRoot: true
             env:
               - name: PLATFORM_INFRA_ENV
@@ -119,8 +119,8 @@ spec:
             type: string
         steps:
           - name: notify
-            # UBI 9 Minimal includes Bash, curl, and CA certificates; pin the multi-architecture manifest.
-            image: registry.access.redhat.com/ubi9/ubi-minimal@sha256:7b8e25a1b56ca4d00219198f3b5b51a3e1693a5c4f5369c5e190d7d6cb3f980e
+            # UBI 10 Minimal includes Bash, curl, and CA certificates; pin the multi-architecture manifest.
+            image: registry.access.redhat.com/ubi10/ubi-minimal:latest@sha256:91eaa992c90c4271691b047c12fec69cdabe7977305e168c4060f094ff2a73e0
             securityContext:
               runAsUser: 1000
               runAsGroup: 1000

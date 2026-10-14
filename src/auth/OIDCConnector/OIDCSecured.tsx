@@ -25,6 +25,7 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
+import getOrganization from './getOrganization';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -54,7 +55,7 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
         locale: user.profile?.locale as any,
         username: user.profile?.username as any,
       },
-      organization: user.profile?.organization as any,
+      organization: getOrganization(user.profile?.organization as ChromeUser['identity']['organization'], user.access_token),
     },
   };
 }

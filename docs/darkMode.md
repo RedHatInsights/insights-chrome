@@ -224,7 +224,9 @@ function ThemedAppRoot({ useDarkModeStore }: { useDarkModeStore: () => DarkModeS
 
 The `useDarkModeStore` hook is backed by a Scalprum shared store (`createSharedStore` from `@scalprum/core`). Chrome manages the store state and dispatches `SET_DARK` / `SET_LIGHT` events when the user changes their color scheme preference in the settings dropdown.
 
-The store is a singleton: all consumers share the same instance, so updates are immediately reflected across all mounted components.
+The store singleton is anchored on `globalThis` rather than module scope. This prevents the webpack duplicate-module-factory split: when the module is both exposed via Module Federation and statically imported by the host, webpack inlines separate copies into different chunks. A module-scoped singleton would produce separate store instances per chunk, so remote apps writing to one instance wouldn't be seen by Chrome reading the other. The `globalThis` anchor collapses all copies onto a single store.
+
+Chrome's own components consume the store through a self-consumption bridge ([`src/chrome/darkModeStoreBridge.ts`](../src/chrome/darkModeStoreBridge.ts)) that loads the module via the `chrome` federated remote, avoiding static value-imports that would create webpack module edges from the host graph.
 
 Source: [`src/state/stores/darkModeStore.ts`](../src/state/stores/darkModeStore.ts)
 

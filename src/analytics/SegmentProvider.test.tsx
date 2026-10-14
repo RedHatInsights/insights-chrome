@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { emailDomain } from './SegmentProvider';
+import getOrganization from '../auth/OIDCConnector/getOrganization';
+import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 // Mock all dependencies before importing the component
 const mockIdentify = jest.fn();
@@ -152,7 +154,28 @@ describe('SegmentProvider', () => {
     const traits = groupCall[1];
     expect(traits).toHaveProperty('email_domain', 'example.com');
     expect(traits).toHaveProperty('organization_name', 'Test Org');
+    expect(traits).toHaveProperty('name', 'Test Org');
     expect(traits).toHaveProperty('account_number', 'EBS-789');
     expect(traits).toHaveProperty('cloud_org_id', 'org-123');
+  });
+
+  it('sends the organization name recovered from the access token', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const accessToken = `header.${Buffer.from(JSON.stringify({ organization: { name: 'Insights QA' } })).toString('base64url')}.signature`;
+    const organization = getOrganization(undefined, accessToken);
+    const Consumer = () => (
+      <ChromeAuthContext.Consumer>
+        {(auth) => (
+          <ChromeAuthContext.Provider value={{ ...auth, user: { ...auth.user, identity: { ...auth.user.identity, organization } } }}>
+            <SegmentProvider>
+              <div>test child</div>
+            </SegmentProvider>
+          </ChromeAuthContext.Provider>
+        )}
+      </ChromeAuthContext.Consumer>
+    );
+
+    render(<Consumer />);
+    await waitFor(() => expect(mockGroup).toHaveBeenCalledWith('org-123', expect.objectContaining({ name: 'Insights QA', organization_name: 'Insights QA' })));
   });
 });

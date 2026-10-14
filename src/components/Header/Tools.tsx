@@ -17,7 +17,7 @@ import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
 import { ITLess, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
@@ -35,6 +35,7 @@ import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { useFeltTheme } from '../../hooks/useFeltTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
 import type { SettingsGroupConfig, ToolbarConfig } from './Header';
+import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -84,7 +85,8 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const { userPersonalization: userConfigDegraded } = useAtomValue(degradedStateAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
-  const workspacesEnabled = useFlag('platform.rbac.workspaces');
+  const { v2OptedIn, isLoading: isOrgOptInLoading } = useOrgOptIn();
+  const workspacesEnabled = v2OptedIn === true;
   const helpPanelEnabled = useFlag('platform.chrome.help-panel');
   const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
@@ -116,9 +118,14 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
   const { isGlassTheme, enableGlass, disableGlass } = useGlassTheme(isGlassModeEnabled, isGlassForced);
+  const { flagsReady, flagsError } = useFlagsStatus();
+  const flagsResolved = flagsReady || !!flagsError;
   const isFeltThemeEnabled = useFlag('platform.chrome.felt-theme');
-  const isFeltAutoEnabled = useFlag('platform.chrome-felt-auto');
-  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltForced || isFeltAutoEnabled);
+  const isFeltAutoFlag = useFlag('platform.chrome-felt-auto');
+  // Keep auto-Felt enabled while flags are loading to prevent theme flicker.
+  // Once flags resolve, follow the actual flag value.
+  const isFeltAutoEnabled = flagsResolved ? isFeltAutoFlag : true;
+  const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {
@@ -197,6 +204,10 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
               Workspaces model available
             </Label>
           ) : null,
+          // Hide while opt-in status is loading for org admins to prevent
+          // flashing V1 link before V2 resolves.  Non-admins always see
+          // the same path (/iam/my-user-access), so no hiding needed.
+          isHidden: isOrgOptInLoading && !!isOrgAdmin,
         },
         {
           ouiaId: 'settings-menu-identity-provider',

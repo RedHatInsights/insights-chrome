@@ -13,6 +13,7 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 import { initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
+import { getDarkModeStore } from '../../../src/state/stores/darkModeStore';
 import { useAtom, useSetAtom } from 'jotai';
 import { ScalprumConfig, scalprumConfigAtom } from '../../../src/state/atoms/scalprumConfigAtom';
 import { moduleRoutesAtom } from '../../../src/state/atoms/chromeModuleAtom';
@@ -111,6 +112,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
     scalprum.current.exposedModules['learningResources#QuickstartsRuntime'] = {
       default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+    };
+
+    // Expose the dark mode store so the self-consumption bridge resolves
+    scalprum.current.exposedModules['chrome#./theme/useDarkModeStore'] = {
+      getDarkModeStore,
     };
 
     setIsReady(true);

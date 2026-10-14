@@ -149,6 +149,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         },
       };
       const groupTraits = {
+        name: user.identity.organization?.name,
         organization_name: user.identity.organization?.name,
         account_number: user.identity.account_number,
         account_id: user.identity.internal?.org_id,

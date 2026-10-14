@@ -35,7 +35,7 @@ spec:
         - name: name
           value: git-clone-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:d35e5d501cb5f5f88369511f76249857cb5ac30250e1dcf086939321964ff6b9
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.2.6@sha256:a3678910c2bf9187a66a96066193cb41046fbb7097160bf2be6a374ed5e49d30
         - name: kind
           value: task
         resolver: bundles
@@ -68,7 +68,7 @@ spec:
           - use
           - $(params.SOURCE_ARTIFACT)=/var/workdir
           computeResources: {}
-          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:b60c24ccd6df949b905739b36f4664a5a7571ca0d15436b1798612c485d7970b
           name: use-trusted-artifact
           env:
           - name: HOME
@@ -76,17 +76,17 @@ spec:
           - name: TAR_OPTIONS
             value: "--no-recursion --anchored --exclude=."
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 1001
+            runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
         - computeResources: {}
-          # Playwright v1.62.1-jammy; keep in sync with @playwright/test in package-lock.json.
-          image: mcr.microsoft.com/playwright@sha256:b3251f7ff1a9fa559a28d1c67eaa15fc1a9800f7845e82756caea7842967f615
+          # Playwright v1.63.0-noble; keep in sync with @playwright/test in package-lock.json.
+          image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
           securityContext:
-            # UID and GID of pwuser in the Playwright Jammy image.
-            runAsUser: 1000
-            runAsGroup: 1000
+            # UID and GID of pwuser in the Playwright Noble image.
+            runAsUser: 1001
+            runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
           env:

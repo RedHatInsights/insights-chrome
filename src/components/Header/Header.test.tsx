@@ -27,11 +27,17 @@ jest.mock('@scalprum/react-core', () => ({
 
 jest.mock('@scalprum/core', () => ({
   preloadModule: jest.fn(() => Promise.resolve()),
+  getCachedModule: jest.fn(() => ({})),
   createSharedStore: jest.fn(() => ({
     getState: jest.fn(() => ({ isDark: false })),
     updateState: jest.fn(),
     subscribe: jest.fn(() => jest.fn()),
   })),
+}));
+
+jest.mock('../../chrome/darkModeStoreBridge', () => ({
+  __esModule: true,
+  useDarkModeIsDark: () => false,
 }));
 
 import React from 'react';

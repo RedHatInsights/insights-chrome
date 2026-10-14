@@ -43,6 +43,7 @@ import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
 import { delegatedHelpTopicsAPI, delegatedQuickstartsAPI } from '../../state/atoms/delegatedChromeQuickstarts';
 import { preloadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
+import { preloadDarkModeStore } from '../../chrome/darkModeStoreBridge';
 
 const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 const Lightwell = lazyWithRetry(() => import('../../layouts/Lightwell'));
@@ -64,48 +65,50 @@ const ScalprumRoot = memo(
     return (
       <ChromeProvider>
         <QuickstartsRuntimeMount>
-          <BetaSwitcher />
-          <DegradedStateBanner />
-          <Routes>
-            <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
-            <Route
-              path="/connect/products"
-              element={
-                <Suspense fallback={LoadingFallback}>
-                  <ProductSelection />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/allservices"
-              element={
-                <Suspense fallback={LoadingFallback}>
-                  <AllServices Footer={<ChromeFooter />} />
-                </Suspense>
-              }
-            />
-            {!ITLess() && (
+          <div className="chr-c-shell">
+            <BetaSwitcher />
+            <DegradedStateBanner />
+            <Routes>
+              <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
               <Route
-                path="/favoritedservices"
+                path="/connect/products"
                 element={
                   <Suspense fallback={LoadingFallback}>
-                    <FavoritedServices Footer={<ChromeFooter />} />
+                    <ProductSelection />
                   </Suspense>
                 }
               />
-            )}
-            <Route path="/security" element={<DefaultLayout />} />
-            {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
-            <Route
-              path={`${LIGHTWELL_PATH}/*`}
-              element={
-                <Suspense fallback={LoadingFallback}>
-                  <Lightwell />
-                </Suspense>
-              }
-            />
-            <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
-          </Routes>
+              <Route
+                path="/allservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <AllServices Footer={<ChromeFooter />} />
+                  </Suspense>
+                }
+              />
+              {!ITLess() && (
+                <Route
+                  path="/favoritedservices"
+                  element={
+                    <Suspense fallback={LoadingFallback}>
+                      <FavoritedServices Footer={<ChromeFooter />} />
+                    </Suspense>
+                  }
+                />
+              )}
+              <Route path="/security" element={<DefaultLayout />} />
+              {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
+              <Route
+                path={`${LIGHTWELL_PATH}/*`}
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <Lightwell />
+                  </Suspense>
+                }
+              />
+              <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
+            </Routes>
+          </div>
         </QuickstartsRuntimeMount>
       </ChromeProvider>
     );
@@ -163,10 +166,11 @@ const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
   }, []);
 
   useEffect(() => {
-    // Warm the breadcrumb store from the `chrome` federated remote so useBreadcrumbStoreRef
-    // and ChromeRoute's loadBreadcrumbStore resolve immediately. Best-effort, idempotent.
+    // Warm the breadcrumb and dark mode stores from the `chrome` federated remote so
+    // bridge hooks resolve immediately. Best-effort, idempotent.
     // Scalprum is already initialized by the child ScalprumProvider before this effect runs.
     preloadBreadcrumbStore().catch(() => {});
+    preloadDarkModeStore().catch(() => {});
   }, []);
 
   const setPageMetadata = useCallback((pageOptions: any) => {

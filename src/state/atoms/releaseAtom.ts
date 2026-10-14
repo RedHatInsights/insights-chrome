@@ -6,9 +6,10 @@ import { SearchPermissionsCache } from './localSearchAtom';
 import { WritableAtom, atom } from 'jotai';
 import { userConfigAtom } from './userConfigAtom';
 import { ChromeUserConfig } from '../../utils/initUserConfig';
-import { LIGHTWELL_PATH } from '../../utils/common';
+import { LIGHTWELL_BUNDLE_ID } from '../../utils/common';
+import { getUrl } from '../../hooks/useBundle';
 
-const isLightwellPath = window.location.pathname.startsWith(LIGHTWELL_PATH);
+const isLightwellBundle = getUrl('bundle') === LIGHTWELL_BUNDLE_ID;
 
 export const previewModalOpenAtom = atomWithToggle(false);
 
@@ -97,31 +98,31 @@ export const hidePreviewBannerAtom = atomWithToggle(initialHidePreviewBanner, as
 
 /**
  * Atom for layouts to signal that the preview banner should be hidden.
- * Initialized from the current pathname so the banner never renders on Lightwell routes,
+ * Initialized from the active bundle ID so the banner never renders on Lightwell routes,
  * even before any component mounts.
  */
-export const layoutBannerHiddenAtom = atom(isLightwellPath);
+export const layoutBannerHiddenAtom = atom(isLightwellBundle);
 
 /**
  * Atom for layouts to signal that the glass theme should be force-enabled.
- * Initialized from the current pathname so the glass theme is already active
+ * Initialized from the active bundle ID so the glass theme is already active
  * before Header/Tools first renders on Lightwell routes.
  */
-export const layoutForceGlassThemeAtom = atom(isLightwellPath);
+export const layoutForceGlassThemeAtom = atom(isLightwellBundle);
 
 /**
  * Atom for layouts to signal that the felt theme should be force-enabled.
- * Initialized from the current pathname so the felt theme is already active
+ * Initialized from the active bundle ID so the felt theme is already active
  * before Header/Tools first renders on Lightwell routes.
  */
-export const layoutForceFeltThemeAtom = atom(isLightwellPath);
+export const layoutForceFeltThemeAtom = atom(isLightwellBundle);
 
 /**
  * Atom for layouts to signal a simplified header for Lightwell.
  * When true, the AllServicesDropdown is replaced with a static "Lightwell"
  * header and the Search input is hidden.
  */
-export const layoutLightwellHeaderAtom = atom(isLightwellPath);
+export const layoutLightwellHeaderAtom = atom(isLightwellBundle);
 
 export const setPreviewSeenAtom = atom(null, async (get, set) => {
   try {

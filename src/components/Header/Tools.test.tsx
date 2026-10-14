@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Tools from './Tools';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 
 // Configure data-ouia-component-id as the test ID attribute
 // This allows using screen.getByTestId/queryByTestId for OUIA IDs
@@ -14,9 +14,17 @@ configure({ testIdAttribute: 'data-ouia-component-id' });
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
+}));
+jest.mock('../../hooks/useOrgOptIn', () => ({
+  useOrgOptIn: () => ({ v2OptedIn: false, isLoading: false, isError: false, isResolved: true }),
 }));
 jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: () => <div />,
+}));
+jest.mock('../../chrome/darkModeStoreBridge', () => ({
+  getCachedDarkModeStore: jest.fn(),
+  useDarkModeIsDark: () => false,
 }));
 jest.mock('./UserToggle', () => ({
   __esModule: true,
@@ -123,6 +131,7 @@ jest.mock('../../hooks/useSupportCaseData', () => ({
 }));
 
 const mockedUseFlag = useFlag as unknown as jest.Mock;
+const mockedUseFlagsStatus = useFlagsStatus as unknown as jest.Mock;
 
 const mockUser = {
   identity: {
@@ -135,7 +144,7 @@ const mockUser = {
 
 const defaultFlags: Record<string, boolean> = {
   'platform.sources.integrations': false,
-  'platform.rbac.workspaces': false,
+  // platform.rbac.workspaces replaced by useOrgOptIn hook
   'platform.chrome.help-panel': false,
   'platform.chrome.learning-resources-quickstarts': false,
   'platform.chrome.ask-redhat-help': false,
@@ -636,6 +645,16 @@ describe('Tools - forced glass mode', () => {
     expect(document.getElementById('contrast-high')).toBeDisabled();
   });
 
+  it('should show theme section when glass is forced (Glass and Felt coexist)', () => {
+    const store = createStore();
+    store.set(layoutForceGlassThemeAtom, true);
+    renderTools({ 'platform.chrome.felt-theme': true }, undefined, store);
+
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(document.getElementById('theme-default')).toBeInTheDocument();
+    expect(document.getElementById('theme-felt')).toBeInTheDocument();
+  });
+
   it('should not disable glass button when glass is forced', () => {
     const store = createStore();
     store.set(layoutForceGlassThemeAtom, true);
@@ -749,5 +768,43 @@ describe('Tools - felt auto mode (platform.chrome-felt-auto)', () => {
     expect(document.getElementById('contrast-default')).toBeInTheDocument();
     expect(document.getElementById('contrast-high')).toBeInTheDocument();
     expect(document.getElementById('contrast-glass')).toBeInTheDocument();
+  });
+});
+
+describe('Tools - felt auto while flags are loading', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeltThemeState.isFeltTheme = false;
+    mockFeltThemeState.forceEnabled = false;
+  });
+
+  afterEach(() => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+  });
+
+  it('should hide theme section while flags are pending (auto-felt assumed enabled)', () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: null });
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    // While flags load, auto-felt is assumed true, so theme section stays hidden
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should show theme section after flags resolve with felt-auto disabled', () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+  });
+
+  it('should hide theme section after flags resolve with felt-auto enabled', () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: true, flagsError: null });
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': true });
+    expect(screen.queryByText('Theme')).not.toBeInTheDocument();
+  });
+
+  it('should treat flags as resolved when flagsError is set', () => {
+    mockedUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: new Error('timeout') });
+    renderTools({ 'platform.chrome.felt-theme': true, 'platform.chrome-felt-auto': false });
+    // Error counts as resolved, so follow actual flag value
+    expect(screen.getByText('Theme')).toBeInTheDocument();
   });
 });

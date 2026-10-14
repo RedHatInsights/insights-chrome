@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import classNames from 'classnames';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
@@ -21,7 +21,6 @@ import BetaSwitcherDropdown from './BetaSwitcherDropdown';
 import './BetaSwitcher.scss';
 
 const BetaSwitcher = () => {
-  const bannerRef = useRef<HTMLDivElement>(null);
   const [hideBanner, setHideBanner] = useAtom(hidePreviewBannerAtom);
   const layoutHidden = useAtomValue(layoutBannerHiddenAtom);
   const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
@@ -34,19 +33,11 @@ const BetaSwitcher = () => {
   // When the personalization API failed, preview changes cannot be persisted — disable the toggle.
   const { userPersonalization: userConfigDegraded } = useAtomValue(degradedStateAtom);
   useEffect(() => {
-    const chromeRenderElement = document.getElementById('chrome-app-render-root');
-    // adjust the height of the chrome render element to fit the banner and not show extra scrollbar
-    if (!hideBanner && !layoutHidden && bannerRef.current && chromeRenderElement) {
-      const { height } = bannerRef.current.getBoundingClientRect();
-      chromeRenderElement.style.height = `calc(100vh - ${height}px)`;
-    } else if ((hideBanner || layoutHidden) && chromeRenderElement) {
-      chromeRenderElement.style.removeProperty('height');
-    }
     if (isPreview) {
       // preview should always reset the banner visibility
       setHideBanner(false);
     }
-  }, [isPreview, hideBanner, layoutHidden]);
+  }, [isPreview, setHideBanner]);
 
   const handleBetaAccept = () => {
     setIsBetaModalOpen(false);
@@ -62,7 +53,7 @@ const BetaSwitcher = () => {
   const changeModeContent = isPreview ? 'return to production, turn off' : 'see new pre-production features, turn on';
 
   return (
-    <div ref={bannerRef}>
+    <div>
       <Split
         className={classNames('chr-c-beta-switcher pf-v6-u-p-xs', {
           active: isPreview,
