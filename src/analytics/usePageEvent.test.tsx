@@ -38,17 +38,17 @@ jest.mock('../state/atoms/segmentPageOptionsAtom', () => ({ segmentPageOptionsAt
 jest.mock('../state/atoms/releaseAtom', () => ({ isPreviewAtom: 'is-preview' }));
 jest.mock('js-cookie', () => ({ __esModule: true, default: { get: jest.fn() } }));
 
-import usePageEvent from './usePageEvent';
+import usePageEvent, { type PageEventInitialization, getPageEventLocationKey } from './usePageEvent';
 
-const PageEventHook = () => {
+const PageEventHook = ({ initialization }: { initialization?: PageEventInitialization }) => {
   const analytics = useRef({ page: mockPage } as unknown as AnalyticsBrowser);
-  usePageEvent(analytics);
+  usePageEvent(analytics, initialization);
   return null;
 };
 
-const TestPageEvents = ({ user }: { user: ChromeUser }) => (
+const TestPageEvents = ({ user, initialization }: { user: ChromeUser; initialization?: PageEventInitialization }) => (
   <ChromeAuthContext.Provider value={{ user } as React.ContextType<typeof ChromeAuthContext>}>
-    <PageEventHook />
+    <PageEventHook initialization={initialization} />
   </ChromeAuthContext.Provider>
 );
 
@@ -173,5 +173,102 @@ describe('usePageEvent theme telemetry', () => {
 
     expect(mockPage).toHaveBeenCalledTimes(1);
     expect(mockPage.mock.calls[0][1]).toEqual(expect.objectContaining({ context: { groupId: 'org-after' } }));
+  });
+
+  it('does not send a pending Page event after unmount', async () => {
+    let resolveThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveThemeInitialization = resolve;
+      })
+    );
+    const { unmount } = render(<TestPageEvents user={makeUser('org-123')} />);
+
+    act(() => jest.advanceTimersByTime(500));
+    expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalledTimes(1);
+    unmount();
+
+    await act(async () => {
+      resolveThemeInitialization();
+      await Promise.resolve();
+    });
+
+    expect(mockPage).not.toHaveBeenCalled();
+  });
+
+  it('waits for identity and skips a location already sent by Segment initialization', async () => {
+    let resolveIdentity: () => void = () => undefined;
+    const identityReady = new Promise<void>((resolve) => {
+      resolveIdentity = resolve;
+    });
+    const initialization: PageEventInitialization = {
+      identityState: { current: { promise: identityReady } },
+      lastSentLocation: { current: undefined },
+    };
+    const { rerender } = render(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+
+    act(() => jest.advanceTimersByTime(500));
+    expect(mockPage).not.toHaveBeenCalled();
+    initialization.lastSentLocation.current = getPageEventLocationKey('/', '');
+
+    await act(async () => {
+      resolveIdentity();
+      await Promise.resolve();
+    });
+    expect(mockPage).not.toHaveBeenCalled();
+
+    mockLocation.pathname = '/next';
+    rerender(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+    expect(mockPage).toHaveBeenCalledTimes(1);
+    expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ path: '/next' }));
+
+    mockLocation.pathname = '/';
+    rerender(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+    expect(mockPage).toHaveBeenCalledTimes(2);
+    expect(mockPage.mock.calls[1][0]).toEqual(expect.objectContaining({ path: '/' }));
+  });
+
+  it('drops callbacks waiting on a superseded identity state', async () => {
+    let resolveOldIdentity: () => void = () => undefined;
+    const oldIdentity = new Promise<void>((resolve) => {
+      resolveOldIdentity = resolve;
+    });
+    const identityState = { current: { promise: oldIdentity } };
+    const initialization: PageEventInitialization = {
+      identityState,
+      lastSentLocation: { current: undefined },
+    };
+    const { rerender } = render(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(mockPage).not.toHaveBeenCalled();
+
+    identityState.current = { promise: Promise.resolve() };
+    await act(async () => {
+      resolveOldIdentity();
+      await Promise.resolve();
+    });
+    expect(mockPage).not.toHaveBeenCalled();
+
+    mockLocation.pathname = '/latest';
+    rerender(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+    expect(mockPage).toHaveBeenCalledTimes(1);
+    expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ path: '/latest' }));
   });
 });

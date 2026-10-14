@@ -12,7 +12,7 @@ import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
-import usePageEvent, { getPageEventOptions } from './usePageEvent';
+import usePageEvent, { type PageEventIdentityState, getPageEventLocationKey, getPageEventOptions } from './usePageEvent';
 import {
   type ColorSchemeSetting,
   type ContrastModeSetting,
@@ -123,6 +123,20 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const selectedWriteKey = useRef<string | undefined>();
   const identifiedAnalytics = useRef<AnalyticsBrowser | undefined>();
   const identifiedUser = useRef<string | undefined>();
+  const identityInitialization = useRef<PageEventIdentityState | undefined>(undefined);
+  const resolveIdentityInitialization = useRef<() => void>(() => undefined);
+  const resetIdentityInitialization = () => {
+    let resolve: () => void = () => undefined;
+    const promise = new Promise<void>((resolvePromise) => {
+      resolve = resolvePromise;
+    });
+    identityInitialization.current = { promise };
+    resolveIdentityInitialization.current = resolve;
+  };
+  if (!identityInitialization.current) {
+    resetIdentityInitialization();
+  }
+  const lastSentLocation = useRef<string | undefined>();
   const intercomHash = useRef<string | undefined>();
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
@@ -136,16 +150,16 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const activeModule = useAtomValue(activeModuleAtom);
   const serializedUser = JSON.stringify(user);
-  const moduleUpdateSequence = useRef(0);
-  const latestModuleUpdate = useRef({ activeModule, serializedUser });
-  useLayoutEffect(() => {
-    latestModuleUpdate.current = { activeModule, serializedUser };
-  }, [activeModule, serializedUser]);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
   const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
   const { pathname, search } = useLocation();
-  usePageEvent(analytics);
+  const moduleUpdateSequence = useRef(0);
+  const latestModuleUpdate = useRef({ activeModule, serializedUser, pathname, search });
+  useLayoutEffect(() => {
+    latestModuleUpdate.current = { activeModule, serializedUser, pathname, search };
+  }, [activeModule, pathname, search, serializedUser]);
+  usePageEvent(analytics, { identityState: identityInitialization, lastSentLocation });
 
   const fetchIntercomHash = async () => {
     try {
@@ -214,33 +228,13 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         if (!isCurrentOperation()) {
           return;
         }
+        const currentLocation = latestModuleUpdate.current;
         intercomHash.current = fetchedIntercomHash;
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-        analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
-          ...identityOptions,
-          context: {
-            ...identityOptions.context,
-            ...(intercomHash.current
-              ? {
-                  Intercom: { user_hash: intercomHash.current },
-                }
-              : {}),
-          },
-        });
-        analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        identifiedAnalytics.current = analytics.current;
-        identifiedUser.current = serializedUser;
-        analytics.current.page(...getPageEventOptions({ pathname, search, user }));
-        initialized.current = true;
-      } else if (initialized.current && !isDisabled && analytics.current) {
-        if (identifiedAnalytics.current !== analytics.current || identifiedUser.current !== serializedUser) {
-          const fetchedIntercomHash = await fetchIntercomHash();
-          if (!isCurrentOperation()) {
-            return;
-          }
-          intercomHash.current = fetchedIntercomHash;
-          // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-          analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
+        analytics.current.identify(
+          user.identity.internal?.account_id,
+          getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, themeTelemetryDefaults),
+          {
             ...identityOptions,
             context: {
               ...identityOptions.context,
@@ -250,10 +244,48 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                   }
                 : {}),
             },
-          });
+          }
+        );
+        analytics.current.group(user.identity.internal?.org_id, groupTraits);
+        identifiedAnalytics.current = analytics.current;
+        identifiedUser.current = serializedUser;
+        analytics.current.page(...getPageEventOptions({ pathname: currentLocation.pathname, search: currentLocation.search, user }));
+        lastSentLocation.current = getPageEventLocationKey(currentLocation.pathname, currentLocation.search);
+        initialized.current = true;
+        resolveIdentityInitialization.current();
+      } else if (initialized.current && !isDisabled && analytics.current) {
+        if (identifiedAnalytics.current !== analytics.current || identifiedUser.current !== serializedUser) {
+          resetIdentityInitialization();
+          const fetchedIntercomHash = await fetchIntercomHash();
+          if (!isCurrentOperation()) {
+            return;
+          }
+          const currentLocation = latestModuleUpdate.current;
+          intercomHash.current = fetchedIntercomHash;
+          // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+          analytics.current.identify(
+            user.identity.internal?.account_id,
+            getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, themeTelemetryDefaults),
+            {
+              ...identityOptions,
+              context: {
+                ...identityOptions.context,
+                ...(intercomHash.current
+                  ? {
+                      Intercom: { user_hash: intercomHash.current },
+                    }
+                  : {}),
+              },
+            }
+          );
           analytics.current.group(user.identity.internal?.org_id, groupTraits);
           identifiedAnalytics.current = analytics.current;
           identifiedUser.current = serializedUser;
+          resolveIdentityInitialization.current();
+        } else {
+          // A newer operation may have superseded an identity update and restored the
+          // already identified user. Release any Page events waiting on that update.
+          resolveIdentityInitialization.current();
         }
       }
     }
@@ -282,26 +314,22 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       ) {
         return;
       }
-      analytics.current.identify(user.identity.internal?.account_id, getIdentityTraits(user, pathname, activeModule, isPreview, themeTelemetryDefaults), {
-        context: {
-          groupId: user.identity.internal?.org_id,
-          ...(intercomHash.current ? { Intercom: { user_hash: intercomHash.current } } : {}),
-        },
-      });
+      const currentLocation = latestModuleUpdate.current;
+      analytics.current.identify(
+        user.identity.internal?.account_id,
+        getIdentityTraits(user, currentLocation.pathname, currentLocation.activeModule, isPreview, themeTelemetryDefaults),
+        {
+          context: {
+            groupId: user.identity.internal?.org_id,
+            ...(intercomHash.current ? { Intercom: { user_hash: intercomHash.current } } : {}),
+          },
+        }
+      );
     };
 
     window.addEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
     return () => window.removeEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
-  }, [
-    activeModule,
-    isDisabled,
-    isPreview,
-    pathname,
-    serializedUser,
-    themeTelemetryDefaults.colorSchemeSetting,
-    themeTelemetryDefaults.contrastModeSetting,
-    user,
-  ]);
+  }, [activeModule, isDisabled, isPreview, serializedUser, themeTelemetryDefaults.colorSchemeSetting, themeTelemetryDefaults.contrastModeSetting, user]);
 
   /**
    * This needs to happen in a condition and during first valid render!
