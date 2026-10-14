@@ -2,6 +2,7 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { emailDomain } from './SegmentProvider';
+import usePageEvent, { type PageEventInitialization, getPageEventOptions } from './usePageEvent';
 import getOrganization from '../auth/OIDCConnector/getOrganization';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { notifyThemeTelemetryPreferencesChanged } from '../utils/themeTelemetry';
@@ -17,6 +18,8 @@ const mockReplacementPage = jest.fn();
 const mockIntercomGet = axios.get as jest.Mock;
 const mockFlags = new Set<string>();
 let mockActiveModule = 'test-app';
+let mockPathname = '/insights/dashboard';
+let mockSearch = '';
 const mockWaitForRenderedThemeInitialization = jest.fn(() => Promise.resolve());
 
 jest.mock('@unleash/proxy-client-react', () => ({
@@ -49,10 +52,7 @@ jest.mock('../utils/themeTelemetry', () => ({
 }));
 
 jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn(() => ({
-    pathname: '/insights/dashboard',
-    search: '',
-  })),
+  useLocation: jest.fn(() => ({ pathname: mockPathname, search: mockSearch })),
 }));
 
 jest.mock('axios', () => ({
@@ -77,6 +77,7 @@ jest.mock('../hooks/useBundle', () => ({
 jest.mock('./usePageEvent', () => ({
   __esModule: true,
   default: jest.fn(),
+  getPageEventLocationKey: (pathname: string, search: string) => JSON.stringify([pathname, search]),
   getPageEventOptions: jest.fn(() => []),
 }));
 
@@ -167,6 +168,8 @@ describe('SegmentProvider', () => {
     });
     mockFlags.clear();
     mockActiveModule = 'test-app';
+    mockPathname = '/insights/dashboard';
+    mockSearch = '';
     mockWaitForRenderedThemeInitialization.mockResolvedValue(undefined);
     localStorage.clear();
   });
@@ -269,6 +272,39 @@ describe('SegmentProvider', () => {
       );
       expect(mockGroup).toHaveBeenCalled();
       expect(mockPage).toHaveBeenCalled();
+    });
+  });
+
+  it('uses the current route for initial Identify and Page events after initialization waits', async () => {
+    let resolveThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveThemeInitialization = resolve;
+      })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalled());
+    mockPathname = '/inventory/new';
+    mockSearch = '?source=current';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+    resolveThemeInitialization();
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+    expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.objectContaining({ urlSegment1: 'inventory', urlSegment2: 'new' }), expect.any(Object));
+    expect(getPageEventOptions).toHaveBeenCalledWith({
+      pathname: '/inventory/new',
+      search: '?source=current',
+      user: expect.any(Object),
     });
   });
 
@@ -398,6 +434,60 @@ describe('SegmentProvider', () => {
       expect(mockGroup).toHaveBeenCalledWith('org-123', expect.any(Object));
     });
     expect(mockLoad).not.toHaveBeenCalled();
+  });
+
+  it('releases Page events when a pending user update is superseded by the already identified user', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const Consumer = ({ accountId }: { accountId: string }) => (
+      <ChromeAuthContext.Consumer>
+        {(auth) => (
+          <ChromeAuthContext.Provider
+            value={{
+              ...auth,
+              user: {
+                ...auth.user,
+                identity: {
+                  ...auth.user.identity,
+                  internal: { ...auth.user.identity.internal, account_id: accountId },
+                },
+              },
+            }}
+          >
+            <SegmentProvider>
+              <div>test child</div>
+            </SegmentProvider>
+          </ChromeAuthContext.Provider>
+        )}
+      </ChromeAuthContext.Consumer>
+    );
+    const view = render(<Consumer accountId="acct-456" />);
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+
+    let resolveChangedUserHash: (response: { data: { data: { dev: string } } }) => void = () => undefined;
+    mockIntercomGet.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveChangedUserHash = resolve;
+        })
+    );
+    view.rerender(<Consumer accountId="acct-next" />);
+    await waitFor(() => expect(mockIntercomGet).toHaveBeenCalledTimes(2));
+
+    const pageEventCalls = (usePageEvent as jest.Mock).mock.calls;
+    const initialization = pageEventCalls[pageEventCalls.length - 1][1] as PageEventInitialization;
+    const pendingIdentity = initialization.identityState.current;
+    expect(pendingIdentity).toBeDefined();
+
+    view.rerender(<Consumer accountId="acct-456" />);
+    const wasReleased = await Promise.race([
+      pendingIdentity!.promise.then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 100)),
+    ]);
+    expect(wasReleased).toBe(true);
+
+    resolveChangedUserHash({ data: { data: { dev: 'stale-hash' } } });
+    await Promise.resolve();
   });
 
   it('updates Segment identify traits when theme preferences change', async () => {

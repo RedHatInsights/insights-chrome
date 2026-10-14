@@ -12,6 +12,18 @@ import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { getThemeTelemetryRendered, waitForRenderedThemeInitialization } from '../utils/themeTelemetry';
 
+export type PageEventIdentityState = {
+  promise: Promise<void>;
+};
+
+export type PageEventInitialization = {
+  identityState: MutableRefObject<PageEventIdentityState | undefined>;
+  lastSentLocation: MutableRefObject<string | undefined>;
+};
+
+export const getPageEventLocationKey = (pathname: string, search: string) => JSON.stringify([pathname, search]);
+const DEFAULT_IDENTITY_STATE = { promise: Promise.resolve() };
+
 export function getPageEventOptions({ pathname, search: searchString = '', user }: { pathname: string; search: string; user: ChromeUser }) {
   const isPreview = chromeStore.get(isPreviewAtom);
   const activeModule = chromeStore.get(activeModuleAtom);
@@ -41,15 +53,21 @@ export function getPageEventOptions({ pathname, search: searchString = '', user 
   ];
 }
 
-const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>) => {
+const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>, initialization?: PageEventInitialization) => {
   const { pathname, search } = useLocation();
   const { user } = useContext(ChromeAuthContext);
   const currentLocation = useRef({ pathname, search });
   const navigationSequence = useRef(0);
   const currentUser = useRef(user);
+  const localLastSentLocation = useRef<string | undefined>();
+  const identityState = initialization?.identityState;
+  const lastSentLocation = initialization?.lastSentLocation ?? localLastSentLocation;
   useLayoutEffect(() => {
     currentLocation.current = { pathname, search };
     navigationSequence.current += 1;
+    if (lastSentLocation.current !== getPageEventLocationKey(pathname, search)) {
+      lastSentLocation.current = undefined;
+    }
   }, [pathname, search]);
   useLayoutEffect(() => {
     currentUser.current = user;
@@ -58,21 +76,42 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>)
     // prevent sending the page event on instant redirects etc
     debounce(async (pathname: string, search: string, sequence: number) => {
       await waitForRenderedThemeInitialization();
+      const identityAtSend = identityState?.current ?? DEFAULT_IDENTITY_STATE;
+      await identityAtSend.promise;
+      if (identityState && identityState.current !== identityAtSend) {
+        return;
+      }
       if (navigationSequence.current !== sequence || currentLocation.current.pathname !== pathname || currentLocation.current.search !== search) {
         return;
       }
+      const locationKey = getPageEventLocationKey(pathname, search);
+      if (lastSentLocation.current === locationKey) {
+        return;
+      }
       try {
+        const currentAnalytics = analytics.current;
+        if (!currentAnalytics) {
+          return;
+        }
         window?.sendCustomEvent?.('pageBottom');
-        analytics.current?.page(...getPageEventOptions({ pathname, search, user: currentUser.current }));
+        currentAnalytics.page(...getPageEventOptions({ pathname, search, user: currentUser.current }));
+        lastSentLocation.current = locationKey;
       } catch (error) {
         console.error('unable to send page event', error);
       }
     }, 500),
-    []
+    [identityState, lastSentLocation]
   );
   useEffect(() => {
     sendPageEvent(pathname, search, navigationSequence.current);
-  }, [pathname, search]);
+  }, [pathname, search, sendPageEvent]);
+  useEffect(
+    () => () => {
+      navigationSequence.current += 1;
+      sendPageEvent.cancel();
+    },
+    [sendPageEvent]
+  );
 };
 
 export default usePageEvent;
