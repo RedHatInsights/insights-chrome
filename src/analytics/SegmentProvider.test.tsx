@@ -1,22 +1,44 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
+import axios from 'axios';
 import { emailDomain } from './SegmentProvider';
+import usePageEvent, { type PageEventInitialization, getPageEventOptions } from './usePageEvent';
 import getOrganization from '../auth/OIDCConnector/getOrganization';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { notifyThemeTelemetryPreferencesChanged } from '../utils/themeTelemetry';
 
 // Mock all dependencies before importing the component
 const mockIdentify = jest.fn();
 const mockGroup = jest.fn();
 const mockPage = jest.fn();
 const mockLoad = jest.fn();
+const mockReplacementIdentify = jest.fn();
+const mockReplacementGroup = jest.fn();
+const mockReplacementPage = jest.fn();
+const mockIntercomGet = axios.get as jest.Mock;
+const mockFlags = new Set<string>();
+let mockActiveModule = 'test-app';
+let mockPathname = '/insights/dashboard';
+let mockSearch = '';
+const mockWaitForRenderedThemeInitialization = jest.fn(() => Promise.resolve());
+
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: (flag: string) => mockFlags.has(flag),
+}));
 
 jest.mock('@segment/analytics-next', () => ({
-  AnalyticsBrowser: jest.fn().mockImplementation(() => ({
-    identify: mockIdentify,
-    group: mockGroup,
-    page: mockPage,
-    load: mockLoad,
-  })),
+  AnalyticsBrowser: Object.assign(
+    jest.fn().mockImplementation(() => ({
+      identify: mockIdentify,
+      group: mockGroup,
+      page: mockPage,
+      instance: { settings: {} },
+      load(this: { instance: { settings: Record<string, unknown> } }, { writeKey }: { writeKey: string }) {
+        this.instance.settings.writeKey = writeKey;
+      },
+    })),
+    { load: (...args: unknown[]) => mockLoad(...args) }
+  ),
 }));
 
 jest.mock('../utils/common', () => ({
@@ -24,15 +46,17 @@ jest.mock('../utils/common', () => ({
   isProd: jest.fn(() => false),
 }));
 
+jest.mock('../utils/themeTelemetry', () => ({
+  ...jest.requireActual('../utils/themeTelemetry'),
+  waitForRenderedThemeInitialization: () => mockWaitForRenderedThemeInitialization(),
+}));
+
 jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn(() => ({
-    pathname: '/insights/dashboard',
-    search: '',
-  })),
+  useLocation: jest.fn(() => ({ pathname: mockPathname, search: mockSearch })),
 }));
 
 jest.mock('axios', () => ({
-  get: jest.fn().mockResolvedValue({ data: { data: { dev: 'mock-hash' } } }),
+  get: jest.fn(),
 }));
 
 jest.mock('./SegmentContext', () => ({
@@ -53,6 +77,7 @@ jest.mock('../hooks/useBundle', () => ({
 jest.mock('./usePageEvent', () => ({
   __esModule: true,
   default: jest.fn(),
+  getPageEventLocationKey: (pathname: string, search: string) => JSON.stringify([pathname, search]),
   getPageEventOptions: jest.fn(() => []),
 }));
 
@@ -89,7 +114,7 @@ jest.mock('../auth/ChromeAuthContext', () => ({
 
 jest.mock('jotai', () => ({
   useAtomValue: jest.fn((atom: unknown) => {
-    if (atom === '__activeModuleAtom__') return 'test-app';
+    if (atom === '__activeModuleAtom__') return mockActiveModule;
     if (atom === '__activeModuleDefinitionReadAtom__') return undefined;
     if (atom === '__isPreviewAtom__') return false;
     return undefined;
@@ -134,6 +159,18 @@ describe('emailDomain', () => {
 describe('SegmentProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIntercomGet.mockResolvedValue({ data: { data: { dev: 'mock-hash' } } });
+    mockLoad.mockReturnValue({
+      identify: mockReplacementIdentify,
+      group: mockReplacementGroup,
+      page: mockReplacementPage,
+      instance: undefined,
+    });
+    mockFlags.clear();
+    mockActiveModule = 'test-app';
+    mockPathname = '/insights/dashboard';
+    mockSearch = '';
+    mockWaitForRenderedThemeInitialization.mockResolvedValue(undefined);
     localStorage.clear();
   });
 
@@ -157,6 +194,358 @@ describe('SegmentProvider', () => {
     expect(traits).toHaveProperty('name', 'Test Org');
     expect(traits).toHaveProperty('account_number', 'EBS-789');
     expect(traits).toHaveProperty('cloud_org_id', 'org-123');
+  });
+
+  it('includes default theme preferences in Segment identify traits', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'light', contrastModeSetting: 'default' }),
+        expect.any(Object)
+      );
+    });
+  });
+
+  it('uses system defaults when Chrome system theme settings are enabled', async () => {
+    mockFlags.add('platform.chrome.dark-mode');
+    mockFlags.add('platform.chrome.dark-mode_system');
+    mockFlags.add('platform.chrome.high-contrast');
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'system' }),
+        expect.any(Object)
+      );
+    });
+  });
+
+  it('uses theme flag defaults that resolve while identity is initializing', async () => {
+    let resolveIntercomHash: (response: { data: { data: { dev: string } } }) => void = () => undefined;
+    mockIntercomGet.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveIntercomHash = resolve;
+        })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockIntercomGet).toHaveBeenCalledTimes(1));
+    mockFlags.add('platform.chrome.dark-mode');
+    mockFlags.add('platform.chrome.dark-mode_system');
+    mockFlags.add('platform.chrome.high-contrast');
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+    resolveIntercomHash({ data: { data: { dev: 'mock-hash' } } });
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'system' }),
+        expect.any(Object)
+      );
+    });
+  });
+
+  it('waits for rendered theme initialization before sending initial Identify and Page events', async () => {
+    let resolveThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveThemeInitialization = resolve;
+      })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalled();
+    });
+    expect(mockIdentify).not.toHaveBeenCalled();
+    expect(mockGroup).not.toHaveBeenCalled();
+    expect(mockPage).not.toHaveBeenCalled();
+
+    localStorage.setItem('chrome:theme', 'system');
+    localStorage.setItem('chrome:high-contrast', 'system');
+    notifyThemeTelemetryPreferencesChanged();
+    expect(mockIdentify).not.toHaveBeenCalled();
+
+    resolveThemeInitialization();
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'system' }),
+        expect.any(Object)
+      );
+      expect(mockGroup).toHaveBeenCalled();
+      expect(mockPage).toHaveBeenCalled();
+    });
+  });
+
+  it('uses the current route for initial Identify and Page events after initialization waits', async () => {
+    let resolveThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveThemeInitialization = resolve;
+      })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalled());
+    mockPathname = '/inventory/new';
+    mockSearch = '?source=current';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+    resolveThemeInitialization();
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+    expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.objectContaining({ urlSegment1: 'inventory', urlSegment2: 'new' }), expect.any(Object));
+    expect(getPageEventOptions).toHaveBeenCalledWith({
+      pathname: '/inventory/new',
+      search: '?source=current',
+      user: expect.any(Object),
+    });
+  });
+
+  it('supersedes a pending initial operation and selects the latest module SDK', async () => {
+    let resolveFirstThemeInitialization: () => void = () => undefined;
+    mockWaitForRenderedThemeInitialization.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        resolveFirstThemeInitialization = resolve;
+      })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockWaitForRenderedThemeInitialization).toHaveBeenCalledTimes(1));
+
+    mockActiveModule = 'acs';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockReplacementPage).toHaveBeenCalledTimes(1));
+    resolveFirstThemeInitialization();
+    await Promise.resolve();
+
+    expect(mockReplacementPage).toHaveBeenCalledTimes(1);
+    expect(mockPage).not.toHaveBeenCalled();
+  });
+
+  it('identifies a replacement SDK instance before its instance is ready when the latest module reuses its write key', async () => {
+    mockActiveModule = 'acs';
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+
+    let resolveFirstReplacementHash: (response: { data: { data: { dev: string } } }) => void = () => undefined;
+    mockIntercomGet
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFirstReplacementHash = resolve;
+          })
+      )
+      .mockResolvedValueOnce({ data: { data: { dev: 'latest-hash' } } });
+
+    mockActiveModule = 'inventory';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockLoad).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockIntercomGet).toHaveBeenCalledTimes(2));
+    localStorage.setItem('chrome:theme', 'dark');
+    localStorage.setItem('chrome:high-contrast', 'default');
+    localStorage.setItem('chrome:glass-theme', 'true');
+    notifyThemeTelemetryPreferencesChanged();
+    expect(mockReplacementIdentify).not.toHaveBeenCalled();
+
+    mockActiveModule = 'dashboard';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockReplacementIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'dark', contrastModeSetting: 'glass' }),
+        expect.objectContaining({ context: expect.objectContaining({ Intercom: { user_hash: 'latest-hash' } }) })
+      );
+      expect(mockReplacementGroup).toHaveBeenCalled();
+    });
+
+    resolveFirstReplacementHash({ data: { data: { dev: 'stale-hash' } } });
+    await Promise.resolve();
+    expect(mockReplacementIdentify).toHaveBeenCalledTimes(1);
+    expect(mockReplacementGroup).toHaveBeenCalledTimes(1);
+  });
+
+  it('re-identifies a changed user even when the Segment write key stays the same', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const Consumer = ({ accountId }: { accountId: string }) => (
+      <ChromeAuthContext.Consumer>
+        {(auth) => (
+          <ChromeAuthContext.Provider
+            value={{
+              ...auth,
+              user: {
+                ...auth.user,
+                identity: {
+                  ...auth.user.identity,
+                  internal: { ...auth.user.identity.internal, account_id: accountId },
+                },
+              },
+            }}
+          >
+            <SegmentProvider>
+              <div>test child</div>
+            </SegmentProvider>
+          </ChromeAuthContext.Provider>
+        )}
+      </ChromeAuthContext.Consumer>
+    );
+    const view = render(<Consumer accountId="acct-456" />);
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+    mockIdentify.mockClear();
+    mockGroup.mockClear();
+
+    view.rerender(<Consumer accountId="acct-next" />);
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith('acct-next', expect.any(Object), expect.any(Object));
+      expect(mockGroup).toHaveBeenCalledWith('org-123', expect.any(Object));
+    });
+    expect(mockLoad).not.toHaveBeenCalled();
+  });
+
+  it('releases Page events when a pending user update is superseded by the already identified user', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const Consumer = ({ accountId }: { accountId: string }) => (
+      <ChromeAuthContext.Consumer>
+        {(auth) => (
+          <ChromeAuthContext.Provider
+            value={{
+              ...auth,
+              user: {
+                ...auth.user,
+                identity: {
+                  ...auth.user.identity,
+                  internal: { ...auth.user.identity.internal, account_id: accountId },
+                },
+              },
+            }}
+          >
+            <SegmentProvider>
+              <div>test child</div>
+            </SegmentProvider>
+          </ChromeAuthContext.Provider>
+        )}
+      </ChromeAuthContext.Consumer>
+    );
+    const view = render(<Consumer accountId="acct-456" />);
+
+    await waitFor(() => expect(mockPage).toHaveBeenCalled());
+
+    let resolveChangedUserHash: (response: { data: { data: { dev: string } } }) => void = () => undefined;
+    mockIntercomGet.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveChangedUserHash = resolve;
+        })
+    );
+    view.rerender(<Consumer accountId="acct-next" />);
+    await waitFor(() => expect(mockIntercomGet).toHaveBeenCalledTimes(2));
+
+    const pageEventCalls = (usePageEvent as jest.Mock).mock.calls;
+    const initialization = pageEventCalls[pageEventCalls.length - 1][1] as PageEventInitialization;
+    const pendingIdentity = initialization.identityState.current;
+    expect(pendingIdentity).toBeDefined();
+
+    view.rerender(<Consumer accountId="acct-456" />);
+    const wasReleased = await Promise.race([
+      pendingIdentity!.promise.then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 100)),
+    ]);
+    expect(wasReleased).toBe(true);
+
+    resolveChangedUserHash({ data: { data: { dev: 'stale-hash' } } });
+    await Promise.resolve();
+  });
+
+  it('updates Segment identify traits when theme preferences change', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockIdentify).toHaveBeenCalled());
+    mockIdentify.mockClear();
+    localStorage.setItem('chrome:theme', 'system');
+    localStorage.setItem('chrome:high-contrast', 'high');
+    notifyThemeTelemetryPreferencesChanged();
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'high-contrast' }),
+        expect.objectContaining({ context: expect.objectContaining({ groupId: 'org-123', Intercom: { user_hash: 'mock-hash' } }) })
+      );
+    });
   });
 
   it('sends the organization name recovered from the access token', async () => {

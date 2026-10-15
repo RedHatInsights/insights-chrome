@@ -34,6 +34,7 @@ import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import { useGlassTheme } from '../../hooks/useGlassTheme';
 import { useFeltTheme } from '../../hooks/useFeltTheme';
 import { HighContrastVariants, useHighContrast } from '../../hooks/useHighContrast';
+import { markRenderedThemeInitialized } from '../../utils/themeTelemetry';
 import type { SettingsGroupConfig, ToolbarConfig } from './Header';
 import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 import './Tools.scss';
@@ -126,6 +127,12 @@ const Tools = ({ toolbarConfig }: { toolbarConfig?: ToolbarConfig }) => {
   // Once flags resolve, follow the actual flag value.
   const isFeltAutoEnabled = flagsResolved ? isFeltAutoFlag : true;
   const { isFeltTheme, setFeltEnabled, setFeltDisabled } = useFeltTheme(isFeltAutoEnabled);
+
+  useEffect(() => {
+    if (flagsResolved) {
+      markRenderedThemeInitialized();
+    }
+  }, [flagsResolved]);
 
   /* Contrast mode handlers — coordinate glass + high-contrast hooks */
   const handleContrastSystem = () => {

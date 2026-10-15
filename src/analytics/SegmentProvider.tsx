@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
+import { useFlag } from '@unleash/proxy-client-react';
 import { ITLess, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -11,7 +12,14 @@ import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
-import usePageEvent, { getPageEventOptions } from './usePageEvent';
+import usePageEvent, { type PageEventIdentityState, getPageEventLocationKey, getPageEventOptions } from './usePageEvent';
+import {
+  type ColorSchemeSetting,
+  type ContrastModeSetting,
+  THEME_TELEMETRY_PREFERENCES_CHANGE,
+  getThemeTelemetrySettings,
+  waitForRenderedThemeInitialization,
+} from '../utils/themeTelemetry';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -61,7 +69,13 @@ export const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '', isPreview: boolean) => {
+const getIdentityTraits = (
+  user: ChromeUser,
+  pathname: string,
+  activeModule = '',
+  isPreview: boolean,
+  themeTelemetryDefaults: { colorSchemeSetting: ColorSchemeSetting; contrastModeSetting: ContrastModeSetting }
+) => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -95,6 +109,7 @@ const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = ''
       {}
     ),
     ...entitlements,
+    ...getThemeTelemetrySettings(themeTelemetryDefaults),
   };
 };
 
@@ -105,15 +120,49 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
   const analytics = useRef<AnalyticsBrowser>(undefined);
   const analyticsLoaded = useRef(false);
+  const selectedWriteKey = useRef<string | undefined>();
+  const identifiedAnalytics = useRef<AnalyticsBrowser | undefined>();
+  const identifiedUser = useRef<string | undefined>();
+  const identityInitialization = useRef<PageEventIdentityState | undefined>(undefined);
+  const resolveIdentityInitialization = useRef<() => void>(() => undefined);
+  const resetIdentityInitialization = () => {
+    resolveIdentityInitialization.current();
+    let resolve: () => void = () => undefined;
+    const promise = new Promise<void>((resolvePromise) => {
+      resolve = resolvePromise;
+    });
+    identityInitialization.current = { promise };
+    resolveIdentityInitialization.current = resolve;
+  };
+  if (!identityInitialization.current) {
+    resetIdentityInitialization();
+  }
+  const lastSentLocation = useRef<string | undefined>();
+  const intercomHash = useRef<string | undefined>();
+  const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
+  const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
+  const isHighContrastEnabled = useFlag('platform.chrome.high-contrast');
+  const themeTelemetryDefaults = {
+    colorSchemeSetting: (isDarkModeEnabled && isDarkModeSystemEnabled ? 'system' : 'light') as ColorSchemeSetting,
+    contrastModeSetting: (isHighContrastEnabled ? 'system' : 'default') as ContrastModeSetting,
+  };
+  const latestThemeTelemetryDefaults = useRef(themeTelemetryDefaults);
   const { user } = useContext(ChromeAuthContext);
   const isPreview = useAtomValue(isPreviewAtom);
 
   const activeModule = useAtomValue(activeModuleAtom);
+  const serializedUser = JSON.stringify(user);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
   const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
   const { pathname, search } = useLocation();
-  usePageEvent(analytics);
+  const moduleUpdateSequence = useRef(0);
+  const latestModuleUpdate = useRef({ activeModule, serializedUser, pathname, search });
+  useLayoutEffect(() => {
+    latestModuleUpdate.current = { activeModule, serializedUser, pathname, search };
+    latestThemeTelemetryDefaults.current = themeTelemetryDefaults;
+  }, [activeModule, pathname, search, serializedUser, themeTelemetryDefaults.colorSchemeSetting, themeTelemetryDefaults.contrastModeSetting]);
+  usePageEvent(analytics, { identityState: identityInitialization, lastSentLocation });
 
   const fetchIntercomHash = async () => {
     try {
@@ -139,10 +188,18 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     analytics.current = new AnalyticsBrowser();
   }
 
-  const handleModuleUpdate = async () => {
+  const handleModuleUpdate = async (operation: number) => {
+    const isCurrentOperation = () =>
+      operation === moduleUpdateSequence.current &&
+      latestModuleUpdate.current.activeModule === activeModule &&
+      latestModuleUpdate.current.serializedUser === serializedUser;
+
+    if (!isCurrentOperation()) {
+      return;
+    }
+
     if (!isDisabled && activeModule && user) {
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
-      const identityTraits = getIdentityTraits(user, pathname, activeModule, isPreview);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,
@@ -157,53 +214,125 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         cloud_ebs_id: user.identity.account_number,
         email_domain: emailDomain(user.identity.user?.email),
       };
-      if (!initialized.current && analytics.current) {
-        const hash = await fetchIntercomHash();
-        // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
-          ...identityOptions,
-          context: {
-            ...identityOptions.context,
-            ...(hash
-              ? {
-                  Intercom: { user_hash: hash },
-                }
-              : {}),
-          },
-        });
-        analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        analytics.current.page(...getPageEventOptions({ pathname, search, user }));
-        initialized.current = true;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
-      } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
+      if (selectedWriteKey.current !== newKey) {
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
         );
+        selectedWriteKey.current = newKey;
         resetIntegrations(analytics.current);
-        const hash = await fetchIntercomHash();
+      }
+      if (!initialized.current && analytics.current) {
+        const fetchedIntercomHash = await fetchIntercomHash();
+        if (!isCurrentOperation()) {
+          return;
+        }
+        await waitForRenderedThemeInitialization();
+        if (!isCurrentOperation()) {
+          return;
+        }
+        const currentLocation = latestModuleUpdate.current;
+        intercomHash.current = fetchedIntercomHash;
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
-          ...identityOptions,
-          context: {
-            ...identityOptions.context,
-            ...(hash
-              ? {
-                  Intercom: { user_hash: hash },
-                }
-              : {}),
-          },
-        });
+        analytics.current.identify(
+          user.identity.internal?.account_id,
+          getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
+          {
+            ...identityOptions,
+            context: {
+              ...identityOptions.context,
+              ...(intercomHash.current
+                ? {
+                    Intercom: { user_hash: intercomHash.current },
+                  }
+                : {}),
+            },
+          }
+        );
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
+        identifiedAnalytics.current = analytics.current;
+        identifiedUser.current = serializedUser;
+        analytics.current.page(...getPageEventOptions({ pathname: currentLocation.pathname, search: currentLocation.search, user }));
+        lastSentLocation.current = getPageEventLocationKey(currentLocation.pathname, currentLocation.search);
+        initialized.current = true;
+        resolveIdentityInitialization.current();
+      } else if (initialized.current && !isDisabled && analytics.current) {
+        if (identifiedAnalytics.current !== analytics.current || identifiedUser.current !== serializedUser) {
+          resetIdentityInitialization();
+          const fetchedIntercomHash = await fetchIntercomHash();
+          if (!isCurrentOperation()) {
+            return;
+          }
+          const currentLocation = latestModuleUpdate.current;
+          intercomHash.current = fetchedIntercomHash;
+          // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+          analytics.current.identify(
+            user.identity.internal?.account_id,
+            getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
+            {
+              ...identityOptions,
+              context: {
+                ...identityOptions.context,
+                ...(intercomHash.current
+                  ? {
+                      Intercom: { user_hash: intercomHash.current },
+                    }
+                  : {}),
+              },
+            }
+          );
+          analytics.current.group(user.identity.internal?.org_id, groupTraits);
+          identifiedAnalytics.current = analytics.current;
+          identifiedUser.current = serializedUser;
+          resolveIdentityInitialization.current();
+        } else {
+          // A newer operation may have superseded an identity update and restored the
+          // already identified user. Release any Page events waiting on that update.
+          resolveIdentityInitialization.current();
+        }
       }
     }
   };
 
   useEffect(() => {
-    handleModuleUpdate();
+    const operation = ++moduleUpdateSequence.current;
+    void handleModuleUpdate(operation);
+    return () => {
+      if (moduleUpdateSequence.current === operation) {
+        moduleUpdateSequence.current += 1;
+      }
+    };
     // need the json stringify to prevent the effect from running on every user update if not necessary
-  }, [activeModule, JSON.stringify(user)]);
+  }, [activeModule, serializedUser]);
+
+  useEffect(() => {
+    const updateThemeTraits = () => {
+      if (
+        !initialized.current ||
+        isDisabled ||
+        !user ||
+        !analytics.current ||
+        identifiedAnalytics.current !== analytics.current ||
+        identifiedUser.current !== serializedUser
+      ) {
+        return;
+      }
+      const currentLocation = latestModuleUpdate.current;
+      analytics.current.identify(
+        user.identity.internal?.account_id,
+        getIdentityTraits(user, currentLocation.pathname, currentLocation.activeModule, isPreview, themeTelemetryDefaults),
+        {
+          context: {
+            groupId: user.identity.internal?.org_id,
+            ...(intercomHash.current ? { Intercom: { user_hash: intercomHash.current } } : {}),
+          },
+        }
+      );
+    };
+
+    window.addEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
+    return () => window.removeEventListener(THEME_TELEMETRY_PREFERENCES_CHANGE, updateThemeTraits);
+  }, [activeModule, isDisabled, isPreview, serializedUser, themeTelemetryDefaults.colorSchemeSetting, themeTelemetryDefaults.contrastModeSetting, user]);
 
   /**
    * This needs to happen in a condition and during first valid render!
@@ -212,10 +341,11 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
    */
   if (user && analytics.current && activeModule && !analyticsLoaded.current) {
     analyticsLoaded.current = true;
+    const writeKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
     analytics.current.load(
       {
         cdnURL: '/connections/cdn',
-        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev),
+        writeKey,
       },
       {
         initialPageview: false,
@@ -228,6 +358,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         },
       }
     );
+    selectedWriteKey.current = writeKey;
     resetIntegrations(analytics.current);
   }
 
