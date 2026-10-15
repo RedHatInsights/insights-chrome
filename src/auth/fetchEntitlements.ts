@@ -1,0 +1,185 @@
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import entitlementsApi from './entitlementsApi';
+import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_STORAGE_TIMEOUT_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
+import {
+  EntitlementsMap,
+  EntitlementsUserProfile,
+  getMinimumViableEntitlements,
+  isEntitlementsMap,
+  isNonEmptyEntitlementsMap,
+  shouldPersistEntitlements,
+} from './getMinimumViableEntitlements';
+import { cacheFetch, deleteCacheKey } from '../utils/cacheFetch';
+import { withTimeout } from '../utils/withTimeout';
+
+export type { EntitlementsMap };
+export { getMinimumViableEntitlements } from './getMinimumViableEntitlements';
+export { ENTITLEMENTS_CACHE_KEY, ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS } from './entitlementsConstants';
+
+export type FetchEntitlementsSource = 'live' | 'memory' | 'cache' | 'defaults' | 'empty';
+
+export type FetchEntitlementsResult = {
+  entitlements: EntitlementsMap;
+  degraded: boolean;
+  source: FetchEntitlementsSource;
+};
+
+export type EntitlementsClient = {
+  servicesGet: (params: { options?: AxiosRequestConfig & { cache?: false } }) => Promise<{ data: unknown; headers?: AxiosResponse['headers'] }>;
+};
+
+export type FetchEntitlementsOptions = {
+  /** Default off: retain the pre-fallback request and error handling exactly. */
+  enabled?: boolean;
+  previous?: EntitlementsMap;
+  client?: EntitlementsClient;
+  signal?: AbortSignal;
+};
+
+const defaultClient: EntitlementsClient = entitlementsApi() as EntitlementsClient;
+
+function isAbortError(err: unknown): boolean {
+  if (typeof err !== 'object' || err === null) {
+    return false;
+  }
+  const error = err as { code?: unknown; name?: unknown };
+  return error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError';
+}
+
+function getHttpStatus(err: unknown): number | undefined {
+  if (typeof err === 'object' && err !== null && 'response' in err) {
+    return (err as { response?: { status?: number } }).response?.status;
+  }
+  return undefined;
+}
+
+function is5xx(err: unknown): boolean {
+  const status = getHttpStatus(err);
+  return typeof status === 'number' && status >= 500 && status < 600;
+}
+
+function isEntitlementsDegraded(headers: { get?: (key: string) => unknown } | Record<string, unknown> | undefined): boolean {
+  if (!headers || typeof headers !== 'object') {
+    return false;
+  }
+  const rec = headers as Record<string, unknown> & { get?: (key: string) => unknown };
+  const raw = typeof rec.get === 'function' ? rec.get('x-entitlements-degraded') : (rec['x-entitlements-degraded'] ?? rec['X-Entitlements-Degraded']);
+  return String(raw).toLowerCase() === 'true';
+}
+
+/** Only reached after the org ID check in fetchEntitlements, so defaults are always available. */
+function fallbackResult(user: { profile?: EntitlementsUserProfile }, previous?: EntitlementsMap): FetchEntitlementsResult {
+  if (isNonEmptyEntitlementsMap(previous)) {
+    return { entitlements: previous, degraded: true, source: 'memory' };
+  }
+  return { entitlements: getMinimumViableEntitlements(user), degraded: true, source: 'defaults' };
+}
+
+async function requestServices(client: EntitlementsClient, controller: AbortController): Promise<{ entitlements: EntitlementsMap; degraded: boolean }> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (controller.signal.aborted) {
+      throw lastError ?? Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' });
+    }
+    try {
+      const response = await client.servicesGet({
+        options: {
+          // The legacy interceptor's URL-only HTTP cache is not tenant-scoped.
+          // Enabled requests use only our organization-scoped last-known-good cache.
+          cache: false,
+          timeout: ENTITLEMENTS_TIMEOUT_MS,
+          signal: controller.signal,
+        },
+      });
+      const entitlements = response.data;
+      if (!isEntitlementsMap(entitlements)) {
+        throw Object.assign(new Error('invalid entitlements payload'), { response: { status: 502 } });
+      }
+      return { entitlements, degraded: isEntitlementsDegraded(response.headers) };
+    } catch (err) {
+      lastError = err;
+      if (isAbortError(err) || !is5xx(err) || attempt === 1 || controller.signal.aborted) {
+        throw err;
+      }
+    }
+  }
+  throw lastError;
+}
+
+export async function fetchEntitlements(user: { profile?: EntitlementsUserProfile }, options: FetchEntitlementsOptions = {}): Promise<FetchEntitlementsResult> {
+  if (!user.profile?.org_id) {
+    console.log('Cannot call entitlements API, no org ID');
+    return { entitlements: {}, degraded: false, source: 'empty' };
+  }
+
+  const client = options.client ?? defaultClient;
+  if (options.enabled !== true) {
+    try {
+      const response = await client.servicesGet({});
+      return { entitlements: response.data as EntitlementsMap, degraded: false, source: 'live' };
+    } catch {
+      return { entitlements: {}, degraded: false, source: 'empty' };
+    }
+  }
+
+  const cacheKey = getEntitlementsCacheKey(user.profile.org_id);
+  const controller = new AbortController();
+  const onOuterAbort = () => controller.abort();
+  if (options.signal) {
+    if (options.signal.aborted) {
+      controller.abort();
+    } else {
+      options.signal.addEventListener('abort', onOuterAbort, { once: true });
+    }
+  }
+  const timer = setTimeout(() => controller.abort(), ENTITLEMENTS_TIMEOUT_MS);
+  let rejectAbort: (error: Error) => void = () => undefined;
+  const aborted = new Promise<never>((_resolve, reject) => {
+    rejectAbort = reject;
+  });
+  const onAbort = () => rejectAbort(Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' }));
+  controller.signal.addEventListener('abort', onAbort, { once: true });
+  if (controller.signal.aborted) {
+    onAbort();
+  }
+
+  let liveDegraded = false;
+
+  try {
+    const { data, fromCache } = await cacheFetch(
+      cacheKey ?? '',
+      async () => {
+        const live = await Promise.race([requestServices(client, controller), aborted]);
+        liveDegraded = live.degraded;
+        return live.entitlements;
+      },
+      ENTITLEMENTS_CACHE_TTL_MS,
+      isEntitlementsMap,
+      {
+        enabled: Boolean(cacheKey),
+        fallbackOnAbort: true,
+        cacheReadTimeoutMs: ENTITLEMENTS_STORAGE_TIMEOUT_MS,
+        shouldPersist: (live, cached) => shouldPersistEntitlements(live, cached, liveDegraded),
+      }
+    );
+
+    if (fromCache) {
+      return { entitlements: data, degraded: true, source: 'cache' };
+    }
+    return { entitlements: data, degraded: liveDegraded, source: 'live' };
+  } catch {
+    return fallbackResult(user, options.previous);
+  } finally {
+    clearTimeout(timer);
+    controller.signal.removeEventListener('abort', onAbort);
+    options.signal?.removeEventListener('abort', onOuterAbort);
+  }
+}
+
+/** Invalidate pending writes immediately; bound only the wait, not the deletion itself. */
+export async function clearEntitlementsCache(orgId: unknown): Promise<void> {
+  const key = getEntitlementsCacheKey(orgId);
+  if (key) {
+    await withTimeout(deleteCacheKey(key), ENTITLEMENTS_STORAGE_TIMEOUT_MS, undefined);
+  }
+}

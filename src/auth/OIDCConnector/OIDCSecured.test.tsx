@@ -1,9 +1,38 @@
-import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import React, { useContext } from 'react';
+import { act, render, waitFor } from '@testing-library/react';
 import { OIDCSecured } from './OIDCSecured';
 import { RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
 import { AuthContextProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
+import { fetchEntitlements } from '../fetchEntitlements';
+import chromeStore from '../../state/chromeStore';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { healthyPaid, healthyUnsubscribed } from '../entitlementsContract.fixture';
+import ChromeAuthContext from '../ChromeAuthContext';
+import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
+import { getMinimumViableEntitlements } from '../getMinimumViableEntitlements';
+import sentry from '../../utils/sentry';
+
+const EntitlementsProbe = () => {
+  const auth = useContext(ChromeAuthContext);
+  return <pre data-testid="entitlements">{JSON.stringify(auth.user?.entitlements)}</pre>;
+};
+
+jest.mock('../../components/FeatureFlags/featureFlagsClient', () => ({ getBootstrapFeatureFlag: jest.fn().mockResolvedValue(true) }));
+jest.mock('../../utils/VisibilitySingleton', () => ({ visibilityFunctionsExist: () => false }));
+
+jest.mock('../fetchEntitlements', () => ({
+  fetchEntitlements: jest.fn().mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' }),
+}));
+
+jest.mock('../../utils/iqeEnablement', () => ({
+  init: jest.fn(),
+}));
+
+jest.mock('../../utils/sentry', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 // Mock setCookie to observe calls from the effect under test
 jest.mock('../setCookie', () => ({
@@ -54,8 +83,19 @@ jest.mock('./useManageSilentRenew', () => ({
 describe('OIDCSecured', () => {
   let mockUser: User;
   let mockAuth: AuthContextProps;
+  const mockedFetchEntitlements = jest.mocked(fetchEntitlements);
 
   beforeEach(() => {
+    jest.mocked(getBootstrapFeatureFlag).mockResolvedValue(true);
+    mockedFetchEntitlements.mockReset();
+    mockedFetchEntitlements.mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' });
+    chromeStore.set(degradedStateAtom, {
+      userPersonalization: false,
+      entitlements: false,
+      configFromCache: false,
+      featureFlags: false,
+      quickstarts: false,
+    });
     mockUser = {
       access_token: 'token-123',
       expires_at: 1700000000,
@@ -169,5 +209,279 @@ describe('OIDCSecured', () => {
       expect(setCookie).toHaveBeenCalledWith('', 0);
       expect(localStorage.getItem(RH_USER_ID_STORAGE_KEY)).toBe(null);
     });
+  });
+
+  it('reaches ready state when entitlements return 503', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+    mockedFetchEntitlements.mockResolvedValue({ entitlements: healthyPaid, degraded: true, source: 'defaults' });
+    mockUser.profile = { ...mockUser.profile, org_id: '12345' };
+    mockAuth.isAuthenticated = true;
+    useAuth.mockReturnValue(mockAuth);
+
+    const { getByTestId, queryByTestId } = render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(getByTestId('child')).toBeInTheDocument();
+    });
+    expect(queryByTestId('app-placeholder')).not.toBeInTheDocument();
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+  });
+
+  it('reaches ready state when entitlements time out', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+    mockedFetchEntitlements.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve({ entitlements: healthyPaid, degraded: true, source: 'defaults' }), 10);
+        })
+    );
+    mockUser.profile = { ...mockUser.profile, org_id: '12345' };
+    mockAuth.isAuthenticated = true;
+    useAuth.mockReturnValue(mockAuth);
+
+    const { getByTestId } = render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(getByTestId('child')).toBeInTheDocument();
+    });
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+  });
+
+  it('clears entitlements degradation after a successful recovery fetch', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+    mockedFetchEntitlements
+      .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: true, source: 'cache' })
+      .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: false, source: 'live' });
+    mockUser.profile = { ...mockUser.profile, org_id: '12345' };
+    mockAuth.isAuthenticated = true;
+    useAuth.mockReturnValue(mockAuth);
+
+    const { getByTestId, rerender } = render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(getByTestId('child')).toBeInTheDocument();
+    });
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+
+    mockUser = { ...mockUser, access_token: 'token-456' } as User;
+    mockAuth.user = mockUser;
+    useAuth.mockReturnValue(mockAuth);
+    rerender(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false);
+    });
+  });
+
+  it('keeps the previous entitlements map when a later fetch is degraded', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+    mockedFetchEntitlements.mockImplementation(async (_user, options) => {
+      if (options?.previous && Object.keys(options.previous).length > 0) {
+        return { entitlements: options.previous, degraded: true, source: 'memory' };
+      }
+      return { entitlements: healthyPaid, degraded: false, source: 'live' };
+    });
+    mockUser.profile = { ...mockUser.profile, org_id: '12345' };
+    mockAuth.isAuthenticated = true;
+    useAuth.mockReturnValue(mockAuth);
+
+    const { getByTestId, rerender } = render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(getByTestId('child')).toBeInTheDocument();
+    });
+
+    mockUser = { ...mockUser, access_token: 'token-789' } as User;
+    mockAuth.user = mockUser;
+    useAuth.mockReturnValue(mockAuth);
+    rerender(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(mockedFetchEntitlements).toHaveBeenCalledTimes(2);
+      expect(mockedFetchEntitlements.mock.calls[1][1]?.previous).toEqual(healthyPaid);
+    });
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+  });
+
+  it('does not pass enhanced options or report degradation when the flag is off', async () => {
+    jest.mocked(getBootstrapFeatureFlag).mockResolvedValue(false);
+    mockedFetchEntitlements.mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' });
+    mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+    mockAuth.isAuthenticated = true;
+    jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    const { getByTestId } = render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('{}'));
+    expect(mockedFetchEntitlements).toHaveBeenCalledWith(mockUser);
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false);
+  });
+
+  it('clears previous entitlements when org changes without unmounting', async () => {
+    mockedFetchEntitlements.mockImplementation(async (user, options) => ({
+      entitlements: user.profile?.org_id === 'org-a' ? healthyPaid : (options?.previous ?? getMinimumViableEntitlements(user)),
+      degraded: user.profile?.org_id !== 'org-a',
+      source: 'live',
+    }));
+    mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+    mockAuth.isAuthenticated = true;
+    jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+    const { getByTestId, rerender } = render(shell());
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":true'));
+    mockAuth.user = { ...mockUser, profile: { ...mockUser.profile, org_id: 'org-b' } } as User;
+    rerender(shell());
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false'));
+    expect(mockedFetchEntitlements.mock.calls[1][1]?.previous).toBeUndefined();
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+  });
+
+  it('ignores a late result from the prior organization', async () => {
+    let resolve!: (result: Awaited<ReturnType<typeof fetchEntitlements>>) => void;
+    mockedFetchEntitlements
+      .mockImplementationOnce(
+        () =>
+          new Promise((done) => {
+            resolve = done;
+          })
+      )
+      .mockResolvedValueOnce({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' });
+    mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+    mockAuth.isAuthenticated = true;
+    jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+    const { getByTestId, rerender } = render(shell());
+    await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1));
+    mockAuth.user = { ...mockUser, profile: { ...mockUser.profile, org_id: 'org-b' } } as User;
+    rerender(shell());
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false'));
+    await act(async () => resolve({ entitlements: healthyPaid, degraded: true, source: 'live' }));
+    await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false));
+    expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false');
+  });
+
+  it('ignores a disabled bootstrap flag from the prior organization', async () => {
+    let resolveFlag!: (enabled: boolean) => void;
+    jest
+      .mocked(getBootstrapFeatureFlag)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFlag = resolve;
+          })
+      )
+      .mockResolvedValueOnce(true);
+    mockedFetchEntitlements.mockResolvedValue({ entitlements: healthyUnsubscribed, degraded: true, source: 'cache' });
+    mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+    mockAuth.isAuthenticated = true;
+    jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+    const { getByTestId, rerender } = render(shell());
+    await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(1));
+    mockAuth.user = { ...mockUser, profile: { ...mockUser.profile, org_id: 'org-b' } } as User;
+    rerender(shell());
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false'));
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+
+    await act(async () => resolveFlag(false));
+
+    expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1);
+    expect(mockedFetchEntitlements).toHaveBeenCalledWith(mockAuth.user, { enabled: true, previous: undefined });
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+    expect(sentry).toHaveBeenCalledTimes(1);
+    expect(sentry).toHaveBeenCalledWith(expect.objectContaining({ identity: expect.objectContaining({ org_id: 'org-b' }) }));
+  });
+
+  it.each([false, true])('ignores a late legacy entitlement result after switching to an organization with fallback=%s', async (enabled) => {
+    let resolveEntitlements!: (result: Awaited<ReturnType<typeof fetchEntitlements>>) => void;
+    jest.mocked(getBootstrapFeatureFlag).mockResolvedValueOnce(false).mockResolvedValueOnce(enabled);
+    mockedFetchEntitlements
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveEntitlements = resolve;
+          })
+      )
+      .mockResolvedValueOnce({ entitlements: healthyUnsubscribed, degraded: enabled, source: enabled ? 'cache' : 'live' });
+    mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+    mockAuth.isAuthenticated = true;
+    jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+    const { getByTestId, rerender } = render(shell());
+    await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledWith(mockUser));
+    mockAuth.user = { ...mockUser, profile: { ...mockUser.profile, org_id: 'org-b' } } as User;
+    rerender(shell());
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false'));
+
+    await act(async () => resolveEntitlements({ entitlements: healthyPaid, degraded: false, source: 'live' }));
+
+    expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false');
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(enabled);
+    expect(sentry).toHaveBeenCalledTimes(1);
+    expect(sentry).toHaveBeenCalledWith(expect.objectContaining({ identity: expect.objectContaining({ org_id: 'org-b' }) }));
+  });
+
+  it('restores the legacy path and clears enhanced degradation after the flag is disabled', async () => {
+    jest.mocked(getBootstrapFeatureFlag).mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+    mockedFetchEntitlements
+      .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: true, source: 'cache' })
+      .mockResolvedValueOnce({ entitlements: {}, degraded: false, source: 'empty' });
+    mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+    mockAuth.isAuthenticated = true;
+    jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+    const { getByTestId, rerender } = render(shell());
+    await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true));
+    mockAuth.user = { ...mockUser, access_token: 'renewed' } as User;
+    rerender(shell());
+    await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('{}'));
+    expect(mockedFetchEntitlements.mock.calls[1]).toEqual([mockAuth.user]);
+    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false);
   });
 });
