@@ -126,6 +126,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const identityInitialization = useRef<PageEventIdentityState | undefined>(undefined);
   const resolveIdentityInitialization = useRef<() => void>(() => undefined);
   const resetIdentityInitialization = () => {
+    resolveIdentityInitialization.current();
     let resolve: () => void = () => undefined;
     const promise = new Promise<void>((resolvePromise) => {
       resolve = resolvePromise;
@@ -145,6 +146,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     colorSchemeSetting: (isDarkModeEnabled && isDarkModeSystemEnabled ? 'system' : 'light') as ColorSchemeSetting,
     contrastModeSetting: (isHighContrastEnabled ? 'system' : 'default') as ContrastModeSetting,
   };
+  const latestThemeTelemetryDefaults = useRef(themeTelemetryDefaults);
   const { user } = useContext(ChromeAuthContext);
   const isPreview = useAtomValue(isPreviewAtom);
 
@@ -158,7 +160,8 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const latestModuleUpdate = useRef({ activeModule, serializedUser, pathname, search });
   useLayoutEffect(() => {
     latestModuleUpdate.current = { activeModule, serializedUser, pathname, search };
-  }, [activeModule, pathname, search, serializedUser]);
+    latestThemeTelemetryDefaults.current = themeTelemetryDefaults;
+  }, [activeModule, pathname, search, serializedUser, themeTelemetryDefaults.colorSchemeSetting, themeTelemetryDefaults.contrastModeSetting]);
   usePageEvent(analytics, { identityState: identityInitialization, lastSentLocation });
 
   const fetchIntercomHash = async () => {
@@ -233,7 +236,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(
           user.identity.internal?.account_id,
-          getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, themeTelemetryDefaults),
+          getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
           {
             ...identityOptions,
             context: {
@@ -265,7 +268,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
           analytics.current.identify(
             user.identity.internal?.account_id,
-            getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, themeTelemetryDefaults),
+            getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
             {
               ...identityOptions,
               context: {

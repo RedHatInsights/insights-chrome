@@ -76,24 +76,27 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>,
     // prevent sending the page event on instant redirects etc
     debounce(async (pathname: string, search: string, sequence: number) => {
       await waitForRenderedThemeInitialization();
-      const identityAtSend = identityState?.current ?? DEFAULT_IDENTITY_STATE;
-      await identityAtSend.promise;
-      if (identityState && identityState.current !== identityAtSend) {
-        return;
+      let identityAtSend = identityState?.current ?? DEFAULT_IDENTITY_STATE;
+      while (true) {
+        await identityAtSend.promise;
+        if (!identityState || identityState.current === identityAtSend) {
+          break;
+        }
+        identityAtSend = identityState.current ?? DEFAULT_IDENTITY_STATE;
       }
       if (navigationSequence.current !== sequence || currentLocation.current.pathname !== pathname || currentLocation.current.search !== search) {
         return;
       }
       const locationKey = getPageEventLocationKey(pathname, search);
-      if (lastSentLocation.current === locationKey) {
-        return;
-      }
       try {
         const currentAnalytics = analytics.current;
         if (!currentAnalytics) {
           return;
         }
         window?.sendCustomEvent?.('pageBottom');
+        if (lastSentLocation.current === locationKey) {
+          return;
+        }
         currentAnalytics.page(...getPageEventOptions({ pathname, search, user: currentUser.current }));
         lastSentLocation.current = locationKey;
       } catch (error) {
