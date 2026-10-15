@@ -6,6 +6,7 @@ import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 const mockLocation = { pathname: '/', search: '' };
 const mockPage = jest.fn();
+const mockSendCustomEvent = jest.fn();
 const mockWaitForRenderedThemeInitialization = jest.fn(() => Promise.resolve());
 
 jest.mock('../utils/themeTelemetry', () => ({
@@ -58,6 +59,8 @@ describe('usePageEvent theme telemetry', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockPage.mockClear();
+    mockSendCustomEvent.mockClear();
+    window.sendCustomEvent = mockSendCustomEvent;
     mockWaitForRenderedThemeInitialization.mockReset().mockResolvedValue(undefined);
     mockLocation.pathname = '/';
     mockLocation.search = '';
@@ -216,6 +219,8 @@ describe('usePageEvent theme telemetry', () => {
       await Promise.resolve();
     });
     expect(mockPage).not.toHaveBeenCalled();
+    expect(mockSendCustomEvent).toHaveBeenCalledTimes(1);
+    expect(mockSendCustomEvent).toHaveBeenCalledWith('pageBottom');
 
     mockLocation.pathname = '/next';
     rerender(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
@@ -224,6 +229,7 @@ describe('usePageEvent theme telemetry', () => {
       await Promise.resolve();
     });
     expect(mockPage).toHaveBeenCalledTimes(1);
+    expect(mockSendCustomEvent).toHaveBeenCalledTimes(2);
     expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ path: '/next' }));
 
     mockLocation.pathname = '/';
@@ -233,10 +239,11 @@ describe('usePageEvent theme telemetry', () => {
       await Promise.resolve();
     });
     expect(mockPage).toHaveBeenCalledTimes(2);
+    expect(mockSendCustomEvent).toHaveBeenCalledTimes(3);
     expect(mockPage.mock.calls[1][0]).toEqual(expect.objectContaining({ path: '/' }));
   });
 
-  it('drops callbacks waiting on a superseded identity state', async () => {
+  it('follows a superseded identity state before sending a pending Page event', async () => {
     let resolveOldIdentity: () => void = () => undefined;
     const oldIdentity = new Promise<void>((resolve) => {
       resolveOldIdentity = resolve;
@@ -255,12 +262,24 @@ describe('usePageEvent theme telemetry', () => {
     });
     expect(mockPage).not.toHaveBeenCalled();
 
-    identityState.current = { promise: Promise.resolve() };
+    let resolveLatestIdentity: () => void = () => undefined;
+    identityState.current = {
+      promise: new Promise<void>((resolve) => {
+        resolveLatestIdentity = resolve;
+      }),
+    };
     await act(async () => {
       resolveOldIdentity();
       await Promise.resolve();
     });
     expect(mockPage).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveLatestIdentity();
+      await Promise.resolve();
+    });
+    expect(mockPage).toHaveBeenCalledTimes(1);
+    expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ path: '/' }));
 
     mockLocation.pathname = '/latest';
     rerender(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
@@ -268,7 +287,7 @@ describe('usePageEvent theme telemetry', () => {
       jest.advanceTimersByTime(500);
       await Promise.resolve();
     });
-    expect(mockPage).toHaveBeenCalledTimes(1);
-    expect(mockPage.mock.calls[0][0]).toEqual(expect.objectContaining({ path: '/latest' }));
+    expect(mockPage).toHaveBeenCalledTimes(2);
+    expect(mockPage.mock.calls[1][0]).toEqual(expect.objectContaining({ path: '/latest' }));
   });
 });

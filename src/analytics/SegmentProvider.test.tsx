@@ -235,6 +235,41 @@ describe('SegmentProvider', () => {
     });
   });
 
+  it('uses theme flag defaults that resolve while identity is initializing', async () => {
+    let resolveIntercomHash: (response: { data: { data: { dev: string } } }) => void = () => undefined;
+    mockIntercomGet.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveIntercomHash = resolve;
+        })
+    );
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockIntercomGet).toHaveBeenCalledTimes(1));
+    mockFlags.add('platform.chrome.dark-mode');
+    mockFlags.add('platform.chrome.dark-mode_system');
+    mockFlags.add('platform.chrome.high-contrast');
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+    resolveIntercomHash({ data: { data: { dev: 'mock-hash' } } });
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith(
+        'acct-456',
+        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'system' }),
+        expect.any(Object)
+      );
+    });
+  });
+
   it('waits for rendered theme initialization before sending initial Identify and Page events', async () => {
     let resolveThemeInitialization: () => void = () => undefined;
     mockWaitForRenderedThemeInitialization.mockReturnValue(
