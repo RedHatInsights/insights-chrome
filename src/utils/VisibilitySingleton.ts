@@ -87,6 +87,38 @@ const initialize = ({
     return enabled !== undefined && enabled === expectedValue;
   };
 
+  /**
+   * Whether the tenant has converted itself to the Kessel V2 experience.
+   *
+   * Conversion is irreversible and per-tenant, while `platform.rbac.workspaces` is rolled out
+   * per environment, so the two disagree for any tenant that converts ahead of the rollout.
+   * Such a tenant is served V1 navigation pointing at pages its backend no longer populates.
+   *
+   * Memoized for the lifetime of the page: every gated navigation item evaluates independently
+   * and `apiRequest`-style visibility checks are not cached, so without this a single navigation
+   * render would fire one request per item. Conversion cannot be undone, so a stale `true` is
+   * not reachable, and a stale `false` only lasts until the next reload.
+   */
+  let tenantOptInRequest: Promise<boolean> | undefined;
+  const isTenantOptedIn = () => {
+    tenantOptInRequest ??= getToken()
+      .then((token) =>
+        axios.get<{ v2_opted_in?: boolean }>('/api/rbac/v1/tenant/opt-in/', {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: VISIBILITY_REQUEST_TIMEOUT_MS,
+        })
+      )
+      .then((response) => response.data?.v2_opted_in === true)
+      // Same failure policy as the other visibility requests: a non-answer is not an opt-in.
+      // This degrades to the feature flag alone, which is how this check behaved previously.
+      .catch(() => {
+        console.log('Unable to retrieve visibility result', { visibilityMethod: 'isKesselOrgOnboarded', url: '/api/rbac/v1/tenant/opt-in/' });
+        return false;
+      });
+
+    return tenantOptInRequest;
+  };
+
   const visibilityFunctions = {
     isOrgAdmin: async () => {
       const data = await getUser();
@@ -237,7 +269,21 @@ const initialize = ({
     },
     isITLess: (expected: boolean) => ITLess() === expected,
     isKesselEnabled: (expected: boolean) => (ITLess() ? false : matchesFeatureFlag('platform.chrome.kessel', expected)),
-    isKesselOrgOnboarded: (expected: boolean) => (ITLess() ? false : matchesFeatureFlag('platform.rbac.workspaces', expected)),
+    isKesselOrgOnboarded: async (expected: boolean) => {
+      if (ITLess()) {
+        return false;
+      }
+      const flagEnabled = isFeatureFlagEnabled('platform.rbac.workspaces');
+      // Unleash gave no answer either way, so there is nothing for the opt-in to override.
+      // Fail closed, as every other flag-backed visibility check does.
+      if (flagEnabled === undefined) {
+        return false;
+      }
+      // Short-circuits, so the request is only sent when the flag alone would report "not
+      // onboarded" — the one case where the tenant's own opt-in can still change the answer.
+      const onboarded = flagEnabled || (await isTenantOptedIn());
+      return onboarded === expected;
+    },
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
