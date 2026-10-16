@@ -36,17 +36,20 @@ The unfiltered request always returns every configured bundle, with unpaid SKUs 
 
 A fallback cache read waits at most one second. Logout invalidates outstanding writes and waits at most one second for scoped deletion; delayed cleanup continues afterward. New writes wait for that cleanup barrier. Navigation and fed-modules keys are separate.
 
+An identity change (organization switch, token renewal), logout, or unmount aborts the pending enabled request. The abort runs in the auth effect cleanup, before the auth interceptor's token moves to the next identity, so an obsolete request cannot retry with another organization's token. An aborted call rejects instead of falling back: it never reads, replays, or persists the cache. The internal five-second timeout still falls back as described above.
+
 ### Bootstrap time budget
 
-The flag lookup and the entitlement request run in sequence, because the flag selects which request runs. With the flag on, a cold start where every backend stalls waits at most about 11 seconds before Chrome is ready:
+The user config, the flag lookup, and the entitlement request run in sequence. The rollout may target `platform.chrome.ui.preview`, which only the user config (`/api/chrome-service/v1/user`) provides, so it is fetched first and hydrates preview before the lookup. `useSessionConfig` reuses the same request, so it is still made once per page load. With the flag on, a cold start where every backend stalls waits at most about 16 seconds before Chrome is ready:
 
 | Step                                      | Upper bound |
 | ----------------------------------------- | ----------- |
+| User config (preview preference)          | 5s          |
 | Bootstrap flag lookup                     | 5s          |
 | Live request, including the one 5xx retry | 5s          |
 | Fallback cache read                       | 1s          |
 
-This covers configured waits only, not page load or browser scheduling. With the flag off, the legacy request has no timeout, so the total is unbounded. Running the two steps in parallel would require an entitlement request that matches both the flag-off and flag-on contracts, so it is left as a follow-up.
+This covers configured waits only, not page load or browser scheduling. The user config wait is not new: it previously ran right after authentication finished, and now runs before the flag lookup instead. If the user config fails, the lookup uses preview off and `useSessionConfig` still reports the degraded personalization state. With the flag off, the legacy request has no timeout, so the total is unbounded. Running the two steps in parallel would require an entitlement request that matches both the flag-off and flag-on contracts, so it is left as a follow-up.
 
 See [the manual testing plan](entitlements-manual-test.md) for rollout, rollback, organization isolation, and outage checks.
 

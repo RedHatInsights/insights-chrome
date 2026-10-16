@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { initChromeUserConfig, initVisibilityFunctions } from './initUserConfig';
+import { initChromeUserConfig, initVisibilityFunctions, loadChromeUserConfigOnce, resetChromeUserConfigOnce } from './initUserConfig';
 import { initializeVisibilityFunctions } from './VisibilitySingleton';
 import createGetUserPermissions from '../auth/createGetUserPermissions';
 
@@ -93,6 +93,39 @@ describe('initUserConfig', () => {
       // Simulate a silent renew updating the current token.
       token = 'new-token';
       await expect(args.getToken()).resolves.toBe('new-token');
+    });
+  });
+
+  describe('initVisibilityFunctions preview', () => {
+    it('initializes with the preview value already hydrated by auth bootstrap', () => {
+      initVisibilityFunctions({ getUser, getToken: () => Promise.resolve('test-token'), isPreview: true });
+      expect(mockedInitVisibility.mock.calls[0][0].isPreview).toBe(true);
+    });
+  });
+
+  describe('loadChromeUserConfigOnce', () => {
+    beforeEach(() => {
+      resetChromeUserConfigOnce();
+    });
+
+    it('shares one request between auth bootstrap and the session config', async () => {
+      const config = { data: { uiPreview: true, uiPreviewSeen: true } };
+      mockedGet.mockResolvedValueOnce({ data: config });
+
+      const first = loadChromeUserConfigOnce();
+      const second = loadChromeUserConfigOnce();
+
+      expect(second).toBe(first);
+      await expect(second).resolves.toEqual(config);
+      expect(mockedGet).toHaveBeenCalledTimes(1);
+    });
+
+    it('shares a rejection instead of silently retrying in the same page load', async () => {
+      mockedGet.mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+
+      await expect(loadChromeUserConfigOnce()).rejects.toThrow('timeout');
+      await expect(loadChromeUserConfigOnce()).rejects.toThrow('timeout');
+      expect(mockedGet).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -66,7 +66,7 @@ Hung IndexedDB operations and writes racing logout are covered deterministically
 ## Automated commands
 
 ```bash
-npx jest src/auth/fetchEntitlements.test.ts src/auth/OIDCConnector/entitlements.integration.test.ts src/auth/OIDCConnector/OIDCSecured.test.tsx src/auth/OIDCConnector/utils.test.ts src/components/FeatureFlags/featureFlagsClient.test.tsx src/utils/cacheFetch.test.ts --runInBand --coverage=false
+npx jest src/auth/fetchEntitlements.test.ts src/auth/OIDCConnector/entitlements.integration.test.ts src/auth/OIDCConnector/OIDCSecured.test.tsx src/auth/OIDCConnector/utils.test.ts src/components/FeatureFlags/featureFlagsClient.test.tsx src/utils/cacheFetch.test.ts src/utils/initUserConfig.test.ts src/hooks/useSessionConfig.test.tsx --runInBand --coverage=false
 npx cypress run --component --browser chrome --spec cypress/component/OIDCConnector/OIDCSecured.cy.tsx
 npm run verify
 ```

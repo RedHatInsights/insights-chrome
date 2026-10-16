@@ -208,6 +208,64 @@ describe('entitlements with real cacheFetch', () => {
     expect(entries.has(key)).toBe(false);
   });
 
+  it("never retries with the next organization's token or persists its body under the obsolete key", async () => {
+    // The auth interceptor reads the current identity's token at send time, so it is modelled as mutable here.
+    let token = 'org-a-token';
+    const tokens: string[] = [];
+    let failFirstAttempt!: () => void;
+    servicesGet.mockImplementation(() => {
+      tokens.push(token);
+      if (tokens.length === 1) {
+        return new Promise((_resolve, reject) => {
+          failFirstAttempt = () => reject({ response: { status: 503 } });
+        });
+      }
+      return Promise.resolve(response(healthyPaid));
+    });
+    const obsolete = new AbortController();
+    const pending = fetchEntitlements(user, { enabled: true, client, signal: obsolete.signal });
+    await Promise.resolve();
+    // Auth-effect cleanup aborts before the next identity's token becomes current.
+    obsolete.abort();
+    token = 'org-b-token';
+    failFirstAttempt();
+    await expect(pending).rejects.toMatchObject({ name: 'CanceledError' });
+    await flushBackground();
+    expect(tokens).toEqual(['org-a-token']);
+    expect(getItem).not.toHaveBeenCalled();
+    expect(setItem).not.toHaveBeenCalled();
+    expect(entries.has(key)).toBe(false);
+  });
+
+  it('does not replay or persist cache for a caller that aborted after the live response', async () => {
+    entries.set(key, { data: healthyUnsubscribed, cachedAt: Date.now() });
+    let resolve!: (value: ReturnType<typeof response>) => void;
+    servicesGet.mockImplementation(
+      () =>
+        new Promise((done) => {
+          resolve = done;
+        })
+    );
+    const obsolete = new AbortController();
+    const pending = fetchEntitlements(user, { enabled: true, client, signal: obsolete.signal });
+    await Promise.resolve();
+    obsolete.abort();
+    resolve(response(healthyPaid));
+    await expect(pending).rejects.toMatchObject({ name: 'CanceledError' });
+    await flushBackground();
+    expect(setItem).not.toHaveBeenCalled();
+    expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number) });
+  });
+
+  it('still replays the same-org cache when the request times out', async () => {
+    jest.useFakeTimers();
+    entries.set(key, { data: healthyPaid, cachedAt: Date.now() });
+    servicesGet.mockImplementation(() => new Promise(() => {}));
+    const pending = fetchEntitlements(user, { enabled: true, client, signal: new AbortController().signal });
+    await jest.advanceTimersByTimeAsync(ENTITLEMENTS_TIMEOUT_MS);
+    expect(await pending).toEqual({ entitlements: healthyPaid, degraded: true, source: 'cache' });
+  });
+
   it('deletes an already-started late write before permitting a new session to persist', async () => {
     jest.useFakeTimers();
     let finishWrite!: () => void;

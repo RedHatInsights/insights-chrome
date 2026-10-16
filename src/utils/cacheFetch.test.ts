@@ -384,6 +384,22 @@ describe('cacheFetch', () => {
       expect(result).toEqual({ data: { foo: 'cached' }, fromCache: true });
     });
 
+    it.each([true, false])('evaluates a fallbackOnAbort function when the request fails (returns %s)', async (allowed) => {
+      const error = { code: 'ERR_CANCELED' };
+      const fetcher = jest.fn().mockRejectedValue(error);
+      mockGetItem.mockResolvedValue({ data: { foo: 'cached' }, cachedAt: Date.now() });
+      const fallbackOnAbort = jest.fn(() => allowed);
+
+      const pending = cacheFetch('test-key', fetcher, undefined, undefined, { enabled: true, fallbackOnAbort });
+      if (allowed) {
+        await expect(pending).resolves.toEqual({ data: { foo: 'cached' }, fromCache: true });
+      } else {
+        await expect(pending).rejects.toEqual(error);
+        expect(mockGetItem).not.toHaveBeenCalled();
+      }
+      expect(fallbackOnAbort).toHaveBeenCalledTimes(1);
+    });
+
     it('rethrows 5xx error when no cache exists', async () => {
       const error = { response: { status: 500 }, message: 'Internal Server Error' };
       const fetcher = jest.fn().mockRejectedValue(error);

@@ -33,6 +33,7 @@ export type FetchEntitlementsOptions = {
   enabled?: boolean;
   previous?: EntitlementsMap;
   client?: EntitlementsClient;
+  /** Abort when the identity is obsolete; the call then rejects with a CanceledError instead of falling back. */
   signal?: AbortSignal;
 };
 
@@ -44,6 +45,10 @@ function isAbortError(err: unknown): boolean {
   }
   const error = err as { code?: unknown; name?: unknown };
   return error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError';
+}
+
+function createCanceledError(): Error {
+  return Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' });
 }
 
 function getHttpStatus(err: unknown): number | undefined {
@@ -79,7 +84,7 @@ async function requestServices(client: EntitlementsClient, controller: AbortCont
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt++) {
     if (controller.signal.aborted) {
-      throw lastError ?? Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' });
+      throw lastError ?? createCanceledError();
     }
     try {
       const response = await client.servicesGet({
@@ -124,10 +129,15 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
 
   const cacheKey = getEntitlementsCacheKey(user.profile.org_id);
   const controller = new AbortController();
-  const onOuterAbort = () => controller.abort();
+  // A caller abort means this identity is obsolete: never retry, replay or persist for it.
+  let callerAborted = false;
+  const onOuterAbort = () => {
+    callerAborted = true;
+    controller.abort();
+  };
   if (options.signal) {
     if (options.signal.aborted) {
-      controller.abort();
+      onOuterAbort();
     } else {
       options.signal.addEventListener('abort', onOuterAbort, { once: true });
     }
@@ -137,7 +147,9 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
   const aborted = new Promise<never>((_resolve, reject) => {
     rejectAbort = reject;
   });
-  const onAbort = () => rejectAbort(Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' }));
+  // Observed through Promise.race; a caller abort can settle it before the live fetch starts racing.
+  aborted.catch(() => undefined);
+  const onAbort = () => rejectAbort(createCanceledError());
   controller.signal.addEventListener('abort', onAbort, { once: true });
   if (controller.signal.aborted) {
     onAbort();
@@ -157,17 +169,23 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
       isEntitlementsMap,
       {
         enabled: Boolean(cacheKey),
-        fallbackOnAbort: true,
+        fallbackOnAbort: () => !callerAborted,
         cacheReadTimeoutMs: ENTITLEMENTS_STORAGE_TIMEOUT_MS,
-        shouldPersist: (live, cached) => shouldPersistEntitlements(live, cached, liveDegraded),
+        shouldPersist: (live, cached) => !callerAborted && shouldPersistEntitlements(live, cached, liveDegraded),
       }
     );
 
+    if (callerAborted) {
+      throw createCanceledError();
+    }
     if (fromCache) {
       return { entitlements: data, degraded: true, source: 'cache' };
     }
     return { entitlements: data, degraded: liveDegraded, source: 'live' };
-  } catch {
+  } catch (err) {
+    if (callerAborted) {
+      throw isAbortError(err) ? err : createCanceledError();
+    }
     return fallbackResult(user, options.previous);
   } finally {
     clearTimeout(timer);

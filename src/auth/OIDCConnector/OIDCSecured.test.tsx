@@ -12,6 +12,8 @@ import ChromeAuthContext from '../ChromeAuthContext';
 import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
 import { getMinimumViableEntitlements } from '../getMinimumViableEntitlements';
 import sentry from '../../utils/sentry';
+import { loadChromeUserConfigOnce } from '../../utils/initUserConfig';
+import { hydratePreviewAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 const EntitlementsProbe = () => {
   const auth = useContext(ChromeAuthContext);
@@ -20,6 +22,7 @@ const EntitlementsProbe = () => {
 
 jest.mock('../../components/FeatureFlags/featureFlagsClient', () => ({ getBootstrapFeatureFlag: jest.fn().mockResolvedValue(true) }));
 jest.mock('../../utils/VisibilitySingleton', () => ({ visibilityFunctionsExist: () => false }));
+jest.mock('../../utils/initUserConfig', () => ({ loadChromeUserConfigOnce: jest.fn() }));
 
 jest.mock('../fetchEntitlements', () => ({
   fetchEntitlements: jest.fn().mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' }),
@@ -87,6 +90,8 @@ describe('OIDCSecured', () => {
 
   beforeEach(() => {
     jest.mocked(getBootstrapFeatureFlag).mockResolvedValue(true);
+    jest.mocked(loadChromeUserConfigOnce).mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
+    chromeStore.set(hydratePreviewAtom, false);
     mockedFetchEntitlements.mockReset();
     mockedFetchEntitlements.mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' });
     chromeStore.set(degradedStateAtom, {
@@ -424,7 +429,7 @@ describe('OIDCSecured', () => {
     await act(async () => resolveFlag(false));
 
     expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1);
-    expect(mockedFetchEntitlements).toHaveBeenCalledWith(mockAuth.user, { enabled: true, previous: undefined });
+    expect(mockedFetchEntitlements).toHaveBeenCalledWith(mockAuth.user, { enabled: true, previous: undefined, signal: expect.any(AbortSignal) });
     expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
     expect(sentry).toHaveBeenCalledTimes(1);
     expect(sentry).toHaveBeenCalledWith(expect.objectContaining({ identity: expect.objectContaining({ org_id: 'org-b' }) }));
@@ -483,5 +488,159 @@ describe('OIDCSecured', () => {
     await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('{}'));
     expect(mockedFetchEntitlements.mock.calls[1]).toEqual([mockAuth.user]);
     expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false);
+  });
+  describe('obsolete entitlement requests', () => {
+    const LogoutProbe = () => {
+      const auth = useContext(ChromeAuthContext);
+      return (
+        <>
+          <button onClick={() => auth.logout()}>logout</button>
+          <button onClick={() => auth.logoutAllTabs(false)}>logoutAllTabs</button>
+        </>
+      );
+    };
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+        <LogoutProbe />
+      </OIDCSecured>
+    );
+    const signalOf = (call: number) => mockedFetchEntitlements.mock.calls[call][1]?.signal as AbortSignal;
+
+    beforeEach(() => {
+      mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+      mockAuth.isAuthenticated = true;
+      jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    });
+
+    it('aborts the pending request before switching to the next organization', async () => {
+      mockedFetchEntitlements
+        .mockImplementationOnce(() => new Promise(() => {}))
+        .mockResolvedValueOnce({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1));
+      expect(signalOf(0).aborted).toBe(false);
+
+      mockAuth.user = { ...mockUser, access_token: 'org-b-token', profile: { ...mockUser.profile, org_id: 'org-b' } } as User;
+      rerender(shell());
+
+      await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":false'));
+      expect(signalOf(0).aborted).toBe(true);
+      expect(signalOf(1).aborted).toBe(false);
+    });
+
+    it('aborts the pending request on unmount', async () => {
+      mockedFetchEntitlements.mockImplementationOnce(() => new Promise(() => {}));
+      const { unmount } = render(shell());
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1));
+      unmount();
+      expect(signalOf(0).aborted).toBe(true);
+    });
+
+    it.each(['logout', 'logoutAllTabs'])('aborts the pending re-authentication request on %s', async (method) => {
+      mockedFetchEntitlements
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: false, source: 'live' })
+        .mockImplementationOnce(() => new Promise(() => {}));
+      const { getByTestId, getByText, rerender } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":true'));
+      mockAuth.user = { ...mockUser, access_token: 'renewed' } as User;
+      rerender(shell());
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(2));
+
+      act(() => getByText(method, { selector: 'button' }).click());
+
+      expect(signalOf(1).aborted).toBe(true);
+      expect(jest.requireMock('./utils').logout).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not pass a signal on the legacy path', async () => {
+      jest.mocked(getBootstrapFeatureFlag).mockResolvedValue(false);
+      render(shell());
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1));
+      expect(mockedFetchEntitlements.mock.calls[0]).toEqual([mockUser]);
+    });
+  });
+
+  describe('bootstrap preview context', () => {
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <EntitlementsProbe />
+      </OIDCSecured>
+    );
+
+    beforeEach(() => {
+      mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+      mockAuth.isAuthenticated = true;
+      jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    });
+
+    it('evaluates the bootstrap rollout with the saved preview preference', async () => {
+      jest.mocked(loadChromeUserConfigOnce).mockResolvedValue({ data: { uiPreview: true, uiPreviewSeen: true } });
+      const { getByTestId } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(getBootstrapFeatureFlag).toHaveBeenCalledWith(expect.anything(), true, 'platform.chrome.entitlements-fallback');
+      expect(jest.mocked(loadChromeUserConfigOnce).mock.invocationCallOrder[0]).toBeLessThan(jest.mocked(getBootstrapFeatureFlag).mock.invocationCallOrder[0]);
+      expect(chromeStore.get(isPreviewAtom)).toBe(true);
+    });
+
+    it('sends the user config request with the authenticated identity token', async () => {
+      const { init } = jest.requireMock('../../utils/iqeEnablement') as { init: jest.Mock };
+      let tokenAtRequest: string | undefined;
+      jest.mocked(loadChromeUserConfigOnce).mockImplementation(async () => {
+        // The auth interceptor reads authRef at send time.
+        tokenAtRequest = init.mock.calls.at(-1)?.[1].current.user?.access_token;
+        return { data: { uiPreview: false, uiPreviewSeen: false } };
+      });
+      // Like the browser: the first render has no user yet, then sign-in completes.
+      const { useAuth } = jest.requireMock('react-oidc-context');
+      useAuth.mockReturnValue({ ...mockAuth, user: null, isAuthenticated: false });
+      const { getByTestId, rerender } = render(shell());
+      useAuth.mockReturnValue(mockAuth);
+      rerender(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(tokenAtRequest).toBe('token-123');
+    });
+
+    it('waits for the user config before the rollout lookup', async () => {
+      let resolveConfig!: (config: Awaited<ReturnType<typeof loadChromeUserConfigOnce>>) => void;
+      jest.mocked(loadChromeUserConfigOnce).mockReturnValue(
+        new Promise((resolve) => {
+          resolveConfig = resolve;
+        })
+      );
+      const { getByTestId } = render(shell());
+      await waitFor(() => expect(loadChromeUserConfigOnce).toHaveBeenCalledTimes(1));
+      await act(async () => undefined);
+      expect(getBootstrapFeatureFlag).not.toHaveBeenCalled();
+      expect(mockedFetchEntitlements).not.toHaveBeenCalled();
+
+      await act(async () => resolveConfig({ data: { uiPreview: true, uiPreviewSeen: true } }));
+
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(getBootstrapFeatureFlag).toHaveBeenCalledWith(expect.anything(), true, 'platform.chrome.entitlements-fallback');
+    });
+
+    it('evaluates preview off and still reaches ready when the user config fails', async () => {
+      jest.mocked(loadChromeUserConfigOnce).mockRejectedValue(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+      const { getByTestId } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(getBootstrapFeatureFlag).toHaveBeenCalledWith(expect.anything(), false, 'platform.chrome.entitlements-fallback');
+      expect(chromeStore.get(isPreviewAtom)).toBe(false);
+    });
+
+    it('does not overwrite a session preview toggle on a later re-authentication', async () => {
+      jest.mocked(loadChromeUserConfigOnce).mockResolvedValue({ data: { uiPreview: true, uiPreviewSeen: true } });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(chromeStore.get(isPreviewAtom)).toBe(true);
+
+      chromeStore.set(hydratePreviewAtom, false);
+      mockAuth.user = { ...mockUser, access_token: 'renewed' } as User;
+      rerender(shell());
+
+      await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(2));
+      expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(false);
+      expect(chromeStore.get(isPreviewAtom)).toBe(false);
+    });
   });
 });

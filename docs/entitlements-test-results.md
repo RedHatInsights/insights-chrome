@@ -15,6 +15,36 @@ Tested on **2026-10-06**, branch `prevent-entitlement-outages`, in the `insights
 
 Initial direct stage probes returned HTTP 403. After the credentials file was supplied, login through the branch's local dev proxy succeeded. The test process loaded `E2E_USER` and `E2E_PASSWORD` directly from the supplied `.env`; their values were not displayed, copied into test source, or saved in browser traces/authentication-state files. Temporary browsers and dev servers were stopped after the runs.
 
+## Review follow-up: obsolete requests and bootstrap preview context
+
+Tested on **2026-10-16** after the second review round. Both reported issues were reproduced before the fix.
+
+**Obsolete entitlement requests.** The enabled request was not given an `AbortSignal`, so an identity change only suppressed its result. A pending attempt that then returned 503 retried with the auth interceptor's _current_ token while keeping the previous organization's cache key, so the next identity's body could be persisted under the old key. The auth effect cleanup, logout, and unmount now abort it. A caller abort rejects without reading, replaying, or persisting cache; the internal timeout still falls back.
+
+**Bootstrap preview context.** `isPreviewAtom` was hydrated only by `useSessionConfig`, which renders after entitlement bootstrap, so the rollout lookup always used `platform.chrome.ui.preview=false`. A preview-targeted rollout sent saved-preview users to the unbounded legacy path. The user config is now fetched once (still 5s-bounded) before the lookup, hydrates preview, and is shared with `useSessionConfig`. Visibility functions are initialized with the current preview value, because the hook's own hydrate is skipped when bootstrap already applied it.
+
+The stage run also exposed an ordering issue in the first version of this change: the earlier user config request was sent as `Bearer undefined` (HTTP 401), because the effect that updates `authRef` was declared after the authentication effect. It is now declared first. Effect cleanups, including the abort, still all run before it.
+
+| Check                                                                                                                  | Before fix                                      | After fix                    |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------- |
+| Jest: abort on org switch, unmount, `logout`, `logoutAllTabs`; preview ordering; auth token on the user config request | 8 new tests failed                              | Passed                       |
+| Jest integration: org A 503 after the switch never retries with org B's token or persists under A's key                | Retried; defaults returned instead of rejecting | Passed                       |
+| Cypress: in-place org switch with org A's request pending, then 503                                                    | Retry sent, B's map written under A's key       | Passed (2 requests, A empty) |
+| Cypress: preview-targeted rollout, saved preview, stalled entitlements                                                 | Shell never rendered                            | Ready in ~5s with defaults   |
+| Stage Playwright: two real silent refreshes with the first request held, then 503                                      | 3 requests (retry carried the new token)        | 2 requests; first aborted    |
+| Stage Playwright: preview-targeted rollout, saved preview, stalled entitlements                                        | Shell never rendered                            | Ready, defaults, banner      |
+| Stage Playwright: user config once and before the lookup; one flag client                                              | Config after the lookup                         | Passed                       |
+| Stage Playwright: user config 503 and 5s stall                                                                         | Stall: lookup ran before config                 | Passed; preview off          |
+
+Final results:
+
+- Focused Jest command: **174 tests passed across 8 suites**.
+- Cypress entitlement component suite, Chrome: **32 passed, 0 failed**.
+- Stage Playwright, real SSO with the supplied account: all six new scenarios passed, and the full regression sweep (`entitlements-review.spec.ts`, `cache-fallback.spec.ts`, `feature-flags.spec.ts`) **passed 44 of 44**. Preview was overridden only in the user config response; the `update-ui-preview` write was intercepted and never called.
+- `npm run verify`: **passed** (lint, production build, 131 Jest suites / 1,563 tests / 33 snapshots).
+
+A real Unleash constraint on `platform.chrome.ui.preview` was simulated at the flag proxy response, using the context the SDK sends. A real two-organization SSO switch still needs a second account; the abort path was exercised end to end with same-org token renewals.
+
 ## Authenticated stage follow-up
 
 The tested account returned no true paid SKU flags. **That does not establish that the account has no plans/subscriptions**, because the same response reported entitlement degradation. The actual stage feature-flag response **does not contain** `platform.chrome.entitlements-fallback`; the unmodified branch therefore selects the disabled path. On/off exercises used the original plan's local response-override approach, preserving the other stage toggles. The independent banner toggle was enabled locally for its assertions. These checks do not verify an administratively configured Unleash rollout.
@@ -157,7 +187,7 @@ The two findings above are already reproduced and confirmed pre-existing; they d
 ## Commands executed
 
 ```bash
-npx jest src/auth/fetchEntitlements.test.ts src/auth/OIDCConnector/entitlements.integration.test.ts src/auth/OIDCConnector/OIDCSecured.test.tsx src/auth/OIDCConnector/utils.test.ts src/components/FeatureFlags/featureFlagsClient.test.tsx src/utils/cacheFetch.test.ts --runInBand --coverage=false
+npx jest src/auth/fetchEntitlements.test.ts src/auth/OIDCConnector/entitlements.integration.test.ts src/auth/OIDCConnector/OIDCSecured.test.tsx src/auth/OIDCConnector/utils.test.ts src/components/FeatureFlags/featureFlagsClient.test.tsx src/utils/cacheFetch.test.ts src/utils/initUserConfig.test.ts src/hooks/useSessionConfig.test.tsx --runInBand --coverage=false
 npx cypress run --component --browser chrome --spec cypress/component/OIDCConnector/OIDCSecured.cy.tsx
 npm run verify
 ./node_modules/.bin/tsc --noEmit

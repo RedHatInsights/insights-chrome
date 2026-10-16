@@ -5,7 +5,7 @@ import axios from 'axios';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import useSessionConfig from './useSessionConfig';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
-import { initChromeUserConfig, initVisibilityFunctions } from '../utils/initUserConfig';
+import { initVisibilityFunctions, loadChromeUserConfigOnce } from '../utils/initUserConfig';
 import { visibilityFunctionsExist } from '../utils/VisibilitySingleton';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import { userConfigAtom } from '../state/atoms/userConfigAtom';
@@ -22,7 +22,7 @@ jest.mock('axios', () => ({
 }));
 
 jest.mock('../utils/initUserConfig', () => ({
-  initChromeUserConfig: jest.fn(),
+  loadChromeUserConfigOnce: jest.fn(),
   initVisibilityFunctions: jest.fn(),
 }));
 
@@ -31,7 +31,7 @@ jest.mock('../utils/VisibilitySingleton', () => ({
   updateVisibilityFunctionsBeta: jest.fn(),
 }));
 
-const mockedInitChromeUserConfig = jest.mocked(initChromeUserConfig);
+const mockedLoadChromeUserConfig = jest.mocked(loadChromeUserConfigOnce);
 const mockedInitVisibilityFunctions = jest.mocked(initVisibilityFunctions);
 const mockedVisibilityFunctionsExist = jest.mocked(visibilityFunctionsExist);
 const mockedPost = jest.mocked(axios.post);
@@ -67,7 +67,7 @@ describe('useSessionConfig', () => {
 
   it('loads config, applies preview, and keeps personalization healthy on success', async () => {
     const config = { data: { uiPreview: true, uiPreviewSeen: true } };
-    mockedInitChromeUserConfig.mockResolvedValueOnce(config);
+    mockedLoadChromeUserConfig.mockResolvedValueOnce(config);
 
     const tokenRef = { current: 'tok' };
     const { result } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
@@ -82,8 +82,21 @@ describe('useSessionConfig', () => {
     expect(store.get(degradedStateAtom).userPersonalization).toBe(false);
   });
 
+  it('initializes visibility functions with preview already hydrated by auth bootstrap', async () => {
+    // Auth bootstrap hydrated preview from the shared request, so the hook's hydrate is skipped.
+    store.set(isPreviewAtom, true);
+    mockedLoadChromeUserConfig.mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
+
+    const tokenRef = { current: 'tok' };
+    const { result } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
+
+    await waitFor(() => expect(result.current.configLoaded).toBe(true));
+    expect(mockedInitVisibilityFunctions).toHaveBeenCalledWith(expect.objectContaining({ isPreview: true }));
+    expect(store.get(isPreviewAtom)).toBe(true);
+  });
+
   it('renders the shell with defaults and flags degraded state on failure', async () => {
-    mockedInitChromeUserConfig.mockRejectedValueOnce(new Error('500'));
+    mockedLoadChromeUserConfig.mockRejectedValueOnce(new Error('500'));
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
     const tokenRef = { current: 'tok' };
@@ -104,7 +117,7 @@ describe('useSessionConfig', () => {
   it('falls back to a degraded shell when the fetch times out (ECONNABORTED, not a gateway error)', async () => {
     // A client-side timeout aborts the XHR (ontimeout), so gatewayErrorAtom stays unset and the
     // request lands in the degraded branch instead of blocking the shell forever.
-    mockedInitChromeUserConfig.mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+    mockedLoadChromeUserConfig.mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
     const tokenRef = { current: 'tok' };
@@ -120,29 +133,29 @@ describe('useSessionConfig', () => {
   });
 
   it('fetches config only once per page load (no in-session retry on token change)', async () => {
-    mockedInitChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
+    mockedLoadChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
 
     const tokenRef = { current: 'tok-1' };
     const { result, rerender } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
 
     await waitFor(() => expect(result.current.configLoaded).toBe(true));
-    expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+    expect(mockedLoadChromeUserConfig).toHaveBeenCalledTimes(1);
 
     // Simulate a silent token refresh — the effect deps change but must not re-fetch.
     tokenRef.current = 'tok-2';
     rerender();
 
-    expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+    expect(mockedLoadChromeUserConfig).toHaveBeenCalledTimes(1);
   });
 
   it('renders loaded immediately on remount without re-fetching (no infinite loading)', async () => {
-    mockedInitChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
+    mockedLoadChromeUserConfig.mockResolvedValue({ data: { uiPreview: false, uiPreviewSeen: false } });
 
     const tokenRef = { current: 'tok' };
     // First mount fetches once.
     const first = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
     await waitFor(() => expect(first.result.current.configLoaded).toBe(true));
-    expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+    expect(mockedLoadChromeUserConfig).toHaveBeenCalledTimes(1);
 
     // Fully unmount, then mount a fresh hook against the SAME store — this simulates the ErrorBoundary
     // "Try again" remount. A component-scoped useState/useRef would reset here (re-fetch, or worse hang
@@ -151,7 +164,7 @@ describe('useSessionConfig', () => {
     const second = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
 
     // No re-fetch, and the shell is loaded immediately (regression guard for the infinite-loading bug).
-    expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1);
+    expect(mockedLoadChromeUserConfig).toHaveBeenCalledTimes(1);
     expect(second.result.current.configLoaded).toBe(true);
   });
 
@@ -159,12 +172,12 @@ describe('useSessionConfig', () => {
     const gatewayErr = { detail: 'gateway down' } as unknown as ThreeScaleError;
     // The XHR interceptor records the gateway error on the store before the request rejects.
     store.set(gatewayErrorAtom, gatewayErr);
-    mockedInitChromeUserConfig.mockRejectedValueOnce(new Error('gateway'));
+    mockedLoadChromeUserConfig.mockRejectedValueOnce(new Error('gateway'));
 
     const tokenRef = { current: 'tok' };
     const { result } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
 
-    await waitFor(() => expect(mockedInitChromeUserConfig).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockedLoadChromeUserConfig).toHaveBeenCalledTimes(1));
     // Flush the rejected promise so the catch branch runs.
     await act(async () => {
       await Promise.resolve();
@@ -183,7 +196,7 @@ describe('useSessionConfig', () => {
     // Visibility singleton already exists — a user toggle would POST, but a hydrate must not.
     mockedVisibilityFunctionsExist.mockReturnValue(true);
     mockedPost.mockClear();
-    mockedInitChromeUserConfig.mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
+    mockedLoadChromeUserConfig.mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
 
     const tokenRef = { current: 'tok' };
     const { result } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
@@ -203,7 +216,7 @@ describe('useSessionConfig', () => {
     store.set(isPreviewAtom, true);
     mockedVisibilityFunctionsExist.mockReturnValue(true);
     mockedPost.mockClear();
-    mockedInitChromeUserConfig.mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
+    mockedLoadChromeUserConfig.mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
 
     const tokenRef = { current: 'tok' };
     const { result } = renderHook(() => useSessionConfig(), { wrapper: buildWrapper(store, tokenRef) });
@@ -221,7 +234,7 @@ describe('useSessionConfig', () => {
     store.set(isPreviewAtom, true);
     mockedVisibilityFunctionsExist.mockReturnValue(true);
     mockedPost.mockClear();
-    mockedInitChromeUserConfig.mockRejectedValueOnce(new Error('500'));
+    mockedLoadChromeUserConfig.mockRejectedValueOnce(new Error('500'));
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
     const tokenRef = { current: 'tok' };

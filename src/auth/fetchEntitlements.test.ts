@@ -98,7 +98,7 @@ describe('fetchEntitlements', () => {
       expect.any(Function),
       ENTITLEMENTS_CACHE_TTL_MS,
       isEntitlementsMap,
-      expect.objectContaining({ enabled: true, fallbackOnAbort: true, shouldPersist: expect.any(Function) })
+      expect.objectContaining({ enabled: true, fallbackOnAbort: expect.any(Function), shouldPersist: expect.any(Function) })
     );
   });
 
@@ -250,6 +250,64 @@ describe('fetchEntitlements', () => {
     const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() } });
     expect(result.source).toBe('defaults');
     expect(mockedCacheFetch).toHaveBeenCalled();
+  });
+});
+
+describe('fetchEntitlements caller abort', () => {
+  beforeEach(() => {
+    mockedCacheFetch.mockReset();
+  });
+
+  it('rejects without requesting when the signal is already aborted', async () => {
+    liveCacheFetch();
+    const client = { servicesGet: jest.fn() };
+    const controller = new AbortController();
+    controller.abort();
+    await expect(fetchEntitlements(userWith(), { client, signal: controller.signal })).rejects.toMatchObject({ name: 'CanceledError' });
+    expect(client.servicesGet).not.toHaveBeenCalled();
+  });
+
+  it('does not retry a 5xx that arrives after the caller aborted', async () => {
+    liveCacheFetch();
+    let fail!: () => void;
+    const client: EntitlementsClient = {
+      servicesGet: jest.fn(
+        () =>
+          new Promise((_resolve, reject) => {
+            fail = () => reject({ response: { status: 503 } });
+          })
+      ),
+    };
+    const controller = new AbortController();
+    const pending = fetchEntitlements(userWith(), { client, signal: controller.signal });
+    await Promise.resolve();
+    controller.abort();
+    fail();
+    const { rejections } = await collectUnhandled(() => expect(pending).rejects.toMatchObject({ name: 'CanceledError' }));
+    expect(rejections).toEqual([]);
+    expect(client.servicesGet).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables cache fallback and persistence only once the caller aborts', async () => {
+    let options!: NonNullable<Parameters<typeof cacheFetch<EntitlementsMap>>[4]>;
+    let finish!: () => void;
+    mockedCacheFetch.mockImplementation((_key, _fetcher, _ttl, _guard, cacheOptions) => {
+      options = cacheOptions as typeof options;
+      return new Promise((resolve) => {
+        finish = () => resolve({ data: healthyPaid, fromCache: true });
+      });
+    });
+    const controller = new AbortController();
+    const pending = fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() }, signal: controller.signal });
+    await Promise.resolve();
+    const fallbackOnAbort = options.fallbackOnAbort as () => boolean;
+    expect(fallbackOnAbort()).toBe(true);
+    expect(options.shouldPersist?.(healthyPaid, null)).toBe(true);
+    controller.abort();
+    expect(fallbackOnAbort()).toBe(false);
+    expect(options.shouldPersist?.(healthyPaid, null)).toBe(false);
+    finish();
+    await expect(pending).rejects.toMatchObject({ name: 'CanceledError' });
   });
 });
 

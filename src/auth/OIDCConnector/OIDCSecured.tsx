@@ -27,7 +27,8 @@ import useManageSilentRenew from './useManageSilentRenew';
 import { EntitlementsMap, fetchEntitlements, getMinimumViableEntitlements } from '../fetchEntitlements';
 import { ENTITLEMENTS_FALLBACK_FLAG } from '../entitlementsConstants';
 import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
-import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { hydratePreviewAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { loadChromeUserConfigOnce } from '../../utils/initUserConfig';
 import getOrganization from './getOrganization';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
@@ -69,6 +70,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const previousEntitlementsOrgRef = useRef<unknown>(undefined);
   const entitlementsFallbackEnabledRef = useRef(false);
   const fetchGenerationRef = useRef(0);
+  const entitlementsAbortRef = useRef<AbortController | undefined>(undefined);
+  const previewHydratedRef = useRef(false);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -82,6 +85,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       authChannel.postMessage({ type: 'logout' });
       if (entitlementsFallbackEnabledRef.current) {
         fetchGenerationRef.current += 1;
+        entitlementsAbortRef.current?.abort();
         previousEntitlementsRef.current = undefined;
       }
       logout(authRef.current, bounce, entitlementsFallbackEnabledRef.current);
@@ -89,6 +93,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     logout: () => {
       if (entitlementsFallbackEnabledRef.current) {
         fetchGenerationRef.current += 1;
+        entitlementsAbortRef.current?.abort();
         previousEntitlementsRef.current = undefined;
       }
       logout(authRef.current, true, entitlementsFallbackEnabledRef.current);
@@ -141,11 +146,33 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     }
   };
 
+  // The bootstrap rollout may target `platform.chrome.ui.preview`, which is only known from the user config.
+  // Hydrate it once per page load, before the first flag lookup; useSessionConfig reuses the same request.
+  async function hydrateBootstrapPreview() {
+    try {
+      const config = await loadChromeUserConfigOnce();
+      // Never overwrite a preview toggle made during the session on a later re-authentication.
+      if (!previewHydratedRef.current && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
+        chromeStore.set(hydratePreviewAtom, config.data.uiPreview);
+      }
+    } catch {
+      // useSessionConfig owns the degraded and gateway error handling; preview stays off.
+    }
+    previewHydratedRef.current = true;
+  }
+
   async function onUserAuthenticated(user: User) {
     const generation = ++fetchGenerationRef.current;
+    entitlementsAbortRef.current?.abort();
+    const entitlementsAbort = new AbortController();
+    entitlementsAbortRef.current = entitlementsAbort;
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(chromeStore, authRef);
+    await hydrateBootstrapPreview();
+    if (generation !== fetchGenerationRef.current) {
+      return;
+    }
     const enabled = user.profile?.org_id
       ? await getBootstrapFeatureFlag(mapOIDCUserToChromeUser(user, {}), chromeStore.get(isPreviewAtom), ENTITLEMENTS_FALLBACK_FLAG)
       : false;
@@ -161,7 +188,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       }
       let degraded = false;
       try {
-        const result = await fetchEntitlements(user, { enabled: true, previous: previousEntitlementsRef.current });
+        const result = await fetchEntitlements(user, { enabled: true, previous: previousEntitlementsRef.current, signal: entitlementsAbort.signal });
         entitlements = result.entitlements;
         degraded = result.degraded;
       } catch {
@@ -201,6 +228,18 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     sentry(chromeUser);
   }
 
+  // Declared before the authentication effect: bootstrap requests (user config, flags, entitlements) read the
+  // token from authRef, so it must already hold the new identity. Effect cleanups, which abort obsolete
+  // entitlement requests, still all run before this.
+  useEffect(() => {
+    authRef.current = auth;
+    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
+    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
+    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
+      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
+    }
+  }, [auth]);
+
   useEffect(() => {
     const user = auth.user;
     if (auth.isAuthenticated && user) {
@@ -223,6 +262,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     }
     return () => {
       fetchGenerationRef.current += 1;
+      // Runs before authRef moves to the next identity, so an obsolete request cannot retry with its token.
+      entitlementsAbortRef.current?.abort();
     };
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
@@ -242,15 +283,6 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     // to ensure we are not re-initializing the chrome on every auth change
     // only on the important events
   }, [auth.error, auth.isLoading, auth.isAuthenticated, state.token, state.user?.identity?.account_number]);
-
-  useEffect(() => {
-    authRef.current = auth;
-    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
-    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
-    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
-      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
-    }
-  }, [auth]);
 
   useManageSilentRenew(auth, state.login);
 

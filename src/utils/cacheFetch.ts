@@ -13,8 +13,9 @@ export type CacheFetchOptions<T = unknown> = {
   /**
    * When true, aborted/canceled live requests may replay last-known-good.
    * Default false: abort means the caller gave up, so do not serve cache.
+   * A function is evaluated when the request fails, so the caller can tell a timeout from its own abort.
    */
-  fallbackOnAbort?: boolean;
+  fallbackOnAbort?: boolean | (() => boolean);
   /** Opt-in bound for fallback reads. Persistence reads always run in the background. */
   cacheReadTimeoutMs?: number;
 };
@@ -295,7 +296,8 @@ export async function cacheFetch<T>(
     return { data, fromCache: false };
   } catch (err) {
     // Reject client errors and canceled requests immediately; only origin/network failures need flag readiness.
-    if (!shouldUseCacheFallback(err, options?.fallbackOnAbort === true)) {
+    const fallbackOnAbort = typeof options?.fallbackOnAbort === 'function' ? options.fallbackOnAbort() : options?.fallbackOnAbort === true;
+    if (!shouldUseCacheFallback(err, fallbackOnAbort)) {
       throw err;
     }
 

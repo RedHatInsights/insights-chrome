@@ -16,6 +16,26 @@ import FeatureFlagsProvider from '../../../src/components/FeatureFlags/FeatureFl
 import DegradedStateBanner from '../../../src/components/DegradedStateBanner/DegradedStateBanner';
 import { getFeatureFlagsClient } from '../../../src/components/FeatureFlags/featureFlagsClient';
 import { getUnleashClient } from '../../../src/components/FeatureFlags/unleashClient';
+import { resetChromeUserConfigOnce } from '../../../src/utils/initUserConfig';
+import { hydratePreviewAtom, isPreviewAtom } from '../../../src/state/atoms/releaseAtom';
+
+const PREVIEW_CONTEXT = 'platform.chrome.ui.preview';
+const USER_CONFIG_PATH = '**/api/chrome-service/v1/user?*';
+
+/** Auth bootstrap reads the saved preview preference once per page load; start every mount cold. */
+const mockUserConfig = (uiPreview: boolean) => {
+  cy.then(() => {
+    resetChromeUserConfigOnce();
+    chromeStore.set(hydratePreviewAtom, false);
+  });
+  cy.intercept('GET', USER_CONFIG_PATH, { statusCode: 200, body: { data: { uiPreview, uiPreviewSeen: true } } }).as('userConfig');
+};
+
+/** The Unleash proxy client sends top-level context fields as query parameters. */
+const requestsPreview = (url: string) => {
+  const params = new URL(url).searchParams;
+  return (params.get(PREVIEW_CONTEXT) ?? params.get(`properties[${PREVIEW_CONTEXT}]`)) === 'true';
+};
 
 const CHILD_TEXT = 'Auth child component';
 
@@ -48,6 +68,8 @@ const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
 };
 
 describe('ODIC Secured', () => {
+  beforeEach(() => mockUserConfig(false));
+
   const testUser: User = {
     access_token: 'foo',
     expired: false,
@@ -280,6 +302,7 @@ describe('OIDCSecured entitlements outage', () => {
   beforeEach(() => {
     chromeStore.set(degradedStateAtom, healthyState);
     cy.then(() => cache.clear());
+    mockUserConfig(false);
   });
 
   const mockFlags = (enabled: boolean | undefined, bannerEnabled = true) => {
@@ -513,6 +536,95 @@ describe('OIDCSecured entitlements outage', () => {
     cy.get('[data-testid="org-id"]').should('have.text', 'org-B');
     assertMap({});
     cy.get('[data-testid="fallback-flag"]').should('have.text', 'false');
+  });
+
+  it("aborts org A's pending request on an in-place org switch so its retry cannot persist org B's body", () => {
+    let requests = 0;
+    cy.intercept('GET', '**/api/entitlements/v1/services**', (req) => {
+      requests += 1;
+      // Org A's first attempt is still pending when the identity switches, then fails with a retryable 503.
+      // Before the fix its retry went out with org B's token and was persisted under org A's key.
+      if (requests === 1) {
+        req.reply({ delay: 1500, statusCode: 503, body: {} });
+      } else {
+        req.reply({ statusCode: 200, body: healthyPaid });
+      }
+    });
+    mountShell();
+    // Switch while org A's request is still pending (cy.wait would wait for its response).
+    cy.wrap(null).should(() => expect(requests).to.equal(1));
+    refreshShell('org-B');
+    cy.get('[data-testid="org-id"]').should('have.text', 'org-B');
+    assertMap(healthyPaid);
+    // Beyond org A's delayed 503, which would have triggered the retry.
+    cy.wait(2500);
+    cy.then(() => expect(requests, "org A's single attempt plus org B's own request").to.equal(2));
+    cy.then(() => cache.getItem(key)).should('be.null');
+    cy.then(() => cache.getItem(`v1:${getEntitlementsCacheKey('org-B')}`))
+      .should('have.property', 'data')
+      .and('deep.equal', healthyPaid);
+  });
+
+  it('takes the bounded path for a saved-preview user when the rollout targets preview', () => {
+    const order: string[] = [];
+    const flagUrls: string[] = [];
+    mockUserConfig(true);
+    cy.intercept('GET', USER_CONFIG_PATH, (req) => {
+      order.push('userConfig');
+      req.reply({ statusCode: 200, body: { data: { uiPreview: true, uiPreviewSeen: true } } });
+    });
+    cy.intercept('GET', '**/api/featureflags/v0*', (req) => {
+      order.push('featureFlags');
+      flagUrls.push(req.url);
+      const toggle = (name: string, enabled: boolean) => ({ name, enabled, variant: { name: 'disabled', enabled: false }, impressionData: false });
+      // Simulates an Unleash constraint `platform.chrome.ui.preview=true` on the fallback rollout.
+      req.reply({
+        statusCode: 200,
+        body: { toggles: [toggle(ENTITLEMENTS_FALLBACK_FLAG, requestsPreview(req.url)), toggle('platform.chrome.degraded-state-banner', true)] },
+      });
+    });
+    cy.intercept('GET', '**/api/entitlements/v1/services**', { delay: 3 * ENTITLEMENTS_TIMEOUT_MS, statusCode: 200, body: healthyPaid });
+    const started = Date.now();
+    mountShell(true, false);
+    cy.contains(CHILD_TEXT, { timeout: ENTITLEMENTS_TIMEOUT_MS + 4000 }).should('exist');
+    cy.then(() => expect(Date.now() - started, 'bootstrap (ms)').to.be.lessThan(ENTITLEMENTS_TIMEOUT_MS + 3000));
+    assertMap(healthyUnsubscribed);
+    cy.get(banner).should('contain.text', 'Entitlements');
+    cy.get('[data-testid="fallback-flag"]').should('have.text', 'true');
+    cy.then(() => {
+      expect(chromeStore.get(isPreviewAtom)).to.equal(true);
+      expect(order.slice(0, 2)).to.deep.equal(['userConfig', 'featureFlags']);
+      expect(
+        order.filter((name) => name === 'userConfig'),
+        'one shared user config request'
+      ).to.have.length(1);
+      // The React provider reuses the bootstrap client instead of starting a second one for preview.
+      // Scoped to this identity: clients left by earlier tests in this spec may also refresh.
+      const identityUrls = flagUrls.filter((url) => new URL(url).searchParams.get('userId') === Cypress.currentTest.title);
+      expect(identityUrls, 'feature flag requests for this identity').to.have.length(1);
+      expect(requestsPreview(identityUrls[0])).to.equal(true);
+    });
+  });
+
+  it('evaluates the rollout with preview off and stays bounded when the user config is unavailable', () => {
+    const flagUrls: string[] = [];
+    mockUserConfig(false);
+    cy.intercept('GET', USER_CONFIG_PATH, { statusCode: 503, body: {} });
+    cy.intercept('GET', '**/api/featureflags/v0*', (req) => {
+      flagUrls.push(req.url);
+      const toggle = (name: string, enabled: boolean) => ({ name, enabled, variant: { name: 'disabled', enabled: false }, impressionData: false });
+      req.reply({ statusCode: 200, body: { toggles: [toggle(ENTITLEMENTS_FALLBACK_FLAG, true), toggle('platform.chrome.degraded-state-banner', true)] } });
+    });
+    cy.intercept('GET', '**/api/entitlements/v1/services**', { statusCode: 503, body: {} });
+    mountShell(true, false);
+    cy.contains(CHILD_TEXT, { timeout: ENTITLEMENTS_TIMEOUT_MS + 4000 }).should('exist');
+    assertMap(healthyUnsubscribed);
+    cy.then(() => {
+      expect(chromeStore.get(isPreviewAtom)).to.equal(false);
+      const identityUrls = flagUrls.filter((url) => new URL(url).searchParams.get('userId') === Cypress.currentTest.title);
+      expect(identityUrls).to.have.length(1);
+      expect(requestsPreview(identityUrls[0])).to.equal(false);
+    });
   });
 
   for (const method of ['logout', 'logoutAllTabs']) {
