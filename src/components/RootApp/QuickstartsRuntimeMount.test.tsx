@@ -1,0 +1,226 @@
+import React from 'react';
+import { act, render, screen } from '@testing-library/react';
+import { Provider as JotaiProvider, createStore } from 'jotai';
+import { useFlag } from '@unleash/proxy-client-react';
+import { ScalprumComponent } from '@scalprum/react-core';
+import QuickstartsRuntimeMount, {
+  LEARNING_RESOURCES_QUICKSTARTS_FLAG,
+  LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY,
+  REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS,
+} from './QuickstartsRuntimeMount';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
+import { remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
+import { resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
+
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: jest.fn(() => false),
+}));
+
+jest.mock('@scalprum/react-core', () => ({
+  ScalprumComponent: jest.fn(({ children }: { children?: React.ReactNode }) => <div data-testid="remote-runtime">{children}</div>),
+}));
+
+jest.mock('./LegacyQuickstartsRuntime', () => ({
+  __esModule: true,
+  default: ({ children }: { children?: React.ReactNode }) => <div data-testid="legacy-runtime">{children}</div>,
+}));
+
+const mockedUseFlag = useFlag as jest.Mock;
+const MockedScalprumComponent = ScalprumComponent as jest.Mock;
+
+const chromeAuth = {
+  user: {
+    identity: {
+      internal: { account_id: '123' },
+    },
+  },
+};
+
+const renderMount = (initialActiveQuickStartID = '', children: React.ReactNode = <span>shell-child</span>) => {
+  const store = createStore();
+  store.set(activeModuleAtom, 'insights');
+  store.set(remoteActiveQuickStartIDAtom, initialActiveQuickStartID);
+  store.set(degradedStateAtom, {
+    userPersonalization: false,
+    entitlements: false,
+    configFromCache: false,
+    featureFlags: false,
+    quickstarts: false,
+  });
+  return {
+    store,
+    ...render(
+      <JotaiProvider store={store}>
+        <ChromeAuthContext.Provider value={chromeAuth as never}>
+          <QuickstartsRuntimeMount>{children}</QuickstartsRuntimeMount>
+        </ChromeAuthContext.Provider>
+      </JotaiProvider>
+    ),
+  };
+};
+
+describe('QuickstartsRuntimeMount', () => {
+  beforeEach(() => {
+    mockedUseFlag.mockReturnValue(false);
+    window.localStorage.removeItem(LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY);
+    MockedScalprumComponent.mockClear();
+    resetDelegatedChromeQuickstartsState();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    window.localStorage.removeItem(LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY);
+    resetDelegatedChromeQuickstartsState();
+    MockedScalprumComponent.mockImplementation(({ children }: { children?: React.ReactNode }) => <div data-testid="remote-runtime">{children}</div>);
+  });
+
+  it('uses leftover Chrome providers when the flag is off', () => {
+    const { store } = renderMount();
+
+    expect(screen.getByTestId('legacy-runtime')).toBeInTheDocument();
+    expect(screen.getByText('shell-child')).toBeInTheDocument();
+    expect(screen.queryByTestId('remote-runtime')).not.toBeInTheDocument();
+    expect(mockedUseFlag).toHaveBeenCalledWith(LEARNING_RESOURCES_QUICKSTARTS_FLAG);
+    expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+  });
+
+  it('loads learning-resources QuickstartsRuntime when the Unleash flag is on', () => {
+    mockedUseFlag.mockReturnValue(true);
+    renderMount();
+
+    expect(screen.getByTestId('remote-runtime')).toBeInTheDocument();
+    expect(screen.getByText('shell-child')).toBeInTheDocument();
+    expect(screen.queryByTestId('legacy-runtime')).not.toBeInTheDocument();
+    expect(MockedScalprumComponent).toHaveBeenCalled();
+    const props = MockedScalprumComponent.mock.calls[0][0];
+    expect(props.scope).toBe('learningResources');
+    expect(props.module).toBe('./QuickstartsRuntime');
+    expect(props.accountId).toBe('123');
+    expect(props.fallback).toBeNull();
+    expect(React.isValidElement(props.children)).toBe(true);
+    expect((props.children as React.ReactElement).props['data-ouia-component-id']).toBe('chrome-quickstarts-slot');
+    expect(screen.getByTestId('remote-runtime')).toHaveTextContent('shell-child');
+  });
+
+  it('loads the remote when localStorage override is set', () => {
+    window.localStorage.setItem(LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY, 'true');
+    renderMount();
+
+    expect(screen.getByTestId('remote-runtime')).toBeInTheDocument();
+    expect(screen.queryByTestId('legacy-runtime')).not.toBeInTheDocument();
+  });
+
+  it('marks quickstarts degraded if the remote never becomes ready', () => {
+    mockedUseFlag.mockReturnValue(true);
+    jest.useFakeTimers();
+    const { store } = renderMount();
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+    act(() => {
+      jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
+    });
+    expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+  });
+
+  it('clears degraded state when onApiReady fires', () => {
+    mockedUseFlag.mockReturnValue(true);
+    const { store } = renderMount();
+    const props = MockedScalprumComponent.mock.calls[0][0];
+
+    act(() => {
+      store.set(degradedStateAtom, { ...store.get(degradedStateAtom), quickstarts: true });
+      props.onApiReady({
+        quickstartsAPI: { version: 1 },
+        helpTopicsAPI: {},
+      });
+    });
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+  });
+
+  it('clears a stale remote quickstart id if the remote never becomes ready', () => {
+    mockedUseFlag.mockReturnValue(true);
+    jest.useFakeTimers();
+    const { store } = renderMount();
+
+    act(() => {
+      store.set(remoteActiveQuickStartIDAtom, 'stale-quickstart');
+      jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
+    });
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+    expect(store.get(remoteActiveQuickStartIDAtom)).toBe('');
+  });
+
+  it('clears a stale remote quickstart id when the remote ErrorComponent mounts', () => {
+    mockedUseFlag.mockReturnValue(true);
+    MockedScalprumComponent.mockImplementation(({ ErrorComponent }: { ErrorComponent?: React.ReactNode }) => <>{ErrorComponent}</>);
+    const { store } = renderMount('stale-quickstart');
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+    expect(store.get(remoteActiveQuickStartIDAtom)).toBe('');
+    expect(screen.getByText('shell-child')).toBeInTheDocument();
+  });
+
+  it('portals chrome children into the remote placeholder', () => {
+    mockedUseFlag.mockReturnValue(true);
+    renderMount();
+
+    expect(screen.getByTestId('remote-runtime')).toHaveTextContent('shell-child');
+  });
+
+  it('keeps chrome children mounted when the remote goes loading -> ready -> failed', () => {
+    mockedUseFlag.mockReturnValue(true);
+    let setRemoteReady: ((ready: boolean) => void) | undefined;
+    MockedScalprumComponent.mockImplementation(({ children }: { children?: React.ReactNode }) => {
+      const [ready, setReady] = React.useState(false);
+      setRemoteReady = setReady;
+      return <div data-testid="remote-runtime">{ready ? children : null}</div>;
+    });
+
+    const observed: { mounts: number; nodes: (HTMLElement | null)[] } = { mounts: 0, nodes: [] };
+    const Probe = () => {
+      const ref = React.useRef<HTMLDivElement>(null);
+      React.useLayoutEffect(() => {
+        observed.mounts += 1;
+        observed.nodes.push(ref.current);
+      }, []);
+      return <div ref={ref}>shell-child</div>;
+    };
+
+    renderMount('', <Probe />);
+    const initialNode = observed.nodes[0];
+    expect(observed.mounts).toBe(1);
+    expect(initialNode && document.contains(initialNode)).toBe(true);
+    expect(screen.getByTestId('remote-runtime')).not.toHaveTextContent('shell-child');
+
+    act(() => setRemoteReady?.(true));
+    expect(observed.mounts).toBe(1);
+    expect(screen.getByTestId('remote-runtime')).toHaveTextContent('shell-child');
+    expect(screen.getByTestId('remote-runtime').contains(initialNode)).toBe(true);
+
+    act(() => setRemoteReady?.(false));
+    expect(observed.mounts).toBe(1);
+    expect(initialNode && document.contains(initialNode)).toBe(true);
+    expect(screen.getByText('shell-child')).toBe(initialNode);
+    expect(screen.getByTestId('remote-runtime')).not.toHaveTextContent('shell-child');
+  });
+
+  it('mounts chrome children attached to the document so layout measurements work', () => {
+    mockedUseFlag.mockReturnValue(true);
+    let attachedDuringLayoutEffect: boolean | undefined;
+    const Probe = () => {
+      const ref = React.useRef<HTMLDivElement>(null);
+      React.useLayoutEffect(() => {
+        attachedDuringLayoutEffect = !!ref.current && document.contains(ref.current);
+      }, []);
+      return <div ref={ref}>shell-child</div>;
+    };
+
+    renderMount('', <Probe />);
+
+    expect(attachedDuringLayoutEffect).toBe(true);
+  });
+});

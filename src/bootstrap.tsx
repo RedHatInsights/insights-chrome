@@ -2,6 +2,10 @@ import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
+// Side-effect only: webpack will not put a shared module in scope unless this
+// compilation imports it. RootApp no longer imports @patternfly/quickstarts, but
+// FEC remotes (Help Panel, QuickstartsRuntime) still consume it with import:false.
+import '@patternfly/quickstarts';
 import RootApp from './components/RootApp';
 import { getEnv, trustarcScriptSetup } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
