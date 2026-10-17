@@ -31,6 +31,10 @@
     "defaultMessage": "API documentation",
     "description": "API documentation"
   },
+  "askRedHat": {
+    "defaultMessage": "Ask Red Hat",
+    "description": "Ask Red Hat"
+  },
   "authFailure": {
     "defaultMessage": "Authorization failure",
     "description": "Authorization failure"
@@ -62,6 +66,74 @@
   "close": {
     "defaultMessage": "Close",
     "description": "Close"
+  },
+  "colorScheme": {
+    "defaultMessage": "Color scheme",
+    "description": "Color scheme"
+  },
+  "colorSchemeDark": {
+    "defaultMessage": "Dark",
+    "description": "Dark color scheme"
+  },
+  "colorSchemeLight": {
+    "defaultMessage": "Light",
+    "description": "Light color scheme"
+  },
+  "colorSchemeSystem": {
+    "defaultMessage": "System",
+    "description": "System color scheme"
+  },
+  "contrast": {
+    "defaultMessage": "Contrast",
+    "description": "Contrast"
+  },
+  "contrastDefault": {
+    "defaultMessage": "Default",
+    "description": "Default"
+  },
+  "contrastGlass": {
+    "defaultMessage": "Glass",
+    "description": "Glass effect option in contrast mode"
+  },
+  "contrastHigh": {
+    "defaultMessage": "High contrast",
+    "description": "High contrast"
+  },
+  "contrastMode": {
+    "defaultMessage": "Contrast mode",
+    "description": "Contrast mode"
+  },
+  "contrastSystem": {
+    "defaultMessage": "System",
+    "description": "System"
+  },
+  "degradedServiceConfigFromCache": {
+    "defaultMessage": "Navigation Configuration",
+    "description": "Label for navigation configuration service"
+  },
+  "degradedServiceEntitlements": {
+    "defaultMessage": "Entitlements",
+    "description": "Label for entitlements service"
+  },
+  "degradedServiceFeatureFlags": {
+    "defaultMessage": "Feature Flags",
+    "description": "Label for feature flags service"
+  },
+  "degradedServiceNavigation": {
+    "defaultMessage": "Navigation",
+    "description": "Combined label for degraded bundle navigation and service catalog visibility or loading"
+  },
+  "degradedServiceUserPersonalization": {
+    "defaultMessage": "User Preferences",
+    "description": "Label for user personalization service"
+  },
+  "degradedStateBannerPrefix": {
+    "defaultMessage": "Core functionality is available, but some services are degraded:",
+    "description": "First part of degraded state banner message"
+  },
+  "degradedStateBannerSuffix": {
+    "defaultMessage": "Try again later.",
+    "description": "Last part of degraded state banner message"
   },
   "demoMode": {
     "defaultMessage": "Demo mode",
@@ -147,6 +219,14 @@
     "defaultMessage": "Get help from Red Hat support.",
     "description": "Get help from Red Hat support."
   },
+  "glassEffect": {
+    "defaultMessage": "Glass effect",
+    "description": "Glass effect"
+  },
+  "glassEffectDescription": {
+    "defaultMessage": "Frosted glass effect",
+    "description": "Frosted glass effect"
+  },
   "globalFilterNotApplicable": {
     "defaultMessage": "Global filter is not applicable for this page",
     "description": "Global filter is not applicable for this page"
@@ -158,6 +238,14 @@
   "globalRuntimeErrorId": {
     "defaultMessage": "Sentry error ID: {errorId}",
     "description": "Global runtime error Id"
+  },
+  "helpPanel": {
+    "defaultMessage": "Help panel",
+    "description": "Help panel"
+  },
+  "helpPanelTooltip": {
+    "defaultMessage": "Learning resources, API documentation, Support Case Management, Ask Red Hat assistant, and more.",
+    "description": "Help panel tooltip describing available resources"
   },
   "helpUsImproveHCC": {
     "defaultMessage": "Help us improve the Red Hat Hybrid Cloud Console.",
@@ -227,13 +315,13 @@
     "defaultMessage": "Log out",
     "description": "Log out"
   },
-  "myProfile": {
-    "defaultMessage": "My profile",
-    "description": "My profile"
-  },
   "myAccess": {
     "defaultMessage": "My Access",
     "description": "My Access"
+  },
+  "myProfile": {
+    "defaultMessage": "My profile",
+    "description": "My profile"
   },
   "myUserAccess": {
     "defaultMessage": "My User Access",
@@ -276,7 +364,7 @@
     "description": "Org ID:"
   },
   "permissionErrorDescription": {
-    "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions."
+    "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My Access</MuaLink> to learn more about your permissions."
   },
   "permissionErrorDetail": {
     "defaultMessage": "Detail: {message}."
@@ -393,9 +481,25 @@
     "defaultMessage": "Thank you for your interest in user research. You have been added to our mailing list.",
     "description": "Thank you for your interest in user research. You have been added to our mailing list."
   },
+  "theme": {
+    "defaultMessage": "Theme",
+    "description": "Theme"
+  },
+  "themeDefault": {
+    "defaultMessage": "Default",
+    "description": "Default theme"
+  },
+  "themeFelt": {
+    "defaultMessage": "Project Felt",
+    "description": "Project Felt theme"
+  },
   "thereWillBeACatalgPage": {
     "defaultMessage": "There will be a catalog page for {bundle} bundle",
     "description": "There will be a catalog page for {bundle} bundle"
+  },
+  "tryAgain": {
+    "defaultMessage": "Try again",
+    "description": "Try again"
   },
   "tryChangingSearch": {
     "defaultMessage": "This filter criteria matches no applications or services. Try changing your input filter.",
