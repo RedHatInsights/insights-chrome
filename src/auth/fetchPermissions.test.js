@@ -16,7 +16,7 @@ jest.mock('./rbac', () => () => {
   };
 });
 
-import { createFetchPermissionsWatcher } from './fetchPermissions';
+import { createFetchPermissionsWatcher, resetPermissionCache } from './fetchPermissions';
 import { getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 describe('fetchPermissions', () => {
@@ -36,6 +36,7 @@ describe('fetchPermissions', () => {
     })
   );
   beforeEach(() => {
+    resetPermissionCache();
     fetchPermissions = createFetchPermissionsWatcher(getUser);
     global.rbacApiCalled = 0;
   });

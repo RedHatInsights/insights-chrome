@@ -4,6 +4,7 @@ import { GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY, OIDC_RESERVED_PARAMS }
 import Cookies from 'js-cookie';
 import logger from '../logger';
 import createUUID from './createUUID';
+import { resetPermissionCache } from '../fetchPermissions';
 
 const log = logger('auth:utils');
 
@@ -35,6 +36,7 @@ function getPartnerScope(pathname: string) {
 }
 
 export async function logout(auth: AuthContextProps, bounce?: boolean) {
+  resetPermissionCache();
   const keys = Object.keys(localStorage).filter(
     (key) =>
       key.endsWith('/api/entitlements/v1/services') ||
