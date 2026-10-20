@@ -24,4 +24,5 @@ await page.waitForLoadState('load', { timeout: 20000 });
 await expect(page.getByRole('button', { name: 'Add widgets' })).toBeVisible({ timeout: 45 * 1000 });
 
 await page.getByRole('button', { name: 'Toggle help panel' }).click();
+await expect(page.locator('.learningResources [role="tabpanel"]')).toBeVisible({ timeout: 45 * 1000 });
 await expect(page.getByText('Loading...')).not.toBeVisible();

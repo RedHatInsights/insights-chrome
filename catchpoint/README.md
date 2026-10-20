@@ -1,5 +1,55 @@
 # Catchpoint WebSocket availability monitor
 
+## Uploading scripts from this repository
+
+The local uploader updates existing Catchpoint tests from the mappings in
+[upload-manifest.json](upload-manifest.json):
+
+| Catchpoint test ID | Source file                      |
+| ------------------ | -------------------------------- |
+| `8413627`          | `catchpoint/websocket.ts`        |
+| `3857358`          | `catchpoint/landingpage.spec.ts` |
+| `8129967`          | `catchpoint/helppanel.spec.ts`   |
+
+Install the [Catchpoint CLI](https://docs.catchpoint.com/docs/catchpoint-cli-guide)
+and make sure `catchpoint-cli` is available on your `PATH`. Set
+`CATCHPOINT_API_TOKEN` in your environment using your team's approved secret
+manager. The CLI reads the token from the environment; it is not passed as a
+command-line argument.
+
+Before the first upload, check that `/script` is the script field for each test:
+
+```bash
+catchpoint-cli test get --test-ids 8413627,3857358,8129967
+```
+
+The uploader defaults to `/script`. If the Catchpoint CLI response uses a
+different JSON path, supply it with `--field <json-path>`.
+
+Preview the whole batch, then upload it:
+
+```bash
+npm run catchpoint:upload -- --dry-run
+npm run catchpoint:upload
+```
+
+The dry run checks the local files and mappings without contacting Catchpoint.
+The upload updates only each test's script field; it does not create or delete
+tests. The uploader updates tests one at a time, so if an update fails, earlier
+tests in that batch may already have been updated. Fix the issue and rerun the
+batch to bring all mapped tests up to date.
+
+**Current limitation:** no Catchpoint API token is available, so actual uploads
+cannot currently be run from this repository. Keep using the Catchpoint portal
+to paste updated scripts. The local uploader and manifest remain available for
+dry runs and for uploading once API token access is available.
+
+The manifest is the default batch. For a one-off batch, pass repeated
+`--test <test-id>=<file>` flags; these replace the manifest for that run. To use
+a different persistent mapping, pass `--manifest path/to/file.json`. Each test
+ID can appear only once in a batch because a Catchpoint test stores one script.
+Set `CATCHPOINT_CLI` if the CLI executable has a different name.
+
 Operational production monitor: [Catchpoint test 8413627](https://portal.catchpoint.com/ui/Symphony/ControlCenter/Tests/Test/8413627/Properties).
 
 Paste the entire contents of [websocket.ts](websocket.ts) into a **Playwright test**
