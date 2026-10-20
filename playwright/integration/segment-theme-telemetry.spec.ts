@@ -1,5 +1,6 @@
 import { expect, test } from '../setup/test-setup';
-import { clearCachedFeatureFlags } from '../helpers/feature-flags';
+import { ChromeTopbar } from '../pages/chrome-topbar';
+import { mockFeatureFlags } from '../helpers/feature-flags';
 
 /**
  * Segment Theme Telemetry Integration Tests
@@ -45,7 +46,12 @@ const renderedThemeVariants = [
 
 test.describe('Segment theme telemetry', () => {
   test('sends rendered theme on Page events and preference settings on Identify events', async ({ page }) => {
-    await clearCachedFeatureFlags(page);
+    await mockFeatureFlags(page, [
+      'platform.chrome.dark-mode',
+      'platform.chrome.dark-mode_system',
+      'platform.chrome.high-contrast',
+      'platform.chrome.glass-theme',
+    ]);
 
     await page.addInitScript(() => {
       localStorage.removeItem('chrome:analytics:disable');
@@ -117,13 +123,28 @@ test.describe('Segment theme telemetry', () => {
     );
     reportPassedAssertion('initial Identify includes colorSchemeSetting=system and contrastModeSetting=high-contrast');
 
-    await page.evaluate(() => {
-      localStorage.setItem('chrome:theme', 'dark');
-      localStorage.setItem('chrome:high-contrast', 'default');
-      localStorage.setItem('chrome:glass-theme', 'true');
-      window.dispatchEvent(new Event('chrome:theme-telemetry-preferences-change'));
-    });
+    const topbar = new ChromeTopbar(page);
+    await topbar.openSettings();
+    await page.locator('#color-scheme-dark').click();
 
+    await expect(page.locator('html')).toHaveClass(/pf-v6-theme-dark/);
+
+    await expect
+      .poll(
+        () =>
+          getEvents(segmentRequests).some(
+            (event) =>
+              event.type === 'identify' && event.traits?.colorSchemeSetting === 'dark' && event.traits?.contrastModeSetting === 'high-contrast'
+          ),
+        { timeout: SEGMENT_REQUEST_TIMEOUT }
+      )
+      .toBe(true);
+    reportPassedAssertion('selecting Dark in Settings sends Identify with colorSchemeSetting=dark');
+
+    await topbar.openSettings();
+    await page.locator('#contrast-glass').click();
+
+    await expect(page.locator('html')).toHaveClass(/pf-v6-theme-glass/);
     await expect
       .poll(
         () =>
@@ -133,7 +154,7 @@ test.describe('Segment theme telemetry', () => {
         { timeout: SEGMENT_REQUEST_TIMEOUT }
       )
       .toBe(true);
-    reportPassedAssertion('Identify updates to colorSchemeSetting=dark and contrastModeSetting=glass after preferences change');
+    reportPassedAssertion('selecting Glass in Settings sends Identify with contrastModeSetting=glass');
 
     for (const [index, renderedTheme] of renderedThemeVariants.entries()) {
       const pageEventCount = getEvents(segmentRequests).filter((event) => event.type === 'page').length;
