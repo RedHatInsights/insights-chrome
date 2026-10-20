@@ -11,8 +11,8 @@ await page.route('**/*', async (route, request) => {
   }
 });
 
-let username = (await '') + Catchpoint.username();
-let password = (await '') + Catchpoint.password();
+let username = await Catchpoint.username();
+let password = await Catchpoint.password();
 
 await page.goto('https://console.redhat.com');
 await page.locator("//input[@id='username-verification']").fill(username);
