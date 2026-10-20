@@ -133,8 +133,7 @@ test.describe('Segment theme telemetry', () => {
       .poll(
         () =>
           getEvents(segmentRequests).some(
-            (event) =>
-              event.type === 'identify' && event.traits?.colorSchemeSetting === 'dark' && event.traits?.contrastModeSetting === 'high-contrast'
+            (event) => event.type === 'identify' && event.traits?.colorSchemeSetting === 'dark' && event.traits?.contrastModeSetting === 'high-contrast'
           ),
         { timeout: SEGMENT_REQUEST_TIMEOUT }
       )
