@@ -23,14 +23,13 @@ const previewValueAtom = atom<boolean>(false);
 // toggle and a hydrate: whether the value is written back to the personalization API. Everything
 // else (search cache, visibility functions, feature-flag context, banner) runs in both cases.
 async function applyPreviewSideEffects(isPreview: boolean, persist: boolean) {
+  // Synchronous side effects run first so that visibility helpers and feature
+  // flags reflect the new mode immediately, regardless of the preference POST.
   try {
     SearchPermissionsCache.clear();
     // Required to change the `isBeta` function return value in the visibility functions
     if (visibilityFunctionsExist()) {
       updateVisibilityFunctionsBeta(isPreview);
-      if (persist) {
-        await axios.post('/api/chrome-service/v1/user/update-ui-preview', { uiPreview: isPreview });
-      }
     }
     if (unleashClientExists()) {
       // Required to change the `platform.chrome.ui.preview` context in the feature flags, TS is bugged
@@ -44,6 +43,16 @@ async function applyPreviewSideEffects(isPreview: boolean, persist: boolean) {
     }
   } catch (error) {
     console.error('Failed to update the visibility functions or feature flags context', error);
+  }
+
+  // Persist the preference asynchronously. A failure here must not prevent
+  // the visibility/feature-flag updates that already ran above.
+  if (persist && visibilityFunctionsExist()) {
+    try {
+      await axios.post('/api/chrome-service/v1/user/update-ui-preview', { uiPreview: isPreview });
+    } catch (error) {
+      console.error('Failed to persist preview preference', error);
+    }
   }
 
   // make sure the banner shows after preview is toggled
