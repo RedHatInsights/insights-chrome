@@ -115,6 +115,8 @@ for (const mode of ['reject', 'wrong-protocol', 'missing-cookie'] as const) {
     const outcomes: string[] = [];
     await expect(runMonitor(page, mode, false, outcomes)).rejects.toThrow('FAIL: WebSocket connection failed');
     expect(outcomes.at(-1)).toContain('FAIL:');
+    expect(outcomes.at(-1)).toContain('Browser trace: socket 1 (/wss/chrome-service/v1/ws)');
+    if (mode !== 'wrong-protocol') expect(outcomes.at(-1)).toContain('socket error:');
     expect(outcomes.some((value) => value.startsWith('PASS:'))).toBe(false);
   });
 }
