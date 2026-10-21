@@ -19,3 +19,9 @@
     --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: min-content 1fr;
   }
 }
+
+// Lightwell currently relocates this Chrome-owned subnav DOM node itself (unsupported);
+// hide the empty wrapper so that relocation does not add a flex gap above the breadcrumbs.
+.pf-v6-c-page.chr-c-page--lightwell .pf-v6-c-page__main > .chr-c-page-subnav:empty {
+  display: none;
+}

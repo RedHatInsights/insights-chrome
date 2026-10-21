@@ -2,6 +2,11 @@ jest.mock('../components/Header/Header', () => ({
   Header: () => <div data-testid="mock-header">Header</div>,
 }));
 
+jest.mock('./useLightwellApp', () => ({
+  __esModule: true,
+  default: jest.fn(() => [{ default: jest.fn() }, undefined]),
+}));
+
 jest.mock('../components/Stratosphere/RedirectBanner', () => ({
   __esModule: true,
   default: () => <div data-testid="mock-redirect-banner">RedirectBanner</div>,
@@ -40,13 +45,18 @@ jest.mock('@unleash/proxy-client-react', () => ({
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
-import Lightwell from './Lightwell';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import InternalChromeContext from '../utils/internalChromeContext';
+
+// Load after the local module mocks above are registered.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const Lightwell = require('./Lightwell').default as typeof import('./Lightwell').default;
+type LightwellAppHookResult = [unknown, Error | undefined];
+const mockUseLightwellApp = jest.requireMock('./useLightwellApp').default as jest.MockedFunction<() => LightwellAppHookResult>;
 
 const mockUser = {
   identity: {
@@ -130,6 +140,7 @@ describe('Lightwell', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseLightwellApp.mockReturnValue([{ default: jest.fn() }, undefined]);
   });
 
   afterEach(() => {
@@ -141,6 +152,15 @@ describe('Lightwell', () => {
     expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
     expect(container.querySelector('.chr-c-masthead')).toBeTruthy();
     expect(container.querySelector('[data-testid="mock-footer"]')).toBeTruthy();
+  });
+
+  it('should let ScalprumComponent handle Lightwell module errors', () => {
+    mockUseLightwellApp.mockReturnValue([undefined, new Error('Lightwell module failed')]);
+
+    const { container } = renderLightwell();
+
+    expect(container.querySelector('#chrome-app-render-root')).toBeTruthy();
+    expect(container.querySelector('.chr-c-lightwell-loading')).toBeNull();
   });
 
   it('should render the footer after the page, outside the page card', () => {

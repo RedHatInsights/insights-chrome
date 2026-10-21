@@ -13,4 +13,6 @@ const LoadingFallback = (
   </Bullseye>
 );
 
+export const LightwellLoadingFallback = <div className="chr-c-lightwell-loading">{LoadingFallback}</div>;
+
 export default LoadingFallback;

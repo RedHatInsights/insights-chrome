@@ -12,7 +12,7 @@ import AllServices from '../../layouts/AllServices';
 import FavoritedServices from '../../layouts/FavoritedServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
-import LoadingFallback from '../../utils/loading-fallback';
+import LoadingFallback, { LightwellLoadingFallback } from '../../utils/loading-fallback';
 import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
@@ -99,7 +99,7 @@ const ScalprumRoot = memo(
             <Route
               path={`${LIGHTWELL_PATH}/*`}
               element={
-                <Suspense fallback={LoadingFallback}>
+                <Suspense fallback={LightwellLoadingFallback}>
                   <Lightwell />
                 </Suspense>
               }

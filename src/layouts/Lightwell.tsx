@@ -7,7 +7,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import LoadingFallback from '../utils/loading-fallback';
+import LoadingFallback, { LightwellLoadingFallback } from '../utils/loading-fallback';
 import ErrorComponent from '../components/ErrorComponents/DefaultErrorComponent';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
@@ -16,6 +16,7 @@ import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import LightwellNavigation from '../components/Navigation/LightwellNavigation';
+import useLightwellApp from './useLightwellApp';
 import { withHorizontalSubnav } from './layoutUtils';
 import './Lightwell.scss';
 
@@ -26,6 +27,7 @@ export type LightwellProps = {
 // TODO: Temporary layout for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
 const Lightwell = ({ Footer }: LightwellProps) => {
   useLightwellRouteSetup();
+  const [lightwellApp, lightwellAppError] = useLightwellApp();
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
@@ -71,6 +73,11 @@ const Lightwell = ({ Footer }: LightwellProps) => {
       focusDrawer();
     }
   }, [isNotificationsDrawerExpanded]);
+
+  // Only show the standalone loader while the remote is pending; let ScalprumComponent handle errors and retries.
+  if (!lightwellApp && !lightwellAppError) {
+    return LightwellLoadingFallback;
+  }
 
   return (
     <div id="chrome-app-render-root" className="chr-m-footer-after-page">
