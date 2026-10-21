@@ -4,7 +4,7 @@ import themeBootstrap from '../config/theme-bootstrap';
 import { THEME_STORAGE_KEY } from './utils/consts';
 
 const templates = ['index.ejs', 'indexRes.ejs'] as const;
-const lightwellOnlyClasses = ['pf-v6-theme-glass'];
+const lightwellOnlyClasses = ['pf-v6-theme-glass', 'lightwell-v1-theme'];
 const feltClass = 'pf-v6-theme-felt';
 
 const getBootstrapScript = (template: string): string => {
@@ -29,8 +29,8 @@ describe.each(templates)('initial theme bootstrap in %s', (templateName) => {
     localStorage.clear();
   });
 
-  it('applies Felt theme on all routes before PF CSS loads', () => {
-    window.history.replaceState({}, '', '/insights/dashboard');
+  it.each(['/insights/dashboard', '/lightwell-preview'])('applies only Felt theme on %s before PF CSS loads', (pathname) => {
+    window.history.replaceState({}, '', pathname);
 
     runThemeBootstrap(templateName);
 
