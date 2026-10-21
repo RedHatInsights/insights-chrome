@@ -17,3 +17,13 @@ html.lightwell-v1-theme {
     background-color: #000000;
   }
 }
+
+// The initial Lightwell spinner sits directly on the atmosphere, without
+// PatternFly's default main content card.
+.chr-c-page--lightwell-placeholder > .pf-v6-c-page__main-container {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+}

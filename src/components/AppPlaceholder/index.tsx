@@ -20,7 +20,7 @@ const AppPlaceholder = () => {
   return (
     <MemoryRouter>
       <Page
-        className="chr-c-page"
+        className={`chr-c-page${bundle === LIGHTWELL_BUNDLE_ID ? ' chr-c-page--lightwell-placeholder' : ''}`}
         masthead={
           <Masthead className="chr-c-masthead">
             <MastheadMain className="pf-v6-u-pl-lg">
