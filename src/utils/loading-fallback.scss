@@ -1,3 +1,20 @@
 .chr-c-loading-fallback {
   min-height: 100%;
 }
+
+.chr-c-lightwell-loading {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  // Reserve the masthead, breadcrumb section, and Lightwell main-column gap.
+  padding-block-start: calc(var(--pf-v6-c-masthead__content--MinHeight, 48px) + 40px + var(--pf-t--global--spacer--lg, 24px));
+  align-items: center;
+  justify-content: center;
+}
+
+// Route fallbacks sit below shell banners; standalone AppPlaceholder fallbacks retain 100vh.
+.chr-c-shell > .chr-c-lightwell-loading {
+  flex: 1 1 0;
+  min-height: 0;
+}

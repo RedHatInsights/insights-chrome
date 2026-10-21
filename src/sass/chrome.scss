@@ -52,17 +52,6 @@ aside {
   min-height: 0;
 }
 
-.chr-c-lightwell-loading {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-  box-sizing: border-box;
-  // Reserve the masthead, breadcrumb section, and Lightwell main-column gap.
-  padding-block-start: calc(var(--pf-v6-c-masthead__content--MinHeight, 48px) + 40px + var(--pf-t--global--spacer--lg, 24px));
-  align-items: center;
-  justify-content: center;
-}
-
 .pf-v6-c-page.chr-c-page {
   .pf-v6-c-page__sidebar {
     border-top-style: solid;

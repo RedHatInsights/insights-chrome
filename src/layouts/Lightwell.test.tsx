@@ -163,6 +163,15 @@ describe('Lightwell', () => {
     expect(container.querySelector('.chr-c-lightwell-loading')).toBeNull();
   });
 
+  it('should show the standalone loader while the Lightwell module is pending', () => {
+    mockUseLightwellApp.mockReturnValue([undefined, undefined]);
+
+    const { container } = renderLightwell();
+
+    expect(container.querySelector('.chr-c-lightwell-loading')).toBeTruthy();
+    expect(container.querySelector('#chrome-app-render-root')).toBeNull();
+  });
+
   it('should render the footer after the page, outside the page card', () => {
     const { container } = renderLightwell();
     const root = container.querySelector('#chrome-app-render-root');
