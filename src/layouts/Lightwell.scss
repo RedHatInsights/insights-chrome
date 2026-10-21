@@ -19,3 +19,53 @@
     --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: min-content 1fr;
   }
 }
+
+// Match content-sources-frontend/src/kit/lightwell.overrides.css and
+// components/components.config.css before the federated app stylesheet arrives.
+.pf-v6-c-page.chr-c-page--lightwell.pf-m-plain {
+  --lw-base--page--inline-padding: var(--pf-t--global--spacer--lg);
+  --lw-base--page--block-padding: var(--pf-t--global--spacer--lg);
+
+  @media (min-width: 48rem) {
+    --lw-base--page--inline-padding: var(--pf-t--global--spacer--2xl);
+    --lw-base--page--block-padding: var(--pf-t--global--spacer--xl);
+  }
+
+  .pf-v6-c-page__main-container {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+    margin: 0;
+    padding-inline: var(--lw-base--page--inline-padding);
+    padding-block: var(--lw-base--page--block-padding);
+    background-color: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
+  }
+
+  .pf-v6-c-page__drawer {
+    flex: 1;
+    max-width: 138rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .pf-v6-c-page__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pf-t--global--spacer--lg);
+  }
+
+  .pf-v6-c-page__main-breadcrumb.chr-c-breadcrumbs > .pf-v6-u-display-flex,
+  .pf-v6-c-page__main-breadcrumb.chr-c-breadcrumbs .pf-v6-c-breadcrumb,
+  .pf-v6-c-breadcrumb__item {
+    padding-block: 0 !important;
+  }
+
+  .pf-v6-c-page__main-breadcrumb.chr-c-breadcrumbs > .pf-v6-u-display-flex {
+    padding-inline: var(--pf-t--global--spacer--md);
+    align-items: center;
+  }
+}
