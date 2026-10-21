@@ -14,7 +14,7 @@ const initializeTheme = function () {
     document.documentElement.classList.add('pf-v6-theme-felt');
 
     if (isLightwellRoute) {
-      document.documentElement.classList.add('pf-v6-theme-glass');
+      document.documentElement.classList.add('pf-v6-theme-glass', 'lightwell-v1-theme');
     }
 
     var savedTheme = localStorage.getItem('chrome:theme');
