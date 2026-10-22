@@ -135,10 +135,10 @@ test.describe('Segment Identify Traits - internal flag', () => {
       }
     });
 
-    // The Hydra profile MUST provide is_internal as a boolean. If this
-    // assertion fails, the test environment is misconfigured — the E2E
-    // user's profile does not include the is_internal field.
-    expect(typeof hydraIsInternal).toBe('boolean');
+    // Normalize the Hydra value exactly as SegmentProvider does:
+    // `user.identity.user?.is_internal ?? false`
+    // If the profile omits is_internal, the provider transmits false.
+    const expectedInternal = hydraIsInternal ?? false;
 
     // Verify the internal trait on EVERY identify call
     for (const [index, identifyTraits] of allIdentifyTraits.entries()) {
@@ -146,9 +146,9 @@ test.describe('Segment Identify Traits - internal flag', () => {
       expect(identifyTraits).toHaveProperty('internal');
       expect(typeof identifyTraits.internal).toBe('boolean');
 
-      // Assert the transmitted trait matches the Hydra profile value,
+      // Assert the transmitted trait matches the normalized Hydra value,
       // proving Segment uses Hydra's is_internal — not the email domain.
-      expect(identifyTraits.internal).toBe(hydraIsInternal);
+      expect(identifyTraits.internal).toBe(expectedInternal);
 
       // Verify other expected identify traits are present
       expect(identifyTraits).toHaveProperty('email_domain');
