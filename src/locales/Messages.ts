@@ -703,6 +703,11 @@ export default defineMessages({
     description: 'Label for feature flags service',
     defaultMessage: 'Feature Flags',
   },
+  degradedServiceQuickstarts: {
+    id: 'degradedServiceQuickstarts',
+    description: 'Label for quickstarts / learning-resources runtime',
+    defaultMessage: 'Quick starts',
+  },
   degradedServiceNavigation: {
     id: 'degradedServiceNavigation',
     description: 'Combined label for degraded bundle navigation and service catalog visibility or loading',
