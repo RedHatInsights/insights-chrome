@@ -23,6 +23,7 @@ import {
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
+const INTERCOM_HASH_REQUEST_TIMEOUT_MS = 10_000;
 
 const KEY_FALLBACK = {
   prod: 'nm7VsnYsBVJ9MqjaVInft69pAkhCXq9Q',
@@ -171,6 +172,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           // the identifier will change based on the DDIS mapping
           app: activeModule,
         },
+        timeout: INTERCOM_HASH_REQUEST_TIMEOUT_MS,
       });
       // FIXME: remove after API is in prod fallback for legacy API
       if (typeof data.data === 'string') {

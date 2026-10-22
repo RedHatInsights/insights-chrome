@@ -75,7 +75,24 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>,
   const sendPageEvent = useCallback(
     // prevent sending the page event on instant redirects etc
     debounce(async (pathname: string, search: string, sequence: number) => {
+      const isCurrentLocation = () =>
+        navigationSequence.current === sequence && currentLocation.current.pathname === pathname && currentLocation.current.search === search;
+
+      if (!isCurrentLocation()) {
+        return;
+      }
+
       await waitForRenderedThemeInitialization();
+      if (!isCurrentLocation()) {
+        return;
+      }
+
+      try {
+        window?.sendCustomEvent?.('pageBottom');
+      } catch (error) {
+        console.error('unable to send page event', error);
+      }
+
       let identityAtSend = identityState?.current ?? DEFAULT_IDENTITY_STATE;
       while (true) {
         await identityAtSend.promise;
@@ -84,7 +101,7 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>,
         }
         identityAtSend = identityState.current ?? DEFAULT_IDENTITY_STATE;
       }
-      if (navigationSequence.current !== sequence || currentLocation.current.pathname !== pathname || currentLocation.current.search !== search) {
+      if (!isCurrentLocation()) {
         return;
       }
       const locationKey = getPageEventLocationKey(pathname, search);
@@ -93,7 +110,6 @@ const usePageEvent = (analytics: MutableRefObject<AnalyticsBrowser | undefined>,
         if (!currentAnalytics) {
           return;
         }
-        window?.sendCustomEvent?.('pageBottom');
         if (lastSentLocation.current === locationKey) {
           return;
         }

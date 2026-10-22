@@ -214,6 +214,28 @@ describe('SegmentProvider', () => {
     });
   });
 
+  it('continues Segment initialization when the Intercom hash request times out', async () => {
+    mockIntercomGet.mockRejectedValueOnce(new Error('timeout'));
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.any(Object), expect.any(Object));
+      expect(mockPage).toHaveBeenCalled();
+    });
+
+    expect(mockIntercomGet).toHaveBeenCalledWith('/api/chrome-service/v1/user/intercom', {
+      params: { app: 'test-app' },
+      timeout: 10_000,
+    });
+    expect(mockIdentify.mock.calls[0][2].context).toEqual({ groupId: 'org-123' });
+  });
+
   it('uses system defaults when Chrome system theme settings are enabled', async () => {
     mockFlags.add('platform.chrome.dark-mode');
     mockFlags.add('platform.chrome.dark-mode_system');

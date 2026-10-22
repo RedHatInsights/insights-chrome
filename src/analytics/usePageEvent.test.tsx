@@ -85,6 +85,7 @@ describe('usePageEvent theme telemetry', () => {
 
     act(() => jest.advanceTimersByTime(500));
     expect(mockPage).not.toHaveBeenCalled();
+    expect(mockSendCustomEvent).not.toHaveBeenCalled();
 
     document.documentElement.classList.remove('pf-v6-theme-dark', 'pf-v6-theme-glass');
     document.documentElement.classList.add('pf-v6-theme-high-contrast');
@@ -196,6 +197,36 @@ describe('usePageEvent theme telemetry', () => {
       await Promise.resolve();
     });
 
+    expect(mockPage).not.toHaveBeenCalled();
+  });
+
+  it('sends pageBottom notifications while Segment identity initialization is pending', async () => {
+    const identityReady = new Promise<void>(() => undefined);
+    const initialization: PageEventInitialization = {
+      identityState: { current: { promise: identityReady } },
+      lastSentLocation: { current: undefined },
+    };
+    const { rerender } = render(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockSendCustomEvent).toHaveBeenCalledTimes(1);
+    expect(mockSendCustomEvent).toHaveBeenCalledWith('pageBottom');
+    expect(mockPage).not.toHaveBeenCalled();
+
+    mockLocation.pathname = '/next';
+    rerender(<TestPageEvents user={makeUser('org-123')} initialization={initialization} />);
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockSendCustomEvent).toHaveBeenCalledTimes(2);
     expect(mockPage).not.toHaveBeenCalled();
   });
 
