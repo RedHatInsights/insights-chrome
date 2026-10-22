@@ -17,8 +17,8 @@ import { clearCachedFeatureFlags } from '../helpers/feature-flags';
 
 // How long to wait for the first Segment request after navigation.
 const SEGMENT_REQUEST_TIMEOUT = 30000;
-// Extra time for additional batched events to arrive.
-const EVENT_BATCH_DELAY = 2000;
+// Maximum time to poll for an identify payload in captured requests.
+const IDENTIFY_POLL_TIMEOUT = 10000;
 
 interface SegmentIdentifyPayload {
   type?: string;
@@ -29,6 +29,33 @@ interface SegmentIdentifyPayload {
 interface SegmentBatchPayload {
   batch?: SegmentIdentifyPayload[];
   [key: string]: unknown;
+}
+
+/**
+ * Extract all identify traits from captured Segment requests.
+ */
+function extractIdentifyTraits(segmentRequests: { url: string; body: unknown }[]): Record<string, unknown>[] {
+  const traits: Record<string, unknown>[] = [];
+
+  for (const req of segmentRequests) {
+    const payload = req.body as SegmentIdentifyPayload & SegmentBatchPayload;
+
+    // Direct identify endpoint (/i)
+    if (payload.type === 'identify' && payload.traits) {
+      traits.push(payload.traits);
+    }
+
+    // Batch endpoint (/b) — look inside the batch array
+    if (Array.isArray(payload.batch)) {
+      for (const item of payload.batch) {
+        if (item.type === 'identify' && item.traits) {
+          traits.push(item.traits);
+        }
+      }
+    }
+  }
+
+  return traits;
 }
 
 test.describe('Segment Identify Traits - internal flag', () => {
@@ -75,8 +102,16 @@ test.describe('Segment Identify Traits - internal flag', () => {
       page.goto('/insights/dashboard'),
     ]);
 
-    // Allow event batching to complete
-    await page.waitForTimeout(EVENT_BATCH_DELAY);
+    // Poll for an identify payload instead of a fixed delay. This avoids
+    // flaky failures when the identify request arrives after other Segment
+    // requests (e.g. a connections POST that completes first).
+    await expect
+      .poll(() => extractIdentifyTraits(segmentRequests).length, {
+        message: 'Expected at least one identify payload in captured Segment requests',
+        timeout: IDENTIFY_POLL_TIMEOUT,
+        intervals: [250, 500, 1000],
+      })
+      .toBeGreaterThan(0);
 
     expect(segmentRequests.length).toBeGreaterThan(0);
 
@@ -85,45 +120,38 @@ test.describe('Segment Identify Traits - internal flag', () => {
       throw new Error(`Unexpected non-JSON POST(s) to /connections API:\n${details}`);
     }
 
-    // Collect ALL identify calls across every captured request.
-    // Segment SDK may send identify data via:
-    //   - POST /connections/api/v1/i  (direct identify call)
-    //   - POST /connections/api/v1/b  (batch containing type:"identify")
-    const allIdentifyTraits: Record<string, unknown>[] = [];
-
-    for (const req of segmentRequests) {
-      const payload = req.body as SegmentIdentifyPayload & SegmentBatchPayload;
-
-      // Direct identify endpoint (/i)
-      if (payload.type === 'identify' && payload.traits) {
-        allIdentifyTraits.push(payload.traits);
-      }
-
-      // Batch endpoint (/b) — look inside the batch array
-      if (Array.isArray(payload.batch)) {
-        for (const item of payload.batch) {
-          if (item.type === 'identify' && item.traits) {
-            allIdentifyTraits.push(item.traits);
-          }
-        }
-      }
-    }
-
-    // At least one identify call must have been made
+    const allIdentifyTraits = extractIdentifyTraits(segmentRequests);
     expect(allIdentifyTraits.length).toBeGreaterThan(0);
 
-    // Verify the internal trait is a boolean on EVERY identify call
+    // Capture the authenticated user's is_internal value from the Hydra
+    // profile via Chrome API. This is the source of truth that
+    // SegmentProvider should use for the "internal" trait.
+    const hydraIsInternal = await page.evaluate(async () => {
+      try {
+        const user = await (window as any).insights?.chrome?.auth?.getUser();
+        return user?.identity?.user?.is_internal;
+      } catch {
+        return undefined;
+      }
+    });
+
+    // Verify the internal trait on EVERY identify call
     for (const [index, identifyTraits] of allIdentifyTraits.entries()) {
       // internal MUST be present and be a boolean
       expect(identifyTraits).toHaveProperty('internal');
       expect(typeof identifyTraits.internal).toBe('boolean');
+
+      // When the Hydra profile value is available, assert it matches
+      // the transmitted trait — proving Segment uses Hydra, not email domain.
+      if (typeof hydraIsInternal === 'boolean') {
+        expect(identifyTraits.internal).toBe(hydraIsInternal);
+      }
 
       // Verify other expected identify traits are present
       expect(identifyTraits).toHaveProperty('email_domain');
       expect(identifyTraits).toHaveProperty('cloud_user_id');
 
       if (allIdentifyTraits.length > 1) {
-        // eslint-disable-next-line no-console
         console.log(`Identify call ${index + 1}/${allIdentifyTraits.length} — internal: ${identifyTraits.internal}`);
       }
     }
