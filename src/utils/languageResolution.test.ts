@@ -1,132 +1,114 @@
-import { buildAccountConsoleUrl, normalizeLanguageTag, resolveLanguage } from './languageResolution';
+import { getNotificationCase, resolveLocale } from './languageResolution';
 
-describe('languageResolution', () => {
-  describe('normalizeLanguageTag', () => {
-    it('normalizes the wild rh_locale cookie variants', () => {
-      expect(normalizeLanguageTag('zh_CN')).toBe('zh-CN');
-      expect(normalizeLanguageTag('zh_hans')).toBe('zh-CN');
-      expect(normalizeLanguageTag('zh-cn')).toBe('zh-CN');
-      expect(normalizeLanguageTag('zh-hans')).toBe('zh-CN');
-      expect(normalizeLanguageTag('zhcn')).toBe('zh-CN');
-      expect(normalizeLanguageTag('en_us')).toBe('en');
-      expect(normalizeLanguageTag('en-GB')).toBe('en');
+describe('resolveLocale', () => {
+  it('returns supported profile locales verbatim', () => {
+    expect(resolveLocale('en')).toBe('en');
+    expect(resolveLocale('fr')).toBe('fr');
+    expect(resolveLocale('ja')).toBe('ja');
+    expect(resolveLocale('ko')).toBe('ko');
+    expect(resolveLocale('zh-CN')).toBe('zh-CN');
+  });
+
+  it('returns English for unsupported profile locales', () => {
+    expect(resolveLocale('zh-TW')).toBe('en');
+    expect(resolveLocale('de')).toBe('en');
+    expect(resolveLocale('it')).toBe('en');
+    expect(resolveLocale('pt-BR')).toBe('en');
+    expect(resolveLocale('fr-FR')).toBe('en');
+  });
+
+  it('returns English when the profile locale is missing', () => {
+    expect(resolveLocale(undefined)).toBe('en');
+    expect(resolveLocale('')).toBe('en');
+    expect(resolveLocale('en_US')).toBe('en');
+  });
+});
+
+describe('getNotificationCase', () => {
+  describe('case 1: SSO set, browser agrees', () => {
+    it('returns none when profile and browser match exactly', () => {
+      expect(getNotificationCase('fr', 'fr')).toEqual({ type: 'none' });
+      expect(getNotificationCase('zh-CN', 'zh-CN')).toEqual({ type: 'none' });
     });
 
-    it('splits Chinese by script: Hant variants are distinct from Hans', () => {
-      expect(normalizeLanguageTag('zh-TW')).toBe('zh-Hant');
-      expect(normalizeLanguageTag('zh_tw')).toBe('zh-Hant');
-      expect(normalizeLanguageTag('zh-Hant')).toBe('zh-Hant');
-      expect(normalizeLanguageTag('zh-HK')).toBe('zh-Hant');
-      expect(normalizeLanguageTag('zh-MO')).toBe('zh-Hant');
-      expect(normalizeLanguageTag('zh')).toBe('zh-CN');
-      expect(normalizeLanguageTag('zh-SG')).toBe('zh-CN');
+    it('returns none when profile and browser share the same base language', () => {
+      expect(getNotificationCase('fr', 'fr-FR')).toEqual({ type: 'none' });
+      expect(getNotificationCase('en', 'en-GB')).toEqual({ type: 'none' });
     });
 
-    it('returns undefined for empty input', () => {
-      expect(normalizeLanguageTag(undefined)).toBeUndefined();
-      expect(normalizeLanguageTag('')).toBeUndefined();
-    });
-
-    it('keeps unsupported bases for mismatch reporting', () => {
-      expect(normalizeLanguageTag('it')).toBe('it');
-      expect(normalizeLanguageTag('pt-BR')).toBe('pt');
+    it('returns none when both agree on an unsupported language', () => {
+      expect(getNotificationCase('zh-TW', 'zh-TW')).toEqual({ type: 'none' });
+      expect(getNotificationCase('de', 'de-DE')).toEqual({ type: 'none' });
     });
   });
 
-  describe('resolveLanguage - detection cascade', () => {
-    it('prefers the SSO profile locale', () => {
-      expect(resolveLanguage({ profileLocale: 'fr', cookieLocale: 'ko', navigatorLanguage: 'ja' })).toMatchObject({
-        locale: 'fr',
-        source: 'sso',
-        mismatch: false,
-      });
+  describe('case 2: SSO set, browser disagrees, browser supported', () => {
+    it('returns discovery when the browser language is supported', () => {
+      expect(getNotificationCase('en', 'fr')).toEqual({ type: 'discovery', browserLanguage: 'fr' });
+      expect(getNotificationCase('en', 'ja')).toEqual({ type: 'discovery', browserLanguage: 'ja' });
+      expect(getNotificationCase('ja', 'ko')).toEqual({ type: 'discovery', browserLanguage: 'ko' });
     });
 
-    it('falls back to navigator when the profile is unset', () => {
-      expect(resolveLanguage({ navigatorLanguage: 'ja' })).toMatchObject({ locale: 'ja', source: 'navigator' });
+    it('returns discovery for regional browser variants of supported languages', () => {
+      expect(getNotificationCase('en', 'fr-FR')).toEqual({ type: 'discovery', browserLanguage: 'fr-FR' });
+      expect(getNotificationCase('en', 'zh-CN')).toEqual({ type: 'discovery', browserLanguage: 'zh-CN' });
     });
 
-    it('defaults to English with no mismatch when nothing is set', () => {
-      expect(resolveLanguage({})).toEqual({
-        locale: 'en',
-        preference: undefined,
-        source: 'default',
-        mismatch: false,
-        nudgeCandidate: false,
-      });
+    it('does not fire discovery when the profile is already the browser language', () => {
+      expect(getNotificationCase('fr', 'fr')).toEqual({ type: 'none' });
+      expect(getNotificationCase('fr', 'fr-FR')).toEqual({ type: 'none' });
     });
   });
 
-  describe('resolveLanguage - negotiation', () => {
-    it('strips regional variants to the base language', () => {
-      expect(resolveLanguage({ profileLocale: 'fr-CA' })).toMatchObject({ locale: 'fr', mismatch: false });
-      expect(resolveLanguage({ profileLocale: 'en-GB' })).toMatchObject({ locale: 'en', mismatch: false });
+  describe('case 3: SSO set, browser disagrees, browser not supported', () => {
+    it('returns none when the browser language has no catalog', () => {
+      expect(getNotificationCase('fr', 'de')).toEqual({ type: 'none' });
+      expect(getNotificationCase('fr', 'it')).toEqual({ type: 'none' });
+      expect(getNotificationCase('en', 'pt-BR')).toEqual({ type: 'none' });
     });
 
-    it('resolves Hans Chinese variants to the simplified catalog', () => {
-      expect(resolveLanguage({ profileLocale: 'zh' })).toMatchObject({ locale: 'zh-CN', mismatch: false });
-      expect(resolveLanguage({ navigatorLanguage: 'zh_hans' })).toMatchObject({ locale: 'zh-CN', mismatch: false });
-      expect(resolveLanguage({ profileLocale: 'zh-SG' })).toMatchObject({ locale: 'zh-CN', mismatch: false });
-    });
-
-    it('treats Hant Chinese variants as unsupported: English fallback, no silent script substitution', () => {
-      // product decision (Oct 2026, per UX): zh-Hans is not the official writing
-      // system for the Taiwan region — the mismatch notification gives the user
-      // an informed choice instead of deciding for them
-      expect(resolveLanguage({ profileLocale: 'zh-TW' })).toMatchObject({ locale: 'en', preference: 'zh-TW', mismatch: true });
-      expect(resolveLanguage({ profileLocale: 'zh-Hant' })).toMatchObject({ locale: 'en', mismatch: true });
-      expect(resolveLanguage({ navigatorLanguage: 'zh-HK' })).toMatchObject({ locale: 'en', mismatch: true });
-    });
-
-    it('flags a mismatch for unsupported preferences', () => {
-      expect(resolveLanguage({ profileLocale: 'it' })).toMatchObject({
-        locale: 'en',
-        preference: 'it',
-        mismatch: true,
-      });
-      expect(resolveLanguage({ profileLocale: 'pt-BR' })).toMatchObject({ locale: 'en', mismatch: true });
+    it('returns none when the browser language is Traditional Chinese', () => {
+      expect(getNotificationCase('zh-CN', 'zh-TW')).toEqual({ type: 'none' });
+      expect(getNotificationCase('zh-CN', 'zh-HK')).toEqual({ type: 'none' });
+      expect(getNotificationCase('en', 'zh-TW')).toEqual({ type: 'none' });
     });
   });
 
-  describe('resolveLanguage - discovery nudge', () => {
-    it('flags English SSO preference with a non-English browser', () => {
-      expect(resolveLanguage({ profileLocale: 'en', navigatorLanguage: 'it' })).toMatchObject({
-        locale: 'en',
-        nudgeCandidate: true,
-      });
+  describe('Keycloak default "en_US" (no locale set)', () => {
+    it('treats the default as English for agreement checks', () => {
+      expect(getNotificationCase('en_US', 'en')).toEqual({ type: 'none' });
+      expect(getNotificationCase('en_US', 'en-US')).toEqual({ type: 'none' });
     });
 
-    it('does not nudge when the browser is English', () => {
-      expect(resolveLanguage({ profileLocale: 'en', navigatorLanguage: 'en-US' })).toMatchObject({
-        nudgeCandidate: false,
-      });
+    it('fires discovery for non-English browsers when locale is the default', () => {
+      expect(getNotificationCase('en_US', 'fr')).toEqual({ type: 'discovery', browserLanguage: 'fr' });
+      expect(getNotificationCase('en_US', 'zh')).toEqual({ type: 'discovery', browserLanguage: 'zh' });
     });
 
-    it('does not nudge when the SSO preference is a supported non-English language', () => {
-      expect(resolveLanguage({ profileLocale: 'fr', navigatorLanguage: 'it' })).toMatchObject({
-        locale: 'fr',
-        nudgeCandidate: false,
-      });
-    });
-
-    it('does not nudge on a mismatch (the pinned notification covers that user)', () => {
-      expect(resolveLanguage({ profileLocale: 'it', navigatorLanguage: 'it' })).toMatchObject({
-        mismatch: true,
-        nudgeCandidate: false,
-      });
-    });
-
-    it('does not nudge when the browser locale is unknown', () => {
-      expect(resolveLanguage({ profileLocale: 'en' })).toMatchObject({ nudgeCandidate: false });
+    it('returns none for unsupported browsers when locale is the default', () => {
+      expect(getNotificationCase('en_US', 'de')).toEqual({ type: 'none' });
     });
   });
 
-  describe('buildAccountConsoleUrl', () => {
-    it('builds the referrer link with an encoded return URL', () => {
-      expect(buildAccountConsoleUrl('https://sso.stage.redhat.com/auth/', 'https://ci.foo.redhat.com/insights/?fromAccount=1')).toBe(
-        'https://sso.stage.redhat.com/auth/realms/redhat-external/account/?referrer=cloud-services&referrer_uri=' +
-          encodeURIComponent('https://ci.foo.redhat.com/insights/?fromAccount=1')
-      );
+  describe('Chinese script edge cases', () => {
+    it('zh-CN profile with zh browser agrees (both Simplified)', () => {
+      expect(getNotificationCase('zh-CN', 'zh')).toEqual({ type: 'none' });
+    });
+
+    it('zh-CN profile with zh-SG browser agrees (both Simplified)', () => {
+      expect(getNotificationCase('zh-CN', 'zh-SG')).toEqual({ type: 'none' });
+    });
+
+    it('en profile with zh browser fires discovery (zh maps to Simplified)', () => {
+      expect(getNotificationCase('en', 'zh')).toEqual({ type: 'discovery', browserLanguage: 'zh' });
+    });
+
+    it('en profile with zh-Hans browser fires discovery', () => {
+      expect(getNotificationCase('en', 'zh-Hans')).toEqual({ type: 'discovery', browserLanguage: 'zh-Hans' });
+    });
+
+    it('en profile with zh-Hant browser returns none (Traditional not supported)', () => {
+      expect(getNotificationCase('en', 'zh-Hant')).toEqual({ type: 'none' });
     });
   });
 });

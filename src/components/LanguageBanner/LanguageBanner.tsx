@@ -1,96 +1,91 @@
 import { useContext, useState } from 'react';
-import { useAtomValue } from 'jotai';
 import { Banner } from '@patternfly/react-core/dist/dynamic/components/Banner';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import GlobeIcon from '@patternfly/react-icons/dist/dynamic/icons/globe-icon';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { languageAtom } from '../../state/atoms/languageAtom';
 import { ACCOUNT_RETURN_PARAM } from '../../hooks/useLanguageResolution';
-import { buildAccountConsoleUrl, languageDisplayName } from '../../utils/languageResolution';
+import { buildAccountConsoleUrl, getNotificationCase, languageDisplayName, resolveLocale } from '../../utils/languageResolution';
 
 /**
- * Discovery-nudge dismissal flag. UX/discovery state, not preference state:
- * per-device and ephemeral by design (same tier as tours and onboarding hints),
- * so localStorage is the correct store. Re-shows on a new browser are acceptable.
+ * Discovery-nudge dismissal flag. Per-device and ephemeral by design,
+ * so localStorage is the correct store.
  */
 const NUDGE_SEEN_KEY = 'chrome:language:nudge-seen';
 
 /**
- * Language notifications for the detection flow (spike branch). Two variants
- * of the same Banner treatment (matching DegradedStateBanner in the shell):
+ * Language notification component. Reads the SSO profile locale and
+ * navigator.language directly (per the ADR: the notification's logic is
+ * internal to this component). Does not go through the languageAtom.
  *
- * - Pinned mismatch notification: the user's SSO language is not supported,
- *   the console falls back to English. State-derived: it stays visible exactly
- *   as long as the mismatch is real and disappears by itself once the profile
- *   changes. No dismissal, no stored state — PatternFly's Banner has none by
- *   design, which is the semantic match for a persistent system state.
+ * Two notification states:
  *
- * - Discovery nudge (one-time): the SSO language is English (likely a
- *   registration default) while the browser says otherwise. Same banner with
- *   a close button; dismissal stores the localStorage bit.
+ * - Discovery nudge (one-time): the SSO locale differs from the browser
+ *   language and the browser language is supported. "The console is
+ *   available in [browser language]."
+ * - No notification: browser agrees with profile, or browser language is
+ *   not supported.
  *
- * Both are English-only by construction: their audience is by definition
- * users whose language we do not render. The CTA targets the SSO account
- * console for this spike (the settings page does not exist yet); the referrer
- * mechanism brings the user back with the ACCOUNT_RETURN_PARAM that triggers
- * the token refresh.
+ * Keycloak defaults the profile locale to "en_US" when no choice is made,
+ * so a user with a non-English browser and a default profile gets the
+ * discovery nudge — the multilingual invitation scenario (no profile
+ * locale at all) does not occur in practice.
+ *
+ * Below the notification, a debug line shows the resolved rendering locale
+ * (spike only, not part of the ADR).
  */
 export const LanguageBanner = () => {
-  const language = useAtomValue(languageAtom);
-  const { ssoUrl } = useContext(ChromeAuthContext);
+  const { ssoUrl, user } = useContext(ChromeAuthContext);
   const [nudgeDismissed, setNudgeDismissed] = useState(() => localStorage.getItem(NUDGE_SEEN_KEY) === 'true');
 
-  if (!language.mismatch && (!language.nudgeCandidate || nudgeDismissed)) {
-    return null;
-  }
+  const profileLocale = user?.identity?.user?.locale as string | undefined;
+  const notification = getNotificationCase(profileLocale, navigator.language);
+  const renderingLocale = resolveLocale(profileLocale);
+
+  const showNotification = notification.type === 'discovery' && !nudgeDismissed;
 
   const returnTo = `${window.location.origin}${window.location.pathname}?${ACCOUNT_RETURN_PARAM}=1`;
   const accountUrl = buildAccountConsoleUrl(ssoUrl, returnTo);
 
+  const dismissNudge = () => {
+    localStorage.setItem(NUDGE_SEEN_KEY, 'true');
+    setNudgeDismissed(true);
+  };
+
   return (
-    <Banner
-      status="info"
-      screenReaderText={language.mismatch ? 'Language not available, console shown in English' : 'Console available in multiple languages'}
-      data-ouia-component-id={language.mismatch ? 'LanguageMismatchBanner' : 'LanguageNudgeBanner'}
-    >
-      <div className="pf-v6-u-display-flex pf-v6-u-align-items-center">
-        <div className="pf-v6-u-flex-grow-1 pf-v6-u-text-align-center">
-          {language.mismatch ? (
-            <>
-              <GlobeIcon /> Your language ({languageDisplayName(language.preference)}) isn&apos;t available in the console yet — the console is shown in
-              English.{' '}
-            </>
-          ) : (
-            <>
-              <GlobeIcon /> The console is available in multiple languages.{' '}
-            </>
-          )}
-          <Button
-            variant="link"
-            isInline
-            component="a"
-            href={accountUrl}
-            data-ouia-component-id={language.mismatch ? 'LanguageMismatchLink' : 'LanguageNudgeLink'}
-          >
-            Learn about the supported languages
-          </Button>
-        </div>
-        {!language.mismatch && (
-          <Button
-            variant="plain"
-            aria-label="Dismiss language notification"
-            data-ouia-component-id="LanguageNudgeClose"
-            onClick={() => {
-              localStorage.setItem(NUDGE_SEEN_KEY, 'true');
-              setNudgeDismissed(true);
-            }}
-          >
-            <TimesIcon />
-          </Button>
-        )}
+    <>
+      {showNotification && (
+        <Banner status="info" screenReaderText="Console available in multiple languages" data-ouia-component-id="LanguageNotificationBanner">
+          <div className="pf-v6-u-display-flex pf-v6-u-align-items-center">
+            <div className="pf-v6-u-flex-grow-1 pf-v6-u-text-align-center">
+              <GlobeIcon /> The console is available in {languageDisplayName(notification.browserLanguage)}.{' '}
+              <Button variant="link" isInline component="a" href={accountUrl} data-ouia-component-id="LanguageNotificationLink">
+                Choose your language
+              </Button>
+            </div>
+            <Button
+              variant="plain"
+              icon={<TimesIcon />}
+              onClick={dismissNudge}
+              aria-label="Dismiss"
+              data-ouia-component-id="LanguageNotificationDismiss"
+            />
+          </div>
+        </Banner>
+      )}
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '4px 0',
+          fontSize: '11px',
+          color: 'var(--pf-v6-c-text-color--m-subtle, #6a6e73)',
+          fontFamily: 'monospace',
+        }}
+      >
+        [spike] profile: {profileLocale ?? 'undefined'} | browser: {navigator.language} | rendering: {renderingLocale} | notification: {notification.type}
+        {notification.type === 'discovery' ? ` (${notification.browserLanguage})` : ''}
       </div>
-    </Banner>
+    </>
   );
 };
 
