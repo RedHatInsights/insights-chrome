@@ -200,7 +200,10 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     });
     setUnleashClient(unleashClient);
     return unleashClient;
-  }, [orgId, userId, accountNumber, email, hasUser, isPreview]);
+    // isPreview is intentionally excluded — Preview changes update context on
+    // the existing client via releaseAtom.applyPreviewSideEffects so that the
+    // React FlagProvider stays connected to the same client instance.
+  }, [orgId, userId, accountNumber, email, hasUser]);
 
   return (
     <FlagProvider unleashClient={client} startClient={false} stopClient={false}>
