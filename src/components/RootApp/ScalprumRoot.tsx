@@ -240,9 +240,9 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       addNavListener,
       deleteNavListener,
       addWsEventListener,
-      language: language.locale,
+      language,
     });
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, language.locale]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, language]);
 
   if (!mutableChromeApi.current) {
     return null;

@@ -1,17 +1,11 @@
 import { atom } from 'jotai';
-import { ResolvedLanguage } from '../../utils/languageResolution';
+import { SupportedLanguage } from '../../utils/languageResolution';
 
 /**
- * Resolved language state for the language detection flow (spike branch).
- * Written by useLanguageResolution, read by the LanguageBanner and exposed
- * on the chrome API as `chrome.language`.
+ * The rendering locale. Written by useLanguageResolution from the SSO profile,
+ * read by the chrome API as `chrome.language` and by the IntlProvider in
+ * bootstrap. This is the entire state: no mismatch flag, no nudge state,
+ * no source tracking. The notification reads the profile and navigator
+ * directly and does not go through this atom.
  */
-export const initialLanguageState: ResolvedLanguage = {
-  locale: 'en',
-  preference: undefined,
-  source: 'default',
-  mismatch: false,
-  nudgeCandidate: false,
-};
-
-export const languageAtom = atom<ResolvedLanguage>(initialLanguageState);
+export const languageAtom = atom<SupportedLanguage>('en');
