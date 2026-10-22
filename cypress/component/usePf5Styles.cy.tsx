@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
@@ -8,7 +9,13 @@ import usePf5Styles from '../../src/hooks/usePf5Styles';
 import userFixture from '../fixtures/testUser.json';
 
 // Test component that uses the hook and allows us to control behavior
-const TestComponent = ({ testId = 'test-component' }: { testId?: string }) => {
+const TestComponent = ({ testId = 'test-component', route = '/' }: { testId?: string; route?: string }) => (
+  <MemoryRouter initialEntries={[route]}>
+    <StylesComponent testId={testId} />
+  </MemoryRouter>
+);
+
+const StylesComponent = ({ testId }: { testId: string }) => {
   usePf5Styles();
   return <div data-cy={testId}>Test Component Using usePf5Styles</div>;
 };
@@ -87,7 +94,7 @@ describe('usePf5Styles Hook', () => {
     });
   });
 
-  const mountWithFeatureFlag = (flagEnabled: boolean) => {
+  const mountWithFeatureFlag = (flagEnabled: boolean, route = '/') => {
     // Set up feature flag mock
     cy.intercept('/api/featureflags/v0/client/metrics', {
       statusCode: 200,
@@ -135,7 +142,7 @@ describe('usePf5Styles Hook', () => {
       <ChromeAuthContext.Provider value={mockAuthContext}>
         <JotaiProvider>
           <FeatureFlagsProvider>
-            <TestComponent />
+            <TestComponent route={route} />
           </FeatureFlagsProvider>
         </JotaiProvider>
       </ChromeAuthContext.Provider>
@@ -156,6 +163,12 @@ describe('usePf5Styles Hook', () => {
       cy.wait('@featureFlags');
       expectPf5StylesheetToNotExist();
     });
+
+    it('should not inject the legacy stylesheet on Lightwell routes', () => {
+      mountWithFeatureFlag(true, '/lightwell/repositories');
+      cy.wait('@featureFlags');
+      expectPf5StylesheetToNotExist();
+    });
   });
 
   describe('When localStorage override is set to "true"', () => {
@@ -173,6 +186,12 @@ describe('usePf5Styles Hook', () => {
       mountWithFeatureFlag(true);
       cy.wait('@featureFlags');
       expectPf5StylesheetToExist();
+    });
+
+    it('should not inject the legacy stylesheet on Lightwell routes despite a local override', () => {
+      mountWithFeatureFlag(false, '/lightwell');
+      cy.wait('@featureFlags');
+      expectPf5StylesheetToNotExist();
     });
   });
 

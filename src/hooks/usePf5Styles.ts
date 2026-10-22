@@ -1,5 +1,8 @@
 import { useFlag } from '@unleash/proxy-client-react';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { LIGHTWELL_BUNDLE_ID } from '../utils/common';
+import { getUrl } from './useBundle';
 
 /**
  * PF 5 and PF6 global font family has a conflict.
@@ -26,6 +29,11 @@ function applyFontFamilyOverride() {
 
 function usePf5Styles() {
   const flagEnabled = useFlag('platform.chrome.pf5');
+  // The route subscription is required to disable PF5 immediately during SPA navigation into
+  // Lightwell, including when a local PF5 override is set. It re-renders the shared Chrome root
+  // for every tenant on SPA navigation; remove this hook when PF5 styles are removed.
+  const { pathname } = useLocation();
+  const isLightwellRoute = getUrl('bundle', pathname) === LIGHTWELL_BUNDLE_ID;
   const stylesOverride = localStorage.getItem('@chrome/pf-5-enabled');
   let isEnabled = false;
   if (stylesOverride === 'true' || stylesOverride === 'false') {
@@ -33,6 +41,7 @@ function usePf5Styles() {
   } else {
     isEnabled = flagEnabled;
   }
+  isEnabled = isEnabled && !isLightwellRoute;
   useEffect(() => {
     let link: HTMLLinkElement;
     let overrideStyleElement: HTMLStyleElement | undefined;
