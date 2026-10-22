@@ -10,7 +10,6 @@ import { mockFeatureFlags } from '../helpers/feature-flags';
  */
 
 const SEGMENT_REQUEST_TIMEOUT = 30000;
-const EVENT_BATCH_DELAY = 2000;
 
 interface SegmentEvent {
   type?: string;
@@ -84,7 +83,11 @@ test.describe('Segment theme telemetry', () => {
       }),
       page.goto('/insights/dashboard'),
     ]);
-    await page.waitForTimeout(EVENT_BATCH_DELAY);
+    await expect
+      .poll(() => getEvents(segmentRequests).some((event) => event.type === 'identify' && event.traits?.colorSchemeSetting !== undefined), {
+        timeout: SEGMENT_REQUEST_TIMEOUT,
+      })
+      .toBe(true);
 
     expect(parseErrors).toEqual([]);
 
