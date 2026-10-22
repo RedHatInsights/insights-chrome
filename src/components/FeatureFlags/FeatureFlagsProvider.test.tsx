@@ -8,6 +8,12 @@ import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import FeatureFlagsProvider, { createFetchFeatureFlags } from './FeatureFlagsProvider';
 import { FEATURE_FLAGS_INITIAL_TIMEOUT_MS, FEATURE_FLAGS_REFRESH_TIMEOUT_MS, UNLEASH_ERROR_KEY, getUnleashClient } from './unleashClient';
 
+jest.mock('../../state/atoms/releaseAtom', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { atom } = require('jotai');
+  return { isPreviewAtom: atom(false) };
+});
+
 jest.mock('@sentry/react', () => ({
   ...jest.requireActual('@sentry/react'),
   captureException: jest.fn(),
@@ -271,6 +277,27 @@ describe('FeatureFlagsProvider outage lifecycle', () => {
       properties: { account_number: 'account-654', email: 'updated@example.com' },
     });
     await waitFor(() => expect(JSON.parse(localStorage.getItem('unleash:repository:org-654:user-987:repo') ?? '[]')).toEqual([cachedToggle]));
+  });
+
+  it('keeps the same client instance when Preview changes', async () => {
+    jest
+      .spyOn(window, 'fetch')
+      .mockImplementation((input) => Promise.resolve(requestPath(input) === FEATURE_FLAGS_PATH ? response(200, [cachedToggle]) : response(200)));
+    const store = createStore();
+    renderProvider(store);
+    await waitFor(() => expect(getUnleashClient().isReady()).toBe(true));
+    const initialClient = getUnleashClient();
+
+    // Toggle Preview via the mocked atom — the client must remain stable
+    // because FlagProvider keeps a ref to the initial client and does not
+    // adopt replacement unleashClient props.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { isPreviewAtom } = require('../../state/atoms/releaseAtom');
+    await act(async () => {
+      store.set(isPreviewAtom, true);
+    });
+
+    expect(getUnleashClient()).toBe(initialClient);
   });
 
   it('keeps toggles in memory only when the identity is incomplete', async () => {
