@@ -1,5 +1,15 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  AllQuickStartStates,
+  HelpTopic,
+  HelpTopicContainer,
+  HelpTopicContext,
+  QuickStart,
+  QuickStartCatalogPage,
+  QuickStartContainer,
+  QuickStartContext,
+} from '@patternfly/quickstarts';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { ScalprumComponent } from '@scalprum/react-core';
@@ -13,6 +23,7 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import { remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
 import { resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
+import { quickstartsRuntimeContextAtom } from '../../state/atoms/quickstartsRuntimeContextAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
@@ -222,5 +233,189 @@ describe('QuickstartsRuntimeMount', () => {
     renderMount('', <Probe />);
 
     expect(attachedDuringLayoutEffect).toBe(true);
+  });
+
+  describe('runtime context bridge', () => {
+    const runtimeQuickStarts: QuickStart[] = [
+      {
+        metadata: { name: 'runtime-qs-a' },
+        spec: { displayName: 'Runtime quickstart A', description: 'First runtime quickstart', icon: '', tasks: [{ title: 'Step 1' }] },
+      },
+      {
+        metadata: { name: 'runtime-qs-b' },
+        spec: { displayName: 'Runtime quickstart B', description: 'Second runtime quickstart', icon: '', tasks: [{ title: 'Step 1' }] },
+      },
+    ];
+    const runtimeHelpTopics: HelpTopic[] = [{ name: 'runtime-topic', title: 'Runtime topic', tags: [], content: 'Topic content' }];
+
+    /** Stand-in for LR's QuickstartsRuntime: owns its state and renders the real PF providers around `children`. */
+    const RuntimeWithProviders = ({
+      children,
+      onActiveQuickStartChanged,
+    }: {
+      children?: React.ReactNode;
+      onActiveQuickStartChanged?: (id: string) => void;
+    }) => {
+      const [activeQuickStartID, setActiveQuickStartID] = React.useState('');
+      const [allQuickStartStates, setAllQuickStartStates] = React.useState<AllQuickStartStates>({});
+      React.useEffect(() => {
+        onActiveQuickStartChanged?.(activeQuickStartID);
+      }, [activeQuickStartID, onActiveQuickStartChanged]);
+      return (
+        <QuickStartContainer
+          quickStarts={runtimeQuickStarts}
+          activeQuickStartID={activeQuickStartID}
+          setActiveQuickStartID={setActiveQuickStartID}
+          allQuickStartStates={allQuickStartStates}
+          setAllQuickStartStates={setAllQuickStartStates}
+          useQueryParams={false}
+        >
+          <HelpTopicContainer helpTopics={runtimeHelpTopics}>{children}</HelpTopicContainer>
+        </QuickStartContainer>
+      );
+    };
+
+    let setRemoteState: ((state: 'loading' | 'ready' | 'failed') => void) | undefined;
+    const originalScrollTo = Element.prototype.scrollTo;
+
+    beforeAll(() => {
+      // jsdom has no Element.scrollTo; the PF drawer calls it when a quickstart opens.
+      Element.prototype.scrollTo = jest.fn();
+    });
+
+    afterAll(() => {
+      Element.prototype.scrollTo = originalScrollTo;
+    });
+
+    beforeEach(() => {
+      mockedUseFlag.mockReturnValue(true);
+      setRemoteState = undefined;
+      MockedScalprumComponent.mockImplementation(
+        ({
+          children,
+          ErrorComponent,
+          onActiveQuickStartChanged,
+        }: {
+          children?: React.ReactNode;
+          ErrorComponent?: React.ReactNode;
+          onActiveQuickStartChanged?: (id: string) => void;
+        }) => {
+          const [state, setState] = React.useState<'loading' | 'ready' | 'failed'>('ready');
+          setRemoteState = setState;
+          if (state === 'failed') {
+            return <>{ErrorComponent}</>;
+          }
+          return (
+            <div data-testid="remote-runtime">
+              {state === 'ready' ? <RuntimeWithProviders onActiveQuickStartChanged={onActiveQuickStartChanged}>{children}</RuntimeWithProviders> : null}
+            </div>
+          );
+        }
+      );
+    });
+
+    const ContextProbe = () => {
+      const { allQuickStarts = [], activeQuickStartID } = React.useContext(QuickStartContext);
+      const { helpTopics = [] } = React.useContext(HelpTopicContext);
+      return (
+        <>
+          <span data-testid="probe-quickstarts">{allQuickStarts.map(({ metadata }) => metadata.name).join(',')}</span>
+          <span data-testid="probe-active">{activeQuickStartID}</span>
+          <span data-testid="probe-topics">{helpTopics.map(({ name }) => name).join(',')}</span>
+        </>
+      );
+    };
+
+    it('gives portalled chrome children the runtime QuickStartContext and HelpTopicContext', () => {
+      const { store } = renderMount('', <ContextProbe />);
+
+      expect(screen.getByTestId('remote-runtime')).toContainElement(screen.getByTestId('probe-quickstarts'));
+      expect(screen.getByTestId('probe-quickstarts')).toHaveTextContent('runtime-qs-a,runtime-qs-b');
+      expect(screen.getByTestId('probe-topics')).toHaveTextContent('runtime-topic');
+      expect(store.get(quickstartsRuntimeContextAtom)?.quickStart.allQuickStarts).toEqual(runtimeQuickStarts);
+    });
+
+    it('renders the runtime quickstarts in a catalog inside the console tree', () => {
+      renderMount('', <QuickStartCatalogPage showFilter={false} showTitle={false} />);
+
+      expect(screen.getByText('Runtime quickstart A')).toBeInTheDocument();
+      expect(screen.getByText('Runtime quickstart B')).toBeInTheDocument();
+    });
+
+    it('starts the quickstart in the runtime when a console catalog tile is clicked', () => {
+      const { store } = renderMount(
+        '',
+        <>
+          <QuickStartCatalogPage showFilter={false} showTitle={false} />
+          <ContextProbe />
+        </>
+      );
+
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: 'Runtime quickstart A' }));
+      });
+
+      expect(store.get(remoteActiveQuickStartIDAtom)).toBe('runtime-qs-a');
+      expect(screen.getByTestId('probe-active')).toHaveTextContent('runtime-qs-a');
+    });
+
+    it('updates the bridged context without remounting the console or re-rendering the remote', () => {
+      let mounts = 0;
+      const MountCounter = () => {
+        React.useLayoutEffect(() => {
+          mounts += 1;
+        }, []);
+        return null;
+      };
+      renderMount(
+        '',
+        <>
+          <MountCounter />
+          <QuickStartCatalogPage showFilter={false} showTitle={false} />
+          <ContextProbe />
+        </>
+      );
+      const remoteRenders = MockedScalprumComponent.mock.calls.length;
+
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: 'Runtime quickstart B' }));
+      });
+
+      expect(screen.getByTestId('probe-active')).toHaveTextContent('runtime-qs-b');
+      expect(mounts).toBe(1);
+      expect(MockedScalprumComponent.mock.calls.length).toBe(remoteRenders);
+    });
+
+    it('falls back to default context values while loading and after the remote fails, keeping children mounted', () => {
+      let mounts = 0;
+      const MountCounter = () => {
+        React.useLayoutEffect(() => {
+          mounts += 1;
+        }, []);
+        return null;
+      };
+      const { store } = renderMount(
+        '',
+        <>
+          <MountCounter />
+          <ContextProbe />
+        </>
+      );
+      expect(screen.getByTestId('probe-quickstarts')).toHaveTextContent('runtime-qs-a,runtime-qs-b');
+
+      act(() => setRemoteState?.('loading'));
+      expect(screen.getByTestId('probe-quickstarts')).toBeEmptyDOMElement();
+      expect(store.get(quickstartsRuntimeContextAtom)).toBeNull();
+
+      act(() => setRemoteState?.('ready'));
+      expect(screen.getByTestId('probe-quickstarts')).toHaveTextContent('runtime-qs-a,runtime-qs-b');
+
+      act(() => setRemoteState?.('failed'));
+      expect(screen.getByTestId('probe-quickstarts')).toBeEmptyDOMElement();
+      expect(screen.getByTestId('probe-topics')).toBeEmptyDOMElement();
+      expect(store.get(quickstartsRuntimeContextAtom)).toBeNull();
+      expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+      expect(mounts).toBe(1);
+    });
   });
 });

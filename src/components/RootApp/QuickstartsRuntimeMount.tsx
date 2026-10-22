@@ -1,6 +1,7 @@
 import React, { Component, ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ScalprumComponent } from '@scalprum/react-core';
+import { HelpTopicContext, HelpTopicContextDefaults, QuickStartContext, QuickStartContextDefaults } from '@patternfly/quickstarts';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChromeAPI } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
@@ -9,6 +10,7 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import { LiveQuickstartsAPI, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
 import { dropPendingLiveChromeQuickstartsApis, publishLiveChromeQuickstartsApis } from '../../state/atoms/delegatedChromeQuickstarts';
+import { quickstartsRuntimeContextAtom } from '../../state/atoms/quickstartsRuntimeContextAtom';
 import LegacyQuickstartsRuntime from './LegacyQuickstartsRuntime';
 import { useLearningResourcesQuickstarts } from './useLearningResourcesQuickstarts';
 
@@ -132,6 +134,46 @@ const ChromeChildrenPortal = ({ children, slot }: { children: ReactNode; slot: H
   );
 };
 
+/**
+ * Rendered inside the remote's children, so it sits under the runtime's
+ * QuickStart/HelpTopic providers. `@patternfly/quickstarts` is a shared singleton,
+ * so these are the same context objects Chrome uses. Copies the runtime values
+ * out for `RuntimeContextBridge`. Unmounting (remote failed / swapped) clears them.
+ */
+const RuntimeContextReporter = () => {
+  const quickStart = useContext(QuickStartContext);
+  const helpTopic = useContext(HelpTopicContext);
+  const setRuntimeContext = useSetAtom(quickstartsRuntimeContextAtom);
+
+  useLayoutEffect(() => {
+    setRuntimeContext({ quickStart, helpTopic });
+  }, [quickStart, helpTopic, setRuntimeContext]);
+
+  useLayoutEffect(() => {
+    return () => {
+      setRuntimeContext(null);
+    };
+  }, [setRuntimeContext]);
+
+  return null;
+};
+
+/**
+ * React context follows the React tree, not the DOM. The portalled console is a
+ * React sibling of the runtime, so re-provide the runtime's context values here.
+ * Providers are always rendered (defaults until the runtime reports) so the tree
+ * shape never changes and the console is never remounted. Only this component
+ * subscribes to the atom, so updates never re-render the remote.
+ */
+const RuntimeContextBridge = ({ children }: { children: ReactNode }) => {
+  const runtimeContext = useAtomValue(quickstartsRuntimeContextAtom);
+  return (
+    <QuickStartContext.Provider value={runtimeContext?.quickStart ?? QuickStartContextDefaults}>
+      <HelpTopicContext.Provider value={runtimeContext?.helpTopic ?? HelpTopicContextDefaults}>{children}</HelpTopicContext.Provider>
+    </QuickStartContext.Provider>
+  );
+};
+
 const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   const { user } = useContext(ChromeAuthContext);
   const activeModule = useAtomValue(activeModuleAtom);
@@ -186,7 +228,9 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <ChromeChildrenPortal slot={childrenSlotEl}>{children}</ChromeChildrenPortal>
+      <ChromeChildrenPortal slot={childrenSlotEl}>
+        <RuntimeContextBridge>{children}</RuntimeContextBridge>
+      </ChromeChildrenPortal>
       <QuickstartsRuntimeBoundary fallback={null}>
         <ScalprumComponent
           scope="learningResources"
@@ -198,7 +242,9 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
           onApiReady={handleApiReady}
           onActiveQuickStartChanged={handleActiveQSChanged}
         >
-          <div ref={setRemoteChildrenSlot} data-ouia-component-id="chrome-quickstarts-slot" style={REMOTE_CHILDREN_SLOT_STYLE} />
+          <div ref={setRemoteChildrenSlot} data-ouia-component-id="chrome-quickstarts-slot" style={REMOTE_CHILDREN_SLOT_STYLE}>
+            <RuntimeContextReporter />
+          </div>
         </ScalprumComponent>
       </QuickstartsRuntimeBoundary>
     </>
