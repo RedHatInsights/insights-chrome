@@ -14,6 +14,8 @@ import { getMinimumViableEntitlements } from '../getMinimumViableEntitlements';
 import sentry from '../../utils/sentry';
 import { loadChromeUserConfigOnce } from '../../utils/initUserConfig';
 import { hydratePreviewAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
+import * as Sentry from '@sentry/react';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 const EntitlementsProbe = () => {
   const auth = useContext(ChromeAuthContext);
@@ -23,9 +25,11 @@ const EntitlementsProbe = () => {
 jest.mock('../../components/FeatureFlags/featureFlagsClient', () => ({ getBootstrapFeatureFlag: jest.fn().mockResolvedValue(true) }));
 jest.mock('../../utils/VisibilitySingleton', () => ({ visibilityFunctionsExist: () => false }));
 jest.mock('../../utils/initUserConfig', () => ({ loadChromeUserConfigOnce: jest.fn() }));
+jest.mock('@sentry/react', () => ({ captureMessage: jest.fn() }));
 
 jest.mock('../fetchEntitlements', () => ({
   fetchEntitlements: jest.fn().mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' }),
+  getMinimumViableEntitlements: jest.requireActual('../getMinimumViableEntitlements').getMinimumViableEntitlements,
 }));
 
 jest.mock('../../utils/iqeEnablement', () => ({
@@ -641,6 +645,99 @@ describe('OIDCSecured', () => {
       await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(2));
       expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(false);
       expect(chromeStore.get(isPreviewAtom)).toBe(false);
+    });
+  });
+
+  describe('in-session entitlements recovery', () => {
+    let firstGetUser: (() => Promise<ChromeUser>) | undefined;
+    const CaptureFirstGetUser = () => {
+      const auth = useContext(ChromeAuthContext);
+      if (auth.ready && !firstGetUser) {
+        firstGetUser = auth.getUser;
+      }
+      return <EntitlementsProbe />;
+    };
+    const shell = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="">
+        <CaptureFirstGetUser />
+      </OIDCSecured>
+    );
+    const renew = (rerender: (ui: React.ReactElement) => void, token: string) => {
+      mockAuth.user = { ...mockUser, access_token: token } as User;
+      rerender(shell());
+    };
+
+    beforeEach(() => {
+      firstGetUser = undefined;
+      mockUser.profile = { ...mockUser.profile, org_id: 'org-a' };
+      mockAuth.isAuthenticated = true;
+      jest.requireMock('react-oidc-context').useAuth.mockReturnValue(mockAuth);
+    });
+
+    it('serves recovered entitlements through a getUser captured during the outage', async () => {
+      const defaults = getMinimumViableEntitlements({ profile: { org_id: 'org-a' } });
+      mockedFetchEntitlements
+        .mockResolvedValueOnce({ entitlements: defaults, degraded: true, source: 'defaults' })
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: false, source: 'live' });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(firstGetUser).toBeDefined());
+      expect((await firstGetUser!()).entitlements).toEqual(defaults);
+
+      // Visibility re-evaluation is triggered by the degraded flag, so the user must already be current then.
+      let userAtRecovery: ChromeUser | undefined;
+      const unsubscribe = chromeStore.sub(degradedStateAtom, () => {
+        if (!chromeStore.get(degradedStateAtom).entitlements) {
+          firstGetUser!().then((current) => (userAtRecovery = current));
+        }
+      });
+      renew(rerender, 'renewed');
+
+      await waitFor(() => expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":true'));
+      unsubscribe();
+      expect((await firstGetUser!()).entitlements).toEqual(healthyPaid);
+      expect(userAtRecovery?.entitlements).toEqual(healthyPaid);
+    });
+
+    it('reports a degraded episode to Sentry once, tagged with the fallback source', async () => {
+      mockedFetchEntitlements
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: true, source: 'cache' })
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: true, source: 'memory' })
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: false, source: 'live' })
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: true, source: 'memory' });
+      const { rerender } = render(shell());
+      await waitFor(() => expect(Sentry.captureMessage).toHaveBeenCalledTimes(1));
+      expect(Sentry.captureMessage).toHaveBeenCalledWith('Entitlements degraded', {
+        level: 'warning',
+        tags: { area: 'entitlements', source: 'cache' },
+      });
+
+      renew(rerender, 'renewed-1');
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(2));
+      renew(rerender, 'renewed-2');
+      await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false));
+      expect(Sentry.captureMessage).toHaveBeenCalledTimes(1);
+
+      renew(rerender, 'renewed-3');
+      await waitFor(() => expect(Sentry.captureMessage).toHaveBeenCalledTimes(2));
+      expect(jest.mocked(Sentry.captureMessage).mock.calls[1][1]).toMatchObject({ tags: { source: 'memory' } });
+    });
+
+    it('reports the catch-path fallback as defaults', async () => {
+      mockedFetchEntitlements.mockRejectedValueOnce(new Error('unexpected'));
+      render(shell());
+      await waitFor(() =>
+        expect(Sentry.captureMessage).toHaveBeenCalledWith(
+          'Entitlements degraded',
+          expect.objectContaining({ tags: { area: 'entitlements', source: 'defaults' } })
+        )
+      );
+    });
+
+    it('does not report to Sentry on the legacy path', async () => {
+      jest.mocked(getBootstrapFeatureFlag).mockResolvedValue(false);
+      const { getByTestId } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(Sentry.captureMessage).not.toHaveBeenCalled();
     });
   });
 });

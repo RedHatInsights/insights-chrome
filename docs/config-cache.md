@@ -38,6 +38,12 @@ A fallback cache read waits at most one second. Logout invalidates outstanding w
 
 An identity change (organization switch, token renewal), logout, or unmount aborts the pending enabled request. The abort runs in the auth effect cleanup, before the auth interceptor's token moves to the next identity, so an obsolete request cannot retry with another organization's token. An aborted call rejects instead of falling back: it never reads, replays, or persists the cache. The internal five-second timeout still falls back as described above.
 
+### In-session recovery
+
+Entitlements are re-requested on every re-authentication, including silent token renewals, so a session that started degraded recovers without a reload. `auth.getUser()` reads the current user, like `getToken()`, so callers that kept an earlier reference (visibility functions, permission watchers) see the recovered map. When entitlements change from degraded to healthy, the already-loaded navigation and service tiles are re-evaluated, so `isEntitled`-gated items appear or disappear immediately. Nothing is re-fetched, so a configuration origin that is still failing cannot replace a working navigation with an error. Entering an outage does not re-evaluate them. Routes and search evaluate visibility on use and pick up the current map on their next check. With the flag off, entitlements are not marked degraded, so the re-evaluation only runs once if the flag is turned off during a degraded session.
+
+Each degraded episode is reported to Sentry once, as a `warning` titled `Entitlements degraded`, tagged `area: entitlements` and `source` (`live` for a degraded 200, `cache`, `memory`, or `defaults`). Renewals during the same outage are not reported again; the next episode after a recovery is. The legacy path does not report.
+
 ### Bootstrap time budget
 
 The user config, the flag lookup, and the entitlement request run in sequence. The rollout may target `platform.chrome.ui.preview`, which only the user config (`/api/chrome-service/v1/user`) provides, so it is fetched first and hydrates preview before the lookup. `useSessionConfig` reuses the same request, so it is still made once per page load. With the flag on, a cold start where every backend stalls waits at most about 16 seconds before Chrome is ready:

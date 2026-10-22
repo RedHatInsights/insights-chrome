@@ -45,6 +45,29 @@ Final results:
 
 A real Unleash constraint on `platform.chrome.ui.preview` was simulated at the flag proxy response, using the context the SDK sends. A real two-organization SSO switch still needs a second account; the abort path was exercised end to end with same-org token renewals.
 
+## In-session recovery and degradation telemetry
+
+Tested on **2026-10-22**, reconciling the remaining RHCLOUD-44526 requirements (re-evaluation after recovery, telemetry) with this PR.
+
+**Recovered entitlements did not reach visibility checks.** The visibility functions are initialized once per page load and kept the first `getUser`, which returned the map from that bootstrap. After a renewal recovered entitlements, `auth.getUser()` was current but `visibilityFunctions.isEntitled()` and the already-evaluated navigation and service tiles kept the outage map until a reload. This predates the PR (on master a failed request yields `{}`), but the PR's fallback makes degraded sessions survivable, so recovery has to propagate. `getUser` now reads the current user, like `getToken`, and the loaded navigation and service tiles are re-evaluated when entitlements change from degraded to healthy, without re-fetching.
+
+**No telemetry.** Degradation was shown in the banner but never reported. Each degraded episode now sends one Sentry warning, tagged with the fallback source.
+
+| Check                                                                                                              | Before fix                  | After fix |
+| ------------------------------------------------------------------------------------------------------------------ | --------------------------- | --------- |
+| Jest: a `getUser` captured during the outage returns the recovered map, already current when degraded clears       | Returned the outage map     | Passed    |
+| Jest: loaded navigation and tiles re-evaluated on recovery, no re-fetch, origin failure cannot replace them        | Stayed on the outage map    | Passed    |
+| Jest: no re-evaluation when entering an outage; superseded re-evaluation is ignored                                | —                           | Passed    |
+| Jest: one Sentry warning per episode with `source` (`cache`, `memory`, `defaults`); none on the legacy path        | No report                   | Passed    |
+| Stage Playwright: 503 bootstrap, then a real silent renewal with a paid map; `isEntitled('ansible')` and no reload | `isEntitled` stayed `false` | Passed    |
+
+Stage has no All Services tile gated only by `isEntitled('ansible')`, so the stage run asserted `isEntitled` directly; navigation and tile re-evaluation is covered by Jest.
+
+Final results:
+
+- `npm run verify`: **passed** (lint, production build, 131 Jest suites / 1,570 tests / 33 snapshots).
+- Complete Playwright suite against stage with real SSO (136 tests, one worker): **122 passed, 4 skipped, 10 failed**. All 45 tests in the entitlement review, cache-fallback, and feature-flag specs had their expected result (35, 8 and 2), including the three known master bugs marked as expected failures. The 10 failures were the webpack dev-server error overlay intercepting clicks; it displayed an uncaught error from stage's notifications remote (`NotificationsDrawerBell`: `Cannot access 'I' before initialization`). With the overlay disabled as in CI (`CI=true npm run dev`), 9 of the 10 passed. The remaining `favorite-services` test is flaky on stage with and without this change (1/2 and 2/3 passes).
+
 ## Authenticated stage follow-up
 
 The tested account returned no true paid SKU flags. **That does not establish that the account has no plans/subscriptions**, because the same response reported entitlement degradation. The actual stage feature-flag response **does not contain** `platform.chrome.entitlements-fallback`; the unmodified branch therefore selects the disabled path. On/off exercises used the original plan's local response-override approach, preserving the other stage toggles. The independent banner toggle was enabled locally for its assertions. These checks do not verify an administratively configured Unleash rollout.
