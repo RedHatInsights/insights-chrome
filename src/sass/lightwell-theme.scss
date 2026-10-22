@@ -1,0 +1,19 @@
+// Keep the preload atmosphere in sync with content-sources-frontend's
+// src/kit/lightwell.overrides.css and src/kit/assets/background-16-9__*.png.
+// Loaded with Chrome CSS so it paints before the federated Lightwell app loads.
+html.lightwell-v1-theme {
+  --pf-t--global--background--image--default: url('./assets/background-16-9__light.png');
+
+  background-image: url('./assets/background-16-9__light.png');
+  background-repeat: no-repeat;
+  background-size: 120%;
+  background-position: 50% -4rem;
+  background-color: #e5e0df;
+
+  &.pf-v6-theme-dark {
+    --pf-t--global--background--image--default--dark: url('./assets/background-16-9__dark.png');
+
+    background-image: url('./assets/background-16-9__dark.png');
+    background-color: #000000;
+  }
+}
