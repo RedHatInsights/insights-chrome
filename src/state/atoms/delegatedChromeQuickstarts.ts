@@ -1,7 +1,9 @@
 import React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef } from './remoteQuickstartsAtom';
+import { useAtomValue } from 'jotai';
+import chromeStore from '../chromeStore';
+import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
 
 type PendingCall<T> = {
   run: (api: T) => void;
@@ -41,6 +43,7 @@ export function publishLiveChromeQuickstartsApis(api: { quickstartsAPI: LiveQuic
   liveRuntimeUnavailable = false;
   liveQuickstartsAPIRef.current = api.quickstartsAPI;
   liveHelpTopicsAPIRef.current = api.helpTopicsAPI;
+  chromeStore.set(liveQuickstartsCatalogAtom, api.quickstartsAPI.Catalog ? { Catalog: api.quickstartsAPI.Catalog } : null);
   flushPending(pendingQuickstartsCalls, api.quickstartsAPI);
   flushPending(pendingHelpTopicsCalls, api.helpTopicsAPI);
 }
@@ -53,6 +56,7 @@ export function dropPendingLiveChromeQuickstartsApis() {
   liveRuntimeUnavailable = true;
   liveQuickstartsAPIRef.current = null;
   liveHelpTopicsAPIRef.current = null;
+  chromeStore.set(liveQuickstartsCatalogAtom, null);
   flushPending(pendingQuickstartsCalls, null);
   flushPending(pendingHelpTopicsCalls, null);
 }
@@ -62,9 +66,20 @@ export function resetDelegatedChromeQuickstartsState() {
   liveRuntimeUnavailable = false;
   liveQuickstartsAPIRef.current = null;
   liveHelpTopicsAPIRef.current = null;
+  chromeStore.set(liveQuickstartsCatalogAtom, null);
   pendingQuickstartsCalls.splice(0).forEach((item) => item.abort());
   pendingHelpTopicsCalls.splice(0).forEach((item) => item.abort());
 }
+
+/**
+ * Subscribes to the published Catalog, so a catalog mounted before `onApiReady`
+ * renders as soon as the runtime arrives. Pinned to `chromeStore` because tenants
+ * render this under their own trees and may have their own jotai Provider.
+ */
+const DelegatedQuickStartCatalog = (props: Record<string, unknown>) => {
+  const live = useAtomValue(liveQuickstartsCatalogAtom, { store: chromeStore });
+  return live ? React.createElement(live.Catalog, props) : null;
+};
 
 export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
   version: 1,
@@ -101,10 +116,7 @@ export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
       () => undefined
     );
   },
-  Catalog: ((props: Record<string, unknown>) => {
-    const Catalog = liveQuickstartsAPIRef.current?.Catalog;
-    return Catalog ? React.createElement(Catalog, props) : null;
-  }) as ChromeAPI['quickStarts']['Catalog'],
+  Catalog: DelegatedQuickStartCatalog as ChromeAPI['quickStarts']['Catalog'],
   updateQuickStarts: (key: string, quickstarts: QuickStart[]) => {
     enqueueOrRun(
       liveQuickstartsAPIRef.current,

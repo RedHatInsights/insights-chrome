@@ -11,4 +11,11 @@ export type LiveQuickstartsAPI = ChromeAPI['quickStarts'] & {
 export const liveQuickstartsAPIRef: { current: LiveQuickstartsAPI | null } = { current: null };
 export const liveHelpTopicsAPIRef: { current: ChromeAPI['helpTopics'] | null } = { current: null };
 
+/**
+ * Reactive copy of the live `Catalog` so mounted delegate catalogs re-render when
+ * the runtime publishes. Wrapped in an object: a bare function passed to
+ * `store.set` would be treated as an updater.
+ */
+export const liveQuickstartsCatalogAtom = atom<{ Catalog: ChromeAPI['quickStarts']['Catalog'] } | null>(null);
+
 export const remoteActiveQuickStartIDAtom = atom<string>('');
