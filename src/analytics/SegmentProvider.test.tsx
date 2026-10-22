@@ -70,7 +70,7 @@ jest.mock('../auth/ChromeAuthContext', () => ({
           is_org_admin: true,
           is_internal: false,
           locale: 'en_US',
-          email: 'testuser@example.com',
+          email: 'testuser@redhat.com',
           first_name: 'Test',
           last_name: 'User',
           username: 'testuser',
@@ -152,11 +152,34 @@ describe('SegmentProvider', () => {
 
     const groupCall = mockGroup.mock.calls[0];
     const traits = groupCall[1];
-    expect(traits).toHaveProperty('email_domain', 'example.com');
+    expect(traits).toHaveProperty('email_domain', 'redhat.com');
     expect(traits).toHaveProperty('organization_name', 'Test Org');
     expect(traits).toHaveProperty('name', 'Test Org');
     expect(traits).toHaveProperty('account_number', 'EBS-789');
     expect(traits).toHaveProperty('cloud_org_id', 'org-123');
+  });
+
+  it('should use is_internal from Hydra profile for the internal identify trait, not email domain', async () => {
+    // Bug scenario (RHCLOUD-52517): mock user has a @redhat.com email but
+    // is_internal: false from Hydra. Old code derived internal from email domain
+    // and would incorrectly set internal: true. New code uses Hydra's is_internal.
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalled();
+    });
+
+    const identifyCall = mockIdentify.mock.calls[0];
+    const traits = identifyCall[1];
+    // Even though email is @redhat.com, internal must be false because
+    // Hydra says is_internal: false — aligns with Pendo and Amplitude behavior
+    expect(traits).toHaveProperty('internal', false);
   });
 
   it('sends the organization name recovered from the access token', async () => {
