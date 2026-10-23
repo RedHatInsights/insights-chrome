@@ -1,9 +1,21 @@
-import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import React, { useContext } from 'react';
+import { act, render, waitFor } from '@testing-library/react';
 import { OIDCSecured } from './OIDCSecured';
 import { RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
 import { AuthContextProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
+import { AxiosError } from 'axios';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
+import { createFetchPermissionsWatcher, resetPermissionCache } from '../fetchPermissions';
+
+jest.unmock('axios');
+const permissionRequest = jest.fn();
+const entitlementRequest = jest.fn();
+jest.mock('../rbac', () => () => ({ getPrincipalAccess: (...args: unknown[]) => permissionRequest(...args) }));
+jest.mock('../entitlementsApi', () => () => ({ servicesGet: () => entitlementRequest() }));
+jest.mock('../../utils/iqeEnablement', () => ({ init: jest.fn() }));
+jest.mock('../../utils/sentry', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../components/FeatureFlags/unleashClient', () => ({ unleashClientExists: () => false }));
 
 // Mock setCookie to observe calls from the effect under test
 jest.mock('../setCookie', () => ({
@@ -11,9 +23,10 @@ jest.mock('../setCookie', () => ({
 }));
 
 // Minimal mocks to avoid unrelated side-effects during render
-jest.mock('broadcast-channel', () => ({
-  BroadcastChannel: jest.fn().mockImplementation(() => ({ postMessage: jest.fn(), close: jest.fn() })),
-}));
+jest.mock('broadcast-channel', () => {
+  const channel = { postMessage: jest.fn(), close: jest.fn() };
+  return { BroadcastChannel: jest.fn(() => channel), channel };
+});
 
 jest.mock('react-oidc-context', () => ({
   hasAuthParams: jest.fn(() => false),
@@ -22,12 +35,13 @@ jest.mock('react-oidc-context', () => ({
 
 jest.mock('./utils', () => ({
   login: jest.fn(),
-  logout: jest.fn(),
+  logout: jest.requireActual('./utils').logout,
 }));
 
 jest.mock('../../utils/common', () => ({
   generateRoutesList: jest.fn(() => []),
   ITLess: jest.fn(() => false),
+  deleteLocalStorageItems: jest.fn(),
 }));
 
 jest.mock('../getInitialScope', () => ({
@@ -56,6 +70,9 @@ describe('OIDCSecured', () => {
   let mockAuth: AuthContextProps;
 
   beforeEach(() => {
+    resetPermissionCache();
+    permissionRequest.mockReset().mockResolvedValue({ data: { data: [], meta: { count: 0 } } });
+    entitlementRequest.mockReset().mockResolvedValue({ data: {} });
     mockUser = {
       access_token: 'token-123',
       expires_at: 1700000000,
@@ -79,6 +96,8 @@ describe('OIDCSecured', () => {
       isLoading: false,
       activeNavigator: undefined,
       signinSilent: jest.fn(),
+      signoutRedirect: jest.fn().mockResolvedValue(undefined),
+      revokeTokens: jest.fn().mockResolvedValue(undefined),
       // @ts-expect-error: Partial stub for UserManagerEvents, only test needs
       events: { addSilentRenewError: jest.fn(), removeSilentRenewError: jest.fn() },
       // @ts-expect-error: Partial stub for UserManagerSettings, only fields required for test
@@ -168,6 +187,168 @@ describe('OIDCSecured', () => {
       // setCookie handles if the token is an empty string and will not attempt to set it in the browser
       expect(setCookie).toHaveBeenCalledWith('', 0);
       expect(localStorage.getItem(RH_USER_ID_STORAGE_KEY)).toBe(null);
+    });
+  });
+
+  describe('permission cache lifecycle', () => {
+    let chromeAuth: ChromeAuthContextValue;
+    const CaptureAuth = () => {
+      chromeAuth = useContext(ChromeAuthContext);
+      return null;
+    };
+    const tree = () => (
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <CaptureAuth />
+      </OIDCSecured>
+    );
+    const authenticate = async (profile: Partial<User['profile']> = {}) => {
+      const previous = chromeAuth;
+      mockUser.profile = { ...mockUser.profile, org_id: 'org-a', account_id: 'user-a', username: 'username-a', type: 'User', ...profile };
+      mockAuth.isAuthenticated = true;
+      jest.requireMock('react-oidc-context').useAuth.mockImplementation(() => mockAuth);
+      const rendered = render(tree());
+      await waitFor(() => expect(chromeAuth).not.toBe(previous));
+      await waitFor(() => expect(chromeAuth.ready).toBe(true));
+      return rendered;
+    };
+
+    it('retries a negative cached read after silent renewal using the original getter', async () => {
+      const rendered = await authenticate();
+      const getUser = chromeAuth.getUser;
+      const read = createFetchPermissionsWatcher(getUser);
+      permissionRequest.mockRejectedValueOnce(new AxiosError('offline', 'ERR_NETWORK'));
+      await read('old-token');
+      await read('old-token');
+      expect(permissionRequest).toHaveBeenCalledTimes(1);
+      mockAuth = { ...mockAuth, user: { ...mockUser, access_token: 'renewed-token' } as User };
+      rendered.rerender(tree());
+      await waitFor(() => expect(chromeAuth.token).toBe('renewed-token'));
+      expect(chromeAuth.getUser).toBe(getUser);
+      await read('renewed-token');
+      expect(permissionRequest).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps the captured user getter current and drops positive cache on an identity change', async () => {
+      const rendered = await authenticate();
+      const getUser = chromeAuth.getUser;
+      const read = createFetchPermissionsWatcher(getUser);
+      await read('token');
+      mockAuth = { ...mockAuth, user: { ...mockUser, profile: { ...mockUser.profile, account_id: 'user-b' } } as User };
+      rendered.rerender(tree());
+      await waitFor(() => expect(chromeAuth.user.identity.internal?.account_id).toBe('user-b'));
+      expect(chromeAuth.getUser).toBe(getUser);
+      expect((await getUser()).identity.internal?.account_id).toBe('user-b');
+      await read('token');
+      expect(permissionRequest).toHaveBeenCalledTimes(2);
+    });
+
+    it('retains entitlements and successful permissions during a same-user token renewal', async () => {
+      const entitlements = { insights: { is_entitled: true, is_trial: false } };
+      entitlementRequest.mockResolvedValueOnce({ data: entitlements });
+      const rendered = await authenticate();
+      const getUser = chromeAuth.getUser;
+      const read = createFetchPermissionsWatcher(getUser);
+      await read('token');
+      let finish!: (value: { data: typeof entitlements }) => void;
+      entitlementRequest.mockImplementationOnce(() => new Promise((resolve) => (finish = resolve)));
+      mockAuth = { ...mockAuth, user: { ...mockUser, access_token: 'renewed-token' } as User };
+      rendered.rerender(tree());
+      expect((await getUser()).entitlements).toEqual(entitlements);
+      await read('renewed-token');
+      expect(permissionRequest).toHaveBeenCalledTimes(1);
+      await act(async () => finish({ data: entitlements }));
+      expect(chromeAuth.token).toBe('renewed-token');
+    });
+
+    it.each([{ account_id: 'user-a' }, { account_id: undefined }])(
+      'delivers pending permissions after same-user token renewal with profile %o',
+      async (profile) => {
+        const rendered = await authenticate(profile);
+        const read = createFetchPermissionsWatcher(chromeAuth.getUser);
+        const permissions = [{ permission: 'inventory:hosts:read', resourceDefinitions: [] }];
+        let finish!: (value: { data: { data: typeof permissions } }) => void;
+        permissionRequest.mockImplementationOnce(() => new Promise((resolve) => (finish = resolve)));
+        const first = read('old-token');
+        await waitFor(() => expect(permissionRequest).toHaveBeenCalledTimes(1));
+        mockAuth = { ...mockAuth, user: { ...mockUser, access_token: 'renewed-token' } as User };
+        rendered.rerender(tree());
+        await waitFor(() => expect(chromeAuth.token).toBe('renewed-token'));
+        expect(permissionRequest.mock.calls[0][0].options.signal.aborted).toBe(false);
+        const second = read('renewed-token');
+        finish({ data: { data: permissions } });
+        await expect(Promise.all([first, second])).resolves.toEqual([permissions, permissions]);
+        expect(permissionRequest).toHaveBeenCalledTimes(1);
+      }
+    );
+
+    it.each([{ org_id: 'org-b' }, { account_id: 'user-b' }, { type: 'System' }, { account_id: undefined }])(
+      'cancels pending reads immediately when identity changes by %o',
+      async (profile) => {
+        const rendered = await authenticate();
+        const read = createFetchPermissionsWatcher(chromeAuth.getUser);
+        const permissions = [{ permission: 'inventory:hosts:read', resourceDefinitions: [] }];
+        let finish!: (value: { data: { data: typeof permissions } }) => void;
+        permissionRequest.mockImplementationOnce(() => new Promise((resolve) => (finish = resolve)));
+        const first = read('old-token');
+        await waitFor(() => expect(permissionRequest).toHaveBeenCalledTimes(1));
+        mockAuth = { ...mockAuth, user: { ...mockUser, access_token: 'new-token', profile: { ...mockUser.profile, ...profile } } as User };
+        rendered.rerender(tree());
+        await waitFor(() => expect(chromeAuth.token).toBe('new-token'));
+        expect(permissionRequest.mock.calls[0][0].options.signal.aborted).toBe(true);
+        finish({ data: { data: permissions } });
+        await expect(first).resolves.toEqual([]);
+        await expect(read('new-token')).resolves.toEqual([]);
+        expect(permissionRequest).toHaveBeenCalledTimes(2);
+      }
+    );
+
+    it('cannot restore the captured user after logout when an entitlement response arrives late', async () => {
+      const rendered = await authenticate();
+      const getUser = chromeAuth.getUser;
+      let finish!: (value: { data: object }) => void;
+      entitlementRequest.mockImplementationOnce(() => new Promise((resolve) => (finish = resolve)));
+      mockAuth = { ...mockAuth, user: { ...mockUser, access_token: 'renewed-token' } as User };
+      rendered.rerender(tree());
+      chromeAuth.logout();
+      await act(async () => finish({ data: {} }));
+      expect((await getUser()).identity.org_id).toBeUndefined();
+    });
+
+    it.each(['logout', 'all-tabs', 'revoke', 'broadcast'])('clears permission cache on %s', async (mode) => {
+      await authenticate();
+      const savedUser = await chromeAuth.getUser();
+      const read = createFetchPermissionsWatcher(async () => savedUser);
+      permissionRequest.mockRejectedValueOnce(new AxiosError('offline', 'ERR_NETWORK'));
+      await read('token');
+      await read('token');
+      expect(permissionRequest).toHaveBeenCalledTimes(1);
+      await act(async () => {
+        if (mode === 'logout') chromeAuth.logout();
+        if (mode === 'all-tabs') chromeAuth.logoutAllTabs();
+        if (mode === 'revoke') chromeAuth.logoutAllTabs(false);
+        if (mode === 'broadcast') {
+          const channel = jest.requireMock('broadcast-channel').channel;
+          channel.onmessage({ data: { type: 'logout' } });
+        }
+      });
+      expect((await chromeAuth.getUser()).identity.org_id).toBeUndefined();
+      await read('token');
+      expect(permissionRequest).toHaveBeenCalledTimes(2);
+      if (mode === 'revoke') expect(mockAuth.revokeTokens).toHaveBeenCalled();
+      else expect(mockAuth.signoutRedirect).toHaveBeenCalled();
+    });
+
+    it('clears cache when authentication is lost without an explicit logout call', async () => {
+      const rendered = await authenticate();
+      const savedUser = await chromeAuth.getUser();
+      const read = createFetchPermissionsWatcher(async () => savedUser);
+      permissionRequest.mockRejectedValueOnce(new AxiosError('offline', 'ERR_NETWORK'));
+      await read('token');
+      mockAuth = { ...mockAuth, isAuthenticated: false, user: undefined };
+      rendered.rerender(tree());
+      await expect(read('token')).resolves.toEqual([]);
+      expect(permissionRequest).toHaveBeenCalledTimes(2);
+      expect((await chromeAuth.getUser()).identity.org_id).toBeUndefined();
     });
   });
 });

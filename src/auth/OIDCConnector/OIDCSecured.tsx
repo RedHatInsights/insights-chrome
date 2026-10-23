@@ -26,6 +26,7 @@ import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
 import getOrganization from './getOrganization';
+import { invalidatePermissionFailures, resetPermissionCache } from '../fetchPermissions';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -80,6 +81,7 @@ async function fetchEntitlements(user: User) {
 export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
+  const chromeUserRef = useRef(mapOIDCUserToChromeUser(auth.user ?? {}, {}));
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -90,10 +92,12 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     ssoUrl,
     ready: false,
     logoutAllTabs: (bounce = true) => {
+      chromeUserRef.current = mapOIDCUserToChromeUser({}, {});
       authChannel.postMessage({ type: 'logout' });
       logout(authRef.current, bounce);
     },
     logout: () => {
+      chromeUserRef.current = mapOIDCUserToChromeUser({}, {});
       logout(authRef.current, true);
     },
     login: (requiredScopes) => login(authRef.current, requiredScopes),
@@ -112,7 +116,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     },
     forceRefresh: () => Promise.resolve(),
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
-    getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
+    // Visibility callbacks retain this getter for the lifetime of the page.
+    getUser: () => Promise.resolve(chromeUserRef.current),
     token: authRef.current.user?.access_token ?? '',
     refreshToken: authRef.current.user?.refresh_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
@@ -145,16 +150,35 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   };
 
   async function onUserAuthenticated(user: User) {
+    const pendingUser = mapOIDCUserToChromeUser(user, {});
+    const previousIdentity = chromeUserRef.current.identity;
+    const sameIdentity =
+      pendingUser.identity.org_id === previousIdentity.org_id &&
+      pendingUser.identity.type === previousIdentity.type &&
+      (pendingUser.identity.internal?.account_id
+        ? pendingUser.identity.internal.account_id === previousIdentity.internal?.account_id
+        : !previousIdentity.internal?.account_id &&
+          !!pendingUser.identity.user?.username &&
+          pendingUser.identity.user.username === previousIdentity.user?.username);
+    if (sameIdentity) {
+      invalidatePermissionFailures();
+      pendingUser.entitlements = chromeUserRef.current.entitlements;
+    } else {
+      resetPermissionCache();
+    }
+    chromeUserRef.current = pendingUser;
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(chromeStore, authRef);
     const entitlements = await fetchEntitlements(user);
+    // An older entitlement response must not restore a user after logout or a
+    // subsequent authentication event.
+    if (!authRef.current.isAuthenticated || chromeUserRef.current !== pendingUser) return;
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
-    const getUser = () => Promise.resolve(chromeUser);
+    chromeUserRef.current = chromeUser;
     setState((prev) => ({
       ...prev,
       ready: true,
-      getUser,
       user: chromeUser,
       token: user.access_token,
       tokenExpires: user.expires_at!,
@@ -162,6 +186,15 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     }));
     sentry(chromeUser);
   }
+
+  useEffect(() => {
+    authRef.current = auth;
+    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
+    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
+    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
+      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
+    }
+  }, [auth]);
 
   useEffect(() => {
     const user = auth.user;
@@ -182,6 +215,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
           }
         }
       };
+    } else {
+      chromeUserRef.current = mapOIDCUserToChromeUser({}, {});
+      resetPermissionCache();
     }
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
@@ -201,15 +237,6 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     // to ensure we are not re-initializing the chrome on every auth change
     // only on the important events
   }, [auth.error, auth.isLoading, auth.isAuthenticated, state.token, state.user?.identity?.account_number]);
-
-  useEffect(() => {
-    authRef.current = auth;
-    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
-    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
-    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
-      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
-    }
-  }, [auth]);
 
   useManageSilentRenew(auth, state.login);
 
