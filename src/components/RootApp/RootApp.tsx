@@ -117,8 +117,8 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
 
   return (
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']}>
-      <SegmentProvider>
-        <FeatureFlagsProvider>
+      <FeatureFlagsProvider>
+        <SegmentProvider>
           <VisibleBundlesInitializer />
           {/* <CrossRequestNotifier /> */}
           <Suspense fallback={null}>
@@ -130,8 +130,8 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
               <ScalprumRoot config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
             </HelpTopicContainer>
           </QuickStartContainer>
-        </FeatureFlagsProvider>
-      </SegmentProvider>
+        </SegmentProvider>
+      </FeatureFlagsProvider>
     </HistoryRouter>
   );
 });
