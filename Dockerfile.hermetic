@@ -1,0 +1,42 @@
+# Hermetic multi-stage build for insights-chrome
+# Uses cachi2 prefetched npm dependencies (offline, no network in RUN steps)
+#
+# NOTE: Sentry sourcemap upload is NOT supported in hermetic mode because RUN
+# steps execute with --network=none. Sentry integration requires a separate
+# post-build pipeline task with network access. See RHCLOUD-52269.
+
+# ────────── NODE.JS VERSION CONFIGURATION ──────────
+ARG NODE_BUILD_VERSION=22
+ARG NODE_IMAGE_TAG=9.8-1780375952
+FROM registry.access.redhat.com/ubi9/nodejs-${NODE_BUILD_VERSION}:${NODE_IMAGE_TAG} AS builder
+
+# Additional arguments to be appended for `npm ci`, e.g. "--legacy-peer-deps"
+ARG NPM_CI_ARGS=
+
+USER default
+
+# Copy package files first for better layer caching
+COPY --chown=default package*.json ./
+
+# Install dependencies offline using cachi2 prefetched packages
+# CYPRESS_INSTALL_BINARY=0 prevents Cypress binary download attempt
+RUN CYPRESS_INSTALL_BINARY=0 npm ci --offline --no-audit --no-fund $NPM_CI_ARGS
+
+# Copy source code
+COPY --chown=default . .
+
+# Build the application
+RUN npm run build
+
+# ────────── Runtime stage ──────────
+# Caddy UBI for serving static files — preserves existing runtime behavior
+FROM quay.io/redhat-services-prod/hcm-eng-prod-tenant/caddy-ubi:latest
+
+COPY LICENSE /licenses/
+
+ENV CADDY_TLS_MODE http_port 8000
+ENV ENV_PUBLIC_PATH "/default"
+
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=builder /opt/app-root/src/dist dist
+COPY package.json .
