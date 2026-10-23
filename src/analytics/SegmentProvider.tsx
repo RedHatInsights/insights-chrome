@@ -64,8 +64,6 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   );
 };
 
-const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
-
 export const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLowerCase() : null);
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
@@ -89,7 +87,7 @@ const getIdentityTraits = (
   return {
     cloud_user_id: user.identity.internal?.account_id,
     adobe_cloud_visitor_id: getAdobeVisitorId(),
-    internal: isInternal(email),
+    internal: user.identity.user?.is_internal ?? false,
     email_domain: emailDomain(email),
     lang: user.identity.user?.locale,
     isOrgAdmin: user.identity.user?.is_org_admin,

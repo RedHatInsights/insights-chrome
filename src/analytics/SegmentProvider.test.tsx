@@ -95,7 +95,7 @@ jest.mock('../auth/ChromeAuthContext', () => ({
           is_org_admin: true,
           is_internal: false,
           locale: 'en_US',
-          email: 'testuser@example.com',
+          email: 'testuser@redhat.com',
           first_name: 'Test',
           last_name: 'User',
           username: 'testuser',
@@ -189,7 +189,7 @@ describe('SegmentProvider', () => {
 
     const groupCall = mockGroup.mock.calls[0];
     const traits = groupCall[1];
-    expect(traits).toHaveProperty('email_domain', 'example.com');
+    expect(traits).toHaveProperty('email_domain', 'redhat.com');
     expect(traits).toHaveProperty('organization_name', 'Test Org');
     expect(traits).toHaveProperty('name', 'Test Org');
     expect(traits).toHaveProperty('account_number', 'EBS-789');
@@ -212,6 +212,21 @@ describe('SegmentProvider', () => {
         expect.any(Object)
       );
     });
+  });
+
+  it('uses is_internal from the Hydra profile for the internal identify trait', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockIdentify).toHaveBeenCalled());
+
+    const traits = mockIdentify.mock.calls[0][1];
+    expect(traits).toHaveProperty('internal', false);
   });
 
   it('continues Segment initialization when the Intercom hash request times out', async () => {
