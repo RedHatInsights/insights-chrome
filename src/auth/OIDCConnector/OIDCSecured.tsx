@@ -26,6 +26,7 @@ import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
 import getOrganization from './getOrganization';
+import { invalidatePermissionFailures, resetPermissionCache } from '../fetchPermissions';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -80,6 +81,7 @@ async function fetchEntitlements(user: User) {
 export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
+  const previousIdentityRef = useRef<string | undefined>(undefined);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -166,6 +168,12 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   useEffect(() => {
     const user = auth.user;
     if (auth.isAuthenticated && user) {
+      const { account_id, org_id, type, username } = user.profile;
+      const principal = account_id || username;
+      const identity = org_id && principal ? JSON.stringify([String(org_id), type, account_id ? 'account-id' : 'username', principal]) : undefined;
+      if (identity !== undefined && identity === previousIdentityRef.current) invalidatePermissionFailures();
+      else resetPermissionCache();
+      previousIdentityRef.current = identity;
       onUserAuthenticated(user);
       authChannel.onmessage = (e) => {
         if (e && e.data && e.data.type) {
@@ -182,6 +190,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
           }
         }
       };
+    } else {
+      previousIdentityRef.current = undefined;
+      resetPermissionCache();
     }
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
