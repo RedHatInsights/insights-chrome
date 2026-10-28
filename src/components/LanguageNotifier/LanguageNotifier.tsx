@@ -71,6 +71,12 @@ export const LanguageNotifier = () => {
   const renderingLocale = resolveLocale(profileLocale);
   const debugEnabled = localStorage.getItem(INTL_DEBUG_KEY) === 'true';
 
+  // Without an SSO URL (a partial auth context) there is no account console
+  // to link to, and the notifications exist to send the user there.
+  if (!ssoUrl) {
+    return null;
+  }
+
   const returnTo = `${window.location.origin}${window.location.pathname}?${ACCOUNT_RETURN_PARAM}=1`;
   const accountUrl = buildAccountConsoleUrl(ssoUrl, returnTo);
 
