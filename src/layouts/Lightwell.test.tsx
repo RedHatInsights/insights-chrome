@@ -134,7 +134,7 @@ describe('Lightwell', () => {
   });
 
   afterEach(() => {
-    document.documentElement.classList.remove('pf-v6-theme-felt', 'pf-v6-theme-glass');
+    document.documentElement.classList.remove('pf-v6-theme-felt', 'pf-v6-theme-glass', 'lightwell-v1-theme');
   });
 
   it('should render the layout shell', () => {
@@ -190,6 +190,14 @@ describe('Lightwell', () => {
     expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(true);
     unmount();
     expect(document.documentElement.classList.contains('pf-v6-theme-felt')).toBe(false);
+  });
+
+  it('should keep the preload theme while mounted and remove it when leaving Lightwell', () => {
+    document.documentElement.classList.add('lightwell-v1-theme');
+    const { unmount } = renderLightwell();
+    expect(document.documentElement).toHaveClass('lightwell-v1-theme');
+    unmount();
+    expect(document.documentElement).not.toHaveClass('lightwell-v1-theme');
   });
 
   it('should set layoutBannerHiddenAtom to true on mount and false on unmount', () => {

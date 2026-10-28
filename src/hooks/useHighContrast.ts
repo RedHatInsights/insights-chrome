@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
+import { notifyThemeTelemetryPreferencesChanged } from '../utils/themeTelemetry';
 
 export enum HighContrastVariants {
   default,
@@ -32,6 +33,7 @@ const applyContrastMode = (mode: HighContrastVariants) => {
     applyHighContrast(true);
   } else if (mode === HighContrastVariants.system) {
     localStorage.setItem('chrome:high-contrast', 'system');
+    notifyThemeTelemetryPreferencesChanged();
     applyHighContrast(window.matchMedia('(prefers-contrast: more)').matches);
   } else {
     applyHighContrast(false);
@@ -53,12 +55,14 @@ export const useHighContrast = () => {
     setContrastMode(HighContrastVariants.default);
     applyHighContrast(false);
     localStorage.setItem('chrome:high-contrast', 'default');
+    notifyThemeTelemetryPreferencesChanged();
   };
 
   const setHighContrast = () => {
     setContrastMode(HighContrastVariants.high);
     applyHighContrast(true);
     localStorage.setItem('chrome:high-contrast', 'high');
+    notifyThemeTelemetryPreferencesChanged();
   };
 
   const setSystemContrast = () => {
@@ -66,6 +70,7 @@ export const useHighContrast = () => {
     const prefersHighContrast = window.matchMedia('(prefers-contrast: more)').matches;
     applyHighContrast(prefersHighContrast);
     localStorage.setItem('chrome:high-contrast', 'system');
+    notifyThemeTelemetryPreferencesChanged();
   };
 
   return {

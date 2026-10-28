@@ -47,15 +47,15 @@ const RootApp = memo(() => {
 
   return (
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']}>
-      <SegmentProvider>
-        <FeatureFlagsProvider>
+      <FeatureFlagsProvider>
+        <SegmentProvider>
           <VisibleBundlesInitializer />
           <Suspense fallback={null}>
             <NotEntitledModal />
           </Suspense>
           <ScalprumRoot config={config} />
-        </FeatureFlagsProvider>
-      </SegmentProvider>
+        </SegmentProvider>
+      </FeatureFlagsProvider>
     </HistoryRouter>
   );
 });
