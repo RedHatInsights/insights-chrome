@@ -6,7 +6,14 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { captureException, captureMessage } from '@sentry/react';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import FeatureFlagsProvider from './FeatureFlagsProvider';
-import { createFetchFeatureFlags, getBootstrapFeatureFlag, getFeatureFlagsClient, startFeatureFlagsClient, stopFeatureFlagsClient } from './featureFlagsClient';
+import {
+  createFetchFeatureFlags,
+  getBootstrapFeatureFlag,
+  getFeatureFlagsClient,
+  isFeatureFlagsClientStarted,
+  startFeatureFlagsClient,
+  stopFeatureFlagsClient,
+} from './featureFlagsClient';
 import { FEATURE_FLAGS_INITIAL_TIMEOUT_MS, UNLEASH_ERROR_KEY, getUnleashClient } from './unleashClient';
 import { ENTITLEMENTS_FALLBACK_FLAG } from '../../auth/entitlementsConstants';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
@@ -14,6 +21,8 @@ import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 
 jest.mock('../../utils/common', () => ({ getEnv: () => 'stage' }));
 jest.mock('@sentry/react', () => ({ captureException: jest.fn(), captureMessage: jest.fn() }));
+// Preview toggles run releaseAtom's real side effects; visibility functions are not under test here.
+jest.mock('../../utils/VisibilitySingleton', () => ({ visibilityFunctionsExist: () => false, updateVisibilityFunctionsBeta: jest.fn() }));
 
 const toggle = { name: ENTITLEMENTS_FALLBACK_FLAG, enabled: true, variant: { name: 'disabled', enabled: false }, impressionData: false };
 const jsonResponse = (toggles = [toggle]) => new Response(JSON.stringify({ toggles }), { headers: { 'content-type': 'application/json' } });
@@ -137,12 +146,9 @@ it('switches the React flag hooks to the new scoped client when the identity cha
   expect(getUnleashClient().getContext()).toMatchObject({ orgId: 'next-org', userId: 'next-user' });
 });
 
-it('switches the React flag hooks to the preview client when the release context changes', async () => {
-  const store = createStore();
-  clientFor();
-  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
+const renderPreviewTree = (store: ReturnType<typeof createStore>) => {
   const Probe = () => <div data-testid="flag">{String(useFlag(ENTITLEMENTS_FALLBACK_FLAG))}</div>;
-  const { getByTestId } = render(
+  return render(
     <JotaiProvider store={store}>
       <ChromeAuthContext.Provider value={{ user } as ChromeAuthContextValue}>
         <FeatureFlagsProvider>
@@ -151,13 +157,50 @@ it('switches the React flag hooks to the preview client when the release context
       </ChromeAuthContext.Provider>
     </JotaiProvider>
   );
+};
+
+it('keeps the same client when Preview is toggled and the React flag hooks follow its new context', async () => {
+  const store = createStore();
+  const client = clientFor();
+  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
+  const { getByTestId } = renderPreviewTree(store);
   await waitFor(() => expect(getByTestId('flag')).toHaveTextContent('true'));
+
   mockFetch.mockImplementation(async () => jsonResponse([{ ...toggle, enabled: false }]));
-  clients.push(getFeatureFlagsClient(user, true));
-  expect(await getBootstrapFeatureFlag(user, true, ENTITLEMENTS_FALLBACK_FLAG)).toBe(false);
   act(() => store.set(isPreviewAtom, true));
   await waitFor(() => expect(getByTestId('flag')).toHaveTextContent('false'));
-  expect(getUnleashClient().getContext()).toMatchObject({ 'platform.chrome.ui.preview': true });
+  expect(getUnleashClient()).toBe(client);
+  expect(client.getContext()).toMatchObject({ 'platform.chrome.ui.preview': true });
+});
+
+it('reuses the provider client when a renewal after a Preview toggle runs the bootstrap lookup', async () => {
+  const store = createStore();
+  const client = clientFor();
+  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
+  const { getByTestId } = renderPreviewTree(store);
+  await waitFor(() => expect(getByTestId('flag')).toHaveTextContent('true'));
+
+  mockFetch.mockImplementation(async () => jsonResponse([{ ...toggle, enabled: false }]));
+  act(() => store.set(isPreviewAtom, true));
+  await waitFor(() => expect(getByTestId('flag')).toHaveTextContent('false'));
+  expect(await getBootstrapFeatureFlag(user, true, ENTITLEMENTS_FALLBACK_FLAG)).toBe(false);
+
+  expect(getFeatureFlagsClient(user, true)).toBe(client);
+  expect(getUnleashClient()).toBe(client);
+  // Still polling: the bootstrap lookup did not stop the client the provider is attached to.
+  expect(isFeatureFlagsClientStarted(client)).toBe(true);
+});
+
+it('evaluates a bootstrap lookup with the new Preview context on a reused client', async () => {
+  const client = clientFor();
+  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
+
+  mockFetch.mockImplementation(async () => jsonResponse([{ ...toggle, enabled: false }]));
+  expect(await getBootstrapFeatureFlag(user, true, ENTITLEMENTS_FALLBACK_FLAG)).toBe(false);
+  expect(getFeatureFlagsClient(user, true)).toBe(client);
+  expect(client.getContext()).toMatchObject({ 'platform.chrome.ui.preview': true });
+  const lastUrl = String(mockFetch.mock.calls[mockFetch.mock.calls.length - 1][0]);
+  expect(lastUrl).toContain('platform.chrome.ui.preview=true');
 });
 
 it('keeps identity-scoped stored toggles on HTTP failure and reports only a warning', async () => {

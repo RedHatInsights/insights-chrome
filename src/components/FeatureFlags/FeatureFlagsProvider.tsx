@@ -76,8 +76,11 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     const unleashClient = getFeatureFlagsClient(user, isPreview);
     setUnleashClient(unleashClient);
     return unleashClient;
-  }, [orgId, userId, accountNumber, email, hasUser, isPreview]);
-  // FlagProvider retains its initial client in a ref; remount it for a new scoped context.
+    // isPreview is intentionally excluded — Preview changes update context on
+    // the existing client via releaseAtom.applyPreviewSideEffects so that the
+    // React FlagProvider stays connected to the same client instance.
+  }, [orgId, userId, accountNumber, email, hasUser]);
+  // FlagProvider retains its initial client in a ref; remount it only for a new identity-scoped client.
   const clientKey = useMemo(() => JSON.stringify(client.getContext()), [client]);
 
   return (

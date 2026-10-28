@@ -116,13 +116,37 @@ const createStorageProvider = (orgId?: string, userId?: string) => {
   return prefix ? new LocalStorageProvider(prefix) : new InMemoryStorageProvider();
 };
 
-type ClientRecord = { key: string; client: UnleashClient; start?: Promise<void>; active: boolean; started: boolean; stopped: boolean };
+type ClientRecord = {
+  key: string;
+  client: UnleashClient;
+  start?: Promise<void>;
+  contextUpdate?: Promise<void>;
+  active: boolean;
+  started: boolean;
+  stopped: boolean;
+};
 let current: ClientRecord | undefined;
 const records = new WeakMap<UnleashClient, ClientRecord>();
 
+const PREVIEW_CONTEXT_FIELD = 'platform.chrome.ui.preview';
+
+/** Update Preview on the existing client, as releaseAtom does, so FlagProvider keeps the same instance. */
+function updatePreviewContext(client: UnleashClient, isPreview: boolean): Promise<void> | undefined {
+  // appName and environment are static; passing them back makes the SDK warn.
+  const { appName, environment, ...context } = client.getContext();
+  if ((context as Record<string, unknown>)[PREVIEW_CONTEXT_FIELD] === isPreview) {
+    return undefined;
+  }
+  // The SDK context type does not declare custom top-level fields.
+  const nextContext = { ...context, [PREVIEW_CONTEXT_FIELD]: isPreview };
+  return client.updateContext(nextContext);
+}
+
 /**
- * Shared bootstrap/provider client, using exactly the same identity and rollout context.
- * A client stopped by provider cleanup is replaced, matching a fresh provider mount.
+ * Shared bootstrap/provider client, scoped to the identity. Preview is part of the rollout context
+ * but not of the client identity: a Preview change updates the existing client's context, so the
+ * React FlagProvider never holds a replaced client. A client stopped by provider cleanup is
+ * replaced, matching a fresh provider mount.
  */
 export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: boolean): UnleashClient {
   clearLegacyFeatureFlagsCache();
@@ -130,8 +154,7 @@ export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: b
   const userId = user?.identity.internal?.account_id;
   const accountNumber = user?.identity.account_number;
   const email = user?.identity.user?.email;
-  const context = {
-    'platform.chrome.ui.preview': isPreview,
+  const identityContext = {
     'platform.chrome.ui.env': getEnv(),
     userId,
     orgId,
@@ -146,13 +169,19 @@ export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: b
         }
       : {}),
   };
-  const key = JSON.stringify(context);
+  const key = JSON.stringify(identityContext);
   if (current?.key === key && !current.stopped) {
+    const contextUpdate = updatePreviewContext(current.client, isPreview);
+    if (contextUpdate) {
+      // Bootstrap waits for this; anywhere else a failed refresh is reported by the client's error event.
+      current.contextUpdate = contextUpdate.catch(() => undefined);
+    }
     return current.client;
   }
   if (current) {
     stopFeatureFlagsClient(current.client);
   }
+  const context = { [PREVIEW_CONTEXT_FIELD]: isPreview, ...identityContext };
   const client = new UnleashClient({
     ...config,
     fetch: createFetchFeatureFlags(),
@@ -204,7 +233,9 @@ export function stopFeatureFlagsClient(client: UnleashClient): void {
 export async function getBootstrapFeatureFlag(user: ChromeUser, isPreview: boolean, flag: string): Promise<boolean> {
   try {
     const client = getFeatureFlagsClient(user, isPreview);
-    await withTimeout(startFeatureFlagsClient(client), FEATURE_FLAGS_INITIAL_TIMEOUT_MS, undefined);
+    // A reused client may still be refetching toggles for a new Preview context.
+    const ready = startFeatureFlagsClient(client).then(() => records.get(client)?.contextUpdate);
+    await withTimeout(ready, FEATURE_FLAGS_INITIAL_TIMEOUT_MS, undefined);
     return client.isEnabled(flag);
   } catch {
     return false;
