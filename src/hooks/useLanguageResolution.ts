@@ -7,16 +7,14 @@ import { resolveLocale } from '../utils/languageResolution';
 
 /**
  * Unleash gate for the whole language flow. When off, the atom stays 'en',
- * chrome.language stays 'en', and the return-trip refresh stays inert.
+ * and chrome.language stays 'en'.
+ *
+ * The account-console return trip (silent re-auth on ?fromAccount=1 before
+ * the app boots) is handled in the auth layer (OIDCProvider), deliberately
+ * outside this flag: the parameter only exists if our account-console links
+ * created it.
  */
 export const LANGUAGE_DETECTION_FLAG = 'platform.chrome.language-detection';
-
-/**
- * Marks the return trip from the SSO account console. On arrival we force a
- * silent re-auth so fresh token claims (including the locale) land before
- * the page re-renders, then reboot the console.
- */
-export const ACCOUNT_RETURN_PARAM = 'fromAccount';
 
 /**
  * Reads the SSO profile locale and publishes the rendering locale to
@@ -34,22 +32,7 @@ export function useLanguageResolution(chromeAuth: ChromeAuthContextValue) {
       return;
     }
 
-    // Return trip from the account console: refresh the token, then reboot.
-    const params = new URLSearchParams(window.location.search);
-    if (params.get(ACCOUNT_RETURN_PARAM) === '1') {
-      params.delete(ACCOUNT_RETURN_PARAM);
-      const cleaned = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
-      chromeAuth
-        .loginSilent()
-        .catch(() => undefined)
-        .finally(() => {
-          window.history.replaceState({}, '', cleaned);
-          window.location.reload();
-        });
-      return;
-    }
-
     const profileLocale = chromeAuth.user?.identity?.user?.locale as string | undefined;
     setLanguage(resolveLocale(profileLocale));
-  }, [chromeAuth.user?.identity?.user?.locale, chromeAuth.token, chromeAuth.loginSilent, languageDetectionEnabled, setLanguage]);
+  }, [chromeAuth.user?.identity?.user?.locale, languageDetectionEnabled, setLanguage]);
 }

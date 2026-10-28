@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { buildAccountConsoleUrl, buildCurrentReturnTo } from '../../utils/languageResolution';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useOrgOptIn } from '../../hooks/useOrgOptIn';
 import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
@@ -94,10 +95,15 @@ const DropdownItems = ({
       </PanelMain>
     </Panel>,
     <Divider component="li" key="separator" />,
-    <React.Fragment key="My Profile wrapper">
+    <React.Fragment key="Account details wrapper">
       {!isITLessEnv && userMenu?.showMyProfile && (
-        <DropdownItem key="My Profile" to={`${ssoBase}/realms/redhat-external/account/`} target="_blank" rel="noopener noreferrer" component="a">
-          {intl.formatMessage(messages.myProfile)}
+        // Opens in the same tab and carries the console return trip: coming
+        // back from the account console re-auths silently (OIDCProvider) so
+        // profile changes — including the language — apply immediately. The
+        // dropdown re-renders on open, so the return URL reflects the page
+        // the user is on when they open the menu.
+        <DropdownItem key="Account details" to={buildAccountConsoleUrl(ssoBase, buildCurrentReturnTo())} component="a">
+          {intl.formatMessage(messages.accountDetails)}
         </DropdownItem>
       )}
     </React.Fragment>,

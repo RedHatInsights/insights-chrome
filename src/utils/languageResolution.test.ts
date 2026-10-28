@@ -1,4 +1,4 @@
-import { getNotificationCase, resolveLocale } from './languageResolution';
+import { buildCurrentReturnTo, getNotificationCase, resolveLocale } from './languageResolution';
 
 describe('resolveLocale', () => {
   it('returns supported profile locales verbatim', () => {
@@ -36,9 +36,32 @@ describe('getNotificationCase', () => {
       expect(getNotificationCase('en', 'en-GB')).toEqual({ type: 'none' });
     });
 
-    it('returns none when both agree on an unsupported language', () => {
-      expect(getNotificationCase('zh-TW', 'zh-TW')).toEqual({ type: 'none' });
-      expect(getNotificationCase('de', 'de-DE')).toEqual({ type: 'none' });
+    it('returns unsupported when both agree on an unsupported language', () => {
+      expect(getNotificationCase('zh-TW', 'zh-TW')).toEqual({ type: 'unsupported', profileLanguage: 'zh-TW' });
+      expect(getNotificationCase('de', 'de-DE')).toEqual({ type: 'unsupported', profileLanguage: 'de' });
+    });
+  });
+
+  describe('case 1: profile language not supported (fallback notice)', () => {
+    it('returns unsupported when the profile language has no catalog, regardless of browser', () => {
+      expect(getNotificationCase('de', 'de-DE')).toEqual({ type: 'unsupported', profileLanguage: 'de' });
+      expect(getNotificationCase('pt-BR', 'fr')).toEqual({ type: 'unsupported', profileLanguage: 'pt-BR' });
+      expect(getNotificationCase('it', 'en')).toEqual({ type: 'unsupported', profileLanguage: 'it' });
+    });
+
+    it('takes precedence over the discovery nudge', () => {
+      expect(getNotificationCase('de', 'fr')).toEqual({ type: 'unsupported', profileLanguage: 'de' });
+      expect(getNotificationCase('zh-TW', 'zh-CN')).toEqual({ type: 'unsupported', profileLanguage: 'zh-TW' });
+    });
+
+    it('does not fire for the Keycloak English default', () => {
+      expect(getNotificationCase('en_US', 'en')).toEqual({ type: 'none' });
+      expect(getNotificationCase('en_US', 'de')).toEqual({ type: 'none' });
+      expect(getNotificationCase(undefined, 'de')).toEqual({ type: 'none' });
+    });
+
+    it('fires for a Traditional Chinese profile regardless of the browser language', () => {
+      expect(getNotificationCase('zh-HK', 'de')).toEqual({ type: 'unsupported', profileLanguage: 'zh-HK' });
     });
   });
 
@@ -109,6 +132,22 @@ describe('getNotificationCase', () => {
 
     it('en profile with zh-Hant browser returns none (Traditional not supported)', () => {
       expect(getNotificationCase('en', 'zh-Hant')).toEqual({ type: 'none' });
+    });
+  });
+
+  describe('buildCurrentReturnTo', () => {
+    afterEach(() => {
+      window.history.replaceState({}, '', '/');
+    });
+
+    it('marks the current location with the return parameter, preserving query and hash', () => {
+      window.history.replaceState({}, '', '/deep/page?keep=1#frag');
+      expect(buildCurrentReturnTo()).toBe(`${window.location.origin}/deep/page?keep=1&fromAccount=1#frag`);
+    });
+
+    it('keeps existing query parameters in order and refreshes a stale return parameter', () => {
+      window.history.replaceState({}, '', '/page?keep=2&fromAccount=1');
+      expect(buildCurrentReturnTo()).toBe(`${window.location.origin}/page?keep=2&fromAccount=1`);
     });
   });
 });

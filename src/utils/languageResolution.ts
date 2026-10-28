@@ -26,11 +26,19 @@ export function resolveLocale(profileLocale: string | undefined): SupportedLangu
 }
 
 // ---------------------------------------------------------------------------
-// Notification logic — internal to the LanguageBanner component.
+// Notification logic — internal to the LanguageNotifier component.
 // Never affects rendering; only decides which notification (if any) to show.
 // ---------------------------------------------------------------------------
 
-export type NotificationCase = { type: 'none' } | { type: 'discovery'; browserLanguage: string } | { type: 'multilingual' };
+export type NotificationCase = { type: 'none' } | { type: 'unsupported'; profileLanguage: string } | { type: 'discovery'; browserLanguage: string };
+
+/**
+ * Returns true when the (base) language has a catalog to render in.
+ * Notification-internal: never used for rendering.
+ */
+function isSupportedBase(base: string): boolean {
+  return base === 'zh-Hans' || (SUPPORTED_LANGUAGES as readonly string[]).includes(base);
+}
 
 /**
  * Returns the script-aware base language for comparison purposes.
@@ -51,23 +59,30 @@ function baseLanguage(tag: string): string {
  *
  * Keycloak defaults the profile locale to "en_US" when no choice is made,
  * so the profile is never truly absent. The "no locale set" scenario
- * collapses into case 1 or 2 depending on the browser language.
+ * collapses into the English-default cases below.
  *
- * 1. SSO locale (or default "en_US"), browser agrees → no notification
- * 2. SSO locale (or default "en_US"), browser disagrees, browser supported → discovery nudge
- * 3. SSO locale, browser disagrees, browser language not supported → no notification
+ * 1. Profile language not supported → fallback notice ("we switched it back
+ *    to English"). Takes precedence over everything: the user picked a
+ *    language we cannot render, and the console silently fell back.
+ * 2. Profile (or default "en_US") and browser agree → no notification
+ * 3. Profile and browser disagree, browser language supported → discovery
+ *    nudge ("<language> is supported… would you like to switch?")
+ * 4. Profile and browser disagree, browser language not supported → no
+ *    notification
  */
 export function getNotificationCase(profileLocale: string | undefined, navigatorLanguage: string): NotificationCase {
   const profileBase = baseLanguage(profileLocale ?? 'en_US');
   const browserBase = baseLanguage(navigatorLanguage);
 
+  if (!isSupportedBase(profileBase)) {
+    return { type: 'unsupported', profileLanguage: profileLocale ?? 'en_US' };
+  }
+
   if (profileBase === browserBase) {
     return { type: 'none' };
   }
 
-  const browserSupported = browserBase === 'zh-Hans' || (SUPPORTED_LANGUAGES as readonly string[]).includes(browserBase);
-
-  if (browserSupported) {
+  if (isSupportedBase(browserBase)) {
     return { type: 'discovery', browserLanguage: navigatorLanguage };
   }
 
@@ -79,6 +94,35 @@ export function getNotificationCase(profileLocale: string | undefined, navigator
 // ---------------------------------------------------------------------------
 
 /**
+ * Query parameter marking the return trip from the SSO account console.
+ * The account-console links set it, and the OIDC layer (OIDCProvider)
+ * consumes it on the landing page load to force a silent re-auth before the
+ * app boots, so fresh token claims — including an updated locale — are in
+ * place before anything renders.
+ */
+export const ACCOUNT_RETURN_PARAM = 'fromAccount';
+
+/**
+ * Shared debug flag for the language flow: set localStorage
+ * "chrome:intl:debug" = "true". Consumed by LanguageNotifier and the
+ * OIDCProvider return-trip handling.
+ */
+export const INTL_DEBUG_KEY = 'chrome:intl:debug';
+
+/**
+ * The page to return to after an account-console visit, computed from the
+ * user's current location at click time (not at notification render time:
+ * the toast persists across SPA navigation, so a boot-time pathname would
+ * send the user back to the wrong page). Preserves the current query string
+ * and hash so bookmarked deep links survive the round trip.
+ */
+export function buildCurrentReturnTo(): string {
+  const url = new URL(window.location.href);
+  url.searchParams.set(ACCOUNT_RETURN_PARAM, '1');
+  return url.toString();
+}
+
+/**
  * Builds the SSO account console URL with the referrer mechanism:
  * the console shows a "Back to cloud-services" masthead link pointing at returnTo.
  */
@@ -88,7 +132,7 @@ export function buildAccountConsoleUrl(ssoUrl: string, returnTo: string): string
 }
 
 /**
- * Native display name for a language tag. Used by the multilingual notification
+ * Native display name for a language tag. Used by the language notifications
  * so each language is presented in its own script.
  */
 export function languageDisplayName(tag: string | undefined): string {
@@ -101,4 +145,15 @@ export function languageDisplayName(tag: string | undefined): string {
   } catch {
     return tag;
   }
+}
+
+/**
+ * Display name in sentence case for the English message template, where the
+ * language name starts the sentence ("Français language is supported…").
+ * Native names arrive lowercase in some languages ("français"), which reads
+ * wrong sentence-initially. A no-op for scripts without case ("中文").
+ */
+export function sentenceCaseDisplayName(tag: string | undefined): string {
+  const name = languageDisplayName(tag);
+  return name.charAt(0).toLocaleUpperCase() + name.slice(1);
 }

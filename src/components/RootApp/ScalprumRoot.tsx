@@ -33,7 +33,7 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
 import DegradedStateBanner from '../DegradedStateBanner';
-import LanguageBanner from '../LanguageBanner/LanguageBanner';
+import LanguageNotifier from '../LanguageNotifier/LanguageNotifier';
 import { useLanguageResolution } from '../../hooks/useLanguageResolution';
 import { languageAtom } from '../../state/atoms/languageAtom';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
@@ -69,7 +69,7 @@ const ScalprumRoot = memo(
         <div className="chr-c-shell">
           <BetaSwitcher />
           <DegradedStateBanner />
-          <LanguageBanner />
+          <LanguageNotifier />
           <Routes>
             <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
             <Route
