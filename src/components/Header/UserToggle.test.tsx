@@ -106,8 +106,9 @@ describe('UserToggle - userMenu config', () => {
   it('should link Account details to the SSO account console with the console return trip, in the same tab', () => {
     renderUserToggle({ showMyProfile: true });
     const profileLink = screen.getByText('Account details').closest('a');
-    // Falls back to QA SSO route when hostname is not in DEFAULT_SSO_ROUTES (e.g. localhost in tests)
-    expect(profileLink).toHaveAttribute('href', buildAccountConsoleUrl('https://sso.qa.redhat.com/auth', buildCurrentReturnTo()));
+    // The link targets the SSO realm from the auth context, carrying the
+    // console return trip.
+    expect(profileLink).toHaveAttribute('href', buildAccountConsoleUrl('https://sso.test.redhat.com', buildCurrentReturnTo()));
     // Same tab: no target/rel, and the return URL carries fromAccount=1 so the
     // OIDC return trip re-auths silently when the user comes back.
     expect(profileLink).not.toHaveAttribute('target');

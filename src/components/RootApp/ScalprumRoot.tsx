@@ -269,7 +269,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
         },
       },
     };
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, language]);
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>

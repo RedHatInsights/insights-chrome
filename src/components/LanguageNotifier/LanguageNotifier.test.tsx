@@ -19,6 +19,11 @@ jest.mock('../../auth/ChromeAuthContext', () => {
   return { __esModule: true, default: actualReact.createContext(undefined) };
 });
 
+// The notifier is gated behind the language-detection feature flag.
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: jest.fn(() => true),
+}));
+
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const mockAuthValue = {

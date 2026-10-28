@@ -2,10 +2,11 @@ import { useContext, useState } from 'react';
 import { AlertActionLink } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import Portal, { PortalNotificationConfig } from '@redhat-cloud-services/frontend-components-notifications/Portal';
 import { useIntl } from 'react-intl';
+import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import messages from '../../locales/Messages';
+import { LANGUAGE_DETECTION_FLAG } from '../../hooks/useLanguageResolution';
 import {
-  ACCOUNT_RETURN_PARAM,
   INTL_DEBUG_KEY,
   buildAccountConsoleUrl,
   buildCurrentReturnTo,
@@ -51,9 +52,10 @@ const DISCOVERY_NOTIFICATION_ID = 'language-discovery';
  *   "Don't ask again" is the explicit permanent opt-out.
  * - No notification: browser agrees with profile, or neither case applies.
  *
- * Keycloak defaults the profile locale to "en_US" when no choice is made,
- * so a user with a non-English browser and a default profile gets the
- * discovery nudge.
+ * Gated behind the platform.chrome.language-detection feature flag, like the
+ * rest of the language flow. Keycloak defaults the profile locale to "en_US"
+ * when no choice is made, so a user with a non-English browser and a default
+ * profile gets the discovery nudge.
  *
  * Resolution details render in a debug line below the notifications when
  * the "chrome:intl:debug" localStorage flag is set.
@@ -61,6 +63,7 @@ const DISCOVERY_NOTIFICATION_ID = 'language-discovery';
 export const LanguageNotifier = () => {
   const { ssoUrl, user } = useContext(ChromeAuthContext);
   const intl = useIntl();
+  const languageDetectionEnabled = useFlag(LANGUAGE_DETECTION_FLAG);
 
   const [sessionDismissed, setSessionDismissed] = useState<Record<string, boolean>>({});
   const [nudgePermanentlyDismissed, setNudgePermanentlyDismissed] = useState(() => localStorage.getItem(NUDGE_SEEN_KEY) === 'true');
@@ -71,21 +74,19 @@ export const LanguageNotifier = () => {
   const renderingLocale = resolveLocale(profileLocale);
   const debugEnabled = localStorage.getItem(INTL_DEBUG_KEY) === 'true';
 
-  // Without an SSO URL (a partial auth context) there is no account console
-  // to link to, and the notifications exist to send the user there.
-  if (!ssoUrl) {
+  // Nothing to do without the feature flag, and without an SSO URL (a
+  // partial auth context) there is no account console to link to.
+  if (!languageDetectionEnabled || !ssoUrl) {
     return null;
   }
 
-  const returnTo = `${window.location.origin}${window.location.pathname}?${ACCOUNT_RETURN_PARAM}=1`;
-  const accountUrl = buildAccountConsoleUrl(ssoUrl, returnTo);
-
   /**
-   * The toast persists across SPA navigation, so the boot-time accountUrl can
-   * be stale by the time the user clicks. Navigate from the live location so
-   * the user returns to the page they are actually on, query string and hash
-   * included. The href stays as a fallback for open-in-new-tab.
+   * Fallback href for open-in-new-tab; the onClick handler below navigates
+   * from the live location instead, because the toast outlives SPA
+   * navigation and a boot-time URL can be stale by the time the user clicks.
    */
+  const accountUrl = buildAccountConsoleUrl(ssoUrl, buildCurrentReturnTo());
+
   const goToAccountConsole = (event: React.MouseEvent) => {
     event.preventDefault();
     window.location.assign(buildAccountConsoleUrl(ssoUrl, buildCurrentReturnTo()));
@@ -159,6 +160,8 @@ export const LanguageNotifier = () => {
   if (debugEnabled) {
     const detail = notification.type === 'discovery' ? ` (${notification.browserLanguage})` : '';
     const profileDetail = notification.type === 'unsupported' ? ` (${notification.profileLanguage})` : '';
+    // console.log, not console.debug: devtools hides Verbose-level messages by
+    // default, which makes an opt-in debug flag invisible (see auth/logger.ts).
     console.log(
       `[chrome:language] profile: ${profileLocale ?? 'undefined'} | browser: ${navigator.language} | rendering: ${renderingLocale} | notification: ${notification.type}${detail}${profileDetail}`
     );
