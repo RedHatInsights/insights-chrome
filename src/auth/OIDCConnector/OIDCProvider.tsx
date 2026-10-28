@@ -77,7 +77,10 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
    * links, so this runs unconditionally; a failure or timeout falls through
    * to a normal boot with the stored identity.
    */
-  const [accountReturnRefresh, setAccountReturnRefresh] = useState(false);
+  // Initialized from the marker so the auth tree is gated on the very first
+  // render: without this, AuthProvider and OIDCSecured mount for one render
+  // on the stale identity before the effect below closes the gate.
+  const [accountReturnRefresh, setAccountReturnRefresh] = useState(() => new URLSearchParams(window.location.search).get(ACCOUNT_RETURN_PARAM) === '1');
   useEffect(() => {
     // The UserManager memo runs before the SSO config resolves, creating a
     // placeholder whose endpoints are unusable ("undefinedrealms/…" — not a
@@ -92,7 +95,7 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       return;
     }
     params.delete(ACCOUNT_RETURN_PARAM);
-    const cleaned = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+    const cleaned = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}${window.location.hash}`;
     window.history.replaceState({}, '', cleaned);
 
     setAccountReturnRefresh(true);

@@ -1,7 +1,7 @@
 import './UserToggle.scss';
 
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { DEFAULT_SSO_ROUTES, ITLess, getEnvDetails, isProd as isProdEnv } from '../../utils/common';
+import { ITLess, isProd as isProdEnv } from '../../utils/common';
 import React, { useContext, useRef, useState } from 'react';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -45,12 +45,11 @@ const DropdownItems = ({
   userMenu?: UserMenuConfig;
 }) => {
   const isProd = isProdEnv();
-  const ssoBase = getEnvDetails()?.sso ?? DEFAULT_SSO_ROUTES.qa.sso;
   const isITLessEnv = ITLess();
   const intl = useIntl();
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
-  const { logout } = useContext(ChromeAuthContext);
+  const { logout, ssoUrl } = useContext(ChromeAuthContext);
   const enableMyAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
   const { v2OptedIn } = useOrgOptIn();
   const v2WorkspacesEnabled = v2OptedIn === true;
@@ -102,7 +101,7 @@ const DropdownItems = ({
         // profile changes — including the language — apply immediately. The
         // dropdown re-renders on open, so the return URL reflects the page
         // the user is on when they open the menu.
-        <DropdownItem key="Account details" to={buildAccountConsoleUrl(ssoBase, buildCurrentReturnTo())} component="a">
+        <DropdownItem key="Account details" to={buildAccountConsoleUrl(ssoUrl, buildCurrentReturnTo())} component="a">
           {intl.formatMessage(messages.accountDetails)}
         </DropdownItem>
       )}
