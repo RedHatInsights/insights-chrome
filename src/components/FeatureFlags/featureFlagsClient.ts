@@ -52,9 +52,16 @@ const fetchFeatureFlagsWithTimeout = (url: RequestInfo | URL, requestInit: Reque
   });
 };
 
-const validateFeatureFlagsResponse = (response: Response) => {
+const validateFeatureFlagsResponse = (response: Response, requestContext: Pick<Sentry.Event, 'tags' | 'contexts'>) => {
+  const captureContext = {
+    ...requestContext,
+    contexts: {
+      ...requestContext.contexts,
+      feature_flags: { ...requestContext.contexts?.feature_flags, status_code: response.status },
+    },
+  };
   if (response.status >= 400) {
-    Sentry.captureMessage(`Feature loading error server error! ${response.status}: ${response.statusText}.`, 'warning');
+    Sentry.captureMessage(`Feature loading error server error! ${response.status}: ${response.statusText}.`, { ...captureContext, level: 'warning' });
     throw new Error(`Feature flag request failed with HTTP ${response.status}`);
   }
 
@@ -62,7 +69,7 @@ const validateFeatureFlagsResponse = (response: Response) => {
     const contentType = response.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       const error = new Error(`Feature loading error server error! Invalid response content type. Expected 'application/json, got: ${contentType}'`);
-      captureException(error);
+      captureException(error, captureContext);
       throw error;
     }
   }
@@ -85,19 +92,31 @@ export const createFetchFeatureFlags = () => {
     }
 
     const timeoutMs = initialRequestSettled ? FEATURE_FLAGS_REFRESH_TIMEOUT_MS : FEATURE_FLAGS_INITIAL_TIMEOUT_MS;
+    const captureContext = {
+      tags: { 'chrome.operation': 'feature_flags.fetch', 'chrome.error_surface': 'request' },
+      contexts: {
+        feature_flags: {
+          // The SDK URL contains identity data. Report only this fixed endpoint, never query parameters, headers, or bodies.
+          endpoint: FEATURE_FLAGS_PATHNAME,
+          method: (requestInit.method ?? (typeof url === 'string' || url instanceof URL ? 'GET' : url.method)).toUpperCase(),
+          phase: initialRequestSettled ? 'refresh' : 'initial',
+          timeout_ms: timeoutMs,
+        },
+      },
+    };
     let response: Response;
     try {
       response = await fetchFeatureFlagsWithTimeout(url, requestInit, timeoutMs);
     } catch (error) {
       if (!requestInit.signal?.aborted) {
         initialRequestSettled = true;
-        captureException(error);
+        captureException(error, captureContext);
       }
       throw error;
     }
 
     initialRequestSettled = true;
-    return validateFeatureFlagsResponse(response);
+    return validateFeatureFlagsResponse(response, captureContext);
   };
 };
 

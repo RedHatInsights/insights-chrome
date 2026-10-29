@@ -208,7 +208,7 @@ it('keeps identity-scoped stored toggles on HTTP failure and reports only a warn
   mockFetch.mockImplementation(async () => new Response('', { status: 503 }));
   clientFor();
   expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
-  expect(captureMessage).toHaveBeenCalledWith(expect.any(String), 'warning');
+  expect(captureMessage).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ level: 'warning' }));
   expect(captureException).not.toHaveBeenCalled();
 });
 
@@ -239,7 +239,7 @@ it('bounds a hung bootstrap lookup even when fetch ignores abort', async () => {
   const pending = getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG);
   await jest.advanceTimersByTimeAsync(FEATURE_FLAGS_INITIAL_TIMEOUT_MS);
   expect(await pending).toBe(false);
-  expect(captureException).toHaveBeenCalledWith(expect.objectContaining({ name: 'TimeoutError' }));
+  expect(captureException).toHaveBeenCalledWith(expect.objectContaining({ name: 'TimeoutError' }), expect.objectContaining({ tags: expect.any(Object) }));
 });
 
 it('starts only once and restarts after provider cleanup', async () => {

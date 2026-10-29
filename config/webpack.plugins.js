@@ -126,6 +126,8 @@ const plugins = (dev = false, beta = false, restricted = false) => {
      */
     new webpack.DefinePlugin({
       __SENTRY_DEBUG__: false,
+      // Expose only the existing CI release identifier, never the build environment or auth token.
+      'process.env.SENTRY_RELEASE': JSON.stringify(process.env.SENTRY_RELEASE || ''),
     }),
     ...(dev
       ? [
