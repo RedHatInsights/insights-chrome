@@ -4,6 +4,7 @@ import { IntlProvider } from 'react-intl';
 import { Provider, createStore } from 'jotai';
 import * as Sentry from '@sentry/react';
 import DefaultErrorComponent from './DefaultErrorComponent';
+import ErrorBoundary from './ErrorBoundary';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { _testHooks } from '../../utils/chunkLoadErrorUtils';
@@ -78,6 +79,10 @@ describe('DefaultErrorComponent', () => {
 
       await waitFor(() => {
         expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+          tags: {
+            'chrome.operation': 'error_fallback',
+            'chrome.error_surface': 'module',
+          },
           contexts: {
             react: { componentStack },
           },
@@ -87,6 +92,38 @@ describe('DefaultErrorComponent', () => {
           },
         });
       });
+    });
+
+    it('identifies the global shell fallback separately from module fallbacks', async () => {
+      const error = new TypeError('NetworkError when attempting to fetch resource.');
+      const BrokenComponent = () => {
+        throw error;
+      };
+      const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+      try {
+        renderWithProviders(
+          <ErrorBoundary>
+            <BrokenComponent />
+          </ErrorBoundary>
+        );
+
+        await waitFor(() => {
+          expect(Sentry.captureException).toHaveBeenCalledWith(
+            error,
+            expect.objectContaining({
+              tags: {
+                'chrome.operation': 'error_fallback',
+                'chrome.error_surface': 'shell',
+              },
+              contexts: { react: { componentStack: expect.any(String) } },
+            })
+          );
+        });
+        expect(screen.getByText('Something went wrong', { exact: false })).toBeInTheDocument();
+      } finally {
+        consoleError.mockRestore();
+      }
     });
 
     it('reports string errors to Sentry with a Something went wrong prefix', async () => {
@@ -100,6 +137,10 @@ describe('DefaultErrorComponent', () => {
             message: 'Something went wrong: Cannot destructure property future of useContext as it is null',
           }),
           {
+            tags: {
+              'chrome.operation': 'error_fallback',
+              'chrome.error_surface': 'module',
+            },
             contexts: {
               react: { componentStack: undefined },
             },
