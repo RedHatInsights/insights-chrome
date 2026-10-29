@@ -2,6 +2,7 @@ import type { Event } from '@sentry/react';
 import * as Sentry from '@sentry/react';
 import type { ConfiguredApps } from './sentry';
 import {
+  addChromeSentryContext,
   applySentryEventRouting,
   filterAdobeAlloySentryEvent,
   getAppDetails,
@@ -344,6 +345,77 @@ describe('filterAdobeAlloySentryEvent function', () => {
     }
 
     expect(captureMessageMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('addChromeSentryContext function', () => {
+  const originalRelease = process.env.SENTRY_RELEASE;
+
+  afterEach(() => {
+    if (originalRelease === undefined) {
+      delete process.env.SENTRY_RELEASE;
+    } else {
+      process.env.SENTRY_RELEASE = originalRelease;
+    }
+    jest.restoreAllMocks();
+  });
+
+  it('identifies the Chrome build without replacing the app release, routing, or grouping', () => {
+    process.env.SENTRY_RELEASE = 'chrome-build-sha';
+    jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+    jest.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+    const event: Event = {
+      ...eventWithFrames('inventory'),
+      release: 'inventory-release',
+      fingerprint: ['existing-group'],
+      contexts: { react: { componentStack: 'original component stack' } },
+      extra: { ROUTE_TO: [{ dsn: 'https://example@sentry.io/123', release: 'inventory-release' }] },
+    };
+    const originalException = event.exception;
+    const originalContexts = event.contexts;
+    const originalRouting = event.extra;
+
+    expect(addChromeSentryContext(event)).toBe(event);
+    expect(event.tags).toEqual({
+      app_name: 'inventory',
+      'chrome.release': 'chrome-build-sha',
+      'chrome.browser_online': true,
+      'chrome.page_visibility': 'visible',
+    });
+    expect(event.release).toBe('inventory-release');
+    expect(event.fingerprint).toEqual(['existing-group']);
+    expect(event.exception).toBe(originalException);
+    expect(event.contexts).toBe(originalContexts);
+    expect(event.extra).toBe(originalRouting);
+  });
+
+  it('reads current browser state for each event without guessing the failed request or UI impact', () => {
+    process.env.SENTRY_RELEASE = 'chrome-build-sha';
+    const online = jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+    const visibility = jest.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+    const first = addChromeSentryContext({} as Event);
+
+    online.mockReturnValue(false);
+    visibility.mockReturnValue('hidden');
+    const second = addChromeSentryContext({} as Event);
+
+    expect(first.tags).toMatchObject({ 'chrome.browser_online': true, 'chrome.page_visibility': 'visible' });
+    expect(second.tags).toEqual({
+      'chrome.release': 'chrome-build-sha',
+      'chrome.browser_online': false,
+      'chrome.page_visibility': 'hidden',
+    });
+    expect(second.contexts).toBeUndefined();
+  });
+
+  it('makes an unavailable build identifier explicit rather than using another app release', () => {
+    delete process.env.SENTRY_RELEASE;
+    const event: Event = { release: 'another-app-release', tags: { 'chrome.error_surface': 'shell' } };
+
+    addChromeSentryContext(event);
+
+    expect(event.tags).toMatchObject({ 'chrome.release': 'unknown', 'chrome.error_surface': 'shell' });
+    expect(event.release).toBe('another-app-release');
   });
 });
 

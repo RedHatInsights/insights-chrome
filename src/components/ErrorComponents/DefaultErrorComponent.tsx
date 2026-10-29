@@ -32,6 +32,7 @@ export type DefaultErrorComponentProps = {
     loginRedirect: () => Promise<void>;
   };
   onReset?: () => void;
+  errorBoundary?: 'shell' | 'module';
 };
 
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
@@ -43,6 +44,10 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
     const sentryId =
       props.error != null
         ? Sentry.captureException(props.error instanceof Error ? props.error : new Error(`Something went wrong: ${getErrorMessage(props.error)}`), {
+            tags: {
+              'chrome.operation': 'error_fallback',
+              'chrome.error_surface': props.errorBoundary ?? 'module',
+            },
             contexts: {
               react: { componentStack: props.errorInfo?.componentStack },
             },
@@ -73,7 +78,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
         chunkLoadErrorUtils.reloadPage();
       }
     }
-  }, [props.error, props.errorInfo, activeModule]);
+  }, [props.error, props.errorInfo, props.errorBoundary, activeModule]);
 
   // second level of error capture if xhr/fetch interceptor fails
   const gatewayError =
