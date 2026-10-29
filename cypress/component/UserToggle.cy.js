@@ -31,6 +31,7 @@ const testUser = {
 };
 
 const chromeAuthContextValue = {
+  ssoUrl: 'https://sso.qa.redhat.com/auth',
   doOffline: () => Promise.resolve(),
   getOfflineToken: () => Promise.resolve(),
   getToken: () => Promise.resolve(''),

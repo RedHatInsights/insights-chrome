@@ -95,7 +95,9 @@ const DropdownItems = ({
     </Panel>,
     <Divider component="li" key="separator" />,
     <React.Fragment key="Account details wrapper">
-      {!isITLessEnv && userMenu?.showMyProfile && (
+      {/* Without an SSO URL (a partial auth context, as in some test fixtures)
+          there is no account console to link to. */}
+      {!isITLessEnv && userMenu?.showMyProfile && ssoUrl && (
         // Opens in the same tab and carries the console return trip: coming
         // back from the account console re-auths silently (OIDCProvider) so
         // profile changes — including the language — apply immediately. The
