@@ -15,13 +15,13 @@ its own is not a wildcard. Confirm the rule in an Instant Test after adding it.
 Add one row per manually configured block. Prefer specific analytics hosts or
 endpoints over broad URL fragments.
 
-| Match pattern (regex) | Analytics entity | Catchpoint scope | Configured | Notes |
-| --- | --- | --- | --- | --- |
-| `data\.analytics\.console\.redhat\.com` | Unconfirmed | Test | Not yet | Host observed in the browser console; confirm the request destination and owner. |
-| `console\.redhat\.com/connections/.*` | Segment proxy | Test | Not yet | Covers `/connections/api/v1` and `/connections/cdn`; both are Segment proxy paths. |
-| `.*\.amplitude\.com/.*` | Amplitude | Test | Not yet | Matches Amplitude subdomains, including `api`, `api2`, `api.eu`, and `cdn`; does not match the apex `amplitude.com` host. |
-| `console\.redhat\.com/connections/cdn/.*` | Segment proxy | Test | Not yet | Retained as the narrower CDN rule from the prior list; it is redundant with the broader Segment rule above. |
-| `.*\.pendo\.io([/:?#].*|$)` | Pendo | Test | Not yet | Matches Pendo subdomains, including the SDK and event hosts, across regional variants. Does not match Pendo guide assets served from `storage.googleapis.com`. |
+| Match pattern (regex)                     | Analytics entity | Catchpoint scope | Configured | Notes                                                                                                                                                          |
+| ----------------------------------------- | ---------------- | ---------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data\.analytics\.console\.redhat\.com`   | Unconfirmed      | Test             | Not yet    | Host observed in the browser console; confirm the request destination and owner.                                                                               |
+| `console\.redhat\.com/connections/.*`     | Segment proxy    | Test             | Not yet    | Covers `/connections/api/v1` and `/connections/cdn`; both are Segment proxy paths.                                                                             |
+| `.*\.amplitude\.com/.*`                   | Amplitude        | Test             | Not yet    | Matches Amplitude subdomains, including `api`, `api2`, `api.eu`, and `cdn`; does not match the apex `amplitude.com` host.                                      |
+| `console\.redhat\.com/connections/cdn/.*` | Segment proxy    | Test             | Not yet    | Retained as the narrower CDN rule from the prior list; it is redundant with the broader Segment rule above.                                                    |
+| `.*\.pendo\.io/.*`                        | Pendo            | Test             | Not yet    | Matches Pendo subdomains, including the SDK and event hosts, across regional variants. Does not match Pendo guide assets served from `storage.googleapis.com`. |
 
 ## One-off validation in Catchpoint
 
@@ -36,15 +36,13 @@ The monitor's WebSocket assertion should still pass. A Pendo script error can oc
 
 References: [Instant Tests](https://docs.catchpoint.com/docs/instant-tests-overview), [Request Override Guide](https://docs.catchpoint.com/docs/request-override-guide), and [Playwright Test](https://docs.catchpoint.com/docs/playwright-test).
 
-
 ## Existing script-level request suppression
 
 These filters already run in the Catchpoint Playwright scripts to suppress
 TrustArc consent traffic. They are not confirmation that equivalent Request
 Block rules exist in Catchpoint configuration.
 
-| Playwright URL pattern | Purpose | Used by |
-| --- | --- | --- |
-| `**/consent.trustarc.com/**` | Suppress TrustArc consent endpoint requests | `websocket.ts` |
-| `**/libs/redhat/marketing/latest/trustarc/**` | Suppress TrustArc loader requests | `websocket.ts`, `landingpage.spec.ts`, `helppanel.spec.ts` |
-
+| Playwright URL pattern                        | Purpose                                     | Used by                                                    |
+| --------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
+| `**/consent.trustarc.com/**`                  | Suppress TrustArc consent endpoint requests | `websocket.ts`                                             |
+| `**/libs/redhat/marketing/latest/trustarc/**` | Suppress TrustArc loader requests           | `websocket.ts`, `landingpage.spec.ts`, `helppanel.spec.ts` |
