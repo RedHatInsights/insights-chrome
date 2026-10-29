@@ -6,10 +6,10 @@ import { SearchPermissionsCache } from './localSearchAtom';
 import { WritableAtom, atom } from 'jotai';
 import { userConfigAtom } from './userConfigAtom';
 import { ChromeUserConfig } from '../../utils/initUserConfig';
-import { LIGHTWELL_BUNDLE_ID } from '../../utils/common';
+import { isLightwellBundleId } from '../../utils/common';
 import { getUrl } from '../../hooks/useBundle';
 
-const isLightwellBundle = getUrl('bundle') === LIGHTWELL_BUNDLE_ID;
+const isLightwellBundle = isLightwellBundleId(getUrl('bundle'));
 
 export const previewModalOpenAtom = atomWithToggle(false);
 

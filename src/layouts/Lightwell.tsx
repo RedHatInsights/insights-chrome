@@ -17,14 +17,16 @@ import useLightwellRouteSetup from '../hooks/useLightwellRouteSetup';
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import LightwellNavigation from '../components/Navigation/LightwellNavigation';
 import { withHorizontalSubnav } from './layoutUtils';
+import { LightwellRemote } from './lightwellRemote';
 import './Lightwell.scss';
 
 export type LightwellProps = {
   Footer?: React.ReactNode;
+  remote: LightwellRemote;
 };
 
-// TODO: Temporary layout for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
-const Lightwell = ({ Footer }: LightwellProps) => {
+// TODO: Temporary layout for the Lightwell authed experience (RHCLOUD-48921). Revisit for a longer-term approach.
+const Lightwell = ({ Footer, remote }: LightwellProps) => {
   useLightwellRouteSetup();
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
@@ -42,11 +44,11 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
 
   useEffect(() => {
-    setActiveModule('contentSources');
+    setActiveModule(remote.scope);
     return () => {
       setActiveModule(undefined);
     };
-  }, [setActiveModule]);
+  }, [remote.scope, setActiveModule]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -108,13 +110,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           <Breadcrumbs />
         </ToolbarGroup>
         <RedirectBanner />
-        <ScalprumComponent
-          scope="contentSources"
-          module="./LightwellApp"
-          appId="contentSources"
-          ErrorComponent={<ErrorComponent />}
-          fallback={LoadingFallback}
-        />
+        <ScalprumComponent scope={remote.scope} module={remote.module} appId={remote.appId} ErrorComponent={<ErrorComponent />} fallback={LoadingFallback} />
       </Page>
       {Footer}
     </div>

@@ -1,4 +1,5 @@
 import React, { Fragment, Suspense, memo, useContext, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useAtomValue } from 'jotai';
 import Tools from './Tools';
@@ -18,6 +19,8 @@ import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
+import { getUrl } from '../../hooks/useBundle';
+import { getLightwellBasePath } from '../../utils/common';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 import WorkspaceSelector from '../WorkspaceSelector';
@@ -79,6 +82,8 @@ const MemoizedHeader = memo(
     const isITLess = useFlag('platform.chrome.itless');
     const isWorkspaceSelectorEnabled = useFlag('platform.chrome.workspace-global_selector');
     const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
+    const { pathname } = useLocation();
+    const lightwellHomeHref = getLightwellBasePath(getUrl('bundle', pathname));
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
@@ -94,13 +99,13 @@ const MemoizedHeader = memo(
               data-codemods
               className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
               component={(props: LinkWrapperProps) => (
-                <ChromeLink {...props} {...(isLightwellHeader ? { href: '/lightwell' } : { appId: 'landing', href: '/' })} />
+                <ChromeLink {...props} {...(isLightwellHeader ? { href: lightwellHomeHref } : { appId: 'landing', href: '/' })} />
               )}
             >
               <Logo />
             </MastheadLogo>
             {isLightwellHeader ? (
-              <ChromeLink href="/lightwell" className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-mt-xs chr-m-plain">
+              <ChromeLink href={lightwellHomeHref} className="chr-c-masthead__lightwell-title pf-v6-u-font-size-xl pf-v6-u-mt-xs chr-m-plain">
                 Lightwell
               </ChromeLink>
             ) : (

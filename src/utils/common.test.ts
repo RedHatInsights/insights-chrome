@@ -1,4 +1,4 @@
-import { findNavLeafPath, getErrorMessage, isExpandableNav, isFedModulesConfig, sanitizeFedModules } from './common';
+import { findNavLeafPath, getErrorMessage, getLightwellBasePath, isExpandableNav, isFedModulesConfig, isLightwellBundleId, sanitizeFedModules } from './common';
 import { NavItem } from '../@types/types';
 
 const mockCaptureException = jest.fn();
@@ -344,5 +344,30 @@ describe('sanitizeFedModules', () => {
   it('returns an empty map for a legitimately empty config without throwing', () => {
     expect(sanitizeFedModules({}, 'Test')).toEqual({});
     expect(sanitizeFedModules({ $schema: 'x' }, 'Test')).toEqual({ $schema: 'x' });
+  });
+});
+
+describe('Lightwell shell segments', () => {
+  it.each(['lightwell', 'lightwell-next'])('treats %s as a Lightwell shell segment', (segment) => {
+    expect(isLightwellBundleId(segment)).toBe(true);
+  });
+
+  it.each([undefined, '', 'landing', 'lightwell-preview', 'lightwell-next-preview', 'lightwell-next/lens'])(
+    'does not treat %s as a Lightwell shell segment',
+    (segment) => {
+      expect(isLightwellBundleId(segment)).toBe(false);
+    }
+  );
+
+  it('returns the public /lightwell path for the lightwell segment', () => {
+    expect(getLightwellBasePath('lightwell')).toBe('/lightwell');
+  });
+
+  it('returns /lightwell-next only for that exact segment', () => {
+    expect(getLightwellBasePath('lightwell-next')).toBe('/lightwell-next');
+  });
+
+  it.each([undefined, 'insights', 'lightwell-preview', 'lightwell-next-preview'])('returns the public /lightwell path for %s', (segment) => {
+    expect(getLightwellBasePath(segment)).toBe('/lightwell');
   });
 });

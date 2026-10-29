@@ -21,7 +21,8 @@ import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess, LIGHTWELL_PATH } from '../../utils/common';
+import { CONTENT_SOURCES_LIGHTWELL_REMOTE, LIGHTWELL_EXPERIENCE_REMOTE } from '../../layouts/lightwellRemote';
+import { ITLess, LIGHTWELL_NEXT_BUNDLE_ID, LIGHTWELL_PATH } from '../../utils/common';
 import { lazyWithRetry } from '../../utils/chunkLoadErrorUtils';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
@@ -95,12 +96,20 @@ const ScalprumRoot = memo(
               />
             )}
             <Route path="/security" element={<DefaultLayout />} />
-            {/* TODO: Temporary hardcoded route for content-sources-frontend authed experience (RHCLOUD-48921). Revisit for a longer-term approach. */}
+            {/* TODO: Temporary Lightwell shell (RHCLOUD-48921). /lightwell loads content-sources; /lightwell-next loads lightwell-experience. */}
             <Route
               path={`${LIGHTWELL_PATH}/*`}
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <Lightwell />
+                  <Lightwell remote={CONTENT_SOURCES_LIGHTWELL_REMOTE} />
+                </Suspense>
+              }
+            />
+            <Route
+              path={`/${LIGHTWELL_NEXT_BUNDLE_ID}/*`}
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <Lightwell remote={LIGHTWELL_EXPERIENCE_REMOTE} />
                 </Suspense>
               }
             />

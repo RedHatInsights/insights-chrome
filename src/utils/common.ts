@@ -9,19 +9,38 @@ import { CONFIG_SOURCES, reportConfigSource } from './configCacheStatus';
 import * as Sentry from '@sentry/react';
 
 /**
- * Bundle identifier for the Lightwell experience.
- * All Lightwell-specific presentation checks should compare against this
- * constant via {@link getUrl}('bundle') rather than raw pathname matching.
+ * Bundle identifier for the public Lightwell route.
+ * Shell checks must use {@link isLightwellBundleId} so `/lightwell-next` is included.
+ * `config/theme-bootstrap.js` duplicates that segment check because the script is
+ * stringified and runs before React, where it cannot import this module.
  */
 export const LIGHTWELL_BUNDLE_ID = 'lightwell';
 
 /**
- * Base path for the Lightwell route.
- * Derived from {@link LIGHTWELL_BUNDLE_ID}.
- * Used for route definitions and URL construction only — NOT for runtime
- * detection.  Use `getUrl('bundle') === LIGHTWELL_BUNDLE_ID` instead.
+ * Alternate Lightwell shell segment. Same chrome shell as {@link LIGHTWELL_BUNDLE_ID},
+ * loading the lightwell-experience remote instead of content-sources.
+ * This is its own first path segment, not a prefix of `lightwell`.
+ */
+export const LIGHTWELL_NEXT_BUNDLE_ID = 'lightwell-next';
+
+/**
+ * Public Lightwell path. Catalog, favorites, and search entries stay here.
+ * In-app shell links must use {@link getLightwellBasePath} so they follow the prefix
+ * the user opened.
  */
 export const LIGHTWELL_PATH = `/${LIGHTWELL_BUNDLE_ID}`;
+
+/**
+ * True when `segment` is a Lightwell shell prefix (`lightwell` or `lightwell-next`).
+ * Compares the first path segment exactly. Do not use `startsWith('lightwell')`.
+ */
+export const isLightwellBundleId = (segment?: string): boolean => segment === LIGHTWELL_BUNDLE_ID || segment === LIGHTWELL_NEXT_BUNDLE_ID;
+
+/**
+ * Base path for the Lightwell shell identified by `segment`.
+ * Returns `/lightwell-next` for that segment and `/lightwell` otherwise.
+ */
+export const getLightwellBasePath = (segment?: string): string => (segment === LIGHTWELL_NEXT_BUNDLE_ID ? `/${LIGHTWELL_NEXT_BUNDLE_ID}` : LIGHTWELL_PATH);
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {

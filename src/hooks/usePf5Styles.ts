@@ -1,7 +1,7 @@
 import { useFlag } from '@unleash/proxy-client-react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { LIGHTWELL_BUNDLE_ID } from '../utils/common';
+import { isLightwellBundleId } from '../utils/common';
 import { getUrl } from './useBundle';
 
 /**
@@ -33,7 +33,7 @@ function usePf5Styles() {
   // Lightwell, including when a local PF5 override is set. It re-renders the shared Chrome root
   // for every tenant on SPA navigation; remove this hook when PF5 styles are removed.
   const { pathname } = useLocation();
-  const isLightwellRoute = getUrl('bundle', pathname) === LIGHTWELL_BUNDLE_ID;
+  const isLightwellRoute = isLightwellBundleId(getUrl('bundle', pathname));
   const stylesOverride = localStorage.getItem('@chrome/pf-5-enabled');
   let isEnabled = false;
   if (stylesOverride === 'true' || stylesOverride === 'false') {

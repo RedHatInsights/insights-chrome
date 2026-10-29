@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
-import { LIGHTWELL_PATH } from '../../utils/common';
+import { getUrl } from '../../hooks/useBundle';
+import { getLightwellBasePath } from '../../utils/common';
 import { isNavItemVisible } from '../../utils/isNavItemVisible';
 import { NavItemPermission } from '../../@types/types';
 
@@ -10,7 +11,8 @@ const CONTENT_SOURCES_FEATURES_URL = '/api/content-sources/v1.0/features/';
 
 interface LightwellNavItemConfig {
   label: string;
-  path: string;
+  /** Path segment after the shell prefix. Empty for the shell root. */
+  segment: string;
   permissions?: NavItemPermission<'apiRequest'>[];
 }
 
@@ -32,19 +34,24 @@ const featuresPermission = (accessor: string): LightwellNavItemConfig['permissio
  * | Beacon         | lightwellbeacon | lightwellbeacon.accessible   |
  */
 const NAV_ITEMS: LightwellNavItemConfig[] = [
-  { label: 'Repositories', path: LIGHTWELL_PATH, permissions: featuresPermission('lightwell.accessible') },
-  { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwelllens.accessible') },
-  { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeacon.accessible') },
+  { label: 'Repositories', segment: '', permissions: featuresPermission('lightwell.accessible') },
+  { label: 'Lens', segment: 'lens', permissions: featuresPermission('lightwelllens.accessible') },
+  { label: 'Beacon', segment: 'beacon', permissions: featuresPermission('lightwellbeacon.accessible') },
 ];
+
+const navPath = (basePath: string, segment: string): string => (segment ? `${basePath}/${segment}` : basePath);
 
 /**
  * Determine which Lightwell nav item is active based on pathname.
  * Checks specific sub-routes first; falls back to Repositories (root).
+ * `basePath` is the shell prefix the user opened (`/lightwell` or `/lightwell-next`).
  */
-const getActiveLightwellNav = (pathname: string): string => {
-  if (pathname === `${LIGHTWELL_PATH}/lens` || pathname.startsWith(`${LIGHTWELL_PATH}/lens/`)) return `${LIGHTWELL_PATH}/lens`;
-  if (pathname === `${LIGHTWELL_PATH}/beacon` || pathname.startsWith(`${LIGHTWELL_PATH}/beacon/`)) return `${LIGHTWELL_PATH}/beacon`;
-  return LIGHTWELL_PATH;
+const getActiveLightwellNav = (pathname: string, basePath: string): string => {
+  const lensPath = navPath(basePath, 'lens');
+  const beaconPath = navPath(basePath, 'beacon');
+  if (pathname === lensPath || pathname.startsWith(`${lensPath}/`)) return lensPath;
+  if (pathname === beaconPath || pathname.startsWith(`${beaconPath}/`)) return beaconPath;
+  return basePath;
 };
 
 /**
@@ -55,6 +62,7 @@ const getActiveLightwellNav = (pathname: string): string => {
  */
 const LightwellNavigation = (): React.JSX.Element | null => {
   const { pathname } = useLocation();
+  const basePath = getLightwellBasePath(getUrl('bundle', pathname));
   const [visibleItems, setVisibleItems] = useState<LightwellNavItemConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -94,16 +102,19 @@ const LightwellNavigation = (): React.JSX.Element | null => {
     return null;
   }
 
-  const activeNav = getActiveLightwellNav(pathname);
+  const activeNav = getActiveLightwellNav(pathname, basePath);
 
   return (
     <Nav variant="horizontal-subnav" aria-label="Lightwell navigation">
       <NavList>
-        {visibleItems.map(({ label, path }) => (
-          <NavItem key={path} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
-            {label}
-          </NavItem>
-        ))}
+        {visibleItems.map((item) => {
+          const path = navPath(basePath, item.segment);
+          return (
+            <NavItem key={item.label} isActive={activeNav === path} to={path} component={(props: LinkWrapperProps) => <ChromeLink {...props} href={path} />}>
+              {item.label}
+            </NavItem>
+          );
+        })}
       </NavList>
     </Nav>
   );

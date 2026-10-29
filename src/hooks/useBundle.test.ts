@@ -56,6 +56,10 @@ describe('useBundle', () => {
     it('returns lightwell bundle id', () => {
       expect(getUrl('bundle', '/lightwell/repositories')).toBe('lightwell');
     });
+
+    it('returns lightwell-next as its own bundle id', () => {
+      expect(getUrl('bundle', '/lightwell-next/lens')).toBe('lightwell-next');
+    });
   });
 
   describe('bundleMapping', () => {
@@ -79,6 +83,7 @@ describe('useBundle', () => {
         'docs',
         'user-preferences',
         'lightwell',
+        'lightwell-next',
         'support',
       ];
       expectedBundles.forEach((bundle) => {
@@ -97,6 +102,7 @@ describe('useBundle', () => {
       expect(bundleMapping.settings).toBe('Settings');
       expect(bundleMapping.landing).toBe('Home');
       expect(bundleMapping.lightwell).toBe('Lightwell');
+      expect(bundleMapping['lightwell-next']).toBe('Lightwell');
     });
   });
 

@@ -41,6 +41,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
+import { CONTENT_SOURCES_LIGHTWELL_REMOTE, LIGHTWELL_EXPERIENCE_REMOTE, LightwellRemote } from './lightwellRemote';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
@@ -79,7 +80,11 @@ const mockInternalChromeContextValue = {
   },
 };
 
-const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRoute = '/lightwell') => {
+const renderLightwell = (
+  flagOverrides: Record<string, boolean> = {},
+  initialRoute = '/lightwell',
+  remote: LightwellRemote = CONTENT_SOURCES_LIGHTWELL_REMOTE
+) => {
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
@@ -99,7 +104,7 @@ const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRou
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <InternalChromeContext.Provider value={mockInternalChromeContextValue as any}>
             <Provider store={store}>
-              <Lightwell Footer={<div data-testid="mock-footer" />} />
+              <Lightwell Footer={<div data-testid="mock-footer" />} remote={remote} />
             </Provider>
           </InternalChromeContext.Provider>
         </ChromeAuthContext.Provider>
@@ -115,6 +120,10 @@ describe('Lightwell', () => {
         contentSources: {
           name: 'contentSources',
           manifestLocation: '/test/manifest.json',
+        },
+        lightwellExperience: {
+          name: 'lightwellExperience',
+          manifestLocation: '/apps/lightwell-experience/fed-mods.json',
         },
       },
     });
@@ -154,9 +163,12 @@ describe('Lightwell', () => {
     expect(page?.nextElementSibling).toBe(footer);
   });
 
-  it('should apply the plain Page variant', () => {
-    renderLightwell();
-    expect(screen.getByTestId('lightwell-page')).toHaveClass('pf-m-plain');
+  it.each([
+    ['/lightwell', CONTENT_SOURCES_LIGHTWELL_REMOTE],
+    ['/lightwell-next', LIGHTWELL_EXPERIENCE_REMOTE],
+  ] as const)('should apply the Lightwell page class on %s', (route, remote) => {
+    renderLightwell({}, route, remote);
+    expect(screen.getByTestId('lightwell-page')).toHaveClass('chr-c-page--lightwell', 'pf-m-plain');
   });
 
   it('should not render sidebar navigation', () => {
@@ -220,9 +232,12 @@ describe('Lightwell', () => {
     expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
   });
 
-  it('should set activeModuleAtom to contentSources on mount and clear on unmount', () => {
-    const { store, unmount } = renderLightwell();
-    expect(store.get(activeModuleAtom)).toBe('contentSources');
+  it.each([
+    ['/lightwell', CONTENT_SOURCES_LIGHTWELL_REMOTE],
+    ['/lightwell-next', LIGHTWELL_EXPERIENCE_REMOTE],
+  ] as const)('should set activeModuleAtom to the %s remote scope and clear it on unmount', (route, remote) => {
+    const { store, unmount } = renderLightwell({}, route, remote);
+    expect(store.get(activeModuleAtom)).toBe(remote.scope);
     unmount();
     expect(store.get(activeModuleAtom)).toBeUndefined();
   });
@@ -234,62 +249,65 @@ describe('Lightwell', () => {
     expect(breadcrumb).toBeTruthy();
   });
 
-  describe('horizontal navigation', () => {
+  describe.each([
+    ['/lightwell', CONTENT_SOURCES_LIGHTWELL_REMOTE],
+    ['/lightwell-next', LIGHTWELL_EXPERIENCE_REMOTE],
+  ] as const)('horizontal navigation on %s', (basePath, remote) => {
     it('should render horizontal subnav with three navigation items', async () => {
-      renderLightwell();
+      renderLightwell({}, basePath, remote);
       const nav = await screen.findByRole('navigation', { name: 'Lightwell navigation' });
       expect(nav).toBeTruthy();
       const links = within(nav).getAllByRole('link');
       expect(links).toHaveLength(3);
     });
 
-    it('should render Repositories, Lens, and Beacon links', async () => {
-      renderLightwell();
+    it('should render Repositories, Lens, and Beacon links on the current prefix', async () => {
+      renderLightwell({}, basePath, remote);
       const repoLink = await screen.findByRole('link', { name: 'Repositories' });
       const lensLink = screen.getByRole('link', { name: 'Lens' });
       const beaconLink = screen.getByRole('link', { name: 'Beacon' });
-      expect(repoLink).toHaveAttribute('href', '/lightwell');
-      expect(lensLink).toHaveAttribute('href', '/lightwell/lens');
-      expect(beaconLink).toHaveAttribute('href', '/lightwell/beacon');
+      expect(repoLink).toHaveAttribute('href', basePath);
+      expect(lensLink).toHaveAttribute('href', `${basePath}/lens`);
+      expect(beaconLink).toHaveAttribute('href', `${basePath}/beacon`);
     });
 
-    it('should mark Repositories as active on /lightwell', async () => {
-      renderLightwell({}, '/lightwell');
+    it('should mark Repositories as active on the shell root', async () => {
+      renderLightwell({}, basePath, remote);
       await waitFor(() => {
         expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
       });
     });
 
-    it('should mark Lens as active on /lightwell/lens', async () => {
-      renderLightwell({}, '/lightwell/lens');
+    it('should mark Lens as active on the lens route', async () => {
+      renderLightwell({}, `${basePath}/lens`, remote);
       await waitFor(() => {
         expect(screen.getByRole('link', { name: 'Lens' })).toHaveAttribute('aria-current', 'page');
       });
     });
 
-    it('should mark Beacon as active on /lightwell/beacon', async () => {
-      renderLightwell({}, '/lightwell/beacon');
+    it('should mark Beacon as active on the beacon route', async () => {
+      renderLightwell({}, `${basePath}/beacon`, remote);
       await waitFor(() => {
         expect(screen.getByRole('link', { name: 'Beacon' })).toHaveAttribute('aria-current', 'page');
       });
     });
 
-    it('should mark Repositories as active on unknown Lightwell subroute', async () => {
-      renderLightwell({}, '/lightwell/unknown');
+    it('should mark Repositories as active on an unknown subroute', async () => {
+      renderLightwell({}, `${basePath}/unknown`, remote);
       await waitFor(() => {
         expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
       });
     });
 
-    it('should not match /lightwell/lens-preview as Lens', async () => {
-      renderLightwell({}, '/lightwell/lens-preview');
+    it('should not match a lens-preview path as Lens', async () => {
+      renderLightwell({}, `${basePath}/lens-preview`, remote);
       await waitFor(() => {
         expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
       });
     });
 
-    it('should not match /lightwell/beacon-preview as Beacon', async () => {
-      renderLightwell({}, '/lightwell/beacon-preview');
+    it('should not match a beacon-preview path as Beacon', async () => {
+      renderLightwell({}, `${basePath}/beacon-preview`, remote);
       await waitFor(() => {
         expect(screen.getByRole('link', { name: 'Repositories' })).toHaveAttribute('aria-current', 'page');
       });

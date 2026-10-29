@@ -81,7 +81,7 @@ const mockInternalChromeContext = {
   },
 };
 
-const renderHeader = (lightwellHeader = false) => {
+const renderHeader = (lightwellHeader = false, route = '/') => {
   const store = createStore();
   if (lightwellHeader) {
     store.set(layoutLightwellHeaderAtom, true);
@@ -90,7 +90,7 @@ const renderHeader = (lightwellHeader = false) => {
   return {
     store,
     ...render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[route]}>
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -141,17 +141,14 @@ describe('Header Lightwell mode', () => {
     expect(logoLink.getAttribute('href')).toBe('/');
   });
 
-  it('should render masthead logo as a link to /lightwell when in Lightwell mode', () => {
-    renderHeader(true);
-    const logoLink = screen.getByRole('link', { name: /logo/i });
-    expect(logoLink).toBeTruthy();
-    expect(logoLink.getAttribute('href')).toBe('/lightwell');
-  });
-
-  it('should render Lightwell title as a link to /lightwell when in Lightwell mode', () => {
-    renderHeader(true);
-    const titleLink = screen.getByRole('link', { name: 'Lightwell' });
-    expect(titleLink).toBeTruthy();
-    expect(titleLink.getAttribute('href')).toBe('/lightwell');
+  it.each([
+    ['/lightwell', '/lightwell'],
+    ['/lightwell/lens', '/lightwell'],
+    ['/lightwell-next', '/lightwell-next'],
+    ['/lightwell-next/beacon', '/lightwell-next'],
+  ])('should point masthead home links for %s to %s', (route, href) => {
+    renderHeader(true, route);
+    expect(screen.getByRole('link', { name: /logo/i }).getAttribute('href')).toBe(href);
+    expect(screen.getByRole('link', { name: 'Lightwell' }).getAttribute('href')).toBe(href);
   });
 });

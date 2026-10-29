@@ -27,6 +27,7 @@ export const bundleMapping: {
   docs: 'Documentation',
   'user-preferences': 'User Preferences',
   lightwell: 'Lightwell',
+  'lightwell-next': 'Lightwell',
   support: 'Support',
 };
 

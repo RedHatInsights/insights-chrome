@@ -29,7 +29,7 @@ describe.each(templates)('initial theme bootstrap in %s', (templateName) => {
     localStorage.clear();
   });
 
-  it.each(['/insights/dashboard', '/lightwell-preview'])('applies only Felt theme on %s before PF CSS loads', (pathname) => {
+  it.each(['/insights/dashboard', '/lightwell-preview', '/lightwell-next-preview'])('applies only Felt theme on %s before PF CSS loads', (pathname) => {
     window.history.replaceState({}, '', pathname);
 
     runThemeBootstrap(templateName);
@@ -40,7 +40,7 @@ describe.each(templates)('initial theme bootstrap in %s', (templateName) => {
     });
   });
 
-  it.each(['/lightwell', '/lightwell/repositories'])('applies Felt and Glass themes on %s', (pathname) => {
+  it.each(['/lightwell', '/lightwell/repositories', '/lightwell-next', '/lightwell-next/lens'])('applies Felt and Glass themes on %s', (pathname) => {
     window.history.replaceState({}, '', pathname);
 
     runThemeBootstrap(templateName);
@@ -60,8 +60,8 @@ describe.each(templates)('initial theme bootstrap in %s', (templateName) => {
     expect(document.documentElement).toHaveClass('pf-v6-theme-dark', feltClass);
   });
 
-  it('combines the Lightwell themes with a saved dark theme', () => {
-    window.history.replaceState({}, '', '/lightwell');
+  it.each(['/lightwell', '/lightwell-next'])('combines the Lightwell themes with a saved dark theme on %s', (pathname) => {
+    window.history.replaceState({}, '', pathname);
     localStorage.setItem(THEME_STORAGE_KEY, 'dark');
 
     runThemeBootstrap(templateName);
@@ -84,8 +84,8 @@ describe.each(templates)('initial theme bootstrap in %s', (templateName) => {
     expect(document.documentElement).toHaveClass(feltClass);
   });
 
-  it('applies Lightwell themes when storage is unavailable', () => {
-    window.history.replaceState({}, '', '/lightwell');
+  it.each(['/lightwell', '/lightwell-next'])('applies Lightwell themes when storage is unavailable on %s', (pathname) => {
+    window.history.replaceState({}, '', pathname);
     const getItem = jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('storage unavailable');
     });

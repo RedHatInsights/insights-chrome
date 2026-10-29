@@ -1,14 +1,14 @@
 import { useLayoutEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import { layoutForceFeltThemeAtom, layoutForceGlassThemeAtom } from '../state/atoms/releaseAtom';
-import { LIGHTWELL_BUNDLE_ID } from '../utils/common';
+import { isLightwellBundleId } from '../utils/common';
 import { getUrl } from './useBundle';
 
 const FELT_THEME_CLASS = 'pf-v6-theme-felt';
 const GLASS_THEME_CLASS = 'pf-v6-theme-glass';
 const LIGHTWELL_THEME_CLASS = 'lightwell-v1-theme';
 
-const isLightwellRoute = getUrl('bundle') === LIGHTWELL_BUNDLE_ID;
+const isLightwellRoute = isLightwellBundleId(getUrl('bundle'));
 
 if (isLightwellRoute) {
   document.documentElement.classList.add(FELT_THEME_CLASS, GLASS_THEME_CLASS, LIGHTWELL_THEME_CLASS);

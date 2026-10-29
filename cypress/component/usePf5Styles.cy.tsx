@@ -169,6 +169,12 @@ describe('usePf5Styles Hook', () => {
       cy.wait('@featureFlags');
       expectPf5StylesheetToNotExist();
     });
+
+    it('should not inject the legacy stylesheet on the lightwell-next shell', () => {
+      mountWithFeatureFlag(true, '/lightwell-next/repositories');
+      cy.wait('@featureFlags');
+      expectPf5StylesheetToNotExist();
+    });
   });
 
   describe('When localStorage override is set to "true"', () => {
@@ -190,6 +196,12 @@ describe('usePf5Styles Hook', () => {
 
     it('should not inject the legacy stylesheet on Lightwell routes despite a local override', () => {
       mountWithFeatureFlag(false, '/lightwell');
+      cy.wait('@featureFlags');
+      expectPf5StylesheetToNotExist();
+    });
+
+    it('should not inject the legacy stylesheet on the lightwell-next shell despite a local override', () => {
+      mountWithFeatureFlag(false, '/lightwell-next');
       cy.wait('@featureFlags');
       expectPf5StylesheetToNotExist();
     });

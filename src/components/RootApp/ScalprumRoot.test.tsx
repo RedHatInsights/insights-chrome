@@ -26,10 +26,10 @@ jest.mock('@scalprum/react-core', () => {
 });
 
 jest.mock('../../layouts/Lightwell', () => {
-  const Lightwell = ({ Footer }: { Footer?: React.ReactNode }) => (
+  const Lightwell = ({ Footer, remote }: { Footer?: React.ReactNode; remote?: { scope: string; module: string; appId: string } }) => (
     <div id="chrome-app-render-root">
       <div className="chr-c-masthead" />
-      <div data-testid="lightwell-content" />
+      <div data-testid="lightwell-content" data-scope={remote?.scope} data-module={remote?.module} data-app-id={remote?.appId} />
       {Footer}
     </div>
   );
@@ -449,14 +449,27 @@ describe('ScalprumRoot', () => {
     jsdomReset();
   });
 
-  it('should render /lightwell route without PageSidebar', async () => {
+  it.each([
+    {
+      path: '/lightwell',
+      scope: 'contentSources',
+      module: './LightwellApp',
+      appId: 'contentSources',
+    },
+    {
+      path: '/lightwell-next',
+      scope: 'lightwellExperience',
+      module: './RootApp',
+      appId: 'lightwellExperience',
+    },
+  ])('should render $path with the Lightwell shell and its remote', async ({ path, scope, module, appId }) => {
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
-    useLocationSpy.mockReturnValue({ pathname: '/lightwell', search: undefined, hash: undefined });
+    useLocationSpy.mockReturnValue({ pathname: path, search: undefined, hash: undefined });
 
     const { container } = render(
       <JotaiTestProvider initialValues={defaultAtomValues}>
         <ChromeAuthContext.Provider value={chromeContextMockValue}>
-          <MemoryRouter initialEntries={['/lightwell']}>
+          <MemoryRouter initialEntries={[path]}>
             <ScalprumRoot config={config} {...initialProps} />
           </MemoryRouter>
         </ChromeAuthContext.Provider>
@@ -469,6 +482,11 @@ describe('ScalprumRoot', () => {
       expect(container.querySelector('#chr-c-sidebar')).toBeFalsy();
       expect(screen.queryByRole('list', { name: 'Lightwell footer links' })).toBeFalsy();
     });
+
+    const content = screen.getByTestId('lightwell-content');
+    expect(content).toHaveAttribute('data-scope', scope);
+    expect(content).toHaveAttribute('data-module', module);
+    expect(content).toHaveAttribute('data-app-id', appId);
 
     useLocationSpy.mockRestore();
   });

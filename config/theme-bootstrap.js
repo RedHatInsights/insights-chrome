@@ -5,7 +5,11 @@
  */
 const initializeTheme = function () {
   try {
-    var isLightwellRoute = window.location.pathname.split('/')[1] === 'lightwell';
+    // Duplicated from isLightwellBundleId in src/utils/common.ts.
+    // This function is stringified into a blocking head script and cannot import TypeScript.
+    // Compare the first path segment exactly; do not use startsWith('lightwell').
+    var bundleSegment = window.location.pathname.split('/')[1];
+    var isLightwellRoute = bundleSegment === 'lightwell' || bundleSegment === 'lightwell-next';
 
     // Apply Felt theme on ALL routes before PatternFly CSS loads.
     // This prevents a flash of non-Felt styles while Unleash feature flags

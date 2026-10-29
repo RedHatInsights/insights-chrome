@@ -58,8 +58,8 @@ describe('Lightwell layout atoms initialized from active bundle ID', () => {
     window.history.pushState({}, '', '/');
   });
 
-  it('should default to true when active bundle is lightwell', () => {
-    window.history.pushState({}, '', '/lightwell/some-page');
+  it.each(['/lightwell/some-page', '/lightwell-next/some-page'])('should default to true when active bundle is %s', (pathname) => {
+    window.history.pushState({}, '', pathname);
 
     /* eslint-disable @typescript-eslint/no-require-imports */
     jest.isolateModules(() => {
@@ -75,8 +75,8 @@ describe('Lightwell layout atoms initialized from active bundle ID', () => {
     /* eslint-enable @typescript-eslint/no-require-imports */
   });
 
-  it('should default to true on the bare /lightwell route', () => {
-    window.history.pushState({}, '', '/lightwell');
+  it.each(['/lightwell', '/lightwell-next'])('should default to true on the bare %s route', (pathname) => {
+    window.history.pushState({}, '', pathname);
 
     /* eslint-disable @typescript-eslint/no-require-imports */
     jest.isolateModules(() => {
@@ -92,8 +92,8 @@ describe('Lightwell layout atoms initialized from active bundle ID', () => {
     /* eslint-enable @typescript-eslint/no-require-imports */
   });
 
-  it('should default to false when active bundle is not lightwell', () => {
-    window.history.pushState({}, '', '/insights/dashboard');
+  it.each(['/insights/dashboard', '/lightwell-preview', '/lightwell-next-preview'])('should default to false when active bundle is %s', (pathname) => {
+    window.history.pushState({}, '', pathname);
 
     /* eslint-disable @typescript-eslint/no-require-imports */
     jest.isolateModules(() => {
