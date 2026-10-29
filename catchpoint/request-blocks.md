@@ -17,6 +17,10 @@ endpoints over broad URL fragments.
 
 | Match pattern (regex) | Analytics entity | Catchpoint scope | Configured | Notes |
 | --- | --- | --- | --- | --- |
+| `data\.analytics\.console\.redhat\.com` | Unconfirmed | Test | Not yet | Host observed in the browser console; confirm the request destination and owner. |
+| `console\.redhat\.com/connections/.*` | Segment proxy | Test | Not yet | Covers `/connections/api/v1` and `/connections/cdn`; both are Segment proxy paths. |
+| `.*\.amplitude\.com/.*` | Amplitude | Test | Not yet | Matches Amplitude subdomains, including `api`, `api2`, `api.eu`, and `cdn`; does not match the apex `amplitude.com` host. |
+| `console\.redhat\.com/connections/cdn/.*` | Segment proxy | Test | Not yet | Retained as the narrower CDN rule from the prior list; it is redundant with the broader Segment rule above. |
 | `.*\.pendo\.io([/:?#].*|$)` | Pendo | Test | Not yet | Matches Pendo subdomains, including the SDK and event hosts, across regional variants. Does not match Pendo guide assets served from `storage.googleapis.com`. |
 
 ## One-off validation in Catchpoint
