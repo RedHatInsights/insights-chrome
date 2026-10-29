@@ -84,6 +84,12 @@ An HTTP upgrade failure, missing/wrong subprotocol, early closure, or connection
 timeout fails the monitor. The 10-second observation period is measured from the
 successful open event, not from when the connection attempt starts.
 
+On failures, the assertion and optional tracepoint include Playwright's WebSocket
+socket errors, close state, and sent/received frame counts for connections to the
+probe path. Frame contents and credentials are not recorded. The browser error
+does not expose the HTTP response status for a rejected upgrade, so use Catchpoint's
+network results to inspect the handshake status and response details.
+
 ## Local verification
 
 ```bash
