@@ -12,13 +12,18 @@ interface LightwellNavItemConfig {
   label: string;
   path: string;
   permissions?: NavItemPermission<'apiRequest'>[];
+  /**
+   * When true, the item is visible if ANY of its permissions pass (OR).
+   * Otherwise all permissions must pass (AND, the default).
+   */
+  requireAny?: boolean;
 }
 
 /**
  * Create an apiRequest permission entry for the content-sources features API.
  * The accessor path extracts the `accessible` boolean from the response.
  */
-const featuresPermission = (accessor: string): LightwellNavItemConfig['permissions'] => [
+const featuresPermission = (accessor: string): NavItemPermission<'apiRequest'>[] => [
   { method: 'apiRequest', args: [{ url: CONTENT_SOURCES_FEATURES_URL, accessor }] },
 ];
 
@@ -30,11 +35,18 @@ const featuresPermission = (accessor: string): LightwellNavItemConfig['permissio
  * | Repositories   | lightwell       | lightwell.accessible         |
  * | Lens           | lightwelllens   | lightwelllens.accessible     |
  * | Beacon         | lightwellbeacon | lightwellbeacon.accessible   |
+ * | Submissions    | lightwellclearinghouse / lightwellclearinghouseread (OR) |
  */
 const NAV_ITEMS: LightwellNavItemConfig[] = [
   { label: 'Repositories', path: LIGHTWELL_PATH, permissions: featuresPermission('lightwell.accessible') },
   { label: 'Lens', path: `${LIGHTWELL_PATH}/lens`, permissions: featuresPermission('lightwelllens.accessible') },
   { label: 'Beacon', path: `${LIGHTWELL_PATH}/beacon`, permissions: featuresPermission('lightwellbeacon.accessible') },
+  {
+    label: 'Submissions',
+    path: `${LIGHTWELL_PATH}/submissions`,
+    permissions: [...featuresPermission('lightwellclearinghouse.accessible'), ...featuresPermission('lightwellclearinghouseread.accessible')],
+    requireAny: true,
+  },
 ];
 
 /**
@@ -44,6 +56,7 @@ const NAV_ITEMS: LightwellNavItemConfig[] = [
 const getActiveLightwellNav = (pathname: string): string => {
   if (pathname === `${LIGHTWELL_PATH}/lens` || pathname.startsWith(`${LIGHTWELL_PATH}/lens/`)) return `${LIGHTWELL_PATH}/lens`;
   if (pathname === `${LIGHTWELL_PATH}/beacon` || pathname.startsWith(`${LIGHTWELL_PATH}/beacon/`)) return `${LIGHTWELL_PATH}/beacon`;
+  if (pathname === `${LIGHTWELL_PATH}/submissions` || pathname.startsWith(`${LIGHTWELL_PATH}/submissions/`)) return `${LIGHTWELL_PATH}/submissions`;
   return LIGHTWELL_PATH;
 };
 
@@ -68,7 +81,10 @@ const LightwellNavigation = (): React.JSX.Element | null => {
             return { item, visible: true };
           }
           try {
-            const visible = await isNavItemVisible(item.permissions, { source: 'lightwell', itemId: item.label });
+            const context = { source: 'lightwell' as const, itemId: item.label };
+            const visible = item.requireAny
+              ? (await Promise.all(item.permissions.map((permission) => isNavItemVisible(permission, context)))).some(Boolean)
+              : await isNavItemVisible(item.permissions, context);
             return { item, visible };
           } catch {
             return { item, visible: false };
