@@ -2,6 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ScalprumRoot from './ScalprumRoot';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { PluginManifest, RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { ScalprumProviderConfigurableProps } from '@scalprum/react-core';
@@ -291,6 +292,113 @@ describe('ScalprumRoot', () => {
       },
     ],
   ];
+
+  describe('responsive sidebar toggle', () => {
+    let bodyWidth: jest.SpiedGetter<number>;
+
+    beforeEach(() => {
+      bodyWidth = jest.spyOn(document.body, 'clientWidth', 'get');
+      jest.spyOn(routerDom, 'useLocation').mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
+    });
+
+    afterEach(() => {
+      bodyWidth.mockRestore();
+    });
+
+    const renderSidebar = async (width: number) => {
+      bodyWidth.mockReturnValue(width);
+      let container!: HTMLElement;
+      await act(async () => {
+        const rendered = render(
+          <JotaiTestProvider initialValues={defaultAtomValues}>
+            <ChromeAuthContext.Provider value={chromeContextMockValue}>
+              <MemoryRouter initialEntries={['/insights']}>
+                <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
+              </MemoryRouter>
+            </ChromeAuthContext.Provider>
+          </JotaiTestProvider>
+        );
+        container = rendered.container;
+      });
+      return {
+        sidebar: container.querySelector('#chr-c-sidebar'),
+        toggle: screen.getByRole('button', { name: 'Global navigation' }),
+        page: container.querySelector('.pf-v6-c-page'),
+      };
+    };
+
+    const resizeTo = (width: number) => {
+      act(() => {
+        bodyWidth.mockReturnValue(width);
+        window.dispatchEvent(new Event('resize'));
+      });
+    };
+
+    it.each([1100, 1199])('opens and closes the mobile sidebar at %ipx without enabling the Page resize observer', async (width) => {
+      const user = userEvent.setup();
+      const { sidebar, toggle, page } = await renderSidebar(width);
+
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      expect(sidebar).toHaveAttribute('aria-hidden', 'true');
+      expect(sidebar).toHaveClass('pf-m-collapsed');
+      expect(sidebar).not.toHaveClass('pf-m-expanded');
+
+      await user.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(sidebar).toHaveAttribute('aria-hidden', 'false');
+      expect(sidebar).toHaveClass('pf-m-expanded');
+      expect(sidebar).not.toHaveClass('pf-m-collapsed');
+
+      await user.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      expect(sidebar).toHaveAttribute('aria-hidden', 'true');
+      expect(sidebar).toHaveClass('pf-m-collapsed');
+      expect(sidebar).not.toHaveClass('pf-m-expanded');
+      expect(page).not.toHaveClass('pf-m-resize-observer');
+    });
+
+    it.each([1200, 1280])('preserves desktop sidebar toggling at %ipx without mobile expansion styling', async (width) => {
+      const user = userEvent.setup();
+      const { sidebar, toggle } = await renderSidebar(width);
+
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(sidebar).not.toHaveClass(/pf-m-(collapsed|expanded)/);
+
+      await user.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      expect(sidebar).toHaveClass('pf-m-collapsed');
+
+      await user.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(sidebar).not.toHaveClass(/pf-m-(collapsed|expanded)/);
+    });
+
+    it('updates expansion styling across the breakpoint and preserves toggle state within each viewport mode', async () => {
+      const user = userEvent.setup();
+      const { sidebar, toggle } = await renderSidebar(1280);
+
+      resizeTo(1199);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      expect(sidebar).toHaveClass('pf-m-collapsed');
+
+      await user.click(toggle);
+      expect(sidebar).toHaveClass('pf-m-expanded');
+
+      resizeTo(1100);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(sidebar).toHaveClass('pf-m-expanded');
+
+      resizeTo(1200);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(sidebar).not.toHaveClass(/pf-m-(collapsed|expanded)/);
+
+      await user.click(toggle);
+      resizeTo(1280);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      expect(sidebar).toHaveClass('pf-m-collapsed');
+      expect(sidebar).not.toHaveClass('pf-m-expanded');
+    });
+  });
 
   it('should render PageSidebar with SideNav component', async () => {
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');

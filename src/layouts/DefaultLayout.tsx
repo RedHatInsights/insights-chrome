@@ -44,6 +44,7 @@ type DefaultLayoutProps = {
   hasBanner: boolean;
   selectedAccountNumber?: string;
   hideNav: boolean;
+  isMobileView: boolean;
   isNavOpen: boolean;
   setIsNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
   Sidebar?: React.FC<NavigationProps>;
@@ -51,7 +52,7 @@ type DefaultLayoutProps = {
   breadcrumbsProps?: Breadcrumbsprops;
 };
 
-const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
+const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isMobileView, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (drawerPanelRef.current !== null) {
@@ -126,7 +127,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
         (noNav || hideNav) && Sidebar
           ? undefined
           : Sidebar && (
-              <PageSidebar isSidebarOpen={isNavOpen} id="chr-c-sidebar">
+              // Page's mobile context stays false with resize tracking disabled, so Chrome supplies the expansion modifier.
+              <PageSidebar isSidebarOpen={isNavOpen} className={classnames({ 'pf-m-expanded': isMobileView && isNavOpen })} id="chr-c-sidebar">
                 <PageSidebarBody>
                   <Sidebar schema={schema} loaded={loaded} />
                 </PageSidebarBody>
@@ -202,6 +204,7 @@ const ShieldedRoot = memo(
       <DefaultLayout
         setIsNavOpen={setIsNavOpen}
         hideNav={hideNav}
+        isMobileView={isMobileView}
         isNavOpen={isNavOpen}
         hasBanner={hasBanner}
         selectedAccountNumber={selectedAccountNumber}
