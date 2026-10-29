@@ -151,7 +151,7 @@ describe('fetchEntitlements', () => {
     expect(result).toEqual({ entitlements: healthyPaid, degraded: true, source: 'cache' });
   });
 
-  it('uses Option B on 503 with no cache and org_id', async () => {
+  it('uses profile-derived defaults on 503 with no cache and org_id', async () => {
     mockedCacheFetch.mockImplementation(async (_key, fetcher) => {
       await fetcher();
       throw new Error('unreachable');
@@ -166,7 +166,7 @@ describe('fetchEntitlements', () => {
     expect(result.entitlements.ansible).toEqual({ is_entitled: false, is_trial: false });
   });
 
-  it.each([500, 502, 503])('falls back to Option B on HTTP %s when cacheFetch rethrows', async (status) => {
+  it.each([500, 502, 503])('falls back to profile-derived defaults on HTTP %s when cacheFetch rethrows', async (status) => {
     mockedCacheFetch.mockRejectedValue({ response: { status } });
     const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() } });
     expect(result.source).toBe('defaults');
@@ -205,7 +205,7 @@ describe('fetchEntitlements', () => {
     expect(result.source).toBe('defaults');
   });
 
-  it('times out a hung request and resolves to Option B', async () => {
+  it('times out a hung request and resolves to profile-derived defaults', async () => {
     jest.useFakeTimers();
     liveCacheFetch();
     const client: EntitlementsClient = {
@@ -245,7 +245,7 @@ describe('fetchEntitlements', () => {
     expect(result.source).toBe('defaults');
   });
 
-  it('returns Option B when cacheFetch rejects', async () => {
+  it('returns profile-derived defaults when cacheFetch rejects', async () => {
     mockedCacheFetch.mockRejectedValue({ response: { status: 503 } });
     const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() } });
     expect(result.source).toBe('defaults');

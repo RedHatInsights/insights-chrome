@@ -263,7 +263,7 @@ describe('VisibilitySingleton', () => {
       expect((await visibilityFunctions.isEntitled()).another).toBe(false);
     });
 
-    test('isEntitled on Option B defaults', async () => {
+    test('isEntitled on profile-derived defaults', async () => {
       const { getMinimumViableEntitlements } = await import('../auth/getMinimumViableEntitlements');
       const defaults = getMinimumViableEntitlements({
         profile: { org_id: '123', account_number: '1', email: 'user@example.com', is_internal: false },

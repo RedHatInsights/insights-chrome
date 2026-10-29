@@ -36,7 +36,7 @@ function isInternalEntitled(profile: EntitlementsUserProfile): boolean {
 }
 
 /**
- * Option B (RHCLOUD-50161): no-cache fallback when the JWT has `org_id`.
+ * Profile-derived defaults (RHCLOUD-50161): no-cache fallback when the JWT has `org_id`.
  * Org-id bundles entitled; SKU keys explicit false so Ansible trial redirect still runs.
  */
 export function getMinimumViableEntitlements(user: { profile?: EntitlementsUserProfile }): EntitlementsMap {

@@ -57,8 +57,6 @@ The user config, the flag lookup, and the entitlement request run in sequence. T
 
 This covers configured waits only, not page load or browser scheduling. The user config wait is not new: it previously ran right after authentication finished, and now runs before the flag lookup instead. If the user config fails, the lookup uses preview off and `useSessionConfig` still reports the degraded personalization state. With the flag off, the legacy request has no timeout, so the total is unbounded. Running the two steps in parallel would require an entitlement request that matches both the flag-off and flag-on contracts, so it is left as a follow-up.
 
-See [the manual testing plan](entitlements-manual-test.md) for rollout, rollback, organization isolation, and outage checks.
-
 ## Flag scope
 
 The feature flag controls persistent cache fallback only. It is not a rollback switch for configuration validation, sanitization, filtering, URL checks, or Sentry reporting. Those protections run for live and cached configuration regardless of the cache flag state.

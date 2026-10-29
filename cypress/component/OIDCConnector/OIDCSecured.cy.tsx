@@ -358,7 +358,7 @@ describe('OIDCSecured entitlements outage', () => {
     cy.get('[data-testid="entitlements"]').should(($element) => expect(JSON.parse($element.text())).to.deep.equal(map));
   };
 
-  it('reaches ready state on entitlements 503 with Option B', () => {
+  it('reaches ready state on entitlements 503 with profile-derived defaults', () => {
     cy.intercept('GET', '**/api/entitlements/v1/services**', { statusCode: 503, body: {} }).as('entitlements');
     mountShell();
     cy.contains(CHILD_TEXT).should('exist');
