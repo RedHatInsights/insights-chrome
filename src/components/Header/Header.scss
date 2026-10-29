@@ -5,12 +5,23 @@
   --pf-v6-c-masthead__content--MinHeight: 48px !important;
   --pf-v6-c-masthead__main--ColumnGap: 0 !important;
   --pf-v6-c-masthead__main--before--Right: 0; // close gap between hamburger and logo
-  .chr-c-brand {
-    width: 30px;
+
+  .pf-v6-c-masthead__brand {
+    gap: 1rem;
+    align-items: stretch;
   }
+
   .pf-v6-c-masthead__logo {
-    width: 50px;
+    display: flex;
+    align-items: center;
+    width: auto;
   }
+  
+  .pf-v6-c-brand {
+    max-width: 9rem;
+    max-height: 2rem;
+  }
+
   a.chr-c-button-masthead {
     display: flex;
     align-items: center;

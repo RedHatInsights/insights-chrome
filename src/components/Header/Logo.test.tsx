@@ -37,51 +37,45 @@ describe('Logo', () => {
     renderLogo();
     const img = screen.getByAltText('Red Hat Logo');
     expect(img).toBeTruthy();
-    expect(img.getAttribute('src')).not.toContain('lightwell-logomark');
   });
 
   it('should render Red Hat logo for both themes (not Lightwell)', () => {
     // SVG imports resolve to identical 'test-file-stub' via fileMock.js — cannot distinguish light vs dark in Jest
     const { unmount } = renderLogo();
-    const lightImg = screen.getByAltText('Red Hat Logo');
-    expect(lightImg.getAttribute('src')).not.toContain('lightwell-logomark');
+    expect(screen.getByAltText('Red Hat Logo')).toBeTruthy();
     unmount();
 
     getDarkModeStore().updateState('SET_DARK');
     renderLogo();
-    const darkImg = screen.getByAltText('Red Hat Logo');
-    expect(darkImg.getAttribute('src')).not.toContain('lightwell-logomark');
+    expect(screen.getByAltText('Red Hat Logo')).toBeTruthy();
   });
 
-  it('should render light Lightwell logo by default when layoutLightwellHeaderAtom is true', () => {
+  it('should render Lightwell logo when layoutLightwellHeaderAtom is true', () => {
     renderLogo({ lightwellHeader: true });
-    const img = screen.getByAltText('Lightwell Logo');
-    expect(img.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
+    expect(screen.getByAltText('Lightwell')).toBeTruthy();
   });
 
-  it('should render dark Lightwell logo when dark mode is active', () => {
+  it('should render Lightwell logo when dark mode is active', () => {
     getDarkModeStore().updateState('SET_DARK');
     renderLogo({ lightwellHeader: true });
-    const img = screen.getByAltText('Lightwell Logo');
-    expect(img.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-dark.svg');
+    expect(screen.getByAltText('Lightwell')).toBeTruthy();
   });
 
-  it('should switch Lightwell logo when the dark mode store updates', () => {
+  it('should keep rendering the Lightwell logo when the dark mode store updates', () => {
     renderLogo({ lightwellHeader: true });
-    const img = screen.getByAltText('Lightwell Logo');
-    expect(img.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
+    expect(screen.getByAltText('Lightwell')).toBeTruthy();
 
     act(() => {
       getDarkModeStore().updateState('SET_DARK');
     });
 
-    expect(screen.getByAltText('Lightwell Logo').getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-dark.svg');
+    expect(screen.getByAltText('Lightwell')).toBeTruthy();
 
     act(() => {
       getDarkModeStore().updateState('SET_LIGHT');
     });
 
-    expect(screen.getByAltText('Lightwell Logo').getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
+    expect(screen.getByAltText('Lightwell')).toBeTruthy();
   });
 
   it('should have chr-c-brand className', () => {
