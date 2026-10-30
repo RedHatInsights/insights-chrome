@@ -1,4 +1,4 @@
-import { evaluateVisibility } from './isNavItemVisible';
+import { evaluateVisibility, isNavItemVisible } from './isNavItemVisible';
 import { NavItem } from '../@types/types';
 import * as Sentry from '@sentry/react';
 
@@ -6,11 +6,13 @@ jest.mock('@sentry/react', () => ({ captureMessage: jest.fn() }));
 
 const mockIsOrgAdmin = jest.fn().mockResolvedValue(true);
 const mockFeatureFlag = jest.fn().mockReturnValue(true);
+const mockApiRequest = jest.fn();
 
 jest.mock('./VisibilitySingleton', () => ({
   getVisibilityFunctions: () => ({
     isOrgAdmin: mockIsOrgAdmin,
     featureFlag: mockFeatureFlag,
+    apiRequest: mockApiRequest,
     scope: (requiredScope: string) => {
       try {
         const parsed: unknown = JSON.parse(localStorage.getItem('@chrome/login-scopes') || '[]');
@@ -293,5 +295,34 @@ describe('evaluateVisibility', () => {
     expect(result.isHidden).toBe(true);
     expect(onError).not.toHaveBeenCalled();
     expect(Sentry.captureMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe('isNavItemVisible requireExplicitTrue', () => {
+  const missingAccessor = { method: 'apiRequest' as const, args: [{ url: '/api/features/', accessor: 'missing.accessible' }] };
+  const deniedAccessor = { method: 'apiRequest' as const, args: [{ url: '/api/features/', accessor: 'denied.accessible' }] };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // A missing accessor resolves to undefined; a denied one resolves to false.
+    mockApiRequest.mockReset().mockImplementation(async ({ accessor }: { accessor: string }) => (accessor === 'denied.accessible' ? false : undefined));
+  });
+
+  it('treats an undefined result as visible by default', async () => {
+    await expect(isNavItemVisible(missingAccessor)).resolves.toBe(true);
+  });
+
+  it('treats an undefined result as hidden when requireExplicitTrue is set', async () => {
+    await expect(isNavItemVisible(missingAccessor, { requireExplicitTrue: true })).resolves.toBe(false);
+  });
+
+  it('keeps OR evaluation hidden when one accessor is missing and the other is false', async () => {
+    const results = await Promise.all([missingAccessor, deniedAccessor].map((permission) => isNavItemVisible(permission, { requireExplicitTrue: true })));
+    expect(results.some(Boolean)).toBe(false);
+  });
+
+  it('treats an explicit true result as visible when requireExplicitTrue is set', async () => {
+    mockApiRequest.mockResolvedValue(true);
+    await expect(isNavItemVisible(missingAccessor, { requireExplicitTrue: true })).resolves.toBe(true);
   });
 });
