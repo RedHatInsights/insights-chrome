@@ -69,13 +69,13 @@ const QuickstartsRemoteError = () => {
   return null;
 };
 
-const REMOTE_CHILDREN_SLOT_STYLE: React.CSSProperties = { display: 'contents' };
+const RUNTIME_CHILDREN_SLOT_STYLE: React.CSSProperties = { display: 'contents' };
 
 /**
  * Keep the console tree in one React position. Move only the DOM node into the
- * remote drawer slot (or a fallback host while the remote is loading / failed).
- * Merged LR already wraps `{children}` in the PF drawers, so Chrome passes a
- * tiny placeholder as the remote's children and portals the console into it.
+ * active runtime's drawer slot (or a fallback host while the remote is loading /
+ * failed). Both runtimes wrap `{children}` in the PF drawers, so Chrome passes a
+ * tiny placeholder as the runtime's children and portals the console into it.
  */
 const ChromeChildrenPortal = ({ children, slot }: { children: ReactNode; slot: HTMLElement | null }) => {
   const fallbackRef = useRef<HTMLDivElement | null>(null);
@@ -135,7 +135,7 @@ const ChromeChildrenPortal = ({ children, slot }: { children: ReactNode; slot: H
 };
 
 /**
- * Rendered inside the remote's children, so it sits under the runtime's
+ * Rendered inside the active runtime's children, so it sits under the runtime's
  * QuickStart/HelpTopic providers. `@patternfly/quickstarts` is a shared singleton,
  * so these are the same context objects Chrome uses. Copies the runtime values
  * out for `RuntimeContextBridge`. Unmounting (remote failed / swapped) clears them.
@@ -182,7 +182,7 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   const useRemote = useLearningResourcesQuickstarts();
   const apiReadyRef = useRef(false);
   const [childrenSlotEl, setChildrenSlotEl] = useState<HTMLDivElement | null>(null);
-  const setRemoteChildrenSlot = useCallback((node: HTMLDivElement | null) => {
+  const setRuntimeChildrenSlot = useCallback((node: HTMLDivElement | null) => {
     setChildrenSlotEl(node);
   }, []);
 
@@ -204,7 +204,6 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!useRemote) {
-      setChildrenSlotEl(null);
       return;
     }
     apiReadyRef.current = false;
@@ -218,35 +217,44 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
 
   const accountId = user?.identity?.internal?.account_id;
 
-  if (!useRemote) {
-    return (
-      <LegacyQuickstartsRuntime accountId={accountId} activeModule={activeModule} onApiReady={handleApiReady} onActiveQuickStartChanged={handleActiveQSChanged}>
-        {children}
-      </LegacyQuickstartsRuntime>
-    );
-  }
+  // Same slot for both runtimes, so a flag change swaps only the runtime sibling
+  // and never remounts the console.
+  const runtimeSlot = (
+    <div ref={setRuntimeChildrenSlot} data-ouia-component-id="chrome-quickstarts-slot" style={RUNTIME_CHILDREN_SLOT_STYLE}>
+      <RuntimeContextReporter />
+    </div>
+  );
 
   return (
     <>
       <ChromeChildrenPortal slot={childrenSlotEl}>
         <RuntimeContextBridge>{children}</RuntimeContextBridge>
       </ChromeChildrenPortal>
-      <QuickstartsRuntimeBoundary fallback={null}>
-        <ScalprumComponent
-          scope="learningResources"
-          module="./QuickstartsRuntime"
-          ErrorComponent={<QuickstartsRemoteError />}
-          fallback={null}
+      {useRemote ? (
+        <QuickstartsRuntimeBoundary fallback={null}>
+          <ScalprumComponent
+            scope="learningResources"
+            module="./QuickstartsRuntime"
+            ErrorComponent={<QuickstartsRemoteError />}
+            fallback={null}
+            accountId={accountId}
+            activeModule={activeModule}
+            onApiReady={handleApiReady}
+            onActiveQuickStartChanged={handleActiveQSChanged}
+          >
+            {runtimeSlot}
+          </ScalprumComponent>
+        </QuickstartsRuntimeBoundary>
+      ) : (
+        <LegacyQuickstartsRuntime
           accountId={accountId}
           activeModule={activeModule}
           onApiReady={handleApiReady}
           onActiveQuickStartChanged={handleActiveQSChanged}
         >
-          <div ref={setRemoteChildrenSlot} data-ouia-component-id="chrome-quickstarts-slot" style={REMOTE_CHILDREN_SLOT_STYLE}>
-            <RuntimeContextReporter />
-          </div>
-        </ScalprumComponent>
-      </QuickstartsRuntimeBoundary>
+          {runtimeSlot}
+        </LegacyQuickstartsRuntime>
+      )}
     </>
   );
 };

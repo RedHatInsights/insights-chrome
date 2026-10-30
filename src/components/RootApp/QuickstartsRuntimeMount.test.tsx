@@ -60,15 +60,19 @@ const renderMount = (initialActiveQuickStartID = '', children: React.ReactNode =
     featureFlags: false,
     quickstarts: false,
   });
+  const tree = () => (
+    <JotaiProvider store={store}>
+      <ChromeAuthContext.Provider value={chromeAuth as never}>
+        <QuickstartsRuntimeMount>{children}</QuickstartsRuntimeMount>
+      </ChromeAuthContext.Provider>
+    </JotaiProvider>
+  );
+  const result = render(tree());
   return {
     store,
-    ...render(
-      <JotaiProvider store={store}>
-        <ChromeAuthContext.Provider value={chromeAuth as never}>
-          <QuickstartsRuntimeMount>{children}</QuickstartsRuntimeMount>
-        </ChromeAuthContext.Provider>
-      </JotaiProvider>
-    ),
+    ...result,
+    /** Re-render with the same children, e.g. after changing the mocked flag. */
+    rerenderMount: () => result.rerender(tree()),
   };
 };
 
@@ -90,8 +94,7 @@ describe('QuickstartsRuntimeMount', () => {
   it('uses leftover Chrome providers when the flag is off', () => {
     const { store } = renderMount();
 
-    expect(screen.getByTestId('legacy-runtime')).toBeInTheDocument();
-    expect(screen.getByText('shell-child')).toBeInTheDocument();
+    expect(screen.getByTestId('legacy-runtime')).toHaveTextContent('shell-child');
     expect(screen.queryByTestId('remote-runtime')).not.toBeInTheDocument();
     expect(mockedUseFlag).toHaveBeenCalledWith(LEARNING_RESOURCES_QUICKSTARTS_FLAG);
     expect(store.get(degradedStateAtom).quickstarts).toBe(false);
@@ -233,6 +236,36 @@ describe('QuickstartsRuntimeMount', () => {
     renderMount('', <Probe />);
 
     expect(attachedDuringLayoutEffect).toBe(true);
+  });
+
+  describe('runtime flag changes', () => {
+    const TenantForm = ({ onMount }: { onMount: () => void }) => {
+      const [value, setValue] = React.useState('');
+      React.useLayoutEffect(() => {
+        onMount();
+      }, []);
+      return <input aria-label="tenant-input" value={value} onChange={(event) => setValue(event.target.value)} />;
+    };
+
+    it('keeps tenant state when the flag changes in either direction', () => {
+      let mounts = 0;
+      const { rerenderMount } = renderMount('', <TenantForm onMount={() => (mounts += 1)} />);
+      fireEvent.change(screen.getByLabelText('tenant-input'), { target: { value: 'unsaved draft' } });
+      expect(screen.getByTestId('legacy-runtime')).toContainElement(screen.getByLabelText('tenant-input'));
+
+      mockedUseFlag.mockReturnValue(true);
+      rerenderMount();
+      expect(screen.queryByTestId('legacy-runtime')).not.toBeInTheDocument();
+      expect(screen.getByTestId('remote-runtime')).toContainElement(screen.getByLabelText('tenant-input'));
+      expect(screen.getByLabelText('tenant-input')).toHaveValue('unsaved draft');
+
+      mockedUseFlag.mockReturnValue(false);
+      rerenderMount();
+      expect(screen.queryByTestId('remote-runtime')).not.toBeInTheDocument();
+      expect(screen.getByTestId('legacy-runtime')).toContainElement(screen.getByLabelText('tenant-input'));
+      expect(screen.getByLabelText('tenant-input')).toHaveValue('unsaved draft');
+      expect(mounts).toBe(1);
+    });
   });
 
   describe('runtime context bridge', () => {
