@@ -9,7 +9,12 @@ import chromeStore from '../../state/chromeStore';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import { LiveQuickstartsAPI, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
-import { dropPendingLiveChromeQuickstartsApis, publishLiveChromeQuickstartsApis } from '../../state/atoms/delegatedChromeQuickstarts';
+import {
+  clearRegisteredChromeQuickstarts,
+  dropPendingLiveChromeQuickstartsApis,
+  publishLiveChromeQuickstartsApis,
+  retireLiveChromeQuickstartsApis,
+} from '../../state/atoms/delegatedChromeQuickstarts';
 import { quickstartsRuntimeContextAtom } from '../../state/atoms/quickstartsRuntimeContextAtom';
 import LegacyQuickstartsRuntime from './LegacyQuickstartsRuntime';
 import { useLearningResourcesQuickstarts } from './useLearningResourcesQuickstarts';
@@ -201,6 +206,21 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
     },
     [setRemoteActiveQSID]
   );
+
+  /**
+   * Swapping runtimes: detach the outgoing one so delegate calls queue for its
+   * replacement. Layout cleanup so the outgoing runtime is detached before any
+   * effect of the incoming one (layout or passive) can publish its API.
+   */
+  useLayoutEffect(() => {
+    return () => {
+      retireLiveChromeQuickstartsApis();
+    };
+  }, [useRemote]);
+
+  useEffect(() => {
+    clearRegisteredChromeQuickstarts();
+  }, [activeModule]);
 
   useEffect(() => {
     if (!useRemote) {

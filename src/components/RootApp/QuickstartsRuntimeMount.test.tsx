@@ -13,6 +13,7 @@ import {
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { ScalprumComponent } from '@scalprum/react-core';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 import QuickstartsRuntimeMount, {
   LEARNING_RESOURCES_QUICKSTARTS_FLAG,
   LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY,
@@ -21,8 +22,9 @@ import QuickstartsRuntimeMount, {
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
-import { remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
-import { resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
+import { LiveQuickstartsAPI, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
+import { delegatedQuickstartsAPI, resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
+import chromeStore from '../../state/chromeStore';
 import { quickstartsRuntimeContextAtom } from '../../state/atoms/quickstartsRuntimeContextAtom';
 
 jest.mock('@unleash/proxy-client-react', () => ({
@@ -33,9 +35,22 @@ jest.mock('@scalprum/react-core', () => ({
   ScalprumComponent: jest.fn(({ children }: { children?: React.ReactNode }) => <div data-testid="remote-runtime">{children}</div>),
 }));
 
+type RuntimeApis = { quickstartsAPI: LiveQuickstartsAPI; helpTopicsAPI: ChromeAPI['helpTopics'] };
+
+/** When set, the legacy mock publishes these from a passive effect, like the real `ApiPublisher`. */
+let mockLegacyApis: RuntimeApis | undefined;
+
 jest.mock('./LegacyQuickstartsRuntime', () => ({
   __esModule: true,
-  default: ({ children }: { children?: React.ReactNode }) => <div data-testid="legacy-runtime">{children}</div>,
+  default: ({ children, onApiReady }: { children?: React.ReactNode; onApiReady?: (api: RuntimeApis) => void }) => {
+    const { useEffect } = jest.requireActual<typeof React>('react');
+    useEffect(() => {
+      if (mockLegacyApis) {
+        onApiReady?.(mockLegacyApis);
+      }
+    }, [onApiReady]);
+    return <div data-testid="legacy-runtime">{children}</div>;
+  },
 }));
 
 const mockedUseFlag = useFlag as jest.Mock;
@@ -85,6 +100,7 @@ describe('QuickstartsRuntimeMount', () => {
   });
 
   afterEach(() => {
+    mockLegacyApis = undefined;
     jest.useRealTimers();
     window.localStorage.removeItem(LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY);
     resetDelegatedChromeQuickstartsState();
@@ -239,6 +255,39 @@ describe('QuickstartsRuntimeMount', () => {
   });
 
   describe('runtime flag changes', () => {
+    const qsA = { metadata: { name: 'qs-a' } } as QuickStart;
+    const qsB = { metadata: { name: 'qs-b' } } as QuickStart;
+    const qsC = { metadata: { name: 'qs-c' } } as QuickStart;
+
+    const createApis = (label: string): RuntimeApis => ({
+      quickstartsAPI: {
+        version: 1,
+        set: jest.fn(),
+        activateQuickstart: jest.fn().mockResolvedValue(undefined),
+        toggle: jest.fn(),
+        Catalog: Object.assign(() => <span>{label}-catalog</span>, { displayName: `${label}Catalog` }),
+        add: jest.fn(() => true),
+        updateQuickStarts: jest.fn(),
+      },
+      helpTopicsAPI: {
+        addHelpTopics: jest.fn(),
+        disableTopics: jest.fn(),
+        enableTopics: jest.fn().mockResolvedValue([]),
+        setActiveTopic: jest.fn().mockResolvedValue(undefined),
+        closeHelpTopic: jest.fn(),
+      },
+    });
+
+    const publishRemote = async (apis: RuntimeApis) => {
+      const props = MockedScalprumComponent.mock.calls[MockedScalprumComponent.mock.calls.length - 1][0];
+      await act(async () => {
+        props.onApiReady(apis);
+      });
+    };
+
+    /** Let effects and the deferred runtime attach run. */
+    const settle = () => act(async () => {});
+
     const TenantForm = ({ onMount }: { onMount: () => void }) => {
       const [value, setValue] = React.useState('');
       React.useLayoutEffect(() => {
@@ -265,6 +314,152 @@ describe('QuickstartsRuntimeMount', () => {
       expect(screen.getByTestId('legacy-runtime')).toContainElement(screen.getByLabelText('tenant-input'));
       expect(screen.getByLabelText('tenant-input')).toHaveValue('unsaved draft');
       expect(mounts).toBe(1);
+    });
+
+    it('detaches the old runtime on switch and queues calls for the replacement', async () => {
+      const legacy = createApis('legacy');
+      const remote = createApis('remote');
+      mockLegacyApis = legacy;
+      const { rerenderMount } = renderMount();
+      await settle();
+      expect(liveQuickstartsAPIRef.current).toBe(legacy.quickstartsAPI);
+
+      mockedUseFlag.mockReturnValue(true);
+      rerenderMount();
+      expect(liveQuickstartsAPIRef.current).toBeNull();
+      expect(chromeStore.get(liveQuickstartsCatalogAtom)).toBeNull();
+
+      delegatedQuickstartsAPI.set('app', [qsC]);
+      void delegatedQuickstartsAPI.activateQuickstart('qs-c');
+      expect(legacy.quickstartsAPI.set).not.toHaveBeenCalled();
+      expect(legacy.quickstartsAPI.activateQuickstart).not.toHaveBeenCalled();
+
+      await publishRemote(remote);
+      expect(remote.quickstartsAPI.set).toHaveBeenCalledWith('app', [qsC]);
+      expect(remote.quickstartsAPI.activateQuickstart).toHaveBeenCalledWith('qs-c');
+      expect(chromeStore.get(liveQuickstartsCatalogAtom)?.Catalog).toBe(remote.quickstartsAPI.Catalog);
+    });
+
+    it('replays tenant registrations into the replacement before queued calls', async () => {
+      const legacy = createApis('legacy');
+      const remote = createApis('remote');
+      mockLegacyApis = legacy;
+      const { rerenderMount } = renderMount();
+      await settle();
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      delegatedQuickstartsAPI.add('app', qsB);
+
+      mockedUseFlag.mockReturnValue(true);
+      rerenderMount();
+      delegatedQuickstartsAPI.set('other', [qsC]);
+      await publishRemote(remote);
+
+      expect((remote.quickstartsAPI.set as jest.Mock).mock.calls).toEqual([
+        ['app', [qsA, qsB]],
+        ['other', [qsC]],
+      ]);
+    });
+
+    it('does not replay registrations from a previous module', async () => {
+      const legacy = createApis('legacy');
+      const remote = createApis('remote');
+      mockLegacyApis = legacy;
+      const { store, rerenderMount } = renderMount();
+      await settle();
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      act(() => {
+        store.set(activeModuleAtom, 'other-module');
+      });
+
+      mockedUseFlag.mockReturnValue(true);
+      rerenderMount();
+      await publishRemote(remote);
+
+      expect(remote.quickstartsAPI.set).not.toHaveBeenCalled();
+    });
+
+    it('replays into a replacement that clears its quickstarts on mount, like both real runtimes', async () => {
+      const legacy = createApis('legacy');
+      mockLegacyApis = legacy;
+      const { rerenderMount } = renderMount();
+      await settle();
+      delegatedQuickstartsAPI.set('app', [qsA]);
+
+      // Real runtimes publish from a child effect, then clear their store from a parent mount
+      // effect, which runs after it. Anything applied during the publish itself is wiped.
+      const store = new Map<string, QuickStart[]>();
+      const remote = createApis('remote');
+      (remote.quickstartsAPI.set as jest.Mock).mockImplementation((key: string, qs: QuickStart[]) => store.set(key, qs));
+      const Publisher = ({ onApiReady }: { onApiReady: (api: RuntimeApis) => void }) => {
+        React.useEffect(() => {
+          onApiReady(remote);
+        }, [onApiReady]);
+        return null;
+      };
+      MockedScalprumComponent.mockImplementation(({ children, onApiReady }: { children?: React.ReactNode; onApiReady: (api: RuntimeApis) => void }) => {
+        React.useEffect(() => {
+          store.clear();
+        }, []);
+        return (
+          <div data-testid="remote-runtime">
+            <Publisher onApiReady={onApiReady} />
+            {children}
+          </div>
+        );
+      });
+
+      mockedUseFlag.mockReturnValue(true);
+      delegatedQuickstartsAPI.set('queued', [qsC]);
+      await act(async () => {
+        rerenderMount();
+      });
+
+      expect(Object.fromEntries(store)).toEqual({ app: [qsA], queued: [qsC] });
+    });
+
+    it('keeps the legacy API published in the same commit as the switch from remote', async () => {
+      const legacy = createApis('legacy');
+      const remote = createApis('remote');
+      mockedUseFlag.mockReturnValue(true);
+      const { rerenderMount } = renderMount();
+      await publishRemote(remote);
+      expect(liveQuickstartsAPIRef.current).toBe(remote.quickstartsAPI);
+
+      mockLegacyApis = legacy;
+      mockedUseFlag.mockReturnValue(false);
+      rerenderMount();
+      await settle();
+
+      expect(liveQuickstartsAPIRef.current).toBe(legacy.quickstartsAPI);
+      delegatedQuickstartsAPI.toggle('qs-a');
+      expect(legacy.quickstartsAPI.toggle).toHaveBeenCalledWith('qs-a');
+      expect(remote.quickstartsAPI.toggle).not.toHaveBeenCalled();
+    });
+
+    it('queues instead of dropping calls after switching away from a failed remote', async () => {
+      const legacy = createApis('legacy');
+      mockedUseFlag.mockReturnValue(true);
+      jest.useFakeTimers();
+      const { store, rerenderMount } = renderMount();
+      act(() => {
+        jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
+      });
+      expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+      // Fake timers also fake queueMicrotask, which the runtime attach uses.
+      jest.useRealTimers();
+
+      mockedUseFlag.mockReturnValue(false);
+      rerenderMount();
+      const pending = delegatedQuickstartsAPI.activateQuickstart('qs-a');
+      // Same `handleApiReady` the legacy runtime receives; publish late to observe the queue.
+      const { onApiReady } = MockedScalprumComponent.mock.calls[0][0];
+      await act(async () => {
+        onApiReady(legacy);
+      });
+
+      await pending;
+      expect(legacy.quickstartsAPI.activateQuickstart).toHaveBeenCalledWith('qs-a');
+      expect(store.get(degradedStateAtom).quickstarts).toBe(false);
     });
   });
 

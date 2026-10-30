@@ -3,16 +3,20 @@ import { act, render, screen } from '@testing-library/react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeAPI } from '@redhat-cloud-services/types';
 import {
+  clearRegisteredChromeQuickstarts,
   delegatedHelpTopicsAPI,
   delegatedQuickstartsAPI,
   dropPendingLiveChromeQuickstartsApis,
   publishLiveChromeQuickstartsApis,
   resetDelegatedChromeQuickstartsState,
+  retireLiveChromeQuickstartsApis,
 } from './delegatedChromeQuickstarts';
 import chromeStore from '../chromeStore';
 import { liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
 
 const stubQuickstart = { metadata: { name: 'qs-1' } } as QuickStart;
+/** `publish…` attaches the runtime in a microtask; let it run. */
+const attached = () => Promise.resolve();
 
 describe('delegatedChromeQuickstarts', () => {
   beforeEach(() => {
@@ -112,6 +116,146 @@ describe('delegatedChromeQuickstarts', () => {
 
     await delegatedQuickstartsAPI.activateQuickstart('after-ready');
     expect(activateQuickstart).toHaveBeenCalledWith('after-ready');
+  });
+
+  describe('runtime replacement', () => {
+    const qsA = { metadata: { name: 'qs-a' } } as QuickStart;
+    const qsB = { metadata: { name: 'qs-b' } } as QuickStart;
+
+    const runtimeApis = (add: (key: string, qs: QuickStart) => boolean = () => true) => ({
+      quickstartsAPI: {
+        version: 1,
+        set: jest.fn(),
+        activateQuickstart: jest.fn().mockResolvedValue(undefined),
+        toggle: jest.fn(),
+        Catalog: jest.fn(),
+        add: jest.fn(add),
+        updateQuickStarts: jest.fn(),
+      },
+      helpTopicsAPI: {
+        addHelpTopics: jest.fn(),
+        disableTopics: jest.fn(),
+        enableTopics: jest.fn().mockResolvedValue([]),
+        setActiveTopic: jest.fn().mockResolvedValue(undefined),
+        closeHelpTopic: jest.fn(),
+      },
+    });
+
+    it('detaches the live runtime and keeps queued calls on retire', async () => {
+      const first = runtimeApis();
+      publishLiveChromeQuickstartsApis(first);
+      await attached();
+      expect(chromeStore.get(liveQuickstartsCatalogAtom)).not.toBeNull();
+
+      retireLiveChromeQuickstartsApis();
+      expect(liveQuickstartsAPIRef.current).toBeNull();
+      expect(liveHelpTopicsAPIRef.current).toBeNull();
+      expect(chromeStore.get(liveQuickstartsCatalogAtom)).toBeNull();
+
+      const pending = delegatedHelpTopicsAPI.setActiveTopic('topic-a');
+      const second = runtimeApis();
+      publishLiveChromeQuickstartsApis(second);
+      await attached();
+
+      await pending;
+      expect(second.helpTopicsAPI.setActiveTopic).toHaveBeenCalledWith('topic-a');
+      expect(first.helpTopicsAPI.setActiveTopic).not.toHaveBeenCalled();
+    });
+
+    it('queues again after a failed runtime is retired', async () => {
+      dropPendingLiveChromeQuickstartsApis();
+      retireLiveChromeQuickstartsApis();
+
+      const pending = delegatedQuickstartsAPI.activateQuickstart('qs-a');
+      expect(delegatedQuickstartsAPI.add('app', qsA)).toBe(true);
+      const next = runtimeApis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+
+      await pending;
+      expect(next.quickstartsAPI.activateQuickstart).toHaveBeenCalledWith('qs-a');
+      expect(next.quickstartsAPI.add).toHaveBeenCalledWith('app', qsA);
+    });
+
+    it('replays registrations into the replacement: set replaces, add appends', async () => {
+      publishLiveChromeQuickstartsApis(runtimeApis());
+      await attached();
+      delegatedQuickstartsAPI.set('app', [qsB]);
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      delegatedQuickstartsAPI.add('app', qsB);
+      delegatedQuickstartsAPI.updateQuickStarts?.('other', [qsB]);
+
+      retireLiveChromeQuickstartsApis();
+      const next = runtimeApis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+
+      expect(next.quickstartsAPI.set.mock.calls).toEqual([
+        ['app', [qsA, qsB]],
+        ['other', [qsB]],
+      ]);
+    });
+
+    it('does not replay quickstarts the runtime rejected', async () => {
+      publishLiveChromeQuickstartsApis(runtimeApis(() => false));
+      await attached();
+      expect(delegatedQuickstartsAPI.add('app', qsA)).toBe(false);
+
+      retireLiveChromeQuickstartsApis();
+      const next = runtimeApis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+
+      expect(next.quickstartsAPI.set).not.toHaveBeenCalled();
+    });
+
+    it('replays only once per retire, not on every re-publish', async () => {
+      const first = runtimeApis();
+      publishLiveChromeQuickstartsApis(first);
+      await attached();
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      expect(first.quickstartsAPI.set).toHaveBeenCalledTimes(1);
+
+      // Same runtime re-publishing (its API memo changed) must not duplicate registrations.
+      publishLiveChromeQuickstartsApis(first);
+      await attached();
+      expect(first.quickstartsAPI.set).toHaveBeenCalledTimes(1);
+
+      retireLiveChromeQuickstartsApis();
+      const next = runtimeApis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+      expect(next.quickstartsAPI.set).toHaveBeenCalledTimes(1);
+    });
+
+    it('records queued registrations once they reach a runtime', async () => {
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      publishLiveChromeQuickstartsApis(runtimeApis());
+      await attached();
+
+      retireLiveChromeQuickstartsApis();
+      const next = runtimeApis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+
+      expect(next.quickstartsAPI.set).toHaveBeenCalledWith('app', [qsA]);
+    });
+
+    it('drops the registry on module change', async () => {
+      publishLiveChromeQuickstartsApis(runtimeApis());
+      await attached();
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      clearRegisteredChromeQuickstarts();
+
+      retireLiveChromeQuickstartsApis();
+      const next = runtimeApis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+
+      expect(next.quickstartsAPI.set).not.toHaveBeenCalled();
+    });
   });
 
   describe('Catalog', () => {
