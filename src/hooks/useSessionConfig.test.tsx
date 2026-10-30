@@ -62,6 +62,7 @@ describe('useSessionConfig', () => {
       entitlements: false,
       configFromCache: false,
       featureFlags: false,
+      quickstarts: false,
     });
   });
 

@@ -83,6 +83,7 @@ const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRou
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
+    'platform.chrome.learning-resources-quickstarts': false,
   };
 
   const flags = { ...defaultFlags, ...flagOverrides };
