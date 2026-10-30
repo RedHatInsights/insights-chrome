@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import * as Sentry from '@sentry/react';
 import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
@@ -7,7 +8,6 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext'
 import { generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
-import entitlementsApi from '../entitlementsApi';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import logger from '../logger';
@@ -23,19 +23,22 @@ import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
+import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import useManageSilentRenew from './useManageSilentRenew';
-import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
+import { EntitlementsMap, FetchEntitlementsResult, fetchEntitlements, getMinimumViableEntitlements } from '../fetchEntitlements';
+import { ENTITLEMENTS_FALLBACK_FLAG } from '../entitlementsConstants';
+import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
+import { hydratePreviewAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { loadChromeUserConfigOnce } from '../../utils/initUserConfig';
 import getOrganization from './getOrganization';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
-const serviceAPI = entitlementsApi();
 const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: ServicesGetReturnType): ChromeUser {
+function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: EntitlementsMap): ChromeUser {
   return {
-    // The client is missing the trial type on the response
     entitlements: entitlements as Record<string, Entitlement>,
     identity: {
       org_id: user.profile?.org_id as any,
@@ -61,25 +64,17 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-async function fetchEntitlements(user: User) {
-  let entitlements: ServicesGetReturnType = {};
-  try {
-    if (user.profile.org_id) {
-      entitlements = (await serviceAPI.servicesGet({})).data;
-      return entitlements;
-    } else {
-      console.log('Cannot call entitlements API, no account number');
-      return entitlements;
-    }
-  } catch {
-    // let's swallow error from services API
-    return entitlements;
-  }
-}
-
 export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
+  const previousEntitlementsRef = useRef<EntitlementsMap | undefined>(undefined);
+  const previousEntitlementsOrgRef = useRef<unknown>(undefined);
+  const entitlementsFallbackEnabledRef = useRef(false);
+  const fetchGenerationRef = useRef(0);
+  const entitlementsAbortRef = useRef<AbortController | undefined>(undefined);
+  const previewHydratedRef = useRef(false);
+  const chromeUserRef = useRef<ChromeUser | undefined>(undefined);
+  const entitlementsDegradedReportedRef = useRef(false);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -91,10 +86,20 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     ready: false,
     logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });
-      logout(authRef.current, bounce);
+      if (entitlementsFallbackEnabledRef.current) {
+        fetchGenerationRef.current += 1;
+        entitlementsAbortRef.current?.abort();
+        previousEntitlementsRef.current = undefined;
+      }
+      logout(authRef.current, bounce, entitlementsFallbackEnabledRef.current);
     },
     logout: () => {
-      logout(authRef.current, true);
+      if (entitlementsFallbackEnabledRef.current) {
+        fetchGenerationRef.current += 1;
+        entitlementsAbortRef.current?.abort();
+        previousEntitlementsRef.current = undefined;
+      }
+      logout(authRef.current, true, entitlementsFallbackEnabledRef.current);
     },
     login: (requiredScopes) => login(authRef.current, requiredScopes),
     loginAllTabs: () => {
@@ -144,13 +149,85 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     }
   };
 
+  // The bootstrap rollout may target `platform.chrome.ui.preview`, which is only known from the user config.
+  // Hydrate it once per page load, before the first flag lookup; useSessionConfig reuses the same request.
+  async function hydrateBootstrapPreview() {
+    try {
+      const config = await loadChromeUserConfigOnce();
+      // Never overwrite a preview toggle made during the session on a later re-authentication.
+      if (!previewHydratedRef.current && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
+        chromeStore.set(hydratePreviewAtom, config.data.uiPreview);
+      }
+    } catch {
+      // useSessionConfig owns the degraded and gateway error handling; preview stays off.
+    }
+    previewHydratedRef.current = true;
+  }
+
   async function onUserAuthenticated(user: User) {
+    const generation = ++fetchGenerationRef.current;
+    entitlementsAbortRef.current?.abort();
+    const entitlementsAbort = new AbortController();
+    entitlementsAbortRef.current = entitlementsAbort;
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(chromeStore, authRef);
-    const entitlements = await fetchEntitlements(user);
+    await hydrateBootstrapPreview();
+    if (generation !== fetchGenerationRef.current) {
+      return;
+    }
+    const enabled = user.profile?.org_id
+      ? await getBootstrapFeatureFlag(mapOIDCUserToChromeUser(user, {}), chromeStore.get(isPreviewAtom), ENTITLEMENTS_FALLBACK_FLAG)
+      : false;
+    let entitlements: EntitlementsMap;
+    // Applied only after chromeUserRef holds the new user, so a recovery re-evaluates visibility with the recovered map.
+    let entitlementsDegraded: boolean | undefined;
+    let entitlementsSource: FetchEntitlementsResult['source'] | undefined;
+    if (enabled) {
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
+      entitlementsFallbackEnabledRef.current = true;
+      if (previousEntitlementsOrgRef.current !== user.profile?.org_id) {
+        previousEntitlementsRef.current = undefined;
+        previousEntitlementsOrgRef.current = user.profile?.org_id;
+      }
+      try {
+        const result = await fetchEntitlements(user, { enabled: true, previous: previousEntitlementsRef.current, signal: entitlementsAbort.signal });
+        entitlements = result.entitlements;
+        entitlementsDegraded = result.degraded;
+        entitlementsSource = result.source;
+      } catch {
+        entitlements = previousEntitlementsRef.current ?? getMinimumViableEntitlements(user);
+        entitlementsDegraded = Boolean(user.profile?.org_id);
+        entitlementsSource = previousEntitlementsRef.current ? 'memory' : 'defaults';
+      }
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
+      previousEntitlementsRef.current = entitlements;
+    } else {
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
+      if (entitlementsFallbackEnabledRef.current) {
+        chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
+      }
+      entitlementsFallbackEnabledRef.current = false;
+      previousEntitlementsRef.current = undefined;
+      entitlements = (await fetchEntitlements(user)).entitlements;
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
+    }
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
-    const getUser = () => Promise.resolve(chromeUser);
+    chromeUserRef.current = chromeUser;
+    if (entitlementsDegraded !== undefined) {
+      chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded: entitlementsDegraded });
+    }
+    // Live, like getToken: consumers holding an earlier getUser (visibility functions, permission watchers)
+    // read entitlements recovered on a later re-authentication instead of the map from their first call.
+    const getUser = () => Promise.resolve(chromeUserRef.current ?? chromeUser);
     setState((prev) => ({
       ...prev,
       ready: true,
@@ -161,7 +238,28 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       forceRefresh: authRef.current.signinSilent,
     }));
     sentry(chromeUser);
+    reportEntitlementsDegraded(entitlementsDegraded === true, entitlementsSource);
   }
+
+  // Once per degraded episode: re-authentication repeats every few minutes while the outage lasts.
+  function reportEntitlementsDegraded(degraded: boolean, source: FetchEntitlementsResult['source'] | undefined) {
+    if (degraded && !entitlementsDegradedReportedRef.current) {
+      Sentry.captureMessage('Entitlements degraded', { level: 'warning', tags: { area: 'entitlements', source: source ?? 'unknown' } });
+    }
+    entitlementsDegradedReportedRef.current = degraded;
+  }
+
+  // Declared before the authentication effect: bootstrap requests (user config, flags, entitlements) read the
+  // token from authRef, so it must already hold the new identity. Effect cleanups, which abort obsolete
+  // entitlement requests, still all run before this.
+  useEffect(() => {
+    authRef.current = auth;
+    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
+    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
+    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
+      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
+    }
+  }, [auth]);
 
   useEffect(() => {
     const user = auth.user;
@@ -183,6 +281,11 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
         }
       };
     }
+    return () => {
+      fetchGenerationRef.current += 1;
+      // Runs before authRef moves to the next identity, so an obsolete request cannot retry with its token.
+      entitlementsAbortRef.current?.abort();
+    };
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
   useEffect(() => {
@@ -201,15 +304,6 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     // to ensure we are not re-initializing the chrome on every auth change
     // only on the important events
   }, [auth.error, auth.isLoading, auth.isAuthenticated, state.token, state.user?.identity?.account_number]);
-
-  useEffect(() => {
-    authRef.current = auth;
-    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
-    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
-    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
-      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
-    }
-  }, [auth]);
 
   useManageSilentRenew(auth, state.login);
 

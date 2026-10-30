@@ -265,4 +265,73 @@ describe('visible bundle initialization with real visibility evaluation', () => 
     expect(store.get(visibleServiceTilesErrorAtom)).toBe(false);
     expect(console.error).not.toHaveBeenCalled();
   });
+
+  describe('in-session entitlements recovery', () => {
+    const entitledLink = {
+      id: 'ansible',
+      title: 'Ansible',
+      href: '/ansible/overview',
+      permissions: { method: 'isEntitled', args: ['ansible'] },
+    } satisfies NavItem;
+    const withAnsible = (isEntitled: boolean) => ({ ...user, entitlements: { ansible: { is_entitled: isEntitled, is_trial: false } } }) as ChromeUser;
+    const navIds = () => store.get(visibleBundlesAtom)[1].navItems.map(({ id }) => id);
+    const tileTitles = () => store.get(visibleServiceTilesAtom)[0].links.map(({ title }) => title);
+    const setEntitlementsDegraded = (degraded: boolean) => act(() => store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: degraded }));
+
+    beforeEach(() => {
+      bundles[1].navItems = [...bundles[1].navItems, entitledLink];
+      tiles = [{ title: 'Services', links: [{ title: 'Working', href: '/working' }, entitledLink] }];
+    });
+
+    it('re-evaluates loaded navigation and tiles with the recovered entitlements, without fetching again', async () => {
+      store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
+      getUser.mockResolvedValue(withAnsible(false));
+      mount();
+      await waitUntilReady();
+      expect(navIds()).toEqual(['dashboard']);
+      expect(tileTitles()).toEqual(['Working']);
+      const fetches = jest.mocked(axios.get).mock.calls.length;
+      // The configuration origin is down too; recovery must not replace a working navigation with an error.
+      jest.mocked(axios.get).mockRejectedValue(new Error('origin unavailable'));
+
+      getUser.mockResolvedValue(withAnsible(true));
+      await setEntitlementsDegraded(false);
+
+      await waitFor(() => expect(navIds()).toEqual(['dashboard', 'ansible']));
+      expect(tileTitles()).toEqual(['Working', 'Ansible']);
+      expect(jest.mocked(axios.get).mock.calls.length).toBe(fetches);
+      expect(store.get(visibleBundlesErrorAtom)).toBe(false);
+      expect(store.get(degradedStateAtom)).toMatchObject({ navigation: false, serviceTiles: false });
+    });
+
+    it('does not re-evaluate when entering an outage', async () => {
+      getUser.mockResolvedValue(withAnsible(true));
+      mount();
+      await waitUntilReady();
+      expect(navIds()).toEqual(['dashboard', 'ansible']);
+      const checks = getUser.mock.calls.length;
+
+      getUser.mockResolvedValue(withAnsible(false));
+      await setEntitlementsDegraded(true);
+
+      expect(getUser.mock.calls.length).toBe(checks);
+      expect(navIds()).toEqual(['dashboard', 'ansible']);
+    });
+
+    it('keeps the current navigation when the re-evaluation is superseded by unmount', async () => {
+      store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
+      getUser.mockResolvedValue(withAnsible(false));
+      const { unmount } = mount();
+      await waitUntilReady();
+
+      let resolveCheck!: (value: ChromeUser) => void;
+      getUser.mockImplementation(() => new Promise((resolve) => (resolveCheck = resolve)));
+      await setEntitlementsDegraded(false);
+      await waitFor(() => expect(resolveCheck).toBeDefined());
+      unmount();
+      await act(async () => resolveCheck(withAnsible(true)));
+
+      expect(navIds()).toEqual(['dashboard']);
+    });
+  });
 });
