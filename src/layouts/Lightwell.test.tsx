@@ -235,22 +235,31 @@ describe('Lightwell', () => {
   });
 
   describe('horizontal navigation', () => {
-    it('should render horizontal subnav with three navigation items', async () => {
+    it('should render horizontal subnav with four navigation items', async () => {
       renderLightwell();
       const nav = await screen.findByRole('navigation', { name: 'Lightwell navigation' });
       expect(nav).toBeTruthy();
       const links = within(nav).getAllByRole('link');
-      expect(links).toHaveLength(3);
+      expect(links).toHaveLength(4);
     });
 
-    it('should render Repositories, Lens, and Beacon links', async () => {
+    it('should render Repositories, Lens, Beacon, and Submissions links', async () => {
       renderLightwell();
       const repoLink = await screen.findByRole('link', { name: 'Repositories' });
       const lensLink = screen.getByRole('link', { name: 'Lens' });
       const beaconLink = screen.getByRole('link', { name: 'Beacon' });
+      const submissionsLink = screen.getByRole('link', { name: 'Submissions' });
       expect(repoLink).toHaveAttribute('href', '/lightwell');
       expect(lensLink).toHaveAttribute('href', '/lightwell/lens');
       expect(beaconLink).toHaveAttribute('href', '/lightwell/beacon');
+      expect(submissionsLink).toHaveAttribute('href', '/lightwell/submissions');
+    });
+
+    it('should mark Submissions as active on /lightwell/submissions', async () => {
+      renderLightwell({}, '/lightwell/submissions');
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Submissions' })).toHaveAttribute('aria-current', 'page');
+      });
     });
 
     it('should mark Repositories as active on /lightwell', async () => {

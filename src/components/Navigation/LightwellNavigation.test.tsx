@@ -1,6 +1,9 @@
 import type { AnyNavItemPermission } from '../../@types/types';
+import type { VisibilityEvaluationContext } from '../../utils/isNavItemVisible';
 
-const mockIsNavItemVisible = jest.fn<Promise<boolean>, [AnyNavItemPermission | AnyNavItemPermission[]]>(() => Promise.resolve(true));
+const mockIsNavItemVisible = jest.fn<Promise<boolean>, [AnyNavItemPermission | AnyNavItemPermission[], VisibilityEvaluationContext?]>(() =>
+  Promise.resolve(true)
+);
 
 // Extract the `accessor` from either a single permission or an array of permissions.
 const permissionAccessor = (permissions: AnyNavItemPermission | AnyNavItemPermission[]): string | undefined => {
@@ -13,7 +16,7 @@ jest.mock('../../utils/common', () => ({
 }));
 
 jest.mock('../../utils/isNavItemVisible', () => ({
-  isNavItemVisible: (...args: [AnyNavItemPermission | AnyNavItemPermission[]]) => mockIsNavItemVisible(...args),
+  isNavItemVisible: (...args: [AnyNavItemPermission | AnyNavItemPermission[], VisibilityEvaluationContext?]) => mockIsNavItemVisible(...args),
 }));
 
 import { act, render, screen, waitFor } from '@testing-library/react';
@@ -116,6 +119,38 @@ describe('LightwellNavigation', () => {
     expect(screen.getByRole('link', { name: 'Repositories' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Lens' })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Beacon' })).not.toBeInTheDocument();
+  });
+
+  it('hides Submissions when one clearinghouse accessor is missing and the other is false', async () => {
+    // Simulate raw apiRequest results: a missing accessor resolves to undefined.
+    const rawResults: Record<string, boolean | undefined> = {
+      'lightwell.accessible': true,
+      'lightwelllens.accessible': true,
+      'lightwellclearinghouse.accessible': undefined,
+      'lightwellclearinghouseread.accessible': false,
+    };
+    // Mirror the real visibilityHandler semantics, including requireExplicitTrue.
+    mockIsNavItemVisible.mockImplementation((permissions, context) => {
+      const raw = rawResults[permissionAccessor(permissions) ?? ''];
+      return Promise.resolve(context?.requireExplicitTrue ? raw === true : raw !== false);
+    });
+    renderNav();
+    await waitFor(() => {
+      expect(screen.getByRole('link', { name: 'Repositories' })).toBeInTheDocument();
+    });
+    expect(screen.queryByRole('link', { name: 'Submissions' })).not.toBeInTheDocument();
+  });
+
+  it('requires an explicit true for each Submissions permission', async () => {
+    renderNav();
+    await waitFor(() => {
+      expect(mockIsNavItemVisible).toHaveBeenCalledTimes(5);
+    });
+    const calls = mockIsNavItemVisible.mock.calls;
+    expect(calls[3][1]).toEqual({ source: 'lightwell', itemId: 'Submissions', requireExplicitTrue: true });
+    expect(calls[4][1]).toEqual({ source: 'lightwell', itemId: 'Submissions', requireExplicitTrue: true });
+    // AND-evaluated items keep the default semantics
+    expect(calls[0][1]).toEqual({ source: 'lightwell', itemId: 'Repositories' });
   });
 
   it('hides Submissions when neither clearinghouse permission is accessible', async () => {

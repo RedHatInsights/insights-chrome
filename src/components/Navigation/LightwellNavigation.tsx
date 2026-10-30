@@ -82,8 +82,10 @@ const LightwellNavigation = (): React.JSX.Element | null => {
           }
           try {
             const context = { source: 'lightwell' as const, itemId: item.label };
+            // For OR checks require an explicit `true`, otherwise a missing accessor
+            // (undefined) would count as visible and bypass the other denied permission.
             const visible = item.requireAny
-              ? (await Promise.all(item.permissions.map((permission) => isNavItemVisible(permission, context)))).some(Boolean)
+              ? (await Promise.all(item.permissions.map((permission) => isNavItemVisible(permission, { ...context, requireExplicitTrue: true })))).some(Boolean)
               : await isNavItemVisible(item.permissions, context);
             return { item, visible };
           } catch {
