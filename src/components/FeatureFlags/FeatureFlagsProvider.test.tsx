@@ -440,6 +440,42 @@ describe('createFetchFeatureFlags timeouts', () => {
 
   const resolveAfter = (ms: number) => new Promise<Response>((resolve) => setTimeout(() => resolve(response(200)), ms));
 
+  it('times out a stalled initial response body', async () => {
+    jest.spyOn(window, 'fetch').mockResolvedValue({
+      status: 200,
+      statusText: 'OK',
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: {},
+      arrayBuffer: () => new Promise<ArrayBuffer>(() => undefined),
+    } as unknown as Response);
+    let settled = false;
+    const request = createFetchFeatureFlags()(FEATURE_FLAGS_URL, {}).finally(() => {
+      settled = true;
+    });
+    await jest.advanceTimersByTimeAsync(0);
+    expect(settled).toBe(false);
+
+    const assertion = expect(request).rejects.toMatchObject({ name: 'TimeoutError' });
+    await jest.advanceTimersByTimeAsync(FEATURE_FLAGS_INITIAL_TIMEOUT_MS);
+    await assertion;
+
+    expect(Sentry.captureException).toHaveBeenCalledWith(expect.objectContaining({ name: 'TimeoutError' }), initialRequestContext);
+  });
+
+  it('returns the initial response body when it arrives before the timeout', async () => {
+    jest.spyOn(window, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ toggles: [{ name: 'cached.flag', enabled: true }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    );
+
+    const result = await createFetchFeatureFlags()(FEATURE_FLAGS_URL, {});
+
+    await expect(result.json()).resolves.toEqual({ toggles: [{ name: 'cached.flag', enabled: true }] });
+  });
+
   it('times out the initial request after the initial timeout', async () => {
     jest.spyOn(window, 'fetch').mockImplementation(() => new Promise<Response>(() => undefined));
     const fetchFeatureFlags = createFetchFeatureFlags();

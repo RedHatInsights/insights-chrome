@@ -38,13 +38,17 @@ const fetchFeatureFlagsWithTimeout = (url: RequestInfo | URL, requestInit: Reque
 
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
   let timedOut = false;
+  const pending = <T,>() => new Promise<T>(() => undefined);
   const fetchPromise = window.fetch(url, { ...requestInit, signal: controller.signal }).catch((error: unknown) => {
-    if (requestSignal?.aborted && !timedOut) {
+    if (timedOut) {
+      return pending<Response>();
+    }
+    if (requestSignal?.aborted) {
       throw createAbortError();
     }
     throw error;
   });
-  const timeoutPromise = new Promise<Response>((_, reject) => {
+  const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => {
       timedOut = true;
       controller.abort();
@@ -52,7 +56,40 @@ const fetchFeatureFlagsWithTimeout = (url: RequestInfo | URL, requestInit: Reque
     }, timeoutMs);
   });
 
-  return Promise.race([fetchPromise, timeoutPromise]).finally(() => {
+  const settle = async (): Promise<Response> => {
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
+    // Headers can arrive while the payload is still unread. The SDK parses the body after fetch resolves.
+    if (response.body == null || response.status === 204 || response.status === 304) {
+      return response;
+    }
+
+    try {
+      const payload = await Promise.race([
+        response.arrayBuffer().catch((error: unknown) => {
+          if (timedOut) {
+            return pending<ArrayBuffer>();
+          }
+          throw error;
+        }),
+        timeoutPromise,
+      ]);
+      return new Response(payload, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      });
+    } catch (error) {
+      if (timedOut) {
+        throw createTimeoutError(timeoutMs);
+      }
+      if (requestSignal?.aborted) {
+        throw createAbortError();
+      }
+      throw error;
+    }
+  };
+
+  return settle().finally(() => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
@@ -87,6 +124,7 @@ const validateFeatureFlagsResponse = (response: Response, requestContext: Pick<S
 
 /**
  * Only the first toggle request uses the short timeout, because it gates the initial navigation.
+ * That timeout stays active until the response body is read, so a stalled payload cannot hang startup.
  * Later refreshes run while stored toggles are served, so a slow proxy must not flap the degraded state.
  */
 export const createFetchFeatureFlags = () => {
