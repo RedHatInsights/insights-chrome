@@ -1,3 +1,24 @@
+const flagErrorListeners = new Set<(error?: unknown) => void>();
+const mockUnleashClient = {
+  on: (event: string, listener: (error?: unknown) => void) => {
+    if (event === 'error') {
+      flagErrorListeners.add(listener);
+    }
+  },
+  off: (event: string, listener: (error?: unknown) => void) => {
+    if (event === 'error') {
+      flagErrorListeners.delete(listener);
+    }
+  },
+  getError: () => undefined,
+};
+
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true, flagsError: null })),
+  useUnleashClient: () => mockUnleashClient,
+}));
+
 jest.mock('../components/Header/Header', () => ({
   Header: () => <div data-testid="mock-header">Header</div>,
 }));
@@ -32,21 +53,21 @@ jest.unmock('../components/NotificationsDrawer/DrawerPanelContent');
 // so we initialize scalprum with a stub config instead.
 import { getSharedScope, initialize } from '@scalprum/core';
 
-const mockUseFlag = jest.fn<(flagName: string) => boolean>();
-jest.mock('@unleash/proxy-client-react', () => ({
-  useFlag: (flagName: string) => mockUseFlag(flagName),
-}));
-
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import Lightwell from './Lightwell';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+// A value import of jest stops SWC from hoisting jest.mock above the module imports.
+import { type jest as Jest, beforeEach, describe, expect, it } from '@jest/globals';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { layoutBannerHiddenAtom, layoutForceGlassThemeAtom, layoutLightwellHeaderAtom } from '../state/atoms/releaseAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import InternalChromeContext from '../utils/internalChromeContext';
+
+const mockUseFlag = useFlag as unknown as Jest.Mock<(flagName: string) => boolean>;
+const mockUseFlagsStatus = useFlagsStatus as unknown as Jest.Mock<() => { flagsReady: boolean; flagsError: unknown }>;
 
 const mockUser = {
   identity: {
@@ -79,14 +100,20 @@ const mockInternalChromeContextValue = {
   },
 };
 
-const renderLightwell = (flagOverrides: Record<string, boolean> = {}, initialRoute = '/lightwell') => {
+const renderLightwell = (
+  flagOverrides: Record<string, boolean> = {},
+  initialRoute = '/lightwell',
+  flagsStatus: { flagsReady: boolean; flagsError: unknown } = { flagsReady: true, flagsError: null }
+) => {
   const defaultFlags: Record<string, boolean> = {
     'platform.chrome.notifications-drawer': false,
     'platform.chrome.help-panel': false,
+    'platform.chrome.lightwell-experience': false,
   };
 
   const flags = { ...defaultFlags, ...flagOverrides };
   mockUseFlag.mockImplementation((name: string) => flags[name] ?? false);
+  mockUseFlagsStatus.mockReturnValue(flagsStatus);
 
   const store = createStore();
 
@@ -116,6 +143,10 @@ describe('Lightwell', () => {
           name: 'contentSources',
           manifestLocation: '/test/manifest.json',
         },
+        lightwellExperience: {
+          name: 'lightwellExperience',
+          manifestLocation: '/apps/lightwell-experience/fed-mods.json',
+        },
       },
     });
     getSharedScope()['@chrome/visibilityFunctions'] = {
@@ -130,6 +161,7 @@ describe('Lightwell', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    flagErrorListeners.clear();
   });
 
   afterEach(() => {
@@ -220,9 +252,82 @@ describe('Lightwell', () => {
     expect(store.get(layoutLightwellHeaderAtom)).toBe(false);
   });
 
-  it('should set activeModuleAtom to contentSources on mount and clear on unmount', () => {
-    const { store, unmount } = renderLightwell();
+  it('should not choose a remote until feature flags resolve', () => {
+    const fetchSpy = jest.spyOn(window, 'fetch').mockImplementation(() => new Promise(() => undefined));
+    const { store } = renderLightwell({}, '/lightwell', { flagsReady: false, flagsError: null });
+
+    expect(store.get(activeModuleAtom)).toBeUndefined();
+    expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeInTheDocument();
+    const requestedUrls = fetchSpy.mock.calls.map(([input]) => String(input));
+    expect(requestedUrls).not.toContain('/test/manifest.json');
+    expect(requestedUrls).not.toContain('/apps/lightwell-experience/fed-mods.json');
+    fetchSpy.mockRestore();
+  });
+
+  it('does not mount a remote when only a metrics error is reported', () => {
+    const { store } = renderLightwell({}, '/lightwell', { flagsReady: false, flagsError: { type: 'metrics', error: new Error('metrics') } });
+    act(() => {
+      flagErrorListeners.forEach((listener) => listener({ type: 'metrics', error: new Error('metrics') }));
+    });
+
+    expect(store.get(activeModuleAtom)).toBeUndefined();
+    expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeInTheDocument();
+  });
+
+  it('should load content-sources when the flag request fails', () => {
+    const { store } = renderLightwell({}, '/lightwell', { flagsReady: false, flagsError: null });
+    act(() => {
+      flagErrorListeners.forEach((listener) => listener({ type: 'fetch-toggles', error: new Error('flags failed') }));
+    });
+
     expect(store.get(activeModuleAtom)).toBe('contentSources');
+  });
+
+  it('uses content-sources when a cached enabled flag is followed by a failed initial request', () => {
+    const { store } = renderLightwell({ 'platform.chrome.lightwell-experience': true }, '/lightwell', { flagsReady: false, flagsError: null });
+    act(() => {
+      flagErrorListeners.forEach((listener) => listener({ type: 'fetch-toggles', error: new Error('flags failed') }));
+    });
+
+    expect(store.get(activeModuleAtom)).toBe('contentSources');
+  });
+
+  it('keeps the fallback remote mounted when a flag error is cleared before the next response', () => {
+    const { store, rerender } = renderLightwell({}, '/lightwell', { flagsReady: false, flagsError: null });
+    act(() => {
+      flagErrorListeners.forEach((listener) => listener({ type: 'HttpError', code: 503 }));
+    });
+    expect(store.get(activeModuleAtom)).toBe('contentSources');
+
+    mockUseFlagsStatus.mockReturnValue({ flagsReady: false, flagsError: null });
+    rerender(
+      <MemoryRouter initialEntries={['/lightwell']}>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <ChromeAuthContext.Provider value={mockAuthContextValue as any}>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <InternalChromeContext.Provider value={mockInternalChromeContextValue as any}>
+            <Provider store={store}>
+              <Lightwell Footer={<div data-testid="mock-footer" />} />
+            </Provider>
+          </InternalChromeContext.Provider>
+        </ChromeAuthContext.Provider>
+      </MemoryRouter>
+    );
+
+    expect(store.get(activeModuleAtom)).toBe('contentSources');
+  });
+
+  it('should load content-sources when the lightwell experience flag is disabled', () => {
+    const { store, unmount } = renderLightwell();
+    expect(mockUseFlag).toHaveBeenCalledWith('platform.chrome.lightwell-experience');
+    expect(store.get(activeModuleAtom)).toBe('contentSources');
+    unmount();
+    expect(store.get(activeModuleAtom)).toBeUndefined();
+  });
+
+  it('should load lightwell-experience when the lightwell experience flag is enabled', () => {
+    const { store, unmount } = renderLightwell({ 'platform.chrome.lightwell-experience': true });
+    expect(store.get(activeModuleAtom)).toBe('lightwellExperience');
     unmount();
     expect(store.get(activeModuleAtom)).toBeUndefined();
   });

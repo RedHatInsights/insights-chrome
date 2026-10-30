@@ -1,10 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from 'pf-6-next/dist/dynamic/components/Page';
 import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { useAtom, useSetAtom } from 'jotai';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag, useFlagsStatus, useUnleashClient } from '@unleash/proxy-client-react';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import LoadingFallback from '../utils/loading-fallback';
@@ -19,6 +19,23 @@ import LightwellNavigation from '../components/Navigation/LightwellNavigation';
 import { withHorizontalSubnav } from './layoutUtils';
 import './Lightwell.scss';
 
+const LIGHTWELL_EXPERIENCE_FLAG = 'platform.chrome.lightwell-experience';
+
+const CONTENT_SOURCES_REMOTE = {
+  scope: 'contentSources',
+  module: './LightwellApp',
+  appId: 'contentSources',
+} as const;
+
+const LIGHTWELL_EXPERIENCE_REMOTE = {
+  scope: 'lightwellExperience',
+  module: './RootApp',
+  appId: 'lightwellExperience',
+} as const;
+
+// The SDK stores the first error it sees, including metrics failures, until recovery clears it.
+const isMetricsError = (error: unknown): boolean => typeof error === 'object' && error !== null && 'type' in error && error.type === 'metrics';
+
 export type LightwellProps = {
   Footer?: React.ReactNode;
 };
@@ -31,6 +48,16 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   const setLayoutBannerHidden = useSetAtom(layoutBannerHiddenAtom);
   const setLayoutLightwellHeader = useSetAtom(layoutLightwellHeaderAtom);
   const setActiveModule = useSetAtom(activeModuleAtom);
+  const isLightwellExperienceEnabled = useFlag(LIGHTWELL_EXPERIENCE_FLAG);
+  const { flagsReady } = useFlagsStatus();
+  const unleashClient = useUnleashClient();
+  const [flagFetchFailed, setFlagFetchFailed] = useState(false);
+  const hasResolvedFlags = useRef(false);
+  if (!hasResolvedFlags.current && (flagsReady || flagFetchFailed)) {
+    hasResolvedFlags.current = true;
+  }
+  const flagsResolved = hasResolvedFlags.current;
+  const remote = flagsReady && isLightwellExperienceEnabled ? LIGHTWELL_EXPERIENCE_REMOTE : CONTENT_SOURCES_REMOTE;
 
   useLayoutEffect(() => {
     setLayoutBannerHidden(true);
@@ -42,11 +69,30 @@ const Lightwell = ({ Footer }: LightwellProps) => {
   }, [setLayoutBannerHidden, setLayoutLightwellHeader]);
 
   useEffect(() => {
-    setActiveModule('contentSources');
+    const markFlagFetchFailed = (error?: unknown) => {
+      if (!isMetricsError(error)) {
+        setFlagFetchFailed(true);
+      }
+    };
+    const existingError = unleashClient.getError();
+    if (existingError) {
+      markFlagFetchFailed(existingError);
+    }
+    unleashClient.on('error', markFlagFetchFailed);
+    return () => {
+      unleashClient.off('error', markFlagFetchFailed);
+    };
+  }, [unleashClient]);
+
+  useEffect(() => {
+    if (!flagsResolved) {
+      return;
+    }
+    setActiveModule(remote.scope);
     return () => {
       setActiveModule(undefined);
     };
-  }, [setActiveModule]);
+  }, [flagsResolved, remote.scope, setActiveModule]);
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
@@ -108,13 +154,18 @@ const Lightwell = ({ Footer }: LightwellProps) => {
           <Breadcrumbs />
         </ToolbarGroup>
         <RedirectBanner />
-        <ScalprumComponent
-          scope="contentSources"
-          module="./LightwellApp"
-          appId="contentSources"
-          ErrorComponent={<ErrorComponent />}
-          fallback={LoadingFallback}
-        />
+        {flagsResolved ? (
+          <ScalprumComponent
+            key={remote.scope}
+            scope={remote.scope}
+            module={remote.module}
+            appId={remote.appId}
+            ErrorComponent={<ErrorComponent />}
+            fallback={LoadingFallback}
+          />
+        ) : (
+          LoadingFallback
+        )}
       </Page>
       {Footer}
     </div>
