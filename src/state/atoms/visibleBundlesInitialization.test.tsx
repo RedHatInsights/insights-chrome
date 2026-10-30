@@ -318,6 +318,88 @@ describe('visible bundle initialization with real visibility evaluation', () => 
       expect(navIds()).toEqual(['dashboard', 'ansible']);
     });
 
+    describe('ordering against configuration loads', () => {
+      const heldChecks: ((value: ChromeUser) => void)[] = [];
+      let holdChecks = false;
+      const releaseHeldChecks = (value: ChromeUser) => act(async () => heldChecks.splice(0).forEach((resolve) => resolve(value)));
+      const loadNewerConfig = (rerender: () => void) => {
+        bundles[1].navItems = [...bundles[1].navItems, { id: 'newer', title: 'Newer', href: '/insights/newer' }];
+        tiles = [{ title: 'Services', links: [...tiles[0].links, { title: 'Newer', href: '/newer' }] }];
+        // Any configuration-load dependency change starts a newer load.
+        mockFlagsError = true;
+        rerender();
+      };
+
+      beforeEach(() => {
+        heldChecks.length = 0;
+        holdChecks = false;
+        getUser.mockImplementation(() => (holdChecks ? new Promise((resolve) => heldChecks.push(resolve)) : Promise.resolve(withAnsible(true))));
+      });
+
+      it('does not let a pending recovery overwrite a newer configuration', async () => {
+        store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
+        holdChecks = true;
+        const { rerender } = mount();
+        await waitFor(() => expect(heldChecks.length).toBeGreaterThan(0));
+        await releaseHeldChecks(withAnsible(false));
+        await waitUntilReady();
+        expect(navIds()).toEqual(['dashboard']);
+
+        await setEntitlementsDegraded(false);
+        await waitFor(() => expect(heldChecks.length).toBe(2));
+        holdChecks = false;
+        loadNewerConfig(rerender);
+        await waitFor(() => expect(navIds()).toEqual(['dashboard', 'ansible', 'newer']));
+        expect(tileTitles()).toEqual(['Working', 'Ansible', 'Newer']);
+
+        await releaseHeldChecks(withAnsible(true));
+
+        expect(navIds()).toEqual(['dashboard', 'ansible', 'newer']);
+        expect(tileTitles()).toEqual(['Working', 'Ansible', 'Newer']);
+      });
+
+      it('does not let a recovery started during a newer fetch overwrite it', async () => {
+        store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
+        getUser.mockResolvedValue(withAnsible(false));
+        const { rerender } = mount();
+        await waitUntilReady();
+        const releaseFetches: (() => void)[] = [];
+        const respond = jest.mocked(axios.get).getMockImplementation()!;
+        jest.mocked(axios.get).mockImplementation((...args) => new Promise((resolve) => releaseFetches.push(() => resolve(respond(...args)))));
+        loadNewerConfig(rerender);
+        await waitFor(() => expect(releaseFetches.length).toBe(2));
+
+        getUser.mockImplementation(() => new Promise((resolve) => heldChecks.push(resolve)));
+        await setEntitlementsDegraded(false);
+        await waitFor(() => expect(heldChecks.length).toBe(2));
+        getUser.mockResolvedValue(withAnsible(true));
+        await act(async () => releaseFetches.forEach((release) => release()));
+        await waitFor(() => expect(navIds()).toEqual(['dashboard', 'ansible', 'newer']));
+
+        await releaseHeldChecks(withAnsible(true));
+
+        expect(navIds()).toEqual(['dashboard', 'ansible', 'newer']);
+        expect(tileTitles()).toEqual(['Working', 'Ansible', 'Newer']);
+      });
+
+      it('keeps the recovered visibility when the degraded-era evaluation of the same config finishes later', async () => {
+        store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
+        holdChecks = true;
+        mount();
+        await waitFor(() => expect(heldChecks.length).toBe(2));
+
+        holdChecks = false;
+        await setEntitlementsDegraded(false);
+        await waitUntilReady();
+        expect(navIds()).toEqual(['dashboard', 'ansible']);
+
+        await releaseHeldChecks(withAnsible(false));
+
+        expect(navIds()).toEqual(['dashboard', 'ansible']);
+        expect(tileTitles()).toEqual(['Working', 'Ansible']);
+      });
+    });
+
     it('keeps the current navigation when the re-evaluation is superseded by unmount', async () => {
       store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
       getUser.mockResolvedValue(withAnsible(false));

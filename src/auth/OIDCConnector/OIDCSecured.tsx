@@ -23,7 +23,7 @@ import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
-import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
+import { degradedStateAtom, setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import useManageSilentRenew from './useManageSilentRenew';
 import { EntitlementsMap, FetchEntitlementsResult, fetchEntitlements, getMinimumViableEntitlements } from '../fetchEntitlements';
 import { ENTITLEMENTS_FALLBACK_FLAG } from '../entitlementsConstants';
@@ -210,14 +210,15 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       if (generation !== fetchGenerationRef.current) {
         return;
       }
-      if (entitlementsFallbackEnabledRef.current) {
-        chromeStore.set(setServiceDegradedAtom, { service: 'entitlements', degraded: false });
-      }
       entitlementsFallbackEnabledRef.current = false;
       previousEntitlementsRef.current = undefined;
       entitlements = (await fetchEntitlements(user)).entitlements;
       if (generation !== fetchGenerationRef.current) {
         return;
+      }
+      // Clear a degradation left by the fallback path only once the legacy map is published below.
+      if (chromeStore.get(degradedStateAtom).entitlements) {
+        entitlementsDegraded = false;
       }
     }
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);

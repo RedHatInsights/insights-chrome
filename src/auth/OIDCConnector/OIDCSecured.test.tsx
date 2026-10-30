@@ -698,6 +698,55 @@ describe('OIDCSecured', () => {
       expect(userAtRecovery?.entitlements).toEqual(healthyPaid);
     });
 
+    it('clears degradation only after the legacy entitlements are published when the flag is disabled mid-outage', async () => {
+      const defaults = getMinimumViableEntitlements({ profile: { org_id: 'org-a' } });
+      let resolveLegacy!: (result: Awaited<ReturnType<typeof fetchEntitlements>>) => void;
+      jest.mocked(getBootstrapFeatureFlag).mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+      mockedFetchEntitlements
+        .mockResolvedValueOnce({ entitlements: defaults, degraded: true, source: 'defaults' })
+        .mockImplementationOnce(() => new Promise((resolve) => (resolveLegacy = resolve)));
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true));
+
+      let userAtRecovery: ChromeUser | undefined;
+      const unsubscribe = chromeStore.sub(degradedStateAtom, () => {
+        if (!chromeStore.get(degradedStateAtom).entitlements) {
+          firstGetUser!().then((current) => (userAtRecovery = current));
+        }
+      });
+      renew(rerender, 'renewed');
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(2));
+      // Still on the fallback map while the legacy request is pending.
+      expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
+
+      await act(async () => resolveLegacy({ entitlements: healthyPaid, degraded: false, source: 'live' }));
+
+      await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false));
+      unsubscribe();
+      expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":true');
+      expect(userAtRecovery?.entitlements).toEqual(healthyPaid);
+    });
+
+    it('clears degradation when a re-authentication supersedes the pending legacy request', async () => {
+      let resolveObsolete!: (result: Awaited<ReturnType<typeof fetchEntitlements>>) => void;
+      jest.mocked(getBootstrapFeatureFlag).mockResolvedValueOnce(true).mockResolvedValue(false);
+      mockedFetchEntitlements
+        .mockResolvedValueOnce({ entitlements: healthyUnsubscribed, degraded: true, source: 'cache' })
+        .mockImplementationOnce(() => new Promise((resolve) => (resolveObsolete = resolve)))
+        .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: false, source: 'live' });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true));
+      renew(rerender, 'renewed-1');
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(2));
+
+      renew(rerender, 'renewed-2');
+
+      await waitFor(() => expect(chromeStore.get(degradedStateAtom).entitlements).toBe(false));
+      expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":true');
+      await act(async () => resolveObsolete({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' }));
+      expect(getByTestId('entitlements')).toHaveTextContent('"ansible":{"is_entitled":true');
+    });
+
     it('reports a degraded episode to Sentry once, tagged with the fallback source', async () => {
       mockedFetchEntitlements
         .mockResolvedValueOnce({ entitlements: healthyPaid, degraded: true, source: 'cache' })
