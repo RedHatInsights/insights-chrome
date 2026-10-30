@@ -7,6 +7,12 @@ export type VisibilityEvaluationContext = {
   bundleId?: string;
   itemId?: string;
   onError?: () => void;
+  /**
+   * When true, only an explicit `true` result counts as visible. By default any
+   * result other than `false` (including `undefined`, e.g. a missing `apiRequest`
+   * accessor) is treated as visible.
+   */
+  requireExplicitTrue?: boolean;
 };
 
 const SAFE_ERROR_NAMES = new Set([
@@ -44,7 +50,8 @@ const visibilityHandler = async ({ method, args }: AnyNavItemPermission, context
     if (!visibilityFunctions[method]) {
       return false;
     }
-    return (await visibilityFunctions[method]?.(...(args || []))) !== false;
+    const result = await visibilityFunctions[method]?.(...(args || []));
+    return context.requireExplicitTrue ? result === true : result !== false;
   } catch (error) {
     // Do not attach the original error or arguments: API errors can contain
     // authorization headers, request payloads and other private data.
