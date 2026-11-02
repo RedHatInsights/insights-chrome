@@ -208,7 +208,10 @@ describe('LanguageNotifier', () => {
       // A Ctrl-click must not be hijacked into current-tab navigation: the
       // handler refreshes the href from the live location and lets the
       // browser perform its native (new tab) action.
-      fireEvent.click(link, { ctrlKey: true });
+      // fireEvent.click returns false when the event is canceled, so this
+      // also proves the handler did not call preventDefault on the click.
+      const notCanceled = fireEvent.click(link, { ctrlKey: true });
+      expect(notCanceled).toBe(true);
       // The href is refreshed from the live location...
       expect(link).toHaveAttribute('href', expect.stringContaining(encodeURIComponent('fromAccount=1')));
       // ...and no current-tab navigation is attempted: jsdom (correctly) does
