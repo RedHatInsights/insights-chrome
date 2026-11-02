@@ -211,9 +211,12 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
    * Swapping runtimes: detach the outgoing one so delegate calls queue for its
    * replacement. Layout cleanup so the outgoing runtime is detached before any
    * effect of the incoming one (layout or passive) can publish its API.
+   * Reset readiness here as well: an incoming child's passive effect can publish
+   * before the parent's timeout effect runs.
    */
   useLayoutEffect(() => {
     return () => {
+      apiReadyRef.current = false;
       retireLiveChromeQuickstartsApis();
     };
   }, [useRemote]);
@@ -226,7 +229,6 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
     if (!useRemote) {
       return;
     }
-    apiReadyRef.current = false;
     const timeout = window.setTimeout(() => {
       if (!apiReadyRef.current) {
         failQuickstartsRuntime(setRemoteActiveQSID, setServiceDegraded);

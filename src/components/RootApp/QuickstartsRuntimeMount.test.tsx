@@ -296,6 +296,47 @@ describe('QuickstartsRuntimeMount', () => {
       return <input aria-label="tenant-input" value={value} onChange={(event) => setValue(event.target.value)} />;
     };
 
+    it.each([false, true])('does not time out when the remote publishes during its first effect pass (initial remote: %s)', (initiallyRemote) => {
+      const remote = createApis('remote');
+      MockedScalprumComponent.mockImplementation(({ children, onApiReady }: { children?: React.ReactNode; onApiReady: (api: RuntimeApis) => void }) => {
+        React.useEffect(() => {
+          onApiReady(remote);
+        }, [onApiReady]);
+        return <div data-testid="remote-runtime">{children}</div>;
+      });
+      jest.useFakeTimers();
+      mockedUseFlag.mockReturnValue(initiallyRemote);
+      const { store, rerenderMount } = renderMount();
+
+      if (!initiallyRemote) {
+        mockedUseFlag.mockReturnValue(true);
+        rerenderMount();
+      }
+      expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+      act(() => {
+        jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
+      });
+
+      expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+      expect(liveQuickstartsAPIRef.current).toBe(remote.quickstartsAPI);
+    });
+
+    it('times out a replacement that never publishes even when the outgoing runtime was ready', () => {
+      const legacy = createApis('legacy');
+      mockLegacyApis = legacy;
+      jest.useFakeTimers();
+      const { store, rerenderMount } = renderMount();
+      act(() => jest.runAllTicks());
+      expect(liveQuickstartsAPIRef.current).toBe(legacy.quickstartsAPI);
+
+      mockedUseFlag.mockReturnValue(true);
+      rerenderMount();
+      act(() => jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS));
+
+      expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+      expect(liveQuickstartsAPIRef.current).toBeNull();
+    });
+
     it('keeps tenant state when the flag changes in either direction', () => {
       let mounts = 0;
       const { rerenderMount } = renderMount('', <TenantForm onMount={() => (mounts += 1)} />);
