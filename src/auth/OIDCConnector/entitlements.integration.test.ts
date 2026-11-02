@@ -6,6 +6,8 @@ import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_STORAGE_TIMEOUT_MS, ENTITLEMENT
 import { DEGRADED_HEADERS, failureA, healthyPaid, healthyUnsubscribed, orgIdUserProfile } from '../entitlementsContract.fixture';
 
 jest.mock('localforage', () => ({ createInstance: jest.fn(), INDEXEDDB: 'idb', WEBSQL: 'sql', LOCALSTORAGE: 'local' }));
+// logout() also resets the RBAC permission cache; that module is covered elsewhere and its store setup is not needed here.
+jest.mock('../fetchPermissions', () => ({ resetPermissionCache: jest.fn() }));
 
 const entries = new Map<string, unknown>();
 const getItem = jest.fn();

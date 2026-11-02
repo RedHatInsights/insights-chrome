@@ -31,6 +31,7 @@ import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFl
 import { hydratePreviewAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { loadChromeUserConfigOnce } from '../../utils/initUserConfig';
 import getOrganization from './getOrganization';
+import { invalidatePermissionFailures, resetPermissionCache } from '../fetchPermissions';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const authChannel = new BroadcastChannel('auth');
@@ -75,6 +76,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const previewHydratedRef = useRef(false);
   const chromeUserRef = useRef<ChromeUser | undefined>(undefined);
   const entitlementsDegradedReportedRef = useRef(false);
+  const previousIdentityRef = useRef<string | undefined>(undefined);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -265,6 +267,12 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   useEffect(() => {
     const user = auth.user;
     if (auth.isAuthenticated && user) {
+      const { account_id, org_id, type, username } = user.profile;
+      const principal = account_id || username;
+      const identity = org_id && principal ? JSON.stringify([String(org_id), type, account_id ? 'account-id' : 'username', principal]) : undefined;
+      if (identity !== undefined && identity === previousIdentityRef.current) invalidatePermissionFailures();
+      else resetPermissionCache();
+      previousIdentityRef.current = identity;
       onUserAuthenticated(user);
       authChannel.onmessage = (e) => {
         if (e && e.data && e.data.type) {
@@ -281,6 +289,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
           }
         }
       };
+    } else {
+      previousIdentityRef.current = undefined;
+      resetPermissionCache();
     }
     return () => {
       fetchGenerationRef.current += 1;
