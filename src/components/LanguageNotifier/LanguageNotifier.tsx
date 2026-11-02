@@ -88,8 +88,17 @@ export const LanguageNotifier = () => {
   const accountUrl = buildAccountConsoleUrl(ssoUrl, buildCurrentReturnTo());
 
   const goToAccountConsole = (event: React.MouseEvent) => {
+    const url = buildAccountConsoleUrl(ssoUrl, buildCurrentReturnTo());
+    // Refresh the href so native navigation (open in new tab, copy link
+    // address) targets the live location rather than the boot-time URL.
+    event.currentTarget.setAttribute('href', url);
+    // Modified clicks (Ctrl/Cmd/Shift/Alt) keep the browser's native
+    // behavior, e.g. opening the account console in a new tab.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
     event.preventDefault();
-    window.location.assign(buildAccountConsoleUrl(ssoUrl, buildCurrentReturnTo()));
+    window.location.assign(url);
   };
 
   /**

@@ -196,4 +196,27 @@ describe('LanguageNotifier', () => {
       navError.mockRestore();
     }
   });
+
+  it('lets modified clicks open the account console in a new tab', () => {
+    setProfileLocale('en');
+    setBrowserLanguage('fr');
+    const navError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    try {
+      renderNotifier();
+      const link = screen.getByRole('link', { name: 'Switch language' });
+
+      // A Ctrl-click must not be hijacked into current-tab navigation: the
+      // handler refreshes the href from the live location and lets the
+      // browser perform its native (new tab) action.
+      fireEvent.click(link, { ctrlKey: true });
+      // The href is refreshed from the live location...
+      expect(link).toHaveAttribute('href', expect.stringContaining(encodeURIComponent('fromAccount=1')));
+      // ...and no current-tab navigation is attempted: jsdom (correctly) does
+      // not follow anchors on modified clicks, so the absence of its
+      // navigation report proves the handler did not hijack the click.
+      expect(navError).not.toHaveBeenCalled();
+    } finally {
+      navError.mockRestore();
+    }
+  });
 });
