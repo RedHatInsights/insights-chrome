@@ -2,18 +2,13 @@ import { AxiosResponse } from 'axios';
 import { cacheFetch } from '../utils/cacheFetch';
 import { DEGRADED_HEADERS, failureA, healthyPaid, healthyUnsubscribed, orgIdUserProfile } from './entitlementsContract.fixture';
 import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
-import {
-  EntitlementsClient,
-  FetchEntitlementsOptions,
-  FetchEntitlementsResult,
-  clearEntitlementsCache,
-  fetchEntitlements as fetchEntitlementsRequest,
-} from './fetchEntitlements';
+import { EntitlementsClient, FetchEntitlementsOptions, clearEntitlementsCache, fetchEntitlements as fetchEntitlementsRequest } from './fetchEntitlements';
 import { EntitlementsMap, getMinimumViableEntitlements, isEntitlementsMap } from './getMinimumViableEntitlements';
 
 jest.mock('../utils/cacheFetch', () => ({
   cacheFetch: jest.fn(),
   deleteCacheKey: jest.fn().mockResolvedValue(undefined),
+  isAbortError: jest.requireActual('../utils/cacheFetch').isAbortError,
 }));
 
 const mockedCacheFetch = jest.mocked(cacheFetch);
@@ -227,13 +222,35 @@ describe('fetchEntitlements', () => {
     jest.useRealTimers();
   });
 
-  it('uses cache when abort happens and cacheFetch returns last-known-good', async () => {
-    mockedCacheFetch.mockResolvedValue({ data: healthyPaid, fromCache: true });
-    const { result, rejections } = await collectUnhandled(() =>
-      fetchEntitlements(userWith(), { client: { servicesGet: jest.fn().mockRejectedValue({ code: 'ERR_CANCELED', name: 'CanceledError' }) } })
+  it('uses last-known-good when the internal timeout aborts the request', async () => {
+    jest.useFakeTimers();
+    // Like cacheFetch: run the fetcher, and on an abort fall back to cache only when fallbackOnAbort allows it.
+    mockedCacheFetch.mockImplementation(async (_key, fetcher, _ttl, _guard, cacheOptions) => {
+      try {
+        return { data: await fetcher(), fromCache: false };
+      } catch (err) {
+        const allow = cacheOptions?.fallbackOnAbort;
+        if ((typeof allow === 'function' ? allow() : allow) === true) {
+          return { data: healthyPaid as never, fromCache: true };
+        }
+        throw err;
+      }
+    });
+    const servicesGet = jest.fn(
+      ({ options }: { options?: { signal?: AbortSignal } }) =>
+        new Promise<never>((_resolve, reject) => {
+          options?.signal?.addEventListener('abort', () => reject({ code: 'ERR_CANCELED', name: 'CanceledError' }));
+        })
     );
+    const { result, rejections } = await collectUnhandled(async () => {
+      const pending = fetchEntitlements(userWith(), { client: { servicesGet } });
+      await jest.advanceTimersByTimeAsync(ENTITLEMENTS_TIMEOUT_MS);
+      return pending;
+    });
+    expect(servicesGet).toHaveBeenCalledTimes(1);
     expect(rejections).toEqual([]);
     expect(result).toEqual({ entitlements: healthyPaid, degraded: true, source: 'cache' });
+    jest.useRealTimers();
   });
 
   it('does not throw after retry exhaustion', async () => {
@@ -366,12 +383,5 @@ describe('fetchEntitlements with the feature disabled', () => {
     } finally {
       jest.useRealTimers();
     }
-  });
-});
-
-describe('fetchEntitlements result typing', () => {
-  it('keeps FetchEntitlementsResult usable as a value', () => {
-    const sample: FetchEntitlementsResult = { entitlements: {}, degraded: false, source: 'empty' };
-    expect(sample.source).toBe('empty');
   });
 });

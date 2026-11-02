@@ -25,7 +25,8 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import { degradedStateAtom, setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import useManageSilentRenew from './useManageSilentRenew';
-import { EntitlementsMap, FetchEntitlementsResult, fetchEntitlements, getMinimumViableEntitlements } from '../fetchEntitlements';
+import { EntitlementsMap, FetchEntitlementsResult, fetchEntitlements } from '../fetchEntitlements';
+import { getMinimumViableEntitlements } from '../getMinimumViableEntitlements';
 import { ENTITLEMENTS_FALLBACK_FLAG } from '../entitlementsConstants';
 import { getBootstrapFeatureFlag } from '../../components/FeatureFlags/featureFlagsClient';
 import { hydratePreviewAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
@@ -83,24 +84,26 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   const requiredScopes = activeModule?.config?.ssoScopes || [];
+  // Logging out makes the identity obsolete: a pending enabled request must not finish, retry or be reused for it.
+  // Refs only, so the closure captured by the initial auth state below stays correct.
+  const cancelEntitlementsFetch = () => {
+    if (!entitlementsFallbackEnabledRef.current) {
+      return;
+    }
+    fetchGenerationRef.current += 1;
+    entitlementsAbortRef.current?.abort();
+    previousEntitlementsRef.current = undefined;
+  };
   const [state, setState] = useState<ChromeAuthContextValue>({
     ssoUrl,
     ready: false,
     logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });
-      if (entitlementsFallbackEnabledRef.current) {
-        fetchGenerationRef.current += 1;
-        entitlementsAbortRef.current?.abort();
-        previousEntitlementsRef.current = undefined;
-      }
+      cancelEntitlementsFetch();
       logout(authRef.current, bounce, entitlementsFallbackEnabledRef.current);
     },
     logout: () => {
-      if (entitlementsFallbackEnabledRef.current) {
-        fetchGenerationRef.current += 1;
-        entitlementsAbortRef.current?.abort();
-        previousEntitlementsRef.current = undefined;
-      }
+      cancelEntitlementsFetch();
       logout(authRef.current, true, entitlementsFallbackEnabledRef.current);
     },
     login: (requiredScopes) => login(authRef.current, requiredScopes),

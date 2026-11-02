@@ -5,7 +5,8 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { Provider, createStore, useAtomValue } from 'jotai';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
-import FeatureFlagsProvider, { createFetchFeatureFlags } from './FeatureFlagsProvider';
+import FeatureFlagsProvider from './FeatureFlagsProvider';
+import { createFetchFeatureFlags } from './featureFlagsClient';
 import { FEATURE_FLAGS_INITIAL_TIMEOUT_MS, FEATURE_FLAGS_REFRESH_TIMEOUT_MS, UNLEASH_ERROR_KEY, getUnleashClient } from './unleashClient';
 
 jest.mock('../../state/atoms/releaseAtom', () => {

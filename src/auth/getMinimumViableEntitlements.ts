@@ -13,10 +13,10 @@ export type EntitlementsUserProfile = {
  * Prod bundle keys from entitlements-config `configs/prod/bundles.yml`.
  * Org-id / always-on bundles are granted to any valid org (openshift to any authenticated caller).
  */
-export const ORG_ID_BUNDLE_KEYS = ['insights', 'rhel', 'settings', 'subscriptions', 'cost_management', 'user_preferences', 'migrations', 'openshift'] as const;
+const ORG_ID_BUNDLE_KEYS = ['insights', 'rhel', 'settings', 'subscriptions', 'cost_management', 'user_preferences', 'migrations', 'openshift'] as const;
 
 /** SKU-gated bundles — never fail-open in the browser. */
-export const SKU_BUNDLE_KEYS = ['ansible', 'acs', 'rhods', 'rhoam', 'rhosak', 'smart_management'] as const;
+const SKU_BUNDLE_KEYS = ['ansible', 'acs', 'rhods', 'rhoam', 'rhosak', 'smart_management'] as const;
 
 const entitled = { is_entitled: true, is_trial: false } as const;
 const notEntitled = { is_entitled: false, is_trial: false } as const;

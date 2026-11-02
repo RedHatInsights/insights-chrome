@@ -440,13 +440,16 @@ describe('cacheFetch', () => {
     it('skips setItem when shouldPersist returns false', async () => {
       mockGetItem.mockResolvedValue({ data: { sku: true }, cachedAt: Date.now() });
       const fetcher = jest.fn().mockResolvedValue({ sku: false });
+      const shouldPersist = jest.fn().mockReturnValue(false);
       const result = await cacheFetch('test-key', fetcher, CACHE_TTL_MS, undefined, {
         enabled: true,
-        shouldPersist: () => false,
+        shouldPersist,
       });
 
       expect(result).toEqual({ data: { sku: false }, fromCache: false });
-      expect(mockGetItem).toHaveBeenCalled();
+      // Persistence runs in the background after cacheFetch resolves: wait for the decision before the negative check.
+      await waitFor(() => expect(shouldPersist).toHaveBeenCalledWith({ sku: false }, { sku: true }));
+      await new Promise((resolve) => setTimeout(resolve, 0));
       expect(mockSetItem).not.toHaveBeenCalled();
     });
 

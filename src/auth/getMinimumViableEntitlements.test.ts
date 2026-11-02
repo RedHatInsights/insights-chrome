@@ -1,11 +1,4 @@
-import {
-  ORG_ID_BUNDLE_KEYS,
-  SKU_BUNDLE_KEYS,
-  countEntitledSkus,
-  getMinimumViableEntitlements,
-  isEntitlementsMap,
-  shouldPersistEntitlements,
-} from './getMinimumViableEntitlements';
+import { countEntitledSkus, getMinimumViableEntitlements, isEntitlementsMap, shouldPersistEntitlements } from './getMinimumViableEntitlements';
 import { failureA, healthyPaid, healthyUnsubscribed } from './entitlementsContract.fixture';
 
 const orgProfile = {
@@ -21,17 +14,19 @@ describe('getMinimumViableEntitlements', () => {
     expect(getMinimumViableEntitlements({ profile: {} })).toEqual({});
   });
 
-  it('entitles every org-id bundle and emits every SKU key as explicit false', () => {
+  it('entitles exactly the org-id bundles and emits every paid SKU as explicit false', () => {
     const result = getMinimumViableEntitlements({ profile: orgProfile });
 
-    for (const key of ORG_ID_BUNDLE_KEYS) {
-      expect(result[key]).toEqual({ is_entitled: true, is_trial: false });
-    }
-    for (const key of SKU_BUNDLE_KEYS) {
+    // Pinned with literals, not the production constants: moving a paid SKU into the org-id list
+    // would fail it open in the browser during an outage, and must fail this test.
+    const entitled = Object.entries(result)
+      .filter(([, value]) => value.is_entitled)
+      .map(([key]) => key)
+      .sort();
+    expect(entitled).toEqual(['cost_management', 'insights', 'migrations', 'openshift', 'rhel', 'settings', 'subscriptions', 'user_preferences']);
+    for (const key of ['ansible', 'acs', 'rhods', 'rhoam', 'rhosak', 'smart_management']) {
       expect(result[key]).toEqual({ is_entitled: false, is_trial: false });
-      expect(result[key]).toBeDefined();
     }
-    expect(result.ansible).toEqual({ is_entitled: false, is_trial: false });
     expect(result.internal).toEqual({ is_entitled: false, is_trial: false });
   });
 

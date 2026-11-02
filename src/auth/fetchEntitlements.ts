@@ -9,12 +9,10 @@ import {
   isNonEmptyEntitlementsMap,
   shouldPersistEntitlements,
 } from './getMinimumViableEntitlements';
-import { cacheFetch, deleteCacheKey } from '../utils/cacheFetch';
+import { cacheFetch, deleteCacheKey, isAbortError } from '../utils/cacheFetch';
 import { withTimeout } from '../utils/withTimeout';
 
 export type { EntitlementsMap };
-export { getMinimumViableEntitlements } from './getMinimumViableEntitlements';
-export { ENTITLEMENTS_CACHE_KEY, ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS } from './entitlementsConstants';
 
 export type FetchEntitlementsSource = 'live' | 'memory' | 'cache' | 'defaults' | 'empty';
 
@@ -38,14 +36,6 @@ export type FetchEntitlementsOptions = {
 };
 
 const defaultClient: EntitlementsClient = entitlementsApi() as EntitlementsClient;
-
-function isAbortError(err: unknown): boolean {
-  if (typeof err !== 'object' || err === null) {
-    return false;
-  }
-  const error = err as { code?: unknown; name?: unknown };
-  return error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError';
-}
 
 function createCanceledError(): Error {
   return Object.assign(new Error('Entitlements request aborted'), { code: 'ERR_CANCELED', name: 'CanceledError' });

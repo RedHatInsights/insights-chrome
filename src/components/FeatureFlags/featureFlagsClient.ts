@@ -81,7 +81,7 @@ const validateFeatureFlagsResponse = (response: Response, requestContext: Pick<S
  * Only the first toggle request uses the short timeout, because it gates the initial navigation.
  * Later refreshes run while stored toggles are served, so a slow proxy must not flap the degraded state.
  */
-export const createFetchFeatureFlags = () => {
+export const createFetchFeatureFlags = (): ((url: RequestInfo | URL, requestInit: RequestInit) => Promise<Response>) => {
   let initialRequestSettled = false;
 
   return async (url: RequestInfo | URL, requestInit: RequestInit) => {

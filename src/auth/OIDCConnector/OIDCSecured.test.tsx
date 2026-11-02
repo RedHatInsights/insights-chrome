@@ -31,7 +31,6 @@ jest.mock('@sentry/react', () => ({ captureMessage: jest.fn() }));
 
 jest.mock('../fetchEntitlements', () => ({
   fetchEntitlements: jest.fn().mockResolvedValue({ entitlements: {}, degraded: false, source: 'empty' }),
-  getMinimumViableEntitlements: jest.requireActual('../getMinimumViableEntitlements').getMinimumViableEntitlements,
   clearEntitlementsCache: jest.fn().mockResolvedValue(undefined),
 }));
 
@@ -252,30 +251,6 @@ describe('OIDCSecured', () => {
       expect(getByTestId('child')).toBeInTheDocument();
     });
     expect(queryByTestId('app-placeholder')).not.toBeInTheDocument();
-    expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
-  });
-
-  it('reaches ready state when entitlements time out', async () => {
-    const { useAuth } = jest.requireMock('react-oidc-context');
-    mockedFetchEntitlements.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => resolve({ entitlements: healthyPaid, degraded: true, source: 'defaults' }), 10);
-        })
-    );
-    mockUser.profile = { ...mockUser.profile, org_id: '12345' };
-    mockAuth.isAuthenticated = true;
-    useAuth.mockReturnValue(mockAuth);
-
-    const { getByTestId } = render(
-      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
-        <div data-testid="child">child</div>
-      </OIDCSecured>
-    );
-
-    await waitFor(() => {
-      expect(getByTestId('child')).toBeInTheDocument();
-    });
     expect(chromeStore.get(degradedStateAtom).entitlements).toBe(true);
   });
 

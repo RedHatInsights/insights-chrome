@@ -213,13 +213,19 @@ it('keeps identity-scoped stored toggles on HTTP failure and reports only a warn
 });
 
 it('does not evaluate another user or legacy unscoped stored toggles', async () => {
+  const orgId = user.identity.internal?.org_id;
   localStorage.setItem('unleash:repository:repo', JSON.stringify([toggle]));
   localStorage.setItem('unleash:repository:other-org:other-user:repo', JSON.stringify([toggle]));
+  // Same org, different user, and an org-only prefix: a store scoped by org alone would read one of these.
+  localStorage.setItem(`unleash:repository:${orgId}:other-user:repo`, JSON.stringify([toggle]));
+  localStorage.setItem(`unleash:repository:${orgId}:repo`, JSON.stringify([toggle]));
   mockFetch.mockImplementation(async () => {
     throw new TypeError('offline');
   });
   clientFor();
   expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(false);
+  // The legacy unscoped entry is removed rather than merely ignored.
+  expect(localStorage.getItem('unleash:repository:repo')).toBeNull();
 });
 
 it('does not use persistent toggles with an incomplete identity', async () => {

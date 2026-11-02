@@ -8,8 +8,6 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { setFeatureFlagsError, setUnleashClient } from './unleashClient';
 import { getFeatureFlagsClient, isFeatureFlagsClientStarted, startFeatureFlagsClient, stopFeatureFlagsClient } from './featureFlagsClient';
 
-export { createFetchFeatureFlags } from './featureFlagsClient';
-
 const isMetricsError = (error: unknown) => typeof error === 'object' && error !== null && 'type' in error && error.type === 'metrics';
 
 const FeatureFlagsStateBridge = ({ client }: { client: UnleashClient }) => {

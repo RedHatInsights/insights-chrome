@@ -93,7 +93,7 @@ function purgeStaleVersions(store: LocalForage): void {
  * Cache is used only for origin failures (5xx) and network errors.
  * Client errors (4xx) propagate immediately — stale SSO config for 401 is worse than failure.
  */
-function isAbortError(err: unknown): boolean {
+export function isAbortError(err: unknown): boolean {
   if (typeof err !== 'object' || err === null) {
     return false;
   }

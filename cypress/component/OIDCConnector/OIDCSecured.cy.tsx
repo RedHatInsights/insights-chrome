@@ -386,6 +386,10 @@ describe('OIDCSecured entitlements outage', () => {
     cy.intercept('GET', '**/api/entitlements/v1/services**', { delay: ENTITLEMENTS_TIMEOUT_MS + 2000, statusCode: 200, body: healthyPaid });
     mountShell();
     cy.contains(CHILD_TEXT, { timeout: ENTITLEMENTS_TIMEOUT_MS + 4000 }).should('exist');
+    // The authenticated shell, not the loading/unauthenticated placeholder. A render error would fail the
+    // test as an uncaught exception, since this harness has no error boundary.
+    cy.get('.chr-c-masthead').should('not.exist');
+    cy.get('.chr-render').should('not.exist');
     cy.wrap(chromeStore).should(() => {
       expect(chromeStore.get(degradedStateAtom).entitlements).to.equal(true);
     });
