@@ -117,6 +117,20 @@ export function filterAdobeAlloySentryEvent<T extends Sentry.Event>(event: T): T
 }
 
 /**
+ * Identifies the shell build independently of a federated app's release and records
+ * browser state at reporting time. Online/visibility are clues, not a diagnosis.
+ */
+export function addChromeSentryContext<T extends Sentry.Event>(event: T): T {
+  event.tags = {
+    ...event.tags,
+    'chrome.release': process.env.SENTRY_RELEASE || 'unknown',
+    'chrome.browser_online': navigator.onLine,
+    'chrome.page_visibility': document.visibilityState,
+  };
+  return event;
+}
+
+/**
  * Applies module-metadata or configured-app routing to a Sentry event.
  * Exported for testing.
  */
@@ -265,7 +279,7 @@ function initSentry() {
         return null;
       }
 
-      return applySentryEventRouting(event, appDetails, configuredApps);
+      return applySentryEventRouting(addChromeSentryContext(event), appDetails, configuredApps);
     },
   });
 }

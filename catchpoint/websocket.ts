@@ -40,6 +40,30 @@ if (!(await userMenu.isVisible())) {
 await userMenu.waitFor({ state: 'visible', timeout: CONFIG.authTimeout });
 
 await Catchpoint.startStep('Verify authenticated WebSocket availability');
+const websocketTrace = [{ path: '', error: '', sentFrames: 0, receivedFrames: 0, closed: false }].slice(0, 0);
+page.on('websocket', (webSocket) => {
+  let socketUrl;
+  try {
+    socketUrl = new URL(webSocket.url());
+  } catch {
+    return;
+  }
+  if (socketUrl.pathname !== CONFIG.socketPath) return;
+
+  const trace = { path: socketUrl.pathname, error: '', sentFrames: 0, receivedFrames: 0, closed: false };
+  websocketTrace.push(trace);
+  webSocket.on('socketerror', (error) => {
+    // Keep error details while avoiding accidental disclosure of query credentials.
+    const safeError = String(error).replace(/([?&][^=&#\s]+)=([^&#\s]+)/g, '$1=[redacted]');
+    trace.error += `${trace.error ? '; ' : ''}${safeError}`;
+  });
+  webSocket.on('framesent', () => trace.sentFrames++);
+  webSocket.on('framereceived', () => trace.receivedFrames++);
+  webSocket.on('close', () => {
+    trace.closed = true;
+  });
+});
+
 const result = await page.evaluate(async (config) => {
   // Keep the probe on the configured origin so the browser supplies its scoped cs_jwt cookie.
   if (location.origin !== new URL(config.consoleUrl).origin) throw new Error('Login did not return to the configured Console origin.');
@@ -92,6 +116,18 @@ const result = await page.evaluate(async (config) => {
   });
   return result;
 }, CONFIG);
+
+if (!result.passed) {
+  const traceDetails = websocketTrace.map((trace, index) => {
+    const details = [`socket ${index + 1} (${trace.path})`, `${trace.sentFrames} sent frames`, `${trace.receivedFrames} received frames`];
+    if (trace.error) details.push(`socket error: ${trace.error}`);
+    if (trace.closed) details.push('closed');
+    return details.join(', ');
+  });
+  result.message += traceDetails.length
+    ? ` Browser trace: ${traceDetails.join('; ')}.`
+    : ' Browser trace: Playwright did not report a matching WebSocket event; inspect Catchpoint network results for the handshake status.';
+}
 
 const outcome = `${result.passed ? 'PASS' : 'FAIL'}: ${result.message}`;
 await Catchpoint.startStep(`WebSocket result - ${result.passed ? 'PASS' : 'FAIL'}`);

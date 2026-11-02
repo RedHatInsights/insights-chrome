@@ -22,6 +22,17 @@ jest.mock('@sentry/react', () => ({
 
 const FEATURE_FLAGS_PATH = '/api/featureflags/v0';
 const FEATURE_FLAGS_URL = `${window.location.origin}${FEATURE_FLAGS_PATH}`;
+const initialRequestContext = {
+  tags: { 'chrome.operation': 'feature_flags.fetch', 'chrome.error_surface': 'request' },
+  contexts: {
+    feature_flags: {
+      endpoint: FEATURE_FLAGS_PATH,
+      method: 'GET',
+      phase: 'initial',
+      timeout_ms: FEATURE_FLAGS_INITIAL_TIMEOUT_MS,
+    },
+  },
+};
 const USER_CACHE_KEY = 'unleash:repository:org-456:user-789:repo';
 const LEGACY_CACHE_KEY = 'unleash:repository:repo';
 const cachedToggle = { name: 'cached.flag', enabled: true, variant: { name: 'enabled', enabled: true }, impressionData: false };
@@ -314,8 +325,111 @@ describe('FeatureFlagsProvider outage lifecycle', () => {
   });
 });
 
+describe('createFetchFeatureFlags Sentry diagnostics', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('reports the original network error with request context but no query, fragment, or headers', async () => {
+    const error = new TypeError('NetworkError when attempting to fetch resource.');
+    jest.spyOn(window, 'fetch').mockRejectedValue(error);
+    const fetchFeatureFlags = createFetchFeatureFlags();
+    const url = new URL(`${FEATURE_FLAGS_URL}?userId=private-user&email=private@example.com#private-fragment`);
+
+    await expect(fetchFeatureFlags(url, { method: 'get', headers: { Authorization: 'Bearer private-token' } })).rejects.toBe(error);
+
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, initialRequestContext);
+    expect(Sentry.captureMessage).not.toHaveBeenCalled();
+    const context = JSON.stringify(jest.mocked(Sentry.captureException).mock.calls[0][1]);
+    expect(context).not.toContain('private-');
+    expect(context).not.toContain('private@example.com');
+  });
+
+  it.each([undefined, 'put'])('uses the Request method unless RequestInit overrides it with %s', async (method) => {
+    const error = new TypeError('Failed to fetch');
+    jest.spyOn(window, 'fetch').mockRejectedValue(error);
+    const fetchFeatureFlags = createFetchFeatureFlags();
+    const request = { url: FEATURE_FLAGS_URL, method: 'POST' } as Request;
+
+    await expect(fetchFeatureFlags(request, { method, body: 'private-body' })).rejects.toBe(error);
+
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+      ...initialRequestContext,
+      contexts: {
+        feature_flags: { ...initialRequestContext.contexts.feature_flags, method: method ? 'PUT' : 'POST' },
+      },
+    });
+    expect(JSON.stringify(jest.mocked(Sentry.captureException).mock.calls[0][1])).not.toContain('private-body');
+  });
+
+  it('distinguishes a refresh from an initial request without changing the original error', async () => {
+    const error = new TypeError('Failed to fetch');
+    jest.spyOn(window, 'fetch').mockResolvedValueOnce(response(200)).mockRejectedValueOnce(error);
+    const fetchFeatureFlags = createFetchFeatureFlags();
+    await fetchFeatureFlags(FEATURE_FLAGS_URL, {});
+
+    await expect(fetchFeatureFlags(FEATURE_FLAGS_URL, {})).rejects.toBe(error);
+
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+      ...initialRequestContext,
+      contexts: {
+        feature_flags: { ...initialRequestContext.contexts.feature_flags, phase: 'refresh', timeout_ms: FEATURE_FLAGS_REFRESH_TIMEOUT_MS },
+      },
+    });
+  });
+
+  it('includes request and response context for an invalid content type without duplicate reports', async () => {
+    jest.spyOn(window, 'fetch').mockResolvedValue({ ...response(200), headers: { get: () => 'text/html' } } as unknown as Response);
+    const fetchFeatureFlags = createFetchFeatureFlags();
+
+    await expect(fetchFeatureFlags(FEATURE_FLAGS_URL, {})).rejects.toThrow('Invalid response content type');
+
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+    expect(Sentry.captureException).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringContaining('Invalid response content type') }), {
+      ...initialRequestContext,
+      contexts: { feature_flags: { ...initialRequestContext.contexts.feature_flags, status_code: 200 } },
+    });
+    expect(Sentry.captureMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not start reporting metrics failures as feature-flag failures', async () => {
+    const error = new TypeError('Failed to fetch');
+    jest.spyOn(window, 'fetch').mockRejectedValue(error);
+
+    await expect(createFetchFeatureFlags()(`${FEATURE_FLAGS_URL}/client/metrics`, { method: 'POST' })).rejects.toBe(error);
+
+    expect(Sentry.captureException).not.toHaveBeenCalled();
+    expect(Sentry.captureMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not report a client cancellation even when fetch rejects with a network TypeError', async () => {
+    const controller = new AbortController();
+    jest.spyOn(window, 'fetch').mockImplementation(
+      (_url, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new TypeError('NetworkError when attempting to fetch resource.')), { once: true });
+        })
+    );
+    const request = createFetchFeatureFlags()(FEATURE_FLAGS_URL, { signal: controller.signal });
+    const assertion = expect(request).rejects.toMatchObject({ name: 'AbortError' });
+
+    controller.abort();
+    await assertion;
+
+    expect(Sentry.captureException).not.toHaveBeenCalled();
+    expect(Sentry.captureMessage).not.toHaveBeenCalled();
+  });
+});
+
 describe('createFetchFeatureFlags timeouts', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.useFakeTimers();
   });
 
@@ -334,6 +448,9 @@ describe('createFetchFeatureFlags timeouts', () => {
     const assertion = expect(request).rejects.toMatchObject({ name: 'TimeoutError' });
     await jest.advanceTimersByTimeAsync(FEATURE_FLAGS_INITIAL_TIMEOUT_MS);
     await assertion;
+
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+    expect(Sentry.captureException).toHaveBeenCalledWith(expect.objectContaining({ name: 'TimeoutError' }), initialRequestContext);
   });
 
   it('lets a refresh slower than the initial timeout succeed', async () => {
@@ -389,7 +506,12 @@ describe('createFetchFeatureFlags HTTP errors', () => {
 
     await expect(fetchFeatureFlags(FEATURE_FLAGS_URL, {})).rejects.toThrow(`Feature flag request failed with HTTP ${status}`);
 
-    expect(captureMessage).toHaveBeenCalledWith(`Feature loading error server error! ${status}: ${response(status).statusText}.`, 'warning');
+    expect(captureMessage).toHaveBeenCalledTimes(1);
+    expect(captureMessage).toHaveBeenCalledWith(`Feature loading error server error! ${status}: ${response(status).statusText}.`, {
+      ...initialRequestContext,
+      level: 'warning',
+      contexts: { feature_flags: { ...initialRequestContext.contexts.feature_flags, status_code: status } },
+    });
     expect(captureException).not.toHaveBeenCalled();
   });
 });

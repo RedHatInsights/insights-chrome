@@ -61,7 +61,9 @@ class ErrorBoundary extends React.Component<
       if (checkAccountOnHold(this.state.error)) {
         return <AccountOnHoldError error={this.state.error} />;
       }
-      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} auth={this.props.auth} onReset={this.resetError} />;
+      return (
+        <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} auth={this.props.auth} onReset={this.resetError} errorBoundary="shell" />
+      );
     }
 
     return this.props.children;
