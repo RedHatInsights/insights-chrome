@@ -24,6 +24,7 @@ import {
   visibleServiceTilesReadyAtom,
 } from '../../src/state/atoms/visibleBundlesAtom';
 import userFixture from '../fixtures/testUser.json';
+import { RBAC_FAILURE_CACHE_TTL_MS, resetPermissionCache } from '../../src/auth/fetchPermissions';
 
 const DELAY_MS = VISIBILITY_REQUEST_TIMEOUT_MS * 2;
 const READY_TIMEOUT_MS = VISIBILITY_REQUEST_TIMEOUT_MS + 10_000;
@@ -102,6 +103,7 @@ type Scenario = {
   permission: AnyNavItemPermission;
   response: object;
   paginated?: boolean;
+  failureStatus?: number;
 };
 
 const scenarios: Scenario[] = [
@@ -111,6 +113,14 @@ const scenarios: Scenario[] = [
     method: 'GET',
     permission: { method: 'hasPermissions', args: [['inventory:hosts:read']] },
     response: { data: [{ permission: 'inventory:hosts:read' }], meta: { count: 1 } },
+  },
+  {
+    name: 'RBAC 503',
+    url: '**/api/rbac/v1/access/*',
+    method: 'GET',
+    permission: { method: 'hasPermissions', args: [['inventory:hosts:read']] },
+    response: { data: [{ permission: 'inventory:hosts:read' }], meta: { count: 1 } },
+    failureStatus: 503,
   },
   {
     name: 'paginated RBAC',
@@ -156,7 +166,10 @@ describe('visibility HTTP timeouts', () => {
     browserErrors = [];
     timedOutRequests = 0;
     resetVisibilityFunctions();
+    resetPermissionCache();
     resetConfigCacheStatus();
+    // Advance cache expiry without replacing native timers/XHR timeout behavior.
+    cy.clock(Date.now(), ['Date']);
     cy.window().then((win) => {
       win.localStorage.setItem(UNLEASH_ERROR_KEY, 'false');
       onUnhandled = (event) => browserErrors.push(event.reason);
@@ -178,6 +191,7 @@ describe('visibility HTTP timeouts', () => {
   afterEach(() => {
     client?.stop();
     resetVisibilityFunctions();
+    resetPermissionCache();
     resetConfigCacheStatus();
     cy.window().then((win) => {
       win.removeEventListener('unhandledrejection', onUnhandled);
@@ -186,7 +200,7 @@ describe('visibility HTTP timeouts', () => {
   });
 
   scenarios.forEach((scenario) => {
-    it(`finishes bootstrap and recovers after a real ${scenario.name} timeout`, () => {
+    it(`finishes bootstrap and recovers after a real ${scenario.name} ${scenario.failureStatus ? 'response' : 'timeout'}`, () => {
       let recover = false;
       let requests = 0;
       let failedRequestCount = 0;
@@ -217,10 +231,10 @@ describe('visibility HTTP timeouts', () => {
       cy.intercept(scenario.method, scenario.url, (request) => {
         requests++;
         const offset = Number(new URL(request.url).searchParams.get('offset') || 0);
-        const delayed = !recover && (!scenario.paginated || offset === 1000);
+        const delayed = !scenario.failureStatus && !recover && (!scenario.paginated || offset === 1000);
         if (scenario.name === 'apiRequest') expect(request.headers.authorization).to.equal('Bearer visibility-test-token');
         request.reply({
-          statusCode: 200,
+          statusCode: !recover && scenario.failureStatus ? scenario.failureStatus : 200,
           delay: delayed ? DELAY_MS : 0,
           // Isolate browser test cases without resetting the live permission
           // watcher between a failed request and recovery.
@@ -265,7 +279,7 @@ describe('visibility HTTP timeouts', () => {
         )
       );
       cy.get('[data-testid="config-ready"]').should('have.text', 'true');
-      cy.get('[data-testid="visibility-ready"]').should('have.text', 'false');
+      if (!scenario.failureStatus) cy.get('[data-testid="visibility-ready"]').should('have.text', 'false');
       cy.get('[data-testid="visibility-ready"]', { timeout: READY_TIMEOUT_MS }).should('have.text', 'true');
       cy.get('[data-testid="visibility-error"]').should('have.text', 'false');
       cy.get('[data-testid="gateway-error"]').should('have.text', 'false');
@@ -274,12 +288,20 @@ describe('visibility HTTP timeouts', () => {
       cy.contains('a', 'Restricted Nav').should('not.exist');
       cy.contains('a', 'Restricted tile').should('not.exist');
       cy.then(() => {
-        expect(timedOutRequests, 'native XHR timeout events').to.be.greaterThan(0);
+        if (!scenario.failureStatus) expect(timedOutRequests, 'native XHR timeout events').to.be.greaterThan(0);
         expect(browserErrors).to.deep.equal([]);
         visibility = getVisibilityFunctions();
         failedRequestCount = requests;
         recover = true;
       });
+      if (scenario.permission.method === 'hasPermissions') {
+        cy.contains('button', 'Reevaluate visibility').click();
+        cy.get('[data-testid="visibility-ready"]').should('have.text', 'true');
+        cy.contains('a', 'Restricted Nav').should('not.exist');
+        cy.contains('a', 'Restricted tile').should('not.exist');
+        cy.then(() => expect(requests, 'no RBAC calls inside negative-cache TTL').to.equal(failedRequestCount));
+        cy.tick(RBAC_FAILURE_CACHE_TTL_MS);
+      }
       cy.contains('button', 'Reevaluate visibility').click();
       cy.get('[data-testid="visibility-ready"]', { timeout: READY_TIMEOUT_MS }).should('have.text', 'true');
       cy.contains('a', 'Restricted Nav').should('be.visible');
