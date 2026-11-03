@@ -76,13 +76,117 @@ const QuickstartsRemoteError = () => {
 
 const RUNTIME_CHILDREN_SLOT_STYLE: React.CSSProperties = { display: 'contents' };
 
+type MoveBeforeHost = HTMLElement & { moveBefore?: (node: Node, child: Node | null) => void };
+
+type TextSelection = { start: number | null; end: number | null; direction: 'forward' | 'backward' | 'none' | null };
+type RangeSnapshot = { startContainer: Node; startOffset: number; endContainer: Node; endOffset: number };
+
+function readTextSelection(element: HTMLElement): TextSelection | null {
+  if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement)) {
+    return null;
+  }
+  try {
+    return { start: element.selectionStart, end: element.selectionEnd, direction: element.selectionDirection };
+  } catch {
+    // Input types without a text selection (number, email in some browsers) throw.
+    return null;
+  }
+}
+
+function readRanges(node: HTMLElement): RangeSnapshot[] {
+  const selection = document.getSelection();
+  if (!selection || selection.rangeCount === 0 || !selection.anchorNode || !node.contains(selection.anchorNode)) {
+    return [];
+  }
+  return Array.from({ length: selection.rangeCount }, (_, index) => {
+    const range = selection.getRangeAt(index);
+    return { startContainer: range.startContainer, startOffset: range.startOffset, endContainer: range.endContainer, endOffset: range.endOffset };
+  });
+}
+
+/** Scroll offsets are reset when an element leaves the document. */
+function readScrollOffsets(node: HTMLElement) {
+  const offsets: [Element, number, number][] = [];
+  node.querySelectorAll('*').forEach((element) => {
+    if (element.scrollTop !== 0 || element.scrollLeft !== 0) {
+      offsets.push([element, element.scrollTop, element.scrollLeft]);
+    }
+  });
+  return offsets;
+}
+
+/**
+ * Move the console node into `host` without losing the user's place. `moveBefore`
+ * is an atomic move that keeps focus, selection and scroll and fires no blur.
+ * Elsewhere `appendChild` removes the subtree first, which drops focus to
+ * `document.body`, so capture focus, selection and scroll offsets and restore them.
+ */
+function moveConsoleNode(host: HTMLElement, node: HTMLElement) {
+  const moveHost = host as MoveBeforeHost;
+  if (typeof moveHost.moveBefore === 'function' && host.isConnected && node.isConnected) {
+    try {
+      moveHost.moveBefore(node, null);
+      return;
+    } catch {
+      // Not movable atomically (e.g. across documents); fall back below.
+    }
+  }
+
+  const active = node.isConnected ? document.activeElement : null;
+  const focused = active instanceof HTMLElement && node.contains(active) ? active : null;
+  const textSelection = focused && readTextSelection(focused);
+  const ranges = node.isConnected ? readRanges(node) : [];
+  const scrollOffsets = node.isConnected ? readScrollOffsets(node) : [];
+
+  host.appendChild(node);
+
+  scrollOffsets.forEach(([element, top, left]) => {
+    element.scrollTop = top;
+    element.scrollLeft = left;
+  });
+  if (focused && focused.isConnected && document.activeElement !== focused) {
+    focused.focus({ preventScroll: true });
+    if (textSelection && textSelection.start !== null && textSelection.end !== null) {
+      try {
+        (focused as HTMLInputElement | HTMLTextAreaElement).setSelectionRange(textSelection.start, textSelection.end, textSelection.direction ?? undefined);
+      } catch {
+        // Selection not supported for this input type.
+      }
+    }
+  }
+  if (ranges.length > 0 && !textSelection) {
+    const selection = document.getSelection();
+    selection?.removeAllRanges();
+    ranges.forEach((snapshot) => {
+      try {
+        const range = document.createRange();
+        range.setStart(snapshot.startContainer, snapshot.startOffset);
+        range.setEnd(snapshot.endContainer, snapshot.endOffset);
+        selection?.addRange(range);
+      } catch {
+        // The selected nodes changed during the move.
+      }
+    });
+  }
+}
+
 /**
  * Keep the console tree in one React position. Move only the DOM node into the
  * active runtime's drawer slot (or a fallback host while the remote is loading /
  * failed). Both runtimes wrap `{children}` in the PF drawers, so Chrome passes a
  * tiny placeholder as the runtime's children and portals the console into it.
  */
-const ChromeChildrenPortal = ({ children, slot }: { children: ReactNode; slot: HTMLElement | null }) => {
+type ConsoleHostController = { releaseSlot: () => void };
+
+const ChromeChildrenPortal = ({
+  children,
+  slot,
+  controllerRef,
+}: {
+  children: ReactNode;
+  slot: HTMLElement | null;
+  controllerRef: React.MutableRefObject<ConsoleHostController | null>;
+}) => {
   const fallbackRef = useRef<HTMLDivElement | null>(null);
   const portalNodeRef = useRef<HTMLDivElement | null>(null);
 
@@ -117,9 +221,29 @@ const ChromeChildrenPortal = ({ children, slot }: { children: ReactNode; slot: H
     }
     const host = slot ?? fallbackRef.current;
     if (host && portalNode.parentElement !== host) {
-      host.appendChild(portalNode);
+      moveConsoleNode(host, portalNode);
     }
   }, [slot, portalNode]);
+
+  /**
+   * The runtime's slot is about to be removed with the outgoing runtime (swap or
+   * failure). Called from the slot's ref detach, which React runs before it removes
+   * the runtime's DOM, so the console leaves the slot while still attached and
+   * keeps focus instead of being removed along with it.
+   */
+  useLayoutEffect(() => {
+    controllerRef.current = {
+      releaseSlot: () => {
+        const fallback = fallbackRef.current;
+        if (portalNode && fallback?.isConnected && portalNode.parentElement !== fallback) {
+          moveConsoleNode(fallback, portalNode);
+        }
+      },
+    };
+    return () => {
+      controllerRef.current = null;
+    };
+  }, [controllerRef, portalNode]);
 
   useLayoutEffect(() => {
     return () => {
@@ -187,7 +311,11 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   const useRemote = useLearningResourcesQuickstarts();
   const apiReadyRef = useRef(false);
   const [childrenSlotEl, setChildrenSlotEl] = useState<HTMLDivElement | null>(null);
+  const consoleHostRef = useRef<ConsoleHostController | null>(null);
   const setRuntimeChildrenSlot = useCallback((node: HTMLDivElement | null) => {
+    if (!node) {
+      consoleHostRef.current?.releaseSlot();
+    }
     setChildrenSlotEl(node);
   }, []);
 
@@ -249,7 +377,7 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <ChromeChildrenPortal slot={childrenSlotEl}>
+      <ChromeChildrenPortal slot={childrenSlotEl} controllerRef={consoleHostRef}>
         <RuntimeContextBridge>{children}</RuntimeContextBridge>
       </ChromeChildrenPortal>
       {useRemote ? (

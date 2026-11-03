@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
-import { QuickStart } from '@patternfly/quickstarts';
+import { HelpTopic, QuickStart } from '@patternfly/quickstarts';
 import { ChromeAPI } from '@redhat-cloud-services/types';
 import {
   clearRegisteredChromeQuickstarts,
@@ -255,6 +255,90 @@ describe('delegatedChromeQuickstarts', () => {
       await attached();
 
       expect(next.quickstartsAPI.set).not.toHaveBeenCalled();
+    });
+
+    describe('help topics', () => {
+      const topic = (name: string) => ({ name, title: name, tags: [], content: name, links: [] }) as unknown as HelpTopic;
+      const t1 = topic('topic-1');
+      const t2 = topic('topic-2');
+      const t3 = topic('topic-3');
+
+      const replace = async () => {
+        retireLiveChromeQuickstartsApis();
+        const next = runtimeApis();
+        publishLiveChromeQuickstartsApis(next);
+        await attached();
+        return next;
+      };
+
+      it('replays tenant-defined help topics with their enabled state into the replacement', async () => {
+        publishLiveChromeQuickstartsApis(runtimeApis());
+        await attached();
+        delegatedHelpTopicsAPI.addHelpTopics([t1, t2]);
+        delegatedHelpTopicsAPI.addHelpTopics([t3], false);
+        delegatedHelpTopicsAPI.disableTopics('topic-2');
+        await delegatedHelpTopicsAPI.enableTopics({ names: ['topic-3'], append: true });
+
+        const next = await replace();
+
+        expect(next.helpTopicsAPI.addHelpTopics.mock.calls).toEqual([
+          [[t1, t3], true],
+          [[t2], false],
+        ]);
+      });
+
+      it('keeps help topics across module changes, like both runtimes', async () => {
+        publishLiveChromeQuickstartsApis(runtimeApis());
+        await attached();
+        delegatedHelpTopicsAPI.addHelpTopics([t1]);
+        clearRegisteredChromeQuickstarts();
+
+        const next = await replace();
+
+        expect(next.helpTopicsAPI.addHelpTopics).toHaveBeenCalledWith([t1], true);
+      });
+
+      it('replays help topics before queued help topic calls and keeps tracking them', async () => {
+        publishLiveChromeQuickstartsApis(runtimeApis());
+        await attached();
+        delegatedHelpTopicsAPI.addHelpTopics([t1]);
+
+        retireLiveChromeQuickstartsApis();
+        delegatedHelpTopicsAPI.disableTopics('topic-1');
+        const second = runtimeApis();
+        const order: string[] = [];
+        second.helpTopicsAPI.addHelpTopics.mockImplementation(() => order.push('replay'));
+        second.helpTopicsAPI.disableTopics.mockImplementation(() => order.push('queued'));
+        publishLiveChromeQuickstartsApis(second);
+        await attached();
+        expect(order).toEqual(['replay', 'queued']);
+
+        const third = await replace();
+        expect(third.helpTopicsAPI.addHelpTopics.mock.calls).toEqual([[[t1], false]]);
+      });
+
+      it('does not replay topics loaded by name, which the runtimes fetch on demand', async () => {
+        publishLiveChromeQuickstartsApis(runtimeApis());
+        await attached();
+        await delegatedHelpTopicsAPI.enableTopics('api-topic');
+        delegatedHelpTopicsAPI.disableTopics('api-topic');
+
+        const next = await replace();
+
+        expect(next.helpTopicsAPI.addHelpTopics).not.toHaveBeenCalled();
+      });
+
+      it('replays the latest version of a re-added topic', async () => {
+        publishLiveChromeQuickstartsApis(runtimeApis());
+        await attached();
+        const updated = { ...t1, title: 'updated' } as HelpTopic;
+        delegatedHelpTopicsAPI.addHelpTopics([t1], false);
+        delegatedHelpTopicsAPI.addHelpTopics([updated]);
+
+        const next = await replace();
+
+        expect(next.helpTopicsAPI.addHelpTopics.mock.calls).toEqual([[[updated], true]]);
+      });
     });
   });
 

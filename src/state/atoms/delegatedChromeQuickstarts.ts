@@ -1,6 +1,6 @@
 import React from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
-import { ChromeAPI } from '@redhat-cloud-services/types';
+import { HelpTopic, QuickStart } from '@patternfly/quickstarts';
+import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { useAtomValue } from 'jotai';
 import chromeStore from '../chromeStore';
 import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
@@ -20,6 +20,13 @@ let publishGeneration = 0;
  * again; the replacement gets these replayed instead.
  */
 const registeredQuickstarts = new Map<string, QuickStart[]>();
+/**
+ * Tenant-defined help topics (`addHelpTopics`) and whether each is enabled. Both
+ * runtimes keep help topics across module changes, so unlike quickstarts this is
+ * not cleared on module change. Topics loaded by name are not tracked: the
+ * runtimes fetch those on demand (`setActiveTopic` / `enableTopics`).
+ */
+const registeredHelpTopics = new Map<string, { topic: HelpTopic; enabled: boolean }>();
 const pendingQuickstartsCalls: PendingCall<LiveQuickstartsAPI>[] = [];
 const pendingHelpTopicsCalls: PendingCall<ChromeAPI['helpTopics']>[] = [];
 
@@ -66,6 +73,7 @@ export function publishLiveChromeQuickstartsApis(api: { quickstartsAPI: LiveQuic
     if (replayRegistrationsOnPublish) {
       replayRegistrationsOnPublish = false;
       registeredQuickstarts.forEach((quickstarts, key) => api.quickstartsAPI.set(key, quickstarts));
+      replayRegisteredHelpTopics(api.helpTopicsAPI);
     }
     flushPending(pendingQuickstartsCalls, api.quickstartsAPI);
     flushPending(pendingHelpTopicsCalls, api.helpTopicsAPI);
@@ -111,6 +119,7 @@ export function resetDelegatedChromeQuickstartsState() {
   retireLiveChromeQuickstartsApis();
   replayRegistrationsOnPublish = false;
   registeredQuickstarts.clear();
+  registeredHelpTopics.clear();
   pendingQuickstartsCalls.splice(0).forEach((item) => item.abort());
   pendingHelpTopicsCalls.splice(0).forEach((item) => item.abort());
 }
@@ -121,6 +130,36 @@ function addRegisteredQuickstart(api: LiveQuickstartsAPI, key: string, qs: Quick
     registeredQuickstarts.set(key, [...(registeredQuickstarts.get(key) ?? []), qs]);
   }
   return added;
+}
+
+function replayRegisteredHelpTopics(api: ChromeAPI['helpTopics']) {
+  const entries = [...registeredHelpTopics.values()];
+  const enabled = entries.filter((entry) => entry.enabled).map((entry) => entry.topic);
+  const disabled = entries.filter((entry) => !entry.enabled).map((entry) => entry.topic);
+  if (enabled.length > 0) {
+    api.addHelpTopics(enabled, true);
+  }
+  if (disabled.length > 0) {
+    api.addHelpTopics(disabled, false);
+  }
+}
+
+/** Keep the enabled state of tenant-defined topics in step with the live runtime. */
+function setRegisteredHelpTopicsEnabled(names: string[], enabled: boolean) {
+  names.forEach((name) => {
+    const entry = registeredHelpTopics.get(name);
+    if (entry) {
+      entry.enabled = enabled;
+    }
+  });
+}
+
+function enableTopicsNames(args: EnableTopicsArgs): string[] {
+  const [first] = args;
+  if (typeof first === 'object' && first !== null) {
+    return first.names ?? [];
+  }
+  return args as string[];
 }
 
 /**
@@ -206,7 +245,11 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
     enqueueOrRun(
       liveHelpTopicsAPIRef.current,
       pendingHelpTopicsCalls,
-      (api) => api.addHelpTopics(...args),
+      (api) => {
+        const [topics, enabled = true] = args;
+        api.addHelpTopics(...args);
+        topics.forEach((topic) => registeredHelpTopics.set(topic.name, { topic, enabled }));
+      },
       () => undefined
     );
   },
@@ -214,14 +257,22 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
     enqueueOrRun(
       liveHelpTopicsAPIRef.current,
       pendingHelpTopicsCalls,
-      (api) => api.disableTopics(...args),
+      (api) => {
+        api.disableTopics(...args);
+        setRegisteredHelpTopicsEnabled(args, false);
+      },
       () => undefined
     );
   },
   enableTopics: (...args: Parameters<ChromeAPI['helpTopics']['enableTopics']>) => {
+    const enableOn = (live: ChromeAPI['helpTopics']) => {
+      const result = live.enableTopics(...args);
+      setRegisteredHelpTopicsEnabled(enableTopicsNames(args), true);
+      return result;
+    };
     const api = liveHelpTopicsAPIRef.current;
     if (api) {
-      return api.enableTopics(...args);
+      return enableOn(api);
     }
     if (liveRuntimeUnavailable) {
       return Promise.resolve([]);
@@ -229,10 +280,7 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
     return new Promise((resolve, reject) => {
       pendingHelpTopicsCalls.push({
         run: (live) => {
-          live
-            .enableTopics(...args)
-            .then(resolve)
-            .catch(reject);
+          enableOn(live).then(resolve).catch(reject);
         },
         abort: () => resolve([]),
       });

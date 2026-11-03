@@ -23,7 +23,7 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { degradedStateAtom } from '../../state/atoms/degradedStateAtom';
 import { LiveQuickstartsAPI, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom, remoteActiveQuickStartIDAtom } from '../../state/atoms/remoteQuickstartsAtom';
-import { delegatedQuickstartsAPI, resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
+import { delegatedHelpTopicsAPI, delegatedQuickstartsAPI, resetDelegatedChromeQuickstartsState } from '../../state/atoms/delegatedChromeQuickstarts';
 import chromeStore from '../../state/chromeStore';
 import { quickstartsRuntimeContextAtom } from '../../state/atoms/quickstartsRuntimeContextAtom';
 
@@ -357,6 +357,84 @@ describe('QuickstartsRuntimeMount', () => {
       expect(mounts).toBe(1);
     });
 
+    describe('focus while the console moves between hosts', () => {
+      const typeAndSelect = () => {
+        const input = screen.getByLabelText('tenant-input') as HTMLInputElement;
+        fireEvent.change(input, { target: { value: 'unsaved draft' } });
+        act(() => {
+          input.focus();
+          input.setSelectionRange(2, 7, 'backward');
+        });
+        expect(document.activeElement).toBe(input);
+        return input;
+      };
+
+      const expectFocusKept = (input: HTMLInputElement) => {
+        expect(document.activeElement).toBe(input);
+        expect([input.selectionStart, input.selectionEnd, input.selectionDirection]).toEqual([2, 7, 'backward']);
+        expect(input).toHaveValue('unsaved draft');
+      };
+
+      it('keeps focus and selection in a tenant input when the remote becomes ready', () => {
+        mockedUseFlag.mockReturnValue(true);
+        let setRemoteReady: ((ready: boolean) => void) | undefined;
+        MockedScalprumComponent.mockImplementation(({ children }: { children?: React.ReactNode }) => {
+          const [ready, setReady] = React.useState(false);
+          setRemoteReady = setReady;
+          return <div data-testid="remote-runtime">{ready ? children : null}</div>;
+        });
+        renderMount('', <TenantForm onMount={() => undefined} />);
+        const input = typeAndSelect();
+        expect(screen.getByTestId('remote-runtime')).not.toContainElement(input);
+
+        act(() => setRemoteReady?.(true));
+
+        expect(screen.getByTestId('remote-runtime')).toContainElement(input);
+        expectFocusKept(input);
+
+        act(() => setRemoteReady?.(false));
+
+        expect(screen.getByTestId('remote-runtime')).not.toContainElement(input);
+        expectFocusKept(input);
+      });
+
+      it('keeps focus and selection in a tenant input when the flag changes in either direction', () => {
+        const { rerenderMount } = renderMount('', <TenantForm onMount={() => undefined} />);
+        const input = typeAndSelect();
+
+        mockedUseFlag.mockReturnValue(true);
+        rerenderMount();
+        expect(screen.getByTestId('remote-runtime')).toContainElement(input);
+        expectFocusKept(input);
+
+        mockedUseFlag.mockReturnValue(false);
+        rerenderMount();
+        expect(screen.getByTestId('legacy-runtime')).toContainElement(input);
+        expectFocusKept(input);
+      });
+
+      it('moves the console atomically with moveBefore where the browser supports it', () => {
+        const proto = HTMLElement.prototype as HTMLElement & { moveBefore?: (node: Node, child: Node | null) => void };
+        const moveBefore = jest.fn(function (this: HTMLElement, node: Node, child: Node | null) {
+          this.insertBefore(node, child);
+        });
+        proto.moveBefore = moveBefore;
+        try {
+          const { rerenderMount } = renderMount('', <TenantForm onMount={() => undefined} />);
+          moveBefore.mockClear();
+
+          mockedUseFlag.mockReturnValue(true);
+          rerenderMount();
+
+          const consoleNode = document.querySelector('[data-ouia-component-id="chrome-quickstarts-children"]');
+          expect(moveBefore).toHaveBeenCalledWith(consoleNode, null);
+          expect(screen.getByTestId('remote-runtime')).toContainElement(screen.getByLabelText('tenant-input'));
+        } finally {
+          delete proto.moveBefore;
+        }
+      });
+    });
+
     it('detaches the old runtime on switch and queues calls for the replacement', async () => {
       const legacy = createApis('legacy');
       const remote = createApis('remote');
@@ -398,6 +476,36 @@ describe('QuickstartsRuntimeMount', () => {
       expect((remote.quickstartsAPI.set as jest.Mock).mock.calls).toEqual([
         ['app', [qsA, qsB]],
         ['other', [qsC]],
+      ]);
+    });
+
+    it('replays tenant help topics and their enabled state into the replacement in both directions', async () => {
+      const topicA = { name: 'tenant-topic-a', title: 'A', tags: [], content: 'a', links: [] } as unknown as HelpTopic;
+      const topicB = { name: 'tenant-topic-b', title: 'B', tags: [], content: 'b', links: [] } as unknown as HelpTopic;
+      const legacy = createApis('legacy');
+      const remote = createApis('remote');
+      mockLegacyApis = legacy;
+      const { rerenderMount } = renderMount();
+      await settle();
+      delegatedHelpTopicsAPI.addHelpTopics([topicA, topicB]);
+      delegatedHelpTopicsAPI.disableTopics('tenant-topic-b');
+
+      mockedUseFlag.mockReturnValue(true);
+      rerenderMount();
+      await publishRemote(remote);
+      expect((remote.helpTopicsAPI.addHelpTopics as jest.Mock).mock.calls).toEqual([
+        [[topicA], true],
+        [[topicB], false],
+      ]);
+
+      const legacyAgain = createApis('legacy-again');
+      mockLegacyApis = legacyAgain;
+      mockedUseFlag.mockReturnValue(false);
+      rerenderMount();
+      await settle();
+      expect((legacyAgain.helpTopicsAPI.addHelpTopics as jest.Mock).mock.calls).toEqual([
+        [[topicA], true],
+        [[topicB], false],
       ]);
     });
 
