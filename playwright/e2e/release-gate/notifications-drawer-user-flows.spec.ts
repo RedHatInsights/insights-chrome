@@ -4,6 +4,7 @@ import type { Locator, Page } from '@playwright/test';
 const NOTIFICATIONS_BUTTON_NAME = 'Notifications';
 const EMPTY_STATE_HEADING = 'No notifications found';
 const DRAWER_SELECTOR = '.pf-v6-c-notification-drawer';
+const NOTIFICATION_LOAD_TIMEOUT = 45000;
 const EMPTY_PERSONA = process.env.NOTIFICATIONS_EMPTY_STATE_PERSONA;
 const mutableAccountEnabled = process.env.NOTIFICATIONS_MUTABLE_TEST_ACCOUNT === 'true';
 const targetNotificationTitle = process.env.NOTIFICATIONS_MUTABLE_TARGET_TITLE?.trim();
@@ -46,6 +47,12 @@ function notificationRow(page: Page, title: string) {
   return page.getByLabel(`Notification item ${title}`, { exact: true });
 }
 
+async function waitForNotificationRow(page: Page, title: string) {
+  const row = notificationRow(page, title);
+  await expect(row).toBeVisible({ timeout: NOTIFICATION_LOAD_TIMEOUT });
+  return row;
+}
+
 async function visibleNotificationTitles(page: Page) {
   return page
     .locator('[aria-label^="Notification item "]')
@@ -62,11 +69,15 @@ async function notificationReadState(page: Page, row: Locator): Promise<'read' |
   await openNotificationActions(page, row);
   const markRead = page.getByRole('menuitem', { name: 'Mark as read', exact: true });
   const markUnread = page.getByRole('menuitem', { name: 'Mark as unread', exact: true });
-  const [markReadCount, markUnreadCount] = await Promise.all([markRead.count(), markUnread.count()]);
-  expect(markReadCount + markUnreadCount).toBe(1);
+  await expect.poll(async () => (await markRead.count()) + (await markUnread.count()), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(1);
+  const markReadCount = await markRead.count();
   const state = markReadCount === 1 ? 'unread' : 'read';
   await page.keyboard.press('Escape');
   return state;
+}
+
+async function expectNotificationReadState(page: Page, row: Locator, desiredState: 'read' | 'unread') {
+  await expect.poll(() => notificationReadState(page, row), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(desiredState);
 }
 
 async function setNotificationReadState(page: Page, row: Locator, desiredState: 'read' | 'unread') {
@@ -76,15 +87,16 @@ async function setNotificationReadState(page: Page, row: Locator, desiredState: 
   const actionName = desiredState === 'read' ? 'Mark as read' : 'Mark as unread';
   await openNotificationActions(page, row);
   await page.getByRole('menuitem', { name: actionName, exact: true }).click();
-  expect(await notificationReadState(page, row)).toBe(desiredState);
+  await expectNotificationReadState(page, row, desiredState);
 }
 
 async function unreadBadgeCount(page: Page) {
   const button = page.getByRole('button', { name: /Notifications/ }).first();
+  await expect(button).toBeVisible();
   const label = (await button.getAttribute('aria-label')) ?? (await button.innerText());
   const count = label.match(/\b\d+\b/);
-  expect(count, 'Notifications button should expose the unread badge count').not.toBeNull();
-  return Number(count![0]);
+  // The header omits its badge when there are no unread notifications.
+  return count ? Number(count[0]) : 0;
 }
 
 async function chooseBulkReadState(page: Page, desiredState: 'read' | 'unread') {
@@ -105,7 +117,7 @@ test.describe('Notifications drawer user flows', () => {
     await assertEmptyState(page);
 
     const preferencesLink = page.getByRole('link', { name: /notification preferences/i });
-    await expect(preferencesLink).toBeVisible();
+    await expect(preferencesLink).toBeVisible({ timeout: NOTIFICATION_LOAD_TIMEOUT });
     await preferencesLink.click();
     await expect(page).toHaveURL(/\/settings\/notifications\/user-preferences\/?$/);
 
@@ -115,7 +127,7 @@ test.describe('Notifications drawer user flows', () => {
 
     if (EMPTY_PERSONA === 'non-org-admin') {
       const eventLogLink = page.getByRole('link', { name: /view the event log to see all fired events/i });
-      await expect(eventLogLink).toBeVisible();
+      await expect(eventLogLink).toBeVisible({ timeout: NOTIFICATION_LOAD_TIMEOUT });
       await eventLogLink.click();
       await expect(page).toHaveURL(/\/settings\/notifications\/notificationslog\/?$/);
 
@@ -125,14 +137,13 @@ test.describe('Notifications drawer user flows', () => {
       const organizationConfigurationLink = page.getByRole('link', {
         name: /organization.*notification|configure.*events|notification.*configuration/i,
       });
-      if ((await organizationConfigurationLink.count()) > 0) {
-        await expect(organizationConfigurationLink).toBeDisabled();
-      }
+      await expect(organizationConfigurationLink).toBeVisible({ timeout: NOTIFICATION_LOAD_TIMEOUT });
+      await expect(organizationConfigurationLink).toBeDisabled();
     } else {
       const organizationConfigurationLink = page.getByRole('link', {
         name: /organization.*notification|configure.*events|notification.*configuration/i,
       });
-      await expect(organizationConfigurationLink).toBeVisible();
+      await expect(organizationConfigurationLink).toBeVisible({ timeout: NOTIFICATION_LOAD_TIMEOUT });
       await organizationConfigurationLink.click();
       await expect(page).toHaveURL(/\/settings\/notifications\/configure-events\/?$/);
     }
@@ -146,15 +157,18 @@ test.describe('Notifications drawer user flows', () => {
 
     await page.goto('/');
     await openNotificationsDrawer(page);
+    await expect.poll(async () => (await visibleNotificationTitles(page)).length, { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBeGreaterThanOrEqual(2);
     const baselineTitles = await visibleNotificationTitles(page);
-    test.skip(baselineTitles.length < 2, 'Blocked — test data unavailable: drawer needs at least two prepared notifications.');
     test.skip(
       baselineTitles.some((title) => !(title in filterTitleBundles!)),
       'Blocked — test data unavailable: provide a bundle mapping for every prepared notification title.'
     );
 
     const expectedFilteredTitles = baselineTitles.filter((title) => filterTitleBundles![title] === filterBundle);
-    test.skip(expectedFilteredTitles.length === 0, 'Blocked — test data unavailable: selected bundle has no prepared notifications.');
+    test.skip(
+      expectedFilteredTitles.length === 0 || expectedFilteredTitles.length === baselineTitles.length,
+      'Blocked — test data unavailable: prepare at least one notification matching the selected bundle and one notification in another bundle.'
+    );
 
     await page.getByRole('button', { name: 'Notifications filter' }).click();
     await page.getByRole('menuitem', { name: filterBundle!, exact: true }).click();
@@ -173,8 +187,7 @@ test.describe('Notifications drawer user flows', () => {
 
     await page.goto('/');
     await openNotificationsDrawer(page);
-    const row = notificationRow(page, targetNotificationTitle!);
-    test.skip((await row.count()) === 0, 'Blocked — test data unavailable: target notification is not present.');
+    const row = await waitForNotificationRow(page, targetNotificationTitle!);
 
     const initialState = await notificationReadState(page, row);
     const initialBadgeCount = await unreadBadgeCount(page);
@@ -187,14 +200,14 @@ test.describe('Notifications drawer user flows', () => {
       await openNotificationActions(page, row);
       stateChanged = true;
       await page.getByRole('menuitem', { name: firstAction, exact: true }).click();
-      expect(await notificationReadState(page, row)).toBe(changedState);
-      expect(await unreadBadgeCount(page)).toBe(initialBadgeCount + expectedBadgeDelta);
+      await expectNotificationReadState(page, row, changedState);
+      await expect.poll(() => unreadBadgeCount(page), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(initialBadgeCount + expectedBadgeDelta);
 
       const restoreAction = initialState === 'read' ? 'Mark as read' : 'Mark as unread';
       await openNotificationActions(page, row);
       await page.getByRole('menuitem', { name: restoreAction, exact: true }).click();
-      expect(await notificationReadState(page, row)).toBe(initialState);
-      expect(await unreadBadgeCount(page)).toBe(initialBadgeCount);
+      await expectNotificationReadState(page, row, initialState);
+      await expect.poll(() => unreadBadgeCount(page), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(initialBadgeCount);
       stateChanged = false;
     } finally {
       if (stateChanged) {
@@ -211,16 +224,15 @@ test.describe('Notifications drawer user flows', () => {
 
     await page.goto('/');
     await openNotificationsDrawer(page);
-    const targetRow = notificationRow(page, targetNotificationTitle!);
-    const controlRow = notificationRow(page, controlNotificationTitle!);
     test.skip(
-      (await targetRow.count()) === 0 || (await controlRow.count()) === 0,
-      'Blocked — test data unavailable: target and control notifications must both be present.'
+      targetNotificationTitle === controlNotificationTitle,
+      'Blocked — test data unavailable: configure distinct target and control notification titles.'
     );
+    const targetRow = await waitForNotificationRow(page, targetNotificationTitle!);
+    const controlRow = await waitForNotificationRow(page, controlNotificationTitle!);
 
     const initialTargetState = await notificationReadState(page, targetRow);
     const initialControlState = await notificationReadState(page, controlRow);
-    test.skip(initialTargetState === initialControlState, 'Blocked — test data unavailable: notifications must begin in different read states.');
 
     const initialBadgeCount = await unreadBadgeCount(page);
     const targetCheckbox = targetRow.getByRole('checkbox');
@@ -244,22 +256,19 @@ test.describe('Notifications drawer user flows', () => {
     const expectedBadgeDelta = changedState === 'unread' ? 1 : -1;
     try {
       await chooseBulkReadState(page, changedState);
-      expect(await notificationReadState(page, targetRow)).toBe(changedState);
-      expect(await notificationReadState(page, controlRow)).toBe(initialControlState);
-      expect(await unreadBadgeCount(page)).toBe(initialBadgeCount + expectedBadgeDelta);
+      await expectNotificationReadState(page, targetRow, changedState);
+      await expectNotificationReadState(page, controlRow, initialControlState);
+      await expect.poll(() => unreadBadgeCount(page), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(initialBadgeCount + expectedBadgeDelta);
 
       await targetCheckbox.check();
       await chooseBulkReadState(page, initialTargetState);
-      expect(await notificationReadState(page, targetRow)).toBe(initialTargetState);
-      expect(await notificationReadState(page, controlRow)).toBe(initialControlState);
-      expect(await unreadBadgeCount(page)).toBe(initialBadgeCount);
+      await expectNotificationReadState(page, targetRow, initialTargetState);
+      await expectNotificationReadState(page, controlRow, initialControlState);
+      await expect.poll(() => unreadBadgeCount(page), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(initialBadgeCount);
     } finally {
       await page.keyboard.press('Escape');
       if ((await notificationReadState(page, targetRow)) !== initialTargetState) {
-        if (!(await targetCheckbox.isChecked())) {
-          await targetCheckbox.check();
-        }
-        await chooseBulkReadState(page, initialTargetState);
+        await setNotificationReadState(page, targetRow, initialTargetState);
       }
       if (await targetCheckbox.isChecked()) {
         await targetCheckbox.uncheck();

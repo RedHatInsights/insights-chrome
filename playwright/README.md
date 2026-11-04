@@ -121,7 +121,8 @@ unless its account/data prerequisites are explicitly configured; skipped
 interactions are not passes.
 
 Configure LP-01/LP-02 with the account-specific baseline and a pre-existing
-favorite:
+favorite. LP-01 compares the complete rendered widget ID set with the
+configured baseline; include every widget expected for that account:
 
 ```bash
 LANDING_PAGE_EXPECTED_WIDGETS='landing-./RhelWidget-widget,landing-./OpenShiftWidget-widget' \
@@ -129,8 +130,8 @@ LANDING_PAGE_FAVORITE_SERVICE='Tasks' npm run playwright -- --workers=1 playwrig
 ```
 
 LP-03 mutates dashboard layout. Run only with a dedicated mutable account whose
-baseline is recorded; the test removes only the added widget, reloads to verify
-removal, and has failure cleanup:
+baseline is recorded; the test reloads to verify the added widget persisted,
+removes only that widget, reloads to verify removal, and has failure cleanup:
 
 ```bash
 LANDING_PAGE_MUTATION_ENABLED=true \
@@ -143,7 +144,8 @@ npm run playwright -- --workers=1 --grep 'LP-03'
 For ND-01, use an account with no notifications and set
 `NOTIFICATIONS_EMPTY_STATE_PERSONA` to `org-admin` or `non-org-admin`; run once
 per role-specific account. For ND-02, prepare at least two notifications from
-different bundles and configure `NOTIFICATIONS_FILTER_BUNDLE` plus
+different bundles, including at least one notification in the selected bundle
+and one outside it, and configure `NOTIFICATIONS_FILTER_BUNDLE` plus
 `NOTIFICATIONS_FILTER_TITLE_TO_BUNDLE` as a JSON object mapping each safe test
 title to its bundle label. ND-03/ND-04 require a dedicated mutable account and
 unique, non-sensitive test notification titles. Mutations are restored before

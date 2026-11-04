@@ -22,7 +22,7 @@ async function waitForDashboard(page: Page) {
   await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
   const layout = page.locator(WIDGET_LAYOUT);
   await expect(layout).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
-  await expect(layout.locator('[aria-busy="true"]')).toHaveCount(0);
+  await expect(layout.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: WIDGET_LOAD_TIMEOUT });
   return layout;
 }
 
@@ -45,7 +45,8 @@ async function favoriteIsVisibleInSwitcher(page: Page, serviceName: string) {
   const favoritesPanel = page.getByRole('tabpanel', { name: MY_FAVORITES_PANEL_NAME });
   await expect(favoritesPanel).toBeVisible();
   const serviceLink = favoritesPanel.getByRole('link', { name: exactName(serviceName) });
-  return serviceLink.isVisible();
+  await expect(serviceLink).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
+  return true;
 }
 
 async function removeWidget(page: Page, widget: Locator) {
@@ -67,10 +68,23 @@ test.describe('Landing page user flows', () => {
 
     for (const ouiaId of expectedWidgetIds) {
       const widget = layout.locator(`[data-ouia-component-id=${JSON.stringify(ouiaId)}]`);
-      await expect(widget).toBeVisible();
-      await expect(widget.getByRole('progressbar')).toHaveCount(0);
-      await expect(widget.getByText(/unable to load content/i)).toHaveCount(0);
+      await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
+      await expect(widget.getByRole('progressbar')).toHaveCount(0, { timeout: WIDGET_LOAD_TIMEOUT });
+      await expect(widget.getByText(/unable to load content/i)).toHaveCount(0, { timeout: WIDGET_LOAD_TIMEOUT });
     }
+
+    const renderedWidgets = layout.locator('[data-ouia-component-id$="-widget"]');
+    await expect
+      .poll(
+        async () =>
+          (
+            await renderedWidgets.evaluateAll((widgets) =>
+              widgets.map((widget) => widget.getAttribute('data-ouia-component-id')).filter((widgetId): widgetId is string => widgetId !== null)
+            )
+          ).sort(),
+        { timeout: WIDGET_LOAD_TIMEOUT }
+      )
+      .toEqual([...expectedWidgetIds].sort());
   });
 
   test('LP-02: shows the same known favorite in the landing widget and app switcher', async ({ page }) => {
@@ -80,22 +94,21 @@ test.describe('Landing page user flows', () => {
       await page.goto('/');
       await waitForDashboard(page);
       const favoritesWidget = widgetByOuiaId(page, FAVORITES_WIDGET_ID);
-      await expect(favoritesWidget).toBeVisible();
-      const homeFavorite = await favoritesWidget.getByRole('link', { name: exactName(favoriteService!) }).isVisible();
+      await expect(favoritesWidget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
+      const homeFavoriteLink = favoritesWidget.getByRole('link', { name: exactName(favoriteService!) });
+      await expect(homeFavoriteLink).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
       const switcherFavorite = await favoriteIsVisibleInSwitcher(page, favoriteService!);
-      return { homeFavorite, switcherFavorite };
+      return { homeFavorite: true, switcherFavorite };
     };
 
-    let result = await compareSurfaces();
-    if (result.homeFavorite !== result.switcherFavorite) {
-      result = await compareSurfaces();
-    }
-
+    const result = await compareSurfaces();
     expect(result.homeFavorite).toBe(true);
     expect(result.switcherFavorite).toBe(true);
   });
 
-  test('LP-03: adds, persists, removes, and restores a dashboard widget', async ({ page }) => {
+  test('LP-03: adds, persists, removes, and restores a dashboard widget', async ({ page }, testInfo) => {
+    const CLEANUP_TIMEOUT = 120000;
+    testInfo.setTimeout(180000);
     test.skip(
       !mutationEnabled || !mutableWidgetName || !mutableWidgetCatalogId || !mutableWidgetOuiaId,
       'Blocked — test data unavailable: enable a dedicated mutable account and configure the widget name and OUIA IDs.'
@@ -116,21 +129,24 @@ test.describe('Landing page user flows', () => {
 
     try {
       await catalogCard.dragTo(dropTarget);
-      await expect(widget).toBeVisible();
+      await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
 
-      await page.goto('/');
+      await page.reload();
       await waitForDashboard(page);
-      await expect(widget).toBeVisible();
+      await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
 
       await removeWidget(page, widget);
-      await page.goto('/');
+      await page.reload();
       await waitForDashboard(page);
       await expect(widget).toHaveCount(0);
     } finally {
       // Drag can partially succeed even if Playwright reports a timeout.
+      testInfo.setTimeout(testInfo.timeout + CLEANUP_TIMEOUT);
+      await page.reload();
+      await waitForDashboard(page);
       if ((await widget.count()) > 0) {
         await removeWidget(page, widget);
-        await page.goto('/');
+        await page.reload();
         await waitForDashboard(page);
         await expect(widget).toHaveCount(0);
       }
