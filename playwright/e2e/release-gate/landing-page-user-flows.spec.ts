@@ -1,4 +1,4 @@
-import { expect, test } from '../../setup/test-setup';
+import { expect, test as baseTest } from '../../setup/test-setup';
 import type { Locator, Page } from '@playwright/test';
 
 const DASHBOARD_HEADING = /Welcome to your Hybrid Cloud Console/i;
@@ -17,6 +17,31 @@ const mutableWidgetName = process.env.LANDING_PAGE_MUTABLE_WIDGET?.trim();
 const mutableWidgetCatalogId = process.env.LANDING_PAGE_MUTABLE_WIDGET_CATALOG_ID?.trim();
 const mutableWidgetOuiaId = process.env.LANDING_PAGE_MUTABLE_WIDGET_OUIA_ID?.trim();
 const mutationEnabled = process.env.LANDING_PAGE_MUTATION_ENABLED === 'true';
+const CLEANUP_TIMEOUT = 120000;
+
+const test = baseTest.extend<{ registerWidgetCleanup: (ouiaId: string) => void }>({
+  registerWidgetCleanup: [
+    async ({ page }, use) => {
+      let widgetOuiaId: string | undefined;
+      await use((ouiaId) => {
+        widgetOuiaId = ouiaId;
+      });
+
+      if (!widgetOuiaId) return;
+
+      const widget = widgetByOuiaId(page, widgetOuiaId);
+      await page.reload();
+      await waitForDashboard(page);
+      if ((await widget.count()) > 0) {
+        await removeWidget(page, widget);
+        await page.reload();
+        await waitForDashboard(page);
+        await expect(widget).toHaveCount(0);
+      }
+    },
+    { timeout: CLEANUP_TIMEOUT },
+  ],
+});
 
 async function waitForDashboard(page: Page) {
   await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
@@ -106,9 +131,7 @@ test.describe('Landing page user flows', () => {
     expect(result.switcherFavorite).toBe(true);
   });
 
-  test('LP-03: adds, persists, removes, and restores a dashboard widget', async ({ page }, testInfo) => {
-    const CLEANUP_TIMEOUT = 120000;
-    testInfo.setTimeout(180000);
+  test('LP-03: adds, persists, removes, and restores a dashboard widget', async ({ page, registerWidgetCleanup }) => {
     test.skip(
       !mutationEnabled || !mutableWidgetName || !mutableWidgetCatalogId || !mutableWidgetOuiaId,
       'Blocked — test data unavailable: enable a dedicated mutable account and configure the widget name and OUIA IDs.'
@@ -127,29 +150,17 @@ test.describe('Landing page user flows', () => {
     const dropTarget = layout.locator('[data-ouia-component-id$="-widget"]').first();
     await expect(dropTarget).toBeVisible();
 
-    try {
-      await catalogCard.dragTo(dropTarget);
-      await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
+    registerWidgetCleanup(mutableWidgetOuiaId!);
+    await catalogCard.dragTo(dropTarget);
+    await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
 
-      await page.reload();
-      await waitForDashboard(page);
-      await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
+    await page.reload();
+    await waitForDashboard(page);
+    await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
 
-      await removeWidget(page, widget);
-      await page.reload();
-      await waitForDashboard(page);
-      await expect(widget).toHaveCount(0);
-    } finally {
-      // Drag can partially succeed even if Playwright reports a timeout.
-      testInfo.setTimeout(testInfo.timeout + CLEANUP_TIMEOUT);
-      await page.reload();
-      await waitForDashboard(page);
-      if ((await widget.count()) > 0) {
-        await removeWidget(page, widget);
-        await page.reload();
-        await waitForDashboard(page);
-        await expect(widget).toHaveCount(0);
-      }
-    }
+    await removeWidget(page, widget);
+    await page.reload();
+    await waitForDashboard(page);
+    await expect(widget).toHaveCount(0);
   });
 });
