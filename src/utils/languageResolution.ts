@@ -73,17 +73,20 @@ function baseLanguage(tag: string): string {
  *    notification
  */
 export function getNotificationCase(profileLocale: string | undefined, navigatorLanguage: string): NotificationCase {
-  const profileBase = baseLanguage(profileLocale ?? 'en_US');
+  // An empty locale behaves as unset: it renders English (the Keycloak
+  // default story) and must not earn the fallback notice.
+  const locale = profileLocale || undefined;
+  const profileBase = baseLanguage(locale ?? 'en_US');
   const browserBase = baseLanguage(navigatorLanguage);
 
   // Fallback detection mirrors resolveLocale exactly: only exact catalog
   // ids render. English variants (en_US, en-GB, the Keycloak default) also
   // render English, but that is what the user asked for, so no notice.
-  const rendersRequestedLanguage = profileLocale !== undefined && (SUPPORTED_LANGUAGES as readonly string[]).includes(profileLocale);
+  const rendersRequestedLanguage = locale !== undefined && (SUPPORTED_LANGUAGES as readonly string[]).includes(locale);
   const isEnglishVariant = profileBase === 'en';
 
   if (!rendersRequestedLanguage && !isEnglishVariant) {
-    return { type: 'unsupported', profileLanguage: profileLocale ?? 'en_US' };
+    return { type: 'unsupported', profileLanguage: locale ?? 'en_US' };
   }
 
   if (profileBase === browserBase) {

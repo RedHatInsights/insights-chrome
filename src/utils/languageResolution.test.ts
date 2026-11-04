@@ -17,6 +17,11 @@ describe('resolveLocale', () => {
     expect(resolveLocale('fr-FR')).toBe('en');
   });
 
+  it('treats an empty profile locale as missing', () => {
+    expect(getNotificationCase('', 'fr')).toEqual({ type: 'discovery', browserLanguage: 'fr' });
+    expect(getNotificationCase('', '')).toEqual({ type: 'none' });
+  });
+
   it('returns English when the profile locale is missing', () => {
     expect(resolveLocale(undefined)).toBe('en');
     expect(resolveLocale('')).toBe('en');
@@ -58,7 +63,7 @@ describe('getNotificationCase', () => {
 
     it('fires exactly when resolveLocale silently renders English', () => {
       const silentlyEnglish = ['fr-FR', 'fr-CA', 'zh-Hans', 'zh', 'zh-TW', 'de', 'pt-BR', 'es-419'];
-      const englishVariants = ['en', 'en_US', 'en-GB', undefined];
+      const englishVariants = ['en', 'en_US', 'en-GB', '', undefined];
       const supportedNonEnglish = ['fr', 'ko', 'ja', 'zh-CN'];
       silentlyEnglish.forEach((locale) => {
         expect(resolveLocale(locale)).toBe('en');
