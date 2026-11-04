@@ -36,7 +36,8 @@ chrome: {
     createCase,
     visibilityFunctions,
     init,
-    updateDocumentTitle
+    updateDocumentTitle,
+    language
 },
 ```
 
@@ -136,6 +137,22 @@ Can be used for changing app title in different app pages with a ` | console.red
 ```js
 chrome.updateDocumentTitle('New title without suffix', true);
 ```
+
+## Console language
+
+### `chrome.language` — resolved console language
+
+A string with the console's current rendering language: one of the supported locale ids — `en`, `fr`, `ko`, `ja`, or `zh-CN`.
+
+- **Source of truth**: the SSO profile locale, used verbatim. If it is one of the supported ids, that language renders; otherwise the console falls back to English and shows the "Language not available" notification. Applications should read this value for their own `IntlProvider` setup instead of re-implementing resolution:
+
+```js
+const locale = chrome.language; // e.g. 'fr'
+```
+
+- **Feature flag**: gated behind `platform.chrome.language-detection`. While the flag is off (the default until it is created in Unleash), `chrome.language` is always `'en'`.
+- **Updates**: the value follows the SSO profile. When the user changes their language in the [account console](https://redhat.com) and returns to the console, a silent re-auth picks up the fresh token claims before the page renders, so `chrome.language` (and the rendered language) update immediately.
+- **Migration note**: `chrome.language` is a new property on the public Chrome API surface exposed through `create-chrome.ts`. It is additive — existing consumers are unaffected and the flag defaults it to `'en'` — but per the breaking-change protocol this PR carries the `breaking-change` label and this documentation.
 
 ## Global events
 

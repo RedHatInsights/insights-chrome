@@ -43,6 +43,37 @@ describe('getNotificationCase', () => {
   });
 
   describe('case 1: profile language not supported (fallback notice)', () => {
+    it('fires for regional variants of supported languages, which only render English', () => {
+      // resolveLocale('fr-FR') renders 'en' — the user must be told why.
+      expect(getNotificationCase('fr-FR', 'fr-FR')).toEqual({ type: 'unsupported', profileLanguage: 'fr-FR' });
+      // zh-Hans is not the catalog id (zh-CN is), so it also renders English.
+      expect(getNotificationCase('zh-Hans', 'zh-CN')).toEqual({ type: 'unsupported', profileLanguage: 'zh-Hans' });
+      expect(getNotificationCase('zh', 'zh')).toEqual({ type: 'unsupported', profileLanguage: 'zh' });
+    });
+
+    it('does not fire for English variants, which render the requested language', () => {
+      expect(getNotificationCase('en-GB', 'en-US')).toEqual({ type: 'none' });
+      expect(getNotificationCase('en_US', 'fr')).toEqual({ type: 'discovery', browserLanguage: 'fr' });
+    });
+
+    it('fires exactly when resolveLocale silently renders English', () => {
+      const silentlyEnglish = ['fr-FR', 'fr-CA', 'zh-Hans', 'zh', 'zh-TW', 'de', 'pt-BR', 'es-419'];
+      const englishVariants = ['en', 'en_US', 'en-GB', undefined];
+      const supportedNonEnglish = ['fr', 'ko', 'ja', 'zh-CN'];
+      silentlyEnglish.forEach((locale) => {
+        expect(resolveLocale(locale)).toBe('en');
+        expect(getNotificationCase(locale, 'en')).toEqual({ type: 'unsupported', profileLanguage: locale ?? 'en_US' });
+      });
+      englishVariants.forEach((locale) => {
+        expect(getNotificationCase(locale, 'en')).toEqual({ type: 'none' });
+      });
+      // Their requested language renders, so never the fallback notice; an
+      // English browser still earns them the discovery nudge.
+      supportedNonEnglish.forEach((locale) => {
+        expect(getNotificationCase(locale, 'en')).toEqual({ type: 'discovery', browserLanguage: 'en' });
+      });
+    });
+
     it('returns unsupported when the profile language has no catalog, regardless of browser', () => {
       expect(getNotificationCase('de', 'de-DE')).toEqual({ type: 'unsupported', profileLanguage: 'de' });
       expect(getNotificationCase('pt-BR', 'fr')).toEqual({ type: 'unsupported', profileLanguage: 'pt-BR' });

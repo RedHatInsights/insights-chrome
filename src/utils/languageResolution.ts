@@ -61,9 +61,11 @@ function baseLanguage(tag: string): string {
  * so the profile is never truly absent. The "no locale set" scenario
  * collapses into the English-default cases below.
  *
- * 1. Profile language not supported → fallback notice ("we switched it back
- *    to English"). Takes precedence over everything: the user picked a
- *    language we cannot render, and the console silently fell back.
+ * 1. Profile locale is not an exact catalog id (and not an English variant)
+ *    → fallback notice ("we switched it back to English"). This uses the
+ *    same predicate as resolveLocale: only exact catalog ids render, so
+ *    e.g. an "fr-FR" or "zh-Hans" profile silently renders English and must
+ *    be told why. Takes precedence over everything.
  * 2. Profile (or default "en_US") and browser agree → no notification
  * 3. Profile and browser disagree, browser language supported → discovery
  *    nudge ("<language> is supported… would you like to switch?")
@@ -74,7 +76,13 @@ export function getNotificationCase(profileLocale: string | undefined, navigator
   const profileBase = baseLanguage(profileLocale ?? 'en_US');
   const browserBase = baseLanguage(navigatorLanguage);
 
-  if (!isSupportedBase(profileBase)) {
+  // Fallback detection mirrors resolveLocale exactly: only exact catalog
+  // ids render. English variants (en_US, en-GB, the Keycloak default) also
+  // render English, but that is what the user asked for, so no notice.
+  const rendersRequestedLanguage = profileLocale !== undefined && (SUPPORTED_LANGUAGES as readonly string[]).includes(profileLocale);
+  const isEnglishVariant = profileBase === 'en';
+
+  if (!rendersRequestedLanguage && !isEnglishVariant) {
     return { type: 'unsupported', profileLanguage: profileLocale ?? 'en_US' };
   }
 
