@@ -1,8 +1,5 @@
 import React, { memo } from 'react';
-import lightThemeLogo from '../../../static/images/logo.svg';
-import darkThemeLogo from '../../../static/images/logo-dark.svg';
-import lightwellLightThemeLogo from '../../../static/images/lightwell-logo.svg';
-import lightwellDarkThemeLogo from '../../../static/images/lightwell-logo-dark.svg';
+import { lightwellLogoDark, lightwellLogoLight, rhLogoDark, rhLogoLight } from './logoAssets';
 import { Brand } from '@patternfly/react-core/dist/dynamic/components/Brand';
 import { layoutLightwellHeaderAtom } from '../../state/atoms/releaseAtom';
 import { useAtomValue } from 'jotai';
@@ -12,8 +9,8 @@ const Logo = () => {
   const isLightwellHeader = useAtomValue(layoutLightwellHeaderAtom);
   const isDark = useDarkModeIsDark();
 
-  const lightwellLogo = isDark ? lightwellDarkThemeLogo : lightwellLightThemeLogo;
-  const rhLogo = isDark ? darkThemeLogo : lightThemeLogo;
+  const lightwellLogo = isDark ? lightwellLogoDark : lightwellLogoLight;
+  const rhLogo = isDark ? rhLogoDark : rhLogoLight;
 
   const src = isLightwellHeader ? lightwellLogo : rhLogo;
   const alt = isLightwellHeader ? 'Lightwell' : 'Red Hat Logo';

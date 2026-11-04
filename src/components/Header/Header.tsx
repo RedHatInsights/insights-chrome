@@ -92,7 +92,7 @@ const MemoizedHeader = memo(
             {isLightwellHeader && !(!md && searchOpen) && <AllServicesDropdown />}
             <MastheadLogo
               data-codemods
-              className="chr-c-masthead__logo"
+              className={isLightwellHeader ? 'chr-c-masthead__logo' : 'chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm'}
               component={(props: LinkWrapperProps) => (
                 <ChromeLink {...props} {...(isLightwellHeader ? { href: '/lightwell' } : { appId: 'landing', href: '/' })} />
               )}
@@ -102,7 +102,7 @@ const MemoizedHeader = memo(
             {!isLightwellHeader && !(!md && searchOpen) && <AllServicesDropdown />}
           </MastheadBrand>
         </MastheadMain>
-        <MastheadContent>
+        <MastheadContent className={isLightwellHeader ? undefined : 'pf-v6-u-mx-0'}>
           {userReady && isActivationPath && (
             <Activation
               user={{

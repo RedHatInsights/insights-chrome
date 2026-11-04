@@ -118,8 +118,8 @@ describe('Header Lightwell mode', () => {
   });
 
   it('should render Lightwell logo in masthead when in Lightwell mode', () => {
-    const { container } = renderHeader(true);
-    const lightwellLogo = container.querySelector('img[alt="Lightwell"]');
+    renderHeader(true);
+    const lightwellLogo = screen.getByRole('img', { name: 'Lightwell' });
     expect(lightwellLogo).toBeTruthy();
   });
 

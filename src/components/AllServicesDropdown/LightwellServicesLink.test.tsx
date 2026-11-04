@@ -8,6 +8,17 @@ import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import { _resetDarkModeStore, getDarkModeStore } from '../../state/stores/darkModeStore';
 import LightwellServicesLink from './LightwellServicesLink';
 
+// Mock the logo asset module (rather than the raw `.svg` imports it wraps)
+// with distinct values per theme so tests can assert the correct asset is
+// selected. Every `.svg` import is routed to the same stub by the
+// `moduleNameMapper` regex in jest.config.js, so mocking the raw paths
+// directly would collide; `../Header/logoAssets` is a plain module and mocks
+// cleanly.
+jest.mock('../Header/logoAssets', () => ({
+  lightwellLogoLight: 'lightwell-logo-light.svg',
+  lightwellLogoDark: 'lightwell-logo-dark.svg',
+}));
+
 // Mock the bridge to delegate to the real globalThis-anchored store.
 jest.mock('../../chrome/darkModeStoreBridge', () => {
   const { getDarkModeStore: getStore } = jest.requireActual('../../state/stores/darkModeStore');
@@ -66,28 +77,26 @@ describe('LightwellServicesLink', () => {
   });
 
   it('should render the Lightwell logo at 22px height', () => {
-    const { container } = renderWithProviders();
-    const icon = container.querySelector('img');
-    expect(icon).toBeInTheDocument();
+    renderWithProviders();
+    const icon = screen.getByRole('img', { name: 'Lightwell' });
     expect(icon).toHaveAttribute('height', '22');
   });
 
   it('should keep rendering the Lightwell logo when the dark mode store updates', () => {
-    // SVG imports resolve to identical 'test-file-stub' via fileMock.js — cannot distinguish light vs dark in Jest
-    const { container } = renderWithProviders();
-    expect(container.querySelector('img')).toBeInTheDocument();
+    renderWithProviders();
+    expect(screen.getByRole('img', { name: 'Lightwell' })).toHaveAttribute('src', 'lightwell-logo-light.svg');
 
     act(() => {
       getDarkModeStore().updateState('SET_DARK');
     });
 
-    expect(container.querySelector('img')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Lightwell' })).toHaveAttribute('src', 'lightwell-logo-dark.svg');
 
     act(() => {
       getDarkModeStore().updateState('SET_LIGHT');
     });
 
-    expect(container.querySelector('img')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Lightwell' })).toHaveAttribute('src', 'lightwell-logo-light.svg');
   });
 
   it('should make the entire content clickable as a single link', () => {

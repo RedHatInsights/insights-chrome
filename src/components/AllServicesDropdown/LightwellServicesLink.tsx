@@ -1,8 +1,7 @@
 import React from 'react';
 import ChromeLink from '../ChromeLink';
 import { useDarkModeIsDark } from '../../chrome/darkModeStoreBridge';
-import lightwellLogoLight from '../../../static/images/lightwell-logo.svg';
-import lightwellLogoDark from '../../../static/images/lightwell-logo-dark.svg';
+import { lightwellLogoDark, lightwellLogoLight } from '../Header/logoAssets';
 
 const LightwellServicesLink = () => {
   const isDark = useDarkModeIsDark();
