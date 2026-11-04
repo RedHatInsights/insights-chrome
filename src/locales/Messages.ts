@@ -91,6 +91,42 @@ export default defineMessages({
     description: 'for known outages.',
     defaultMessage: 'for known outages.',
   },
+  languageNotAvailableTitle: {
+    id: 'languageNotAvailableTitle',
+    description: 'Language notification title shown when the selected SSO profile language has no translation catalog.',
+    defaultMessage: 'Language not available',
+  },
+  languageNotAvailableBody: {
+    id: 'languageNotAvailableBody',
+    description: 'Language notification body explaining the console fell back to English because the selected language is not supported.',
+    defaultMessage: 'The language you selected is not available in Hybrid Cloud Console, we switched it back to English.',
+  },
+  languageSelectAnother: {
+    id: 'languageSelectAnother',
+    description: 'Link to the SSO account console shown in the unsupported-language notification.',
+    defaultMessage: 'Select another language',
+  },
+  languagePreferredAvailableTitle: {
+    id: 'languagePreferredAvailableTitle',
+    description: 'Language notification title shown when the browser language has a translation catalog the user is not using.',
+    defaultMessage: 'Preferred language available',
+  },
+  languagePreferredAvailableBody: {
+    id: 'languagePreferredAvailableBody',
+    description:
+      'Language notification body suggesting a switch to the browser language, which Hybrid Cloud Console now supports. {language} is the browser language display name.',
+    defaultMessage: '{language} language is supported by Hybrid Cloud Console now. Would you like to switch to it?',
+  },
+  languageSwitch: {
+    id: 'languageSwitch',
+    description: 'Link to the SSO account console shown in the preferred-language notification.',
+    defaultMessage: 'Switch language',
+  },
+  languageDontAskAgain: {
+    id: 'languageDontAskAgain',
+    description: 'Action in the language notifications that permanently hides the notification; the close button only hides it for the current session.',
+    defaultMessage: "Don't ask again",
+  },
   tryAgain: {
     id: 'tryAgain',
     description: 'Try again',
@@ -378,7 +414,11 @@ export default defineMessages({
     description: 'Internal user',
     defaultMessage: 'Internal user',
   },
-  myProfile: { id: 'myProfile', description: 'My profile', defaultMessage: 'My profile' },
+  accountDetails: {
+    id: 'accountDetails',
+    description: 'Link to the SSO account details page in the user menu; opens the account console with the console return trip',
+    defaultMessage: 'Account details',
+  },
   myAccess: { id: 'myAccess', description: 'My Access', defaultMessage: 'My Access' },
   myUserAccess: { id: 'myUserAccess', description: 'My User Access', defaultMessage: 'My User Access' },
   userPreferences: {

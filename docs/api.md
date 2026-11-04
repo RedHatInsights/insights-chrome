@@ -36,7 +36,8 @@ chrome: {
     createCase,
     visibilityFunctions,
     init,
-    updateDocumentTitle
+    updateDocumentTitle,
+    language
 },
 ```
 
@@ -136,6 +137,22 @@ Can be used for changing app title in different app pages with a ` | console.red
 ```js
 chrome.updateDocumentTitle('New title without suffix', true);
 ```
+
+## Console language
+
+### `chrome.language` — resolved console language
+
+A string with the console's resolved language: one of the supported locale ids — `en`, `fr`, `ko`, `ja`, or `zh-CN`. The value drives the console's own `IntlProvider` and is exposed for applications to consume in theirs:
+
+```js
+const locale = chrome.language; // e.g. 'fr'
+```
+
+- **Source of truth**: the SSO profile locale, used verbatim. If it is one of the supported ids, that locale resolves; otherwise the console falls back to English. Unsupported locales show the "Language not available" notification, except English variants (`en_US`, `en-GB`, the Keycloak default), which render English silently. An unset or empty profile locale behaves as the English default.
+- **Catalogs**: translated catalogs for the non-English locales arrive through the translation pipeline. Until a locale's catalog ships, its messages fall back to the English `defaultMessage`s while date, number and plural formatting already follow the resolved locale.
+- **Feature flag**: gated behind `platform.chrome.language-detection`. While the flag is off (the default until it is created in Unleash), `chrome.language` is always `'en'`.
+- **Updates**: the value follows the SSO profile. When the user changes their language in the account console and returns, a silent re-auth refreshes the token claims before the app renders. The wait is bounded by a five-second fallback: if re-auth is still pending, the page renders with the previously stored locale and `chrome.language` updates once the re-auth completes; a failed re-auth leaves the value unchanged.
+- **Migration note**: `chrome.language` is a new property on the public Chrome API surface exposed through `create-chrome.ts`. It is additive — existing consumers are unaffected and the flag defaults it to `'en'` — but per the breaking-change protocol this PR carries the `breaking` label and this documentation.
 
 ## Global events
 
