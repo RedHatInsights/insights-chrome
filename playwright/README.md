@@ -111,6 +111,58 @@ Each test performs a full login using the `login()` helper function from `playwr
 
 The login helper uses environment variables `E2E_USER` and `E2E_PASSWORD` to perform authentication at the start of each test.
 
+### Landing page and notification user-flow coverage
+
+`release-gate/landing-page-user-flows.spec.ts` and
+`release-gate/notifications-drawer-user-flows.spec.ts` cover LP-01–LP-03 and
+ND-01–ND-04 from the recommended Stage test plan. These flows use real Stage
+data. A test reports **Blocked — test data unavailable** (Playwright skipped)
+unless its account/data prerequisites are explicitly configured; skipped
+interactions are not passes.
+
+Configure LP-01/LP-02 with the account-specific baseline and a pre-existing
+favorite:
+
+```bash
+LANDING_PAGE_EXPECTED_WIDGETS='landing-./RhelWidget-widget,landing-./OpenShiftWidget-widget' \
+LANDING_PAGE_FAVORITE_SERVICE='Tasks' npm run playwright -- --workers=1 playwright/e2e/release-gate/landing-page-user-flows.spec.ts
+```
+
+LP-03 mutates dashboard layout. Run only with a dedicated mutable account whose
+baseline is recorded; the test removes only the added widget, reloads to verify
+removal, and has failure cleanup:
+
+```bash
+LANDING_PAGE_MUTATION_ENABLED=true \
+LANDING_PAGE_MUTABLE_WIDGET='Integrations' \
+LANDING_PAGE_MUTABLE_WIDGET_CATALOG_ID='add-widget-card-Integrations' \
+LANDING_PAGE_MUTABLE_WIDGET_OUIA_ID='landing-./Integrations-widget' \
+npm run playwright -- --workers=1 --grep 'LP-03'
+```
+
+For ND-01, use an account with no notifications and set
+`NOTIFICATIONS_EMPTY_STATE_PERSONA` to `org-admin` or `non-org-admin`; run once
+per role-specific account. For ND-02, prepare at least two notifications from
+different bundles and configure `NOTIFICATIONS_FILTER_BUNDLE` plus
+`NOTIFICATIONS_FILTER_TITLE_TO_BUNDLE` as a JSON object mapping each safe test
+title to its bundle label. ND-03/ND-04 require a dedicated mutable account and
+unique, non-sensitive test notification titles. Mutations are restored before
+the test ends:
+
+```bash
+NOTIFICATIONS_FILTER_BUNDLE='Inventory' \
+NOTIFICATIONS_FILTER_TITLE_TO_BUNDLE='{"e2e-title-a":"Inventory","e2e-title-b":"Advisor"}' \
+NOTIFICATIONS_MUTABLE_TEST_ACCOUNT=true \
+NOTIFICATIONS_MUTABLE_TARGET_TITLE='e2e-title-a' \
+NOTIFICATIONS_MUTABLE_CONTROL_TITLE='e2e-title-b' \
+npm run playwright -- --workers=1 playwright/e2e/release-gate/notifications-drawer-user-flows.spec.ts
+```
+
+Use the documented local dev proxy (`KONFLUX_RUN=true DISABLE_CLIENT_OVERLAY=true
+npm run dev:beta`) and `BASE` when running against a local shell. Never run the
+mutating cases against a shared account. Do not include real notification
+content, account identifiers, or credentials in test output or reports.
+
 ## E2E vs Integration
 
 **E2E tests** (`playwright/e2e/`):
