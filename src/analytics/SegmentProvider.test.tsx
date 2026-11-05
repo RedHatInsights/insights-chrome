@@ -532,8 +532,13 @@ describe('SegmentProvider', () => {
     const view = render(<Consumer accountId="acct-456" />);
 
     await waitFor(() => expect(mockPage).toHaveBeenCalled());
+    expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.any(Object), {
+      context: { groupId: 'org-123' },
+      integrations: { Intercom: { user_hash: 'mock-hash' } },
+    });
     mockIdentify.mockClear();
     mockGroup.mockClear();
+    mockIntercomGet.mockResolvedValueOnce({ data: { data: {} } });
 
     view.rerender(<Consumer accountId="acct-next" />);
 
@@ -544,7 +549,6 @@ describe('SegmentProvider', () => {
     expect(mockIdentify.mock.calls[0][1]).toHaveProperty('cloud_user_id', 'acct-next');
     expect(mockIdentify.mock.calls[mockIdentify.mock.calls.length - 1][2]).toEqual({
       context: { groupId: 'org-123' },
-      integrations: { Intercom: { user_hash: 'mock-hash' } },
     });
     expect(mockLoad).not.toHaveBeenCalled();
   });
