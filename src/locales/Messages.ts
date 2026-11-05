@@ -517,11 +517,13 @@ export default defineMessages({
   },
   permissionErrorDescription: {
     id: 'permissionErrorDescription',
+    description: 'Guidance on the permission-denied page. Keep the MuaLink rich-text tag around the link to the My Access page.',
     defaultMessage:
       'Contact your organization administrator(s) for more information or visit <MuaLink>My Access</MuaLink> to learn more about your permissions.',
   },
   permissionErrorDetail: {
     id: 'permissionErrorDetail',
+    description: 'Additional detail on the permission-denied page. The message placeholder contains the error detail returned by the service.',
     defaultMessage: 'Detail: {message}.',
   },
   filterByTags: {
