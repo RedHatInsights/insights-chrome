@@ -20,6 +20,8 @@ coverage/
 *.log
 
 # Generated files
+locales/translation-template.json
+src/locales/en.json
 src/locales/translations.json
 src/locales/data.json
 

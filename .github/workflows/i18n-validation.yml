@@ -1,0 +1,36 @@
+name: Validate i18n catalogs
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/i18n/**'
+      - '.github/workflows/i18n-validation.yml'
+      - 'locales/**'
+      - 'src/locales/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches: [master]
+    paths:
+      - '.github/i18n/**'
+      - '.github/workflows/i18n-validation.yml'
+      - 'locales/**'
+      - 'src/locales/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validate catalogs
+    uses: RedHatInsights/i18n-tooling/.github/workflows/i18n-validate.yml@7228d32f08872f97c8de8d255b5690e77f484f1f
+    with:
+      node-version: '24'
+      package-manager: npm
+      validation-config: .github/i18n/catalog-validation.json
+    permissions:
+      contents: read

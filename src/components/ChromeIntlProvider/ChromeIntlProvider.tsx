@@ -5,7 +5,7 @@ import { getEnv } from '../../utils/common';
 import { languageAtom } from '../../state/atoms/languageAtom';
 import { SupportedLanguage } from '../../utils/languageResolution';
 import { messageCatalogs } from '../../locales/messageCatalogs';
-import englishCatalog from '../../locales/data.json';
+import englishCatalog from '../../locales/en.json';
 
 /**
  * Wires the resolved console language into the root IntlProvider.
@@ -24,12 +24,12 @@ import englishCatalog from '../../locales/data.json';
 export const ChromeIntlProvider = ({ children }: React.PropsWithChildren) => {
   const language = useAtomValue(languageAtom);
   const [loadedLocale, setLoadedLocale] = useState<SupportedLanguage>('en');
-  const [catalog, setCatalog] = useState<Record<string, string> | null>(englishCatalog.en);
+  const [catalog, setCatalog] = useState<Record<string, string> | null>(englishCatalog);
 
   useEffect(() => {
     if (language === 'en') {
       setLoadedLocale('en');
-      setCatalog(englishCatalog.en);
+      setCatalog(englishCatalog);
       return;
     }
 
