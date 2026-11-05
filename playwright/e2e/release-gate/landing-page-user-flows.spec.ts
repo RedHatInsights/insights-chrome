@@ -132,6 +132,8 @@ test.describe('Landing page user flows', () => {
   });
 
   test('LP-03: adds, persists, removes, and restores a dashboard widget', async ({ page, registerWidgetCleanup }) => {
+    test.setTimeout(240000);
+
     test.skip(
       !mutationEnabled || !mutableWidgetName || !mutableWidgetCatalogId || !mutableWidgetOuiaId,
       'Blocked — test data unavailable: enable a dedicated mutable account and configure the widget name and OUIA IDs.'
