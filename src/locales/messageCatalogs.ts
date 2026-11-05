@@ -1,4 +1,4 @@
-import { SupportedLanguage } from '../utils/languageResolution';
+import { SUPPORTED_LANGUAGES, SupportedLanguage } from '../utils/languageResolution';
 
 type CatalogModule = { default: Record<string, string> };
 
@@ -7,15 +7,11 @@ type CatalogModule = { default: Record<string, string> };
 const importCatalog = (locale: string): Promise<CatalogModule> =>
   import(
     /* webpackChunkName: "locale-[request]" */
-    /* webpackInclude: /\.json$/ */
     /* webpackExclude: /\/en\.json$/ */
     `./${locale}.json`
   ) as Promise<CatalogModule>;
 
-// Preserve the SSO locale ids while matching Phrase's repository filenames.
-export const messageCatalogs: Partial<Record<SupportedLanguage, () => Promise<CatalogModule>>> = {
-  fr: () => importCatalog('fr'),
-  ja: () => importCatalog('ja'),
-  ko: () => importCatalog('ko'),
-  'zh-CN': () => importCatalog('zh-cn'),
-};
+// Preserve the SSO locale ids while matching Phrase's lowercase repository filenames.
+export const messageCatalogs: Partial<Record<SupportedLanguage, () => Promise<CatalogModule>>> = Object.fromEntries(
+  SUPPORTED_LANGUAGES.filter((locale) => locale !== 'en').map((locale) => [locale, () => importCatalog(locale.toLowerCase())])
+);
