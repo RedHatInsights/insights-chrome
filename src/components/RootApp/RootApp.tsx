@@ -2,7 +2,6 @@ import React, { Suspense, memo, useContext, useEffect, useMemo } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useIntl } from 'react-intl';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
@@ -33,7 +32,6 @@ const VisibleBundlesInitializer = () => {
 };
 
 const RootApp = memo(({ accountId }: { accountId?: string }) => {
-  const { locale } = useIntl();
   const quickstartLinkStore = useQuickstartLinkStore();
   const config = useAtomValue(scalprumConfigAtom);
   const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates(accountId);
@@ -94,7 +92,7 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     setActiveQuickStartID: setActiveQuickStartID as QuickStartContainerProps['setActiveQuickStartID'],
     setAllQuickStartStates: setAllQuickStartStates as unknown as QuickStartContainerProps['setAllQuickStartStates'],
     showCardFooters: false,
-    language: locale,
+    language: 'en',
     alwaysShowTaskReview: true,
     markdown: {
       extensions: [createQuickstartLinkMarkupExtension(quickstartLinkStore)],

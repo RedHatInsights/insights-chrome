@@ -2,6 +2,14 @@ import { messageCatalogs } from './messageCatalogs';
 
 jest.mock('./fr.json', () => ({ __esModule: true, default: { login: 'Connexion' } }), { virtual: true });
 jest.mock('./zh-cn.json', () => ({ __esModule: true, default: { login: '登录' } }), { virtual: true });
+// Simulate a missing catalog even after Phrase delivers the real file.
+jest.mock(
+  './ko.json',
+  () => {
+    throw new Error("Cannot find module './ko.json'");
+  },
+  { virtual: true }
+);
 
 describe('messageCatalogs', () => {
   it('loads a delivered locale without adding a static catalog import', async () => {
