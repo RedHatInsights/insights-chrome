@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "tmsConfig": ".github/i18n/phrase-tms.json",
   "sourceLint": {
     "files": ["src/locales/Messages.ts"],
     "catalog": "locales/translation-template.json"

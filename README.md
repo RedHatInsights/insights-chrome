@@ -364,6 +364,12 @@ document.documentElement.classList.remove('pf-v6-theme-glass');
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
 
+## Internationalization
+
+English FormatJS messages are declared in `src/locales/Messages.ts`. Run `npm run translations` to regenerate the extraction template and compiled `src/locales/en.json` catalog. `ChromeIntlProvider` loads catalogs asynchronously for the resolved SSO profile locale, gated by `platform.chrome.language-detection`, with English fallback. Browser language remains notification-only and never selects the rendering locale. Shared validation is configured in `.github/i18n/catalog-validation.json` and runs in CI through the pinned `i18n-tooling` workflow. Translation delivery is configured for the central [i18n-hub](https://github.com/RedHatInsights/i18n-hub), using `.github/i18n/phrase-tms.json` and the shared `hcc-ui` Phrase project. Delivery requires this repository to be registered in the hub and the `hcc-i18n-tms-sync` GitHub App to be installed. The hub submits committed source catalogs from `master` and reconciles completed translations into per-locale PRs; this repository needs no Phrase secrets or submit/reconcile workflows. The Chinese catalog uses `zh-cn.json` to match the runtime loader's lowercase locale normalization.
+
+For local catalog validation, `npm run translations:validate` needs the `i18n-pipeline` command from a checkout of [i18n-tooling](https://github.com/RedHatInsights/i18n-tooling) on `PATH`. It is not published to npm; follow [its consumer onboarding guide](https://github.com/RedHatInsights/i18n-tooling/blob/main/docs/consumer-onboarding.md#4-wire-the-package-scripts) to build it.
+
 ## Staleness
 
 A bot will post a comment after 60 days of inactivity giving the opener 5 days to update their issue/PR before it's closed.
