@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "key": "2b266edc9b838e6bb89039f3aa67b521283ed88190589c8fb3ad60daa67c6b86",
-  "phase": "creating",
+  "phase": "importing",
   "repository": "RedHatInsights/insights-chrome",
   "baseRef": "master",
   "sourceCommit": "b0e858ed184bfa1b1eb27a71e4d3cacd08494911",
@@ -44,7 +44,100 @@
     }
   },
   "createdAt": "2026-11-05T14:16:07.574Z",
-  "jobs": [],
+  "jobs": [
+    {
+      "uid": "GzLeFOYzNrpHaNTMs4dXV3",
+      "status": "NEW",
+      "providers": [],
+      "targetLang": "zh_cn",
+      "workflowLevel": 1,
+      "workflowStep": {
+        "name": "Translation",
+        "id": "225677",
+        "uid": "Vm1j1nqsDSxM343cSZb17g",
+        "order": 10,
+        "lqaEnabled": true
+      },
+      "filename": "insights-chrome.ui.en.json",
+      "dateDue": null,
+      "dateCreated": "2026-11-05T14:16:13+0000",
+      "updateSourceDate": null,
+      "imported": false,
+      "jobAssignedEmailTemplate": null,
+      "notificationIntervalInMinutes": 0,
+      "continuous": false,
+      "sourceFileUid": "ks0qPbCPEmP1D4ZuWeaCQe"
+    },
+    {
+      "uid": "g1fOXCYHKtOV6G2mZPpsZ7",
+      "status": "NEW",
+      "providers": [],
+      "targetLang": "fr",
+      "workflowLevel": 1,
+      "workflowStep": {
+        "name": "Translation",
+        "id": "225677",
+        "uid": "Vm1j1nqsDSxM343cSZb17g",
+        "order": 10,
+        "lqaEnabled": true
+      },
+      "filename": "insights-chrome.ui.en.json",
+      "dateDue": null,
+      "dateCreated": "2026-11-05T14:16:13+0000",
+      "updateSourceDate": null,
+      "imported": false,
+      "jobAssignedEmailTemplate": null,
+      "notificationIntervalInMinutes": 0,
+      "continuous": false,
+      "sourceFileUid": "ks0qPbCPEmP1D4ZuWeaCQe"
+    },
+    {
+      "uid": "yS33ZsTddKpI6BlD2Uv2z3",
+      "status": "NEW",
+      "providers": [],
+      "targetLang": "ko",
+      "workflowLevel": 1,
+      "workflowStep": {
+        "name": "Translation",
+        "id": "225677",
+        "uid": "Vm1j1nqsDSxM343cSZb17g",
+        "order": 10,
+        "lqaEnabled": true
+      },
+      "filename": "insights-chrome.ui.en.json",
+      "dateDue": null,
+      "dateCreated": "2026-11-05T14:16:13+0000",
+      "updateSourceDate": null,
+      "imported": false,
+      "jobAssignedEmailTemplate": null,
+      "notificationIntervalInMinutes": 0,
+      "continuous": false,
+      "sourceFileUid": "ks0qPbCPEmP1D4ZuWeaCQe"
+    },
+    {
+      "uid": "dhrN5CTposoA0WXIdjrV96",
+      "status": "NEW",
+      "providers": [],
+      "targetLang": "ja",
+      "workflowLevel": 1,
+      "workflowStep": {
+        "name": "Translation",
+        "id": "225677",
+        "uid": "Vm1j1nqsDSxM343cSZb17g",
+        "order": 10,
+        "lqaEnabled": true
+      },
+      "filename": "insights-chrome.ui.en.json",
+      "dateDue": null,
+      "dateCreated": "2026-11-05T14:16:13+0000",
+      "updateSourceDate": null,
+      "imported": false,
+      "jobAssignedEmailTemplate": null,
+      "notificationIntervalInMinutes": 0,
+      "continuous": false,
+      "sourceFileUid": "ks0qPbCPEmP1D4ZuWeaCQe"
+    }
+  ],
   "warningCount": 0,
   "locales": {
     "fr": {
@@ -59,5 +152,6 @@
     "zh_cn": {
       "phase": "pending"
     }
-  }
+  },
+  "importAsyncRequestId": "1907169987"
 }
