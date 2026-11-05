@@ -142,13 +142,13 @@ test.describe('Notifications drawer user flows', () => {
     const initiallySelectedCount = await notifications.selectedNotificationCount();
     test.skip(initiallySelectedCount !== 0, 'Blocked — test data unavailable: start with no notifications selected.');
 
-    await notifications.selectNotification(targetNotificationTitle!);
-    await notifications.expectNotificationSelected(controlNotificationTitle!, false);
-    expect(await notifications.selectedNotificationCount()).toBe(1);
-
     const changedState = initialTargetState === 'read' ? 'unread' : 'read';
     const expectedBadgeDelta = changedState === 'unread' ? 1 : -1;
     try {
+      await notifications.selectNotification(targetNotificationTitle!);
+      await notifications.expectNotificationSelected(controlNotificationTitle!, false);
+      expect(await notifications.selectedNotificationCount()).toBe(1);
+
       await notifications.chooseBulkReadState(changedState);
       await notifications.expectNotificationReadState(targetRow, changedState);
       await notifications.expectNotificationReadState(controlRow, initialControlState);
@@ -161,10 +161,13 @@ test.describe('Notifications drawer user flows', () => {
       await expect.poll(() => notifications.unreadBadgeCount(), { timeout: NOTIFICATION_LOAD_TIMEOUT }).toBe(initialBadgeCount);
     } finally {
       await notifications.closeMenus();
-      if ((await notifications.notificationReadState(targetRow)) !== initialTargetState) {
-        await notifications.setNotificationReadState(targetRow, initialTargetState);
+      try {
+        if ((await notifications.notificationReadState(targetRow)) !== initialTargetState) {
+          await notifications.setNotificationReadState(targetRow, initialTargetState);
+        }
+      } finally {
+        await notifications.unselectNotification(targetNotificationTitle!);
       }
-      await notifications.unselectNotification(targetNotificationTitle!);
     }
   });
 });
