@@ -206,11 +206,28 @@ describe('SegmentProvider', () => {
     );
 
     await waitFor(() => {
-      expect(mockIdentify).toHaveBeenCalledWith(
-        'acct-456',
-        expect.objectContaining({ colorSchemeSetting: 'light', contrastModeSetting: 'default' }),
-        expect.any(Object)
-      );
+      expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.objectContaining({ colorSchemeSetting: 'light', contrastModeSetting: 'default' }), {
+        context: { groupId: 'org-123' },
+        integrations: { Intercom: { user_hash: 'mock-hash' } },
+      });
+    });
+  });
+
+  it('passes the Intercom hash as an Identify integration override on initial identification', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => expect(mockIdentify).toHaveBeenCalled());
+
+    expect(mockIdentify.mock.calls[0][1]).toHaveProperty('cloud_user_id', 'acct-456');
+    expect(mockIdentify.mock.calls[0][2]).toEqual({
+      context: { groupId: 'org-123' },
+      integrations: { Intercom: { user_hash: 'mock-hash' } },
     });
   });
 
@@ -249,6 +266,26 @@ describe('SegmentProvider', () => {
       timeout: 10_000,
     });
     expect(mockIdentify.mock.calls[0][2].context).toEqual({ groupId: 'org-123' });
+    expect(mockIdentify.mock.calls[0][2].integrations).toBeUndefined();
+  });
+
+  it('continues Segment initialization without an Intercom integration override when no hash is returned', async () => {
+    mockIntercomGet.mockResolvedValueOnce({ data: { data: {} } });
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.any(Object), expect.any(Object));
+      expect(mockPage).toHaveBeenCalled();
+    });
+
+    expect(mockIdentify.mock.calls[0][2]).toEqual({ context: { groupId: 'org-123' } });
+    expect(mockIdentify.mock.calls[0][1]).toHaveProperty('cloud_user_id', 'acct-456');
   });
 
   it('uses system defaults when Chrome system theme settings are enabled', async () => {
@@ -455,11 +492,10 @@ describe('SegmentProvider', () => {
     );
 
     await waitFor(() => {
-      expect(mockReplacementIdentify).toHaveBeenCalledWith(
-        'acct-456',
-        expect.objectContaining({ colorSchemeSetting: 'dark', contrastModeSetting: 'glass' }),
-        expect.objectContaining({ context: expect.objectContaining({ Intercom: { user_hash: 'latest-hash' } }) })
-      );
+      expect(mockReplacementIdentify).toHaveBeenCalledWith('acct-456', expect.objectContaining({ colorSchemeSetting: 'dark', contrastModeSetting: 'glass' }), {
+        context: { groupId: 'org-123' },
+        integrations: { Intercom: { user_hash: 'latest-hash' } },
+      });
       expect(mockReplacementGroup).toHaveBeenCalled();
     });
 
@@ -504,6 +540,11 @@ describe('SegmentProvider', () => {
     await waitFor(() => {
       expect(mockIdentify).toHaveBeenCalledWith('acct-next', expect.any(Object), expect.any(Object));
       expect(mockGroup).toHaveBeenCalledWith('org-123', expect.any(Object));
+    });
+    expect(mockIdentify.mock.calls[0][1]).toHaveProperty('cloud_user_id', 'acct-next');
+    expect(mockIdentify.mock.calls[mockIdentify.mock.calls.length - 1][2]).toEqual({
+      context: { groupId: 'org-123' },
+      integrations: { Intercom: { user_hash: 'mock-hash' } },
     });
     expect(mockLoad).not.toHaveBeenCalled();
   });
@@ -577,11 +618,10 @@ describe('SegmentProvider', () => {
     notifyThemeTelemetryPreferencesChanged();
 
     await waitFor(() => {
-      expect(mockIdentify).toHaveBeenCalledWith(
-        'acct-456',
-        expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'high-contrast' }),
-        expect.objectContaining({ context: expect.objectContaining({ groupId: 'org-123', Intercom: { user_hash: 'mock-hash' } }) })
-      );
+      expect(mockIdentify).toHaveBeenCalledWith('acct-456', expect.objectContaining({ colorSchemeSetting: 'system', contrastModeSetting: 'high-contrast' }), {
+        context: { groupId: 'org-123' },
+        integrations: { Intercom: { user_hash: 'mock-hash' } },
+      });
     });
   });
 
