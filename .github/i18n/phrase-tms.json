@@ -1,0 +1,29 @@
+{
+  "preset": "hcc-ui",
+  "sourceCatalog": {
+    "path": "locales/translation-template.json",
+    "filename": "insights-chrome.ui.en.json"
+  },
+  "targetLocales": [
+    {
+      "phraseLocale": "fr",
+      "repositoryLocale": "fr",
+      "outputPath": "src/locales/fr.json"
+    },
+    {
+      "phraseLocale": "ja",
+      "repositoryLocale": "ja",
+      "outputPath": "src/locales/ja.json"
+    },
+    {
+      "phraseLocale": "ko",
+      "repositoryLocale": "ko",
+      "outputPath": "src/locales/ko.json"
+    },
+    {
+      "phraseLocale": "zh_cn",
+      "repositoryLocale": "zh-cn",
+      "outputPath": "src/locales/zh-cn.json"
+    }
+  ]
+}

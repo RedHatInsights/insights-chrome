@@ -6,9 +6,8 @@ import LanguageNotifier from './LanguageNotifier';
 // return the raw defaultMessage without value interpolation; these tests
 // assert real ICU interpolation, so use the real react-intl.
 jest.unmock('react-intl');
-// The real provider (src/bootstrap.tsx) feeds the compiled catalog from
-// src/locales/data.json; mirror that shape so interpolation behaves as in production.
-import enMessages from '../../locales/data.json';
+// Use the same flat English catalog as ChromeIntlProvider for real interpolation.
+import enMessages from '../../locales/en.json';
 
 /**
  * The component reads the SSO profile locale from ChromeAuthContext and the
@@ -41,7 +40,7 @@ const setProfileLocale = (locale: string | undefined) => {
 
 const renderNotifier = () =>
   render(
-    <IntlProvider locale="en" messages={enMessages.en}>
+    <IntlProvider locale="en" messages={enMessages}>
       {/* The mocked context is typed Context<undefined>; the real value shape is supplied here. */}
       <ChromeAuthContext.Provider value={mockAuthValue as unknown as never}>
         <LanguageNotifier />
