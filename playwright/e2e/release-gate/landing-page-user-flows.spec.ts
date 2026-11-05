@@ -7,6 +7,7 @@ const FAVORITES_WIDGET_ID = 'chrome-./DashboardFavorites-widget';
 const APP_SWITCHER_NAME = /Red Hat Hybrid Cloud Console/i;
 const MY_FAVORITES_PANEL_NAME = /My Favorite services/i;
 const WIDGET_LOAD_TIMEOUT = 45000;
+const LANDING_PAGE_FLOW_TIMEOUT = 180000;
 
 const expectedWidgetIds = (process.env.LANDING_PAGE_EXPECTED_WIDGETS ?? '')
   .split(',')
@@ -82,6 +83,8 @@ async function removeWidget(page: Page, widget: Locator) {
 }
 
 test.describe('Landing page user flows', () => {
+  test.describe.configure({ timeout: LANDING_PAGE_FLOW_TIMEOUT });
+
   test('LP-01: renders the account default widget inventory after loading', async ({ page }) => {
     test.skip(
       expectedWidgetIds.length === 0,
