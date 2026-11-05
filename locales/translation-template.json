@@ -392,10 +392,12 @@
     "description": "Org ID:"
   },
   "permissionErrorDescription": {
-    "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My Access</MuaLink> to learn more about your permissions."
+    "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My Access</MuaLink> to learn more about your permissions.",
+    "description": "Guidance on the permission-denied page. Keep the MuaLink rich-text tag around the link to the My Access page."
   },
   "permissionErrorDetail": {
-    "defaultMessage": "Detail: {message}."
+    "defaultMessage": "Detail: {message}.",
+    "description": "Additional detail on the permission-denied page. The message placeholder contains the error detail returned by the service."
   },
   "personalAccount": {
     "defaultMessage": "Personal account",

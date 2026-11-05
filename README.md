@@ -364,6 +364,10 @@ document.documentElement.classList.remove('pf-v6-theme-glass');
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
 
+## Internationalization
+
+English FormatJS messages are declared in `src/locales/Messages.ts`. Run `npm run translations` to regenerate the extraction template and compiled `src/locales/en.json` catalog. Shared validation is configured in `.github/i18n/catalog-validation.json` and runs in CI through the pinned `i18n-tooling` workflow. Translation delivery is configured for the central [i18n-hub](https://github.com/RedHatInsights/i18n-hub), using `.github/i18n/phrase-tms.json` and the shared `hcc-ui` Phrase project. Delivery requires this repository to be registered in the hub and the `hcc-i18n-tms-sync` GitHub App to be installed. The hub submits committed source catalogs from `master` and reconciles completed translations into per-locale PRs; this repository needs no Phrase secrets or submit/reconcile workflows. The Chinese catalog uses `zh-cn.json` to match the runtime loader's lowercase locale normalization.
+
 ## Staleness
 
 A bot will post a comment after 60 days of inactivity giving the opener 5 days to update their issue/PR before it's closed.

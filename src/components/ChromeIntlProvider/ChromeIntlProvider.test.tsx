@@ -39,6 +39,17 @@ const renderWith = (locale: string) =>
   );
 
 describe('ChromeIntlProvider', () => {
+  it('reads English messages from the flat compiled catalog', () => {
+    render(
+      <Provider store={createStore()}>
+        <ChromeIntlProvider>
+          <FormattedMessage id="login" defaultMessage="Unused fallback" />
+        </ChromeIntlProvider>
+      </Provider>
+    );
+    expect(screen.getByText('Log in')).toBeInTheDocument();
+  });
+
   it('renders with the English catalog for the default locale', () => {
     renderWith('en');
     expect(screen.getByText('English fallback text')).toBeInTheDocument();
