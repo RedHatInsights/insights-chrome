@@ -31,6 +31,9 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
 import DegradedStateBanner from '../DegradedStateBanner';
+import LanguageNotifier from '../LanguageNotifier/LanguageNotifier';
+import { useLanguageResolution } from '../../hooks/useLanguageResolution';
+import { languageAtom } from '../../state/atoms/languageAtom';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
@@ -68,6 +71,7 @@ const ScalprumRoot = memo(
           <div className="chr-c-shell">
             <BetaSwitcher />
             <DegradedStateBanner />
+            <LanguageNotifier />
             <Routes>
               <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
               <Route
@@ -125,6 +129,9 @@ export type ChromeApiRootProps = {
 
 const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
   const chromeAuth = useContext(ChromeAuthContext);
+  // language detection flow (spike): resolve + publish to the atom, expose on the chrome API
+  useLanguageResolution(chromeAuth);
+  const language = useAtomValue(languageAtom);
   const mutableChromeApi = useRef<ChromeAPI>(undefined);
   const isPreview = useAtomValue(isPreviewAtom);
   const addNavListener = useSetAtom(addNavListenerAtom);
@@ -190,8 +197,9 @@ const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
       addNavListener,
       deleteNavListener,
       addWsEventListener,
+      language,
     });
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, language]);
 
   if (!mutableChromeApi.current) {
     return null;
@@ -216,7 +224,7 @@ const ChromeApiRoot = ({ config }: ChromeApiRootProps) => {
         },
       },
     };
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, language]);
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>

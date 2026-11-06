@@ -1,23 +1,21 @@
 import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
 // Side-effect only: webpack will not put a shared module in scope unless this
 // compilation imports it. RootApp no longer imports @patternfly/quickstarts, but
 // FEC remotes (Help Panel, QuickstartsRuntime) still consume it with import:false.
 import '@patternfly/quickstarts';
 import RootApp from './components/RootApp';
-import { getEnv, trustarcScriptSetup } from './utils/common';
+import { trustarcScriptSetup } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
-import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import chromeStore from './state/chromeStore';
 import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
 import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
 import ConfigCacheDegradedStateBridge from './components/ConfigCacheDegradedStateBridge/ConfigCacheDegradedStateBridge';
+import ChromeIntlProvider from './components/ChromeIntlProvider/ChromeIntlProvider';
 
-const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
 
 const useInitializeAnalytics = () => {
@@ -45,25 +43,13 @@ if (entry) {
   reactRoot.render(
     <JotaiProvider store={chromeStore}>
       <ConfigCacheDegradedStateBridge />
-      <IntlProvider
-        locale={language}
-        messages={messages[language]}
-        onError={(error) => {
-          if (
-            (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-            localStorage.getItem('chrome:intl:debug') === 'true' ||
-            !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-          ) {
-            console.error(error);
-          }
-        }}
-      >
+      <ChromeIntlProvider>
         <ErrorBoundary>
           <AuthProvider>
             <App />
           </AuthProvider>
         </ErrorBoundary>
-      </IntlProvider>
+      </ChromeIntlProvider>
     </JotaiProvider>
   );
 }

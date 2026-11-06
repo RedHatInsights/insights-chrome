@@ -20,8 +20,8 @@ coverage/
 *.log
 
 # Generated files
-src/locales/translations.json
-src/locales/data.json
+locales/translation-template.json
+src/locales/en.json
 
 # Cypress
 .cypress-cache/

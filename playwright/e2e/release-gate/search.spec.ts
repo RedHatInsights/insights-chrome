@@ -49,32 +49,6 @@ test.describe('Platform Search', () => {
   });
 
   /**
-   * Test search results for Tasks/CentOS conversion keywords
-   * Migrated from: test_search_by_keyword (Tasks variant)
-   */
-  test.describe('Tasks searches', () => {
-    const expectedPage = 'Tasks';
-    const keywords = ['CentOS conversion', 'C2R', 'CentOS', 'centos conversion', 'Pre-Conversion analysis', 'Convert to RHEL'];
-
-    for (const keyword of keywords) {
-      test(`should find "${expectedPage}" when searching for "${keyword}"`, async ({ page }) => {
-        const search = new ChromeSearch(page);
-
-        // Search for the keyword (search() handles opening and waiting for results)
-        await search.search(keyword);
-
-        // Verify results are returned
-        const resultCount = await search.getResultCount();
-        expect(resultCount, `No search results found for keyword: ${keyword}`).toBeGreaterThan(0);
-
-        // Verify the expected page appears in results
-        const containsExpectedPage = await search.resultsContain(expectedPage);
-        expect(containsExpectedPage, `"${expectedPage}" not found in search results for keyword: ${keyword}`).toBe(true);
-      });
-    }
-  });
-
-  /**
    * Test empty search state
    * Migrated from: test_search_no_results
    *

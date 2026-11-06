@@ -211,11 +211,6 @@ function initSentry() {
         project: 'remediations-rhel',
       },
       {
-        appName: 'tasks',
-        dsn: 'https://5b8c5a580090ff977052ac622b242057@o490301.ingest.us.sentry.io/4508683269570560',
-        project: 'tasks-rhel',
-      },
-      {
         appName: 'registration',
         dsn: 'https://95df6c65ea4016243ee2bcc2d45fcba8@o490301.ingest.us.sentry.io/4508683266686976',
         project: 'registration-assistant-rhel',

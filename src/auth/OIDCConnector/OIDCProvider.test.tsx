@@ -190,4 +190,44 @@ describe('OIDCProvider', () => {
       expect(mockResolveSSOUrl).toHaveBeenCalledWith(mockSSOConfig);
     });
   });
+
+  it('forces a silent re-auth before booting on the SSO return trip', async () => {
+    // Landing from the SSO account console is a full page load with the
+    // return marker in the query; other params must survive the cleanup.
+    window.history.replaceState({}, '', '/some/deep/page?keep=1&fromAccount=1');
+    mockLoadSSOConfig.mockResolvedValue({ ssoUrl: 'https://sso.redhat.com/auth' });
+    mockResolveSSOUrl.mockReturnValue('https://sso.redhat.com/auth/');
+    mockLoadFedModules.mockResolvedValue({ data: { app: { manifestLocation: '/apps/app/fed-mods.json' } } });
+
+    let resolveSilent: () => void = () => undefined;
+    let mockUserManager: { signinSilent: jest.Mock } | undefined;
+    const { UserManager: MockUserManager } = jest.requireMock('oidc-client-ts') as { UserManager: jest.Mock };
+    MockUserManager.mockImplementation(() => {
+      mockUserManager = { signinSilent: jest.fn(() => new Promise<void>((resolve) => (resolveSilent = resolve))) };
+      return mockUserManager;
+    });
+
+    render(
+      <OIDCProvider>
+        <div>App Content</div>
+      </OIDCProvider>
+    );
+
+    // While the silent re-auth is in flight the app stays on the placeholder:
+    // nothing boots on the stale identity.
+    await waitFor(() => {
+      expect(mockUserManager?.signinSilent).toHaveBeenCalled();
+    });
+    expect(screen.getByTestId('app-placeholder')).toBeInTheDocument();
+    expect(screen.queryByTestId('oidc-secured')).not.toBeInTheDocument();
+
+    // The marker is stripped from the URL immediately, other params preserved.
+    expect(window.location.search).toBe('?keep=1');
+
+    resolveSilent();
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+    expect(screen.getByText('App Content')).toBeInTheDocument();
+  });
 });

@@ -45,6 +45,8 @@ export type CreateChromeContextConfig = {
   addNavListener: (cb: NavListener) => number;
   deleteNavListener: (id: number) => void;
   addWsEventListener: AddChromeWsEventListener;
+  /** resolved console language (language detection flow, spike) */
+  language: string;
 };
 
 export const createChromeContext = ({
@@ -59,6 +61,7 @@ export const createChromeContext = ({
   addNavListener,
   deleteNavListener,
   addWsEventListener,
+  language,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
@@ -153,7 +156,7 @@ export const createChromeContext = ({
 
   const isITLessEnv = ITLess();
 
-  const api: ChromeAPI = {
+  const api: ChromeAPI & { language: string } = {
     ...actions,
     addWsEventListener,
     auth: {
@@ -211,6 +214,7 @@ export const createChromeContext = ({
     },
     isBeta: () => isPreview,
     isChrome2: true,
+    language,
     enable: debugFunctions,
     isDemo: () => Boolean(Cookies.get('cs_demo')),
     isPenTest: () => Boolean(Cookies.get('x-rh-insights-pentest')),
