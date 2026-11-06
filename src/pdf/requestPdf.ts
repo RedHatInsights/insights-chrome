@@ -31,15 +31,17 @@ const STATUS_REQUEST_TIMEOUT = 10_000;
 
 type PdfFailureBody = { error?: { description?: string } };
 
-export const pollStatus = async (statusID: string) => {
-  return new Promise<{ status: string; filepath: string }>((resolve, reject) => {
+export type PdfStatus = { status: string; filepath: string };
+
+export const pollStatus = async (statusID: string): Promise<PdfStatus> => {
+  return new Promise<PdfStatus>((resolve, reject) => {
     let notFoundRetries = 0;
 
     const poll = async () => {
       try {
         const {
           data: { status: data },
-        } = await axios.get<{ status: { status: string; filepath: string } }>(`/api/crc-pdf-generator/v2/status/${statusID}`, {
+        } = await axios.get<{ status: PdfStatus }>(`/api/crc-pdf-generator/v2/status/${statusID}`, {
           timeout: STATUS_REQUEST_TIMEOUT,
         });
         if (data.status === 'Generated') {
