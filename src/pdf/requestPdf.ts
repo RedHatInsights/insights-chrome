@@ -19,27 +19,31 @@ const downloadPDF = async (url: string, filename = 'report.pdf') => {
   hiddenLink.remove();
 };
 
-const pollStatus = async (statusID: string) => {
+const POLL_INTERVAL = 2000;
+
+export const pollStatus = async (statusID: string) => {
   return new Promise<{ status: string; filepath: string }>((resolve, reject) => {
-    const interval = setInterval(async () => {
+    const poll = async () => {
       try {
         const {
           data: { status: data },
         } = await axios.get<{ status: { status: string; filepath: string } }>(`/api/crc-pdf-generator/v2/status/${statusID}`);
         if (data.status === 'Generated') {
-          clearInterval(interval);
-          resolve(data);
+          return resolve(data);
         }
 
         if (data.status.includes('Failed')) {
-          clearInterval(interval);
-          reject(new Error(data.status));
+          return reject(new Error(data.status));
         }
+
+        // re-arm only after the previous request resolves to avoid overlapping requests
+        setTimeout(poll, POLL_INTERVAL);
       } catch (error) {
-        clearInterval(interval);
         reject(error);
       }
-    }, 10000);
+    };
+
+    setTimeout(poll, POLL_INTERVAL);
   });
 };
 
