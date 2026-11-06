@@ -26,14 +26,8 @@ Tests search functionality for two main categories:
 - ✅ rbac → finds "Identity & Access Management"
 - ✅ RBAC → finds "Identity & Access Management"
 
-**Tasks/CentOS Conversion (6 test cases):**
-
-- ✅ CentOS conversion → finds "Tasks"
-- ✅ C2R → finds "Tasks"
-- ✅ CentOS → finds "Tasks"
-- ✅ centos conversion → finds "Tasks"
-- ✅ Pre-Conversion analysis → finds "Tasks"
-- ✅ Convert to RHEL → finds "Tasks"
+**Tasks/CentOS Conversion (6 test cases - Removed):**
+*Removed November 2026 due to tasks-frontend deprecation and search index decommissioning.*
 
 Each test verifies:
 
@@ -83,7 +77,7 @@ Created `ChromeSearch` page object (`playwright/pages/chrome-search.ts`) with me
 ### Migration Statistics
 
 - **Tests Migrated:** 2 test functions → 15 test cases
-  - test_search_by_keyword: 14 parameterized tests (8 IAM + 6 Tasks)
+  - test_search_by_keyword: 8 parameterized tests (8 IAM; 6 Tasks tests decommissioned)
   - test_search_no_results: 1 test for empty state
 - **Tests Skipped:** 0
 - **Page Objects Created:** 1 (ChromeSearch)
