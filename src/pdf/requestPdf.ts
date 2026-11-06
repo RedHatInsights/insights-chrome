@@ -20,9 +20,17 @@ const downloadPDF = async (url: string, filename = 'report.pdf') => {
 };
 
 const POLL_INTERVAL = 2000;
+// A 404 can be transient: the collection may not be registered yet on the pod
+// serving the status request (Kafka sync lag across pods). Retry a bounded
+// number of times before giving up.
+const MAX_NOT_FOUND_RETRIES = 5;
+
+type PdfFailureBody = { error?: { description?: string } };
 
 export const pollStatus = async (statusID: string) => {
   return new Promise<{ status: string; filepath: string }>((resolve, reject) => {
+    let notFoundRetries = 0;
+
     const poll = async () => {
       try {
         const {
@@ -39,6 +47,27 @@ export const pollStatus = async (statusID: string) => {
         // re-arm only after the previous request resolves to avoid overlapping requests
         setTimeout(poll, POLL_INTERVAL);
       } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const code = error.response?.status;
+
+          // Transient 404 while the collection propagates — retry up to the cap.
+          if (code === 404 && notFoundRetries < MAX_NOT_FOUND_RETRIES) {
+            notFoundRetries += 1;
+            setTimeout(poll, POLL_INTERVAL);
+            return;
+          }
+
+          if (code === 404) {
+            return reject(new Error(`No PDF found for ${statusID}`));
+          }
+
+          // Backend returns HTTP 500 when generation fails; surface the reason.
+          if (code === 500) {
+            const description = (error.response?.data as PdfFailureBody | undefined)?.error?.description;
+            return reject(new Error(description ?? 'PDF generation failed'));
+          }
+        }
+
         reject(error);
       }
     };

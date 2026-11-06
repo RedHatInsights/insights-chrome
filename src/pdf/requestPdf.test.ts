@@ -10,6 +10,7 @@ describe('pollStatus', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockedAxios.get.mockReset();
+    mockedAxios.isAxiosError = jest.fn().mockReturnValue(false) as never;
   });
 
   afterEach(() => {
@@ -18,9 +19,7 @@ describe('pollStatus', () => {
 
   it('resolves with data once status is Generated', async () => {
     const generated = { status: 'Generated', filepath: '/tmp/report.pdf' };
-    mockedAxios.get
-      .mockResolvedValueOnce({ data: { status: { status: 'Pending', filepath: '' } } })
-      .mockResolvedValueOnce({ data: { status: generated } });
+    mockedAxios.get.mockResolvedValueOnce({ data: { status: { status: 'Pending', filepath: '' } } }).mockResolvedValueOnce({ data: { status: generated } });
 
     const promise = pollStatus('abc');
 
@@ -50,6 +49,57 @@ describe('pollStatus', () => {
 
     const promise = pollStatus('abc');
     const assertion = expect(promise).rejects.toThrow('Network Error');
+
+    await jest.advanceTimersByTimeAsync(2000);
+    await assertion;
+    expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries on a transient 404 and resolves once the collection appears', async () => {
+    const notFound = { isAxiosError: true, response: { status: 404 } };
+    const generated = { status: 'Generated', filepath: '/tmp/report.pdf' };
+    mockedAxios.isAxiosError.mockReturnValue(true);
+    mockedAxios.get
+      .mockRejectedValueOnce(notFound)
+      .mockRejectedValueOnce(notFound)
+      .mockResolvedValueOnce({ data: { status: generated } });
+
+    const promise = pollStatus('abc');
+
+    await jest.advanceTimersByTimeAsync(2000); // 404 #1
+    await jest.advanceTimersByTimeAsync(2000); // 404 #2
+    await jest.advanceTimersByTimeAsync(2000); // Generated
+
+    await expect(promise).resolves.toEqual(generated);
+    expect(mockedAxios.get).toHaveBeenCalledTimes(3);
+  });
+
+  it('rejects after exhausting 404 retries', async () => {
+    const notFound = { isAxiosError: true, response: { status: 404 } };
+    mockedAxios.isAxiosError.mockReturnValue(true);
+    mockedAxios.get.mockRejectedValue(notFound);
+
+    const promise = pollStatus('abc');
+    const assertion = expect(promise).rejects.toThrow('No PDF found for abc');
+
+    // MAX_NOT_FOUND_RETRIES (5) retries + 1 final attempt that rejects = 6 calls
+    for (let i = 0; i < 6; i += 1) {
+      await jest.advanceTimersByTimeAsync(2000);
+    }
+
+    await assertion;
+    expect(mockedAxios.get).toHaveBeenCalledTimes(6);
+  });
+
+  it('rejects with the failure description on HTTP 500', async () => {
+    mockedAxios.isAxiosError.mockReturnValue(true);
+    mockedAxios.get.mockRejectedValueOnce({
+      isAxiosError: true,
+      response: { status: 500, data: { error: { description: 'renderer crashed' } } },
+    });
+
+    const promise = pollStatus('abc');
+    const assertion = expect(promise).rejects.toThrow('renderer crashed');
 
     await jest.advanceTimersByTimeAsync(2000);
     await assertion;
