@@ -127,6 +127,10 @@
     "defaultMessage": "Navigation",
     "description": "Combined label for degraded bundle navigation and service catalog visibility or loading"
   },
+  "degradedServiceQuickstarts": {
+    "defaultMessage": "Quick starts",
+    "description": "Label for quickstarts / learning-resources runtime"
+  },
   "degradedServiceUserPersonalization": {
     "defaultMessage": "User Preferences",
     "description": "Label for user personalization service"
