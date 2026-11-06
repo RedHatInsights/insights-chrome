@@ -1,12 +1,6 @@
-import { expect, test as baseTest } from '../../setup/test-setup';
-import type { Locator, Page } from '@playwright/test';
+import { test as baseTest, expect } from '../../setup/test-setup';
+import { LandingPage, WIDGET_LOAD_TIMEOUT } from '../../pages/landing-page';
 
-const DASHBOARD_HEADING = /Welcome to your Hybrid Cloud Console/i;
-const WIDGET_LAYOUT = '#widget-layout-container';
-const FAVORITES_WIDGET_ID = 'chrome-./DashboardFavorites-widget';
-const APP_SWITCHER_NAME = /Red Hat Hybrid Cloud Console/i;
-const MY_FAVORITES_PANEL_NAME = /My Favorite services/i;
-const WIDGET_LOAD_TIMEOUT = 45000;
 const LANDING_PAGE_FLOW_TIMEOUT = 180000;
 
 const expectedWidgetIds = (process.env.LANDING_PAGE_EXPECTED_WIDGETS ?? '')
@@ -30,57 +24,20 @@ const test = baseTest.extend<{ registerWidgetCleanup: (ouiaId: string) => void }
 
       if (!widgetOuiaId) return;
 
-      const widget = widgetByOuiaId(page, widgetOuiaId);
+      const landingPage = new LandingPage(page);
+      const widget = landingPage.widgetByOuiaId(widgetOuiaId);
       await page.reload();
-      await waitForDashboard(page);
+      await landingPage.waitForDashboard();
       if ((await widget.count()) > 0) {
-        await removeWidget(page, widget);
+        await landingPage.removeWidget(widget);
         await page.reload();
-        await waitForDashboard(page);
+        await landingPage.waitForDashboard();
         await expect(widget).toHaveCount(0);
       }
     },
     { timeout: CLEANUP_TIMEOUT },
   ],
 });
-
-async function waitForDashboard(page: Page) {
-  await expect(page.getByRole('heading', { name: DASHBOARD_HEADING })).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
-  const layout = page.locator(WIDGET_LAYOUT);
-  await expect(layout).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
-  await expect(layout.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: WIDGET_LOAD_TIMEOUT });
-  return layout;
-}
-
-function widgetByOuiaId(page: Page, ouiaId: string) {
-  return page.locator(`[data-ouia-component-id=${JSON.stringify(ouiaId)}]`);
-}
-
-function exactName(value: string): RegExp {
-  return new RegExp(`^${value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
-}
-
-async function favoriteIsVisibleInSwitcher(page: Page, serviceName: string) {
-  await page.getByRole('button', { name: APP_SWITCHER_NAME }).click();
-
-  const favoritesTab = page.getByRole('tab', { name: MY_FAVORITES_PANEL_NAME });
-  if ((await favoritesTab.count()) > 0) {
-    await favoritesTab.click();
-  }
-
-  const favoritesPanel = page.getByRole('tabpanel', { name: MY_FAVORITES_PANEL_NAME });
-  await expect(favoritesPanel).toBeVisible();
-  const serviceLink = favoritesPanel.getByRole('link', { name: exactName(serviceName) });
-  await expect(serviceLink).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
-  return true;
-}
-
-async function removeWidget(page: Page, widget: Locator) {
-  await widget.hover();
-  await widget.getByRole('button', { name: 'Widget actions' }).click();
-  await page.getByRole('menuitem', { name: /^Remove/i }).click();
-  await expect(widget).toHaveCount(0);
-}
 
 test.describe('Landing page user flows', () => {
   test.describe.configure({ timeout: LANDING_PAGE_FLOW_TIMEOUT });
@@ -91,11 +48,11 @@ test.describe('Landing page user flows', () => {
       'Blocked — test data unavailable: configure LANDING_PAGE_EXPECTED_WIDGETS for the account default layout and enabled flags.'
     );
 
-    await page.goto('/');
-    const layout = await waitForDashboard(page);
+    const landingPage = new LandingPage(page);
+    const layout = await landingPage.open();
 
     for (const ouiaId of expectedWidgetIds) {
-      const widget = layout.locator(`[data-ouia-component-id=${JSON.stringify(ouiaId)}]`);
+      const widget = landingPage.widgetByOuiaId(ouiaId, layout);
       await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
       await expect(widget.getByRole('progressbar')).toHaveCount(0, { timeout: WIDGET_LOAD_TIMEOUT });
       await expect(widget.getByText(/unable to load content/i)).toHaveCount(0, { timeout: WIDGET_LOAD_TIMEOUT });
@@ -119,14 +76,16 @@ test.describe('Landing page user flows', () => {
     test.skip(!favoriteService, 'Blocked — test data unavailable: configure LANDING_PAGE_FAVORITE_SERVICE to a favorite already set on the test account.');
 
     const compareSurfaces = async () => {
-      await page.goto('/');
-      await waitForDashboard(page);
-      const favoritesWidget = widgetByOuiaId(page, FAVORITES_WIDGET_ID);
+      const landingPage = new LandingPage(page);
+      await landingPage.open();
+      const favoritesWidget = landingPage.favoritesWidget();
       await expect(favoritesWidget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
-      const homeFavoriteLink = favoritesWidget.getByRole('link', { name: exactName(favoriteService!) });
+      const homeFavoriteLink = landingPage.favoriteServiceLink(favoritesWidget, favoriteService!);
       await expect(homeFavoriteLink).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
-      const switcherFavorite = await favoriteIsVisibleInSwitcher(page, favoriteService!);
-      return { homeFavorite: true, switcherFavorite };
+      const favoritesPanel = await landingPage.openFavoritesInAppSwitcher();
+      const switcherFavoriteLink = landingPage.favoriteServiceLink(favoritesPanel, favoriteService!);
+      await expect(switcherFavoriteLink).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
+      return { homeFavorite: true, switcherFavorite: true };
     };
 
     const result = await compareSurfaces();
@@ -142,30 +101,27 @@ test.describe('Landing page user flows', () => {
       'Blocked — test data unavailable: enable a dedicated mutable account and configure the widget name and OUIA IDs.'
     );
 
-    await page.goto('/');
-    const layout = await waitForDashboard(page);
-    const widget = widgetByOuiaId(page, mutableWidgetOuiaId!);
+    const landingPage = new LandingPage(page);
+    await landingPage.open();
+    const widget = landingPage.widgetByOuiaId(mutableWidgetOuiaId!);
     test.skip((await widget.count()) > 0, 'Blocked — test data unavailable: selected widget must be absent from the account baseline.');
 
-    await page.locator('[data-ouia-component-id="add-widget-button"]').click();
-    const catalogCard = page.locator(`[data-ouia-component-id=${JSON.stringify(mutableWidgetCatalogId)}]`);
+    await landingPage.openWidgetCatalog();
+    const catalogCard = landingPage.widgetCatalogItem(mutableWidgetCatalogId!);
     test.skip((await catalogCard.count()) === 0, 'Blocked — test data unavailable: selected widget is not present in the add-widget catalog.');
     await expect(catalogCard).toBeVisible();
 
-    const dropTarget = layout.locator('[data-ouia-component-id$="-widget"]').first();
-    await expect(dropTarget).toBeVisible();
-
     registerWidgetCleanup(mutableWidgetOuiaId!);
-    await catalogCard.dragTo(dropTarget);
+    await landingPage.addWidgetToFirstSlot(catalogCard);
     await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
 
     await page.reload();
-    await waitForDashboard(page);
+    await landingPage.waitForDashboard();
     await expect(widget).toBeVisible({ timeout: WIDGET_LOAD_TIMEOUT });
 
-    await removeWidget(page, widget);
+    await landingPage.removeWidget(widget);
     await page.reload();
-    await waitForDashboard(page);
+    await landingPage.waitForDashboard();
     await expect(widget).toHaveCount(0);
   });
 });
