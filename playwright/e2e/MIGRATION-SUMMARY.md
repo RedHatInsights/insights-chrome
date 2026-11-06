@@ -11,9 +11,9 @@
 #### 1. Search by Keyword
 
 **Test:** `test_search_by_keyword`
-**Playwright Implementation:** 14 parameterized test cases
+**Playwright Implementation:** 8 parameterized test cases
 
-Tests search functionality for two main categories:
+Tests search functionality for Identity & Access Management:
 
 **Identity & Access Management (8 test cases):**
 
@@ -26,8 +26,7 @@ Tests search functionality for two main categories:
 - ✅ rbac → finds "Identity & Access Management"
 - ✅ RBAC → finds "Identity & Access Management"
 
-**Tasks/CentOS Conversion (6 test cases - Removed):**
-*Removed November 2026 due to tasks-frontend deprecation and search index decommissioning.*
+_(Note: 6 former Tasks/CentOS Conversion search test cases removed November 2026 due to tasks-frontend deprecation)_
 
 Each test verifies:
 
@@ -76,8 +75,8 @@ Created `ChromeSearch` page object (`playwright/pages/chrome-search.ts`) with me
 
 ### Migration Statistics
 
-- **Tests Migrated:** 2 test functions → 15 test cases
-  - test_search_by_keyword: 8 parameterized tests (8 IAM; 6 Tasks tests decommissioned)
+- **Tests Migrated:** 2 test functions → 9 active test cases
+  - test_search_by_keyword: 8 parameterized tests (8 IAM; 6 legacy Tasks tests decommissioned)
   - test_search_no_results: 1 test for empty state
 - **Tests Skipped:** 0
 - **Page Objects Created:** 1 (ChromeSearch)
