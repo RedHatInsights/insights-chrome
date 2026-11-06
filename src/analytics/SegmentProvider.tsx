@@ -239,14 +239,13 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
           {
             ...identityOptions,
-            context: {
-              ...identityOptions.context,
-              ...(intercomHash.current
-                ? {
+            ...(intercomHash.current
+              ? {
+                  integrations: {
                     Intercom: { user_hash: intercomHash.current },
-                  }
-                : {}),
-            },
+                  },
+                }
+              : {}),
           }
         );
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
@@ -271,14 +270,13 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
             {
               ...identityOptions,
-              context: {
-                ...identityOptions.context,
-                ...(intercomHash.current
-                  ? {
+              ...(intercomHash.current
+                ? {
+                    integrations: {
                       Intercom: { user_hash: intercomHash.current },
-                    }
-                  : {}),
-              },
+                    },
+                  }
+                : {}),
             }
           );
           analytics.current.group(user.identity.internal?.org_id, groupTraits);
@@ -324,8 +322,8 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           context: {
             groupId: user.identity.internal?.org_id,
-            ...(intercomHash.current ? { Intercom: { user_hash: intercomHash.current } } : {}),
           },
+          ...(intercomHash.current ? { integrations: { Intercom: { user_hash: intercomHash.current } } } : {}),
         }
       );
     };
