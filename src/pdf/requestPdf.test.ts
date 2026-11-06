@@ -30,7 +30,20 @@ describe('pollStatus', () => {
 
     await expect(promise).resolves.toEqual(generated);
     expect(mockedAxios.get).toHaveBeenCalledTimes(2);
-    expect(mockedAxios.get).toHaveBeenCalledWith(statusUrl('abc'));
+    expect(mockedAxios.get).toHaveBeenCalledWith(statusUrl('abc'), { timeout: 10_000 });
+  });
+
+  it('rejects when the status request times out', async () => {
+    const timeout = { isAxiosError: true, code: 'ECONNABORTED', message: 'timeout of 10000ms exceeded' };
+    mockedAxios.isAxiosError.mockReturnValue(true);
+    mockedAxios.get.mockRejectedValueOnce(timeout);
+
+    const promise = pollStatus('abc');
+    const assertion = expect(promise).rejects.toBe(timeout);
+
+    await jest.advanceTimersByTimeAsync(2000);
+    await assertion;
+    expect(mockedAxios.get).toHaveBeenCalledTimes(1);
   });
 
   it('rejects when status includes Failed', async () => {

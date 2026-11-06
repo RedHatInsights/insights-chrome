@@ -24,6 +24,10 @@ const POLL_INTERVAL = 2000;
 // serving the status request (Kafka sync lag across pods). Retry a bounded
 // number of times before giving up.
 const MAX_NOT_FOUND_RETRIES = 5;
+// Cap each status request so a hung connection aborts and reaches the catch
+// block instead of leaving the poll loop pending forever (the next poll is only
+// armed after the previous request settles).
+const STATUS_REQUEST_TIMEOUT = 10_000;
 
 type PdfFailureBody = { error?: { description?: string } };
 
@@ -35,7 +39,9 @@ export const pollStatus = async (statusID: string) => {
       try {
         const {
           data: { status: data },
-        } = await axios.get<{ status: { status: string; filepath: string } }>(`/api/crc-pdf-generator/v2/status/${statusID}`);
+        } = await axios.get<{ status: { status: string; filepath: string } }>(`/api/crc-pdf-generator/v2/status/${statusID}`, {
+          timeout: STATUS_REQUEST_TIMEOUT,
+        });
         if (data.status === 'Generated') {
           return resolve(data);
         }
