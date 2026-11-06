@@ -1,5 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { BundleNavigation, NavItem } from '../../@types/types.d';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
@@ -10,7 +10,7 @@ import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup, isAllServicesLink } from '../../components/AllServices/allServicesLinks';
 import { cacheFetch } from '../../utils/cacheFetch';
 import { CONFIG_SOURCES, reportConfigSource } from '../../utils/configCacheStatus';
-import { setServiceDegradedAtom } from './degradedStateAtom';
+import { degradedStateAtom, setServiceDegradedAtom } from './degradedStateAtom';
 
 export const visibleBundlesAtom = atom<BundleNavigation[]>([]);
 export const visibleBundlesReadyAtom = atom(false);
@@ -147,6 +147,10 @@ export const loadServiceTiles = async (feoGenerated: boolean, signal: AbortSigna
   }
 };
 
+const keepCurrentVisibility = (error: unknown) => {
+  console.error('Failed to re-evaluate visibility after entitlements recovery', error);
+};
+
 /**
  * Single initializer hook — call once, high in the component tree.
  * Fetches bundles and service tiles, evaluates visibility, and writes to atoms.
@@ -162,6 +166,14 @@ export const useInitVisibleBundles = () => {
   const setTilesReady = useSetAtom(visibleServiceTilesReadyAtom);
   const setTilesError = useSetAtom(visibleServiceTilesErrorAtom);
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
+  const entitlementsDegraded = useAtomValue(degradedStateAtom).entitlements;
+  const wasEntitlementsDegradedRef = useRef(entitlementsDegraded);
+  // Unfiltered configs from the last successful fetch, so a recovery can re-evaluate without fetching again.
+  const sourceBundlesRef = useRef<BundleNavigation[] | undefined>(undefined);
+  const sourceTilesRef = useRef<AllServicesSection[] | undefined>(undefined);
+  // Shared by the config-load and recovery effects: only the most recently started evaluation of a source may apply.
+  const bundlesGenerationRef = useRef(0);
+  const tilesGenerationRef = useRef(0);
 
   useEffect(() => {
     if (!flagsReady && !flagsError) {
@@ -170,20 +182,23 @@ export const useInitVisibleBundles = () => {
 
     let cancelled = false;
     const controller = new AbortController();
-    let bundlesDegraded = false;
-    let tilesDegraded = false;
 
     setBundlesError(false);
     setTilesError(false);
 
     fetchNavigationFiles(feoGenerated)
-      .then((bundles) => evaluateBundleNavItems(bundles, () => (bundlesDegraded = true)))
-      .then((result) => {
-        if (!cancelled) {
-          setBundles(result);
-          setBundlesReady(true);
-          setServiceDegraded({ service: 'navigation', degraded: bundlesDegraded });
-        }
+      .then((bundles) => {
+        if (cancelled) return;
+        sourceBundlesRef.current = bundles;
+        const generation = ++bundlesGenerationRef.current;
+        let bundlesDegraded = false;
+        return evaluateBundleNavItems(bundles, () => (bundlesDegraded = true)).then((result) => {
+          if (generation === bundlesGenerationRef.current) {
+            setBundles(result);
+            setBundlesReady(true);
+            setServiceDegraded({ service: 'navigation', degraded: bundlesDegraded });
+          }
+        });
       })
       .catch((error) => {
         if (cancelled) return;
@@ -194,13 +209,18 @@ export const useInitVisibleBundles = () => {
       });
 
     loadServiceTiles(feoGenerated, controller.signal)
-      .then((tiles) => evaluateServiceTilesVisibility(tiles, () => (tilesDegraded = true)))
-      .then((result) => {
-        if (!cancelled) {
-          setTiles(result);
-          setTilesReady(true);
-          setServiceDegraded({ service: 'serviceTiles', degraded: tilesDegraded });
-        }
+      .then((tiles) => {
+        if (cancelled) return;
+        sourceTilesRef.current = tiles;
+        const generation = ++tilesGenerationRef.current;
+        let tilesDegraded = false;
+        return evaluateServiceTilesVisibility(tiles, () => (tilesDegraded = true)).then((result) => {
+          if (generation === tilesGenerationRef.current) {
+            setTiles(result);
+            setTilesReady(true);
+            setServiceDegraded({ service: 'serviceTiles', degraded: tilesDegraded });
+          }
+        });
       })
       .catch((error) => {
         if (cancelled) return;
@@ -213,8 +233,53 @@ export const useInitVisibleBundles = () => {
     return () => {
       cancelled = true;
       controller.abort();
+      // A newer config load is starting (or the hook unmounted): no pending evaluation of the old config may apply.
+      bundlesGenerationRef.current += 1;
+      tilesGenerationRef.current += 1;
     };
   }, [feoGenerated, flagsReady, flagsError]);
+
+  // Entitlements recovered in-session (degraded → healthy): re-evaluate the loaded configs so items gated by
+  // `isEntitled` reflect the recovered map without a reload. Only on recovery, never when entering an outage,
+  // and without re-fetching, so a failing config origin cannot replace a working navigation.
+  useEffect(() => {
+    const recovered = wasEntitlementsDegradedRef.current && !entitlementsDegraded;
+    wasEntitlementsDegradedRef.current = entitlementsDegraded;
+    if (!recovered) {
+      return;
+    }
+
+    let cancelled = false;
+    const bundles = sourceBundlesRef.current;
+    const tiles = sourceTilesRef.current;
+    if (bundles) {
+      const generation = ++bundlesGenerationRef.current;
+      let bundlesDegraded = false;
+      evaluateBundleNavItems(bundles, () => (bundlesDegraded = true)).then((result) => {
+        if (!cancelled && generation === bundlesGenerationRef.current) {
+          setBundles(result);
+          // A recovery can supersede the first evaluation of a config, so it must also mark the source ready.
+          setBundlesReady(true);
+          setServiceDegraded({ service: 'navigation', degraded: bundlesDegraded });
+        }
+      }, keepCurrentVisibility);
+    }
+    if (tiles) {
+      const generation = ++tilesGenerationRef.current;
+      let tilesDegraded = false;
+      evaluateServiceTilesVisibility(tiles, () => (tilesDegraded = true)).then((result) => {
+        if (!cancelled && generation === tilesGenerationRef.current) {
+          setTiles(result);
+          setTilesReady(true);
+          setServiceDegraded({ service: 'serviceTiles', degraded: tilesDegraded });
+        }
+      }, keepCurrentVisibility);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [entitlementsDegraded]);
 };
 
 export const useVisibleBundles = () => {
