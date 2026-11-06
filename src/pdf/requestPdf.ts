@@ -47,7 +47,7 @@ export const pollStatus = async (statusID: string) => {
         }
 
         if (data.status.includes('Failed')) {
-          return reject(new Error(data.status));
+          return reject(new Error(`${data.status} (statusID: ${statusID})`));
         }
 
         // re-arm only after the previous request resolves to avoid overlapping requests
@@ -67,10 +67,10 @@ export const pollStatus = async (statusID: string) => {
             return reject(new Error(`No PDF found for ${statusID}`));
           }
 
-          // Backend returns HTTP 500 when generation fails; surface the reason.
+          // Backend returns HTTP 500 when generation fails; surface the reason
           if (code === 500) {
             const description = (error.response?.data as PdfFailureBody | undefined)?.error?.description;
-            return reject(new Error(description ?? 'PDF generation failed'));
+            return reject(new Error(`${description ?? 'PDF generation failed'} (statusID: ${statusID}, HTTP 500)`));
           }
         }
 
