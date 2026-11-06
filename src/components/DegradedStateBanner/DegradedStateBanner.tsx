@@ -22,6 +22,7 @@ const DegradedStateBanner = () => {
     entitlements: messages.degradedServiceEntitlements,
     configFromCache: messages.degradedServiceConfigFromCache,
     featureFlags: messages.degradedServiceFeatureFlags,
+    quickstarts: messages.degradedServiceQuickstarts,
     navigation: messages.degradedServiceNavigation,
   };
 
@@ -30,6 +31,7 @@ const DegradedStateBanner = () => {
   if (serviceHealth.entitlements) degradedServices.push(intl.formatMessage(serviceNameMap.entitlements));
   if (serviceHealth.configFromCache) degradedServices.push(intl.formatMessage(serviceNameMap.configFromCache));
   if (serviceHealth.featureFlags) degradedServices.push(intl.formatMessage(serviceNameMap.featureFlags));
+  if (serviceHealth.quickstarts) degradedServices.push(intl.formatMessage(serviceNameMap.quickstarts));
   // Both affect service discovery, not the availability of the services themselves.
   // Keep their health independent so recovery of one cannot hide the other's warning.
   if (serviceHealth.navigation || serviceHealth.serviceTiles) degradedServices.push(intl.formatMessage(serviceNameMap.navigation));
