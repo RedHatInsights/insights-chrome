@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Provider, useSetAtom } from 'jotai';
 import { createStore } from 'jotai';
@@ -39,6 +39,72 @@ const renderWith = (locale: string) =>
   );
 
 describe('ChromeIntlProvider', () => {
+  let originalLang: string;
+  let originalConsoleLanguage: string | null;
+  beforeEach(() => {
+    originalLang = document.documentElement.lang;
+    originalConsoleLanguage = document.documentElement.getAttribute('data-console-language');
+  });
+  afterEach(() => {
+    document.documentElement.lang = originalLang;
+    if (originalConsoleLanguage === null) document.documentElement.removeAttribute('data-console-language');
+    else document.documentElement.setAttribute('data-console-language', originalConsoleLanguage);
+  });
+
+  it('separates the requested language from the rendered catalog language', async () => {
+    const store = createStore();
+    let resolveFrench!: (catalog: { default: Record<string, string> }) => void;
+    let rejectJapanese!: (error: Error) => void;
+    messageCatalogs.fr = () =>
+      new Promise((resolve) => {
+        resolveFrench = resolve;
+      });
+    messageCatalogs.ja = () =>
+      new Promise((_resolve, reject) => {
+        rejectJapanese = reject;
+      });
+    try {
+      render(
+        <Provider store={store}>
+          <ChromeIntlProvider>
+            <FormattedMessage id="test-message" defaultMessage="English fallback text" />
+            <LocaleProbe />
+          </ChromeIntlProvider>
+        </Provider>
+      );
+      expect(document.documentElement.lang).toBe('en');
+      expect(document.documentElement.dataset.consoleLanguage).toBe('en');
+      act(() => store.set(languageAtom, 'fr'));
+      expect(document.documentElement.dataset.consoleLanguage).toBe('fr');
+      expect(document.documentElement.lang).toBe('en');
+      expect(screen.getByText('English fallback text')).toBeInTheDocument();
+      await act(async () => resolveFrench({ default: { 'test-message': 'Texte français' } }));
+      expect(screen.getByText('Texte français')).toBeInTheDocument();
+      expect(document.documentElement.lang).toBe('fr');
+      act(() => store.set(languageAtom, 'ja'));
+      expect(document.documentElement.dataset.consoleLanguage).toBe('ja');
+      expect(document.documentElement.lang).toBe('fr');
+      expect(screen.getByText('Texte français')).toBeInTheDocument();
+      await act(async () => rejectJapanese(new Error('chunk load failed')));
+      expect(screen.getByText('English fallback text')).toBeInTheDocument();
+      expect(document.documentElement.lang).toBe('en');
+      expect(document.documentElement.dataset.consoleLanguage).toBe('ja');
+      act(() => store.set(languageAtom, 'en'));
+      expect(document.documentElement.lang).toBe('en');
+      expect(document.documentElement.dataset.consoleLanguage).toBe('en');
+    } finally {
+      delete messageCatalogs.fr;
+      delete messageCatalogs.ja;
+    }
+  });
+
+  it.each(['fr', 'ko', 'ja', 'zh-CN'])('keeps English document language when %s has no catalog', (locale) => {
+    renderWith(locale);
+    expect(screen.getByText('English fallback text')).toBeInTheDocument();
+    expect(document.documentElement.lang).toBe('en');
+    expect(document.documentElement.dataset.consoleLanguage).toBe(locale);
+  });
+
   it('reads English messages from the flat compiled catalog', () => {
     render(
       <Provider store={createStore()}>
