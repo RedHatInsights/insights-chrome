@@ -18,9 +18,6 @@ import { gunzipSync } from 'zlib';
 // Test configuration constants
 const AMPLITUDE_REQUEST_TIMEOUT = 30000; // 30 seconds to wait for initial Amplitude request
 const AMPLITUDE_API_HOSTS = ['api.amplitude.com', 'api2.amplitude.com', 'api.eu.amplitude.com'];
-// EVENT_BATCH_DELAY: Amplitude batches events. After waitForRequest() catches the FIRST request,
-// we need to wait for additional batched requests to arrive. Necessary for slow CI environments.
-const EVENT_BATCH_DELAY = 2000; // 2 seconds to collect all batched events
 // NEGATIVE_TEST_WAIT: Proving a negative (no request made) requires waiting long enough to account
 // for slow CI. networkidle won't work due to background WebSocket/polling activity.
 const NEGATIVE_TEST_WAIT = 3000; // 3 seconds to ensure no requests in slow CI
@@ -36,29 +33,24 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
       localStorage.removeItem('chrome:segment:disable');
     });
 
-    // Intercept FEO config (fed-mods.json) and inject Amplitude autocapture keys
-    await page.route('**/apps/chrome/fed-mods.json**', async (route) => {
-      const response = await route.fetch();
-      const feoConfig = await response.json();
-
-      // Ensure chrome module has analytics config with autocapture keys
-      if (!feoConfig.chrome) {
-        feoConfig.chrome = {};
-      }
-      if (!feoConfig.chrome.analytics) {
-        feoConfig.chrome.analytics = {};
-      }
-
-      // Inject test Amplitude keys
-      feoConfig.chrome.analytics = {
-        ...feoConfig.chrome.analytics,
-        APIKey: 'test-amplitude-engagement-key-prod',
-        APIKeyDev: 'test-amplitude-engagement-key-dev',
-        autocaptureAPIKey: 'test-amplitude-autocapture-key-prod',
-        autocaptureAPIKeyDev: 'test-amplitude-autocapture-key-dev',
-      };
-
-      await route.fulfill({ json: feoConfig });
+    // Intercept the FEO fed-modules config, which contains chrome.analytics settings.
+    let chromeAnalyticsConfigIntercepted = false;
+    await page.route('**/apps/chrome/operator-generated/fed-modules.json**', async (route) => {
+      // The generated endpoint can return an edge 403 to route.fetch() in stage, so provide
+      // the Chrome analytics override directly instead of relying on the live response.
+      chromeAnalyticsConfigIntercepted = true;
+      await route.fulfill({
+        json: {
+          chrome: {
+            analytics: {
+              APIKey: 'test-amplitude-engagement-key-prod',
+              APIKeyDev: 'test-amplitude-engagement-key-dev',
+              autocaptureAPIKey: 'test-amplitude-autocapture-key-prod',
+              autocaptureAPIKeyDev: 'test-amplitude-autocapture-key-dev',
+            },
+          },
+        },
+      });
     });
 
     // Intercept Unleash feature flags and enable Amplitude autocapture
@@ -144,83 +136,44 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
       });
     }
 
-    // Navigate to a page to trigger autocapture initialization
-    // and wait for the Amplitude request to be sent
-    await Promise.all([
-      // Wait for Amplitude API request
-      page.waitForRequest((request) => AMPLITUDE_API_HOSTS.some((host) => request.url().includes(host)) && request.method() === 'POST', {
-        timeout: AMPLITUDE_REQUEST_TIMEOUT,
-      }),
-      // Navigate to the page
-      page.goto('/insights/dashboard'),
-    ]);
-
-    // Wait for event batching to complete
-    await page.waitForTimeout(EVENT_BATCH_DELAY);
-
-    // Verify that Amplitude requests were made
-    expect(amplitudeRequests.length).toBeGreaterThan(0);
-
-    // Find identify events with user properties
-    // Amplitude SDK can send user properties in two ways:
-    // 1. Via $identify event with user_properties field
-    // 2. Via set_once or user_properties at the event level
-    const eventsWithUserProperties = amplitudeRequests.filter((req) => {
-      if (typeof req.body === 'string') {
-        // Skip gzipped/binary requests for now
-        return false;
-      }
-
-      const body = req.body as {
-        events?: Array<{
-          event_type?: string;
-          user_properties?: Record<string, unknown>;
-          [key: string]: unknown;
-        }>;
-        options?: { user_id?: string };
-      };
-
-      if (body && Array.isArray(body.events)) {
-        return body.events.some((event) => {
-          // Check for $identify event OR events with user_properties
-          const isIdentify = event.event_type === '$identify';
-          const hasUserProps = event.user_properties && Object.keys(event.user_properties).length > 0;
-          return isIdentify || hasUserProps;
-        });
-      }
-      return false;
+    // Register both waiters before navigation; the shell requests its federated config after
+    // the initial page load, and the Amplitude request follows SDK initialization.
+    const chromeAnalyticsConfigResponse = page.waitForResponse((response) => response.url().includes('/apps/chrome/operator-generated/fed-modules.json'), {
+      timeout: AMPLITUDE_REQUEST_TIMEOUT,
     });
+    const amplitudeRequest = page.waitForRequest((request) => AMPLITUDE_API_HOSTS.some((host) => request.url().includes(host)) && request.method() === 'POST', {
+      timeout: AMPLITUDE_REQUEST_TIMEOUT,
+    });
+    await Promise.all([chromeAnalyticsConfigResponse, page.goto('/insights/dashboard')]);
+    expect(chromeAnalyticsConfigIntercepted, 'Chrome FEO analytics config should be intercepted and given test keys').toBe(true);
+    await amplitudeRequest;
 
-    // Should have at least one $identify event with user properties
-    expect(eventsWithUserProperties.length).toBeGreaterThan(0);
+    // Amplitude may send automatic events before the enriched identify event. Wait for the
+    // payload this test cares about instead of assuming a fixed batching delay is sufficient.
+    const findIdentifyEventWithEnrichedProps = () => {
+      for (const req of amplitudeRequests) {
+        if (typeof req.body === 'string') {
+          continue;
+        }
 
-    // Find the $identify event that has our enriched properties in $set
-    // Note: Amplitude can batch multiple events in one request, so we need to find
-    // the specific $identify event that contains our custom properties, not just
-    // the SDK's automatic initial identify event
-    let identifyEventWithEnrichedProps: { event_type?: string; user_properties?: Record<string, unknown>; [key: string]: unknown } | undefined;
+        const body = req.body as {
+          events?: Array<{ event_type?: string; user_properties?: Record<string, unknown>; [key: string]: unknown }>;
+        };
 
-    for (const req of eventsWithUserProperties) {
-      const body = req.body as {
-        events: Array<{ event_type?: string; user_properties?: Record<string, unknown>; [key: string]: unknown }>;
-      };
-
-      for (const event of body.events) {
-        if (event.event_type === '$identify') {
-          const userProps = event.user_properties as { $set?: Record<string, unknown> } | undefined;
-          // Check if this identify event has our custom 'internal' property in $set
-          if (userProps?.$set?.internal !== undefined) {
-            identifyEventWithEnrichedProps = event;
-            break;
+        for (const event of body?.events ?? []) {
+          if (event.event_type === '$identify') {
+            const userProps = event.user_properties as { $set?: Record<string, unknown> } | undefined;
+            if (userProps?.$set?.internal !== undefined) {
+              return event;
+            }
           }
         }
       }
+      return undefined;
+    };
 
-      if (identifyEventWithEnrichedProps) {
-        break;
-      }
-    }
-
+    await expect.poll(() => Boolean(findIdentifyEventWithEnrichedProps()), { timeout: AMPLITUDE_REQUEST_TIMEOUT }).toBe(true);
+    const identifyEventWithEnrichedProps = findIdentifyEventWithEnrichedProps();
     expect(identifyEventWithEnrichedProps).toBeDefined();
 
     const userProperties = identifyEventWithEnrichedProps?.user_properties;

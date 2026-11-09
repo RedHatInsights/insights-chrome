@@ -306,9 +306,8 @@ describe('useAmplitude', () => {
       // Verify init was called with proper config (no identifyOptions - that's not a real parameter)
       const initCall = (amplitude.init as jest.Mock).mock.calls[0];
       expect(initCall[0]).toBe('feo-dev-autocapture-key');
-      expect(initCall[1]).toBe('user-1');
+      expect(initCall[1]).toBe('acct-456');
       expect(initCall[2]).toMatchObject({
-        deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
           pageViews: true,
@@ -337,6 +336,21 @@ describe('useAmplitude', () => {
       return true;
     });
     logSpy.mockRestore();
+  });
+
+  it('initializes autocapture without waiting for Segment integrations to be ready', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+    const segmentReadySpy = jest.spyOn(analyticsMock, 'ready').mockImplementation(() => undefined);
+
+    render(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', 'acct-456', expect.any(Object)));
+    expect(segmentReadySpy).not.toHaveBeenCalled();
+    segmentReadySpy.mockRestore();
   });
 
   it('initializes both guides and autocapture when both flags are enabled', async () => {

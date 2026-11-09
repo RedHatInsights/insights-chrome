@@ -147,44 +147,34 @@ function useAmplitude() {
     // Set flag immediately to prevent re-entrancy during async initialization
     amplitudeSdkInitialized.current = true;
 
-    analytics?.ready(() => {
-      analytics
-        .user()
-        .then((segmentUser) => {
-          try {
-            // Initialize Amplitude SDK with autocapture plugin
-            amplitude.add(autocapturePlugin());
-            const initPromise = amplitude.init(autocaptureKeyToUse, segmentUser.id() ?? undefined, {
-              deviceId: segmentUser.anonymousId() ?? undefined,
-              defaultTracking: {
-                sessions: true,
-                pageViews: true,
-                formInteractions: true,
-                fileDownloads: true,
-              },
-            });
+    try {
+      // Use the same stable ID Segment identifies for the user. Waiting for Segment's global
+      // ready callback can block autocapture on unrelated integrations.
+      amplitude.add(autocapturePlugin());
+      const initPromise = amplitude.init(autocaptureKeyToUse, user.identity.internal?.account_id ?? undefined, {
+        defaultTracking: {
+          sessions: true,
+          pageViews: true,
+          formInteractions: true,
+          fileDownloads: true,
+        },
+      });
 
-            // Wait for init() to complete, then send initial identify()
-            initPromise?.promise
-              ?.then(() => {
-                sendIdentifyEvent();
-              })
-              .catch((error) => {
-                // Handle initialization promise rejection
-                amplitudeSdkInitialized.current = false;
-                console.error('Error during Amplitude SDK initialization promise', error);
-              });
-          } catch (error) {
-            amplitudeSdkInitialized.current = false;
-            console.error('Error initializing Amplitude SDK with autocapture', error);
-          }
+      // Wait for init() to complete, then send initial identify()
+      initPromise?.promise
+        ?.then(() => {
+          sendIdentifyEvent();
         })
         .catch((error) => {
+          // Handle initialization promise rejection
           amplitudeSdkInitialized.current = false;
-          console.error('Error getting user for Amplitude autocapture', error);
+          console.error('Error during Amplitude SDK initialization promise', error);
         });
-    });
-  }, [enableAmplitudeAutocapture, ready, analytics, autocaptureKeyToUse, user, sendIdentifyEvent]);
+    } catch (error) {
+      amplitudeSdkInitialized.current = false;
+      console.error('Error initializing Amplitude SDK with autocapture', error);
+    }
+  }, [enableAmplitudeAutocapture, ready, autocaptureKeyToUse, user, sendIdentifyEvent]);
 
   const initializeAmplitude = function () {
     return analytics
