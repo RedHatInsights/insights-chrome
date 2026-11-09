@@ -277,7 +277,8 @@
     "zh_cn": {
       "phase": "exporting",
       "toolingCommitShas": [
-        "9c068bacf38687e95855ebd75ea315641af35b5f"
+        "9c068bacf38687e95855ebd75ea315641af35b5f",
+        "2aeb8989dbd752d588ce2d42ff2ba3d1e6bd63b8"
       ]
     }
   },
