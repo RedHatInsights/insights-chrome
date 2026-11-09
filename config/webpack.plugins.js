@@ -39,7 +39,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     'policies-rhel',
     'registration-assistant-rhel',
     'remediations-rhel',
-    'tasks-rhel',
     'vulnerability-rhel',
     // Other Insights components
     'content-sources',
