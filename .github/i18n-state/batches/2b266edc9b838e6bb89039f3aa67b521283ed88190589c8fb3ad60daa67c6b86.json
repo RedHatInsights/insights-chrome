@@ -48,7 +48,7 @@
     {
       "uid": "GzLeFOYzNrpHaNTMs4dXV3",
       "innerId": "13",
-      "status": "NEW",
+      "status": "COMPLETED",
       "providers": [],
       "sourceLang": "en_us",
       "targetLang": "zh_cn",
@@ -60,6 +60,7 @@
         "workflowLevel": 1
       },
       "filename": "insights-chrome.ui.en.json",
+      "fullFilename": "insights-chrome.ui.en.json",
       "dateDue": null,
       "wordsCount": 854,
       "beginIndex": 0,
@@ -70,7 +71,8 @@
       "dateCreated": "2026-11-05T14:16:13+0000",
       "jobReference": {
         "uid": "7Zn088GMLbMvoW4Tc0o1Cp",
-        "filename": "insights-chrome.ui.en.json"
+        "filename": "insights-chrome.ui.en.json",
+        "fullFilename": "insights-chrome.ui.en.json"
       },
       "project": {
         "name": "hcc-ui",
@@ -92,8 +94,19 @@
     {
       "uid": "g1fOXCYHKtOV6G2mZPpsZ7",
       "innerId": "14",
-      "status": "NEW",
-      "providers": [],
+      "status": "ACCEPTED",
+      "providers": [
+        {
+          "type": "USER",
+          "id": "285168",
+          "uid": "2sHjdtUUmG8d39nW3yQ216",
+          "userName": "croe",
+          "firstName": "Corina",
+          "lastName": "Roe",
+          "email": "croe@redhat.com",
+          "active": true
+        }
+      ],
       "sourceLang": "en_us",
       "targetLang": "fr",
       "workflowLevel": 1,
@@ -104,6 +117,7 @@
         "workflowLevel": 1
       },
       "filename": "insights-chrome.ui.en.json",
+      "fullFilename": "insights-chrome.ui.en.json",
       "dateDue": null,
       "wordsCount": 854,
       "beginIndex": 0,
@@ -114,7 +128,8 @@
       "dateCreated": "2026-11-05T14:16:13+0000",
       "jobReference": {
         "uid": "WNzd7a4eFQqM751898TrC4",
-        "filename": "insights-chrome.ui.en.json"
+        "filename": "insights-chrome.ui.en.json",
+        "fullFilename": "insights-chrome.ui.en.json"
       },
       "project": {
         "name": "hcc-ui",
@@ -148,6 +163,7 @@
         "workflowLevel": 1
       },
       "filename": "insights-chrome.ui.en.json",
+      "fullFilename": "insights-chrome.ui.en.json",
       "dateDue": null,
       "wordsCount": 854,
       "beginIndex": 0,
@@ -158,7 +174,8 @@
       "dateCreated": "2026-11-05T14:16:13+0000",
       "jobReference": {
         "uid": "Rghlwfoiwrr37V7223cSZ1",
-        "filename": "insights-chrome.ui.en.json"
+        "filename": "insights-chrome.ui.en.json",
+        "fullFilename": "insights-chrome.ui.en.json"
       },
       "project": {
         "name": "hcc-ui",
@@ -180,8 +197,19 @@
     {
       "uid": "dhrN5CTposoA0WXIdjrV96",
       "innerId": "16",
-      "status": "NEW",
-      "providers": [],
+      "status": "ACCEPTED",
+      "providers": [
+        {
+          "type": "USER",
+          "id": "346709",
+          "uid": "MYSlpMIGEX95ax0xNc3sb1",
+          "userName": "kemorigu",
+          "firstName": "Keiko",
+          "lastName": "Moriguchi",
+          "email": "kemorigu@redhat.com",
+          "active": true
+        }
+      ],
       "sourceLang": "en_us",
       "targetLang": "ja",
       "workflowLevel": 1,
@@ -192,6 +220,7 @@
         "workflowLevel": 1
       },
       "filename": "insights-chrome.ui.en.json",
+      "fullFilename": "insights-chrome.ui.en.json",
       "dateDue": null,
       "wordsCount": 854,
       "beginIndex": 0,
@@ -202,7 +231,8 @@
       "dateCreated": "2026-11-05T14:16:13+0000",
       "jobReference": {
         "uid": "gGrq8TGE4hFKcJ2qGZcut1",
-        "filename": "insights-chrome.ui.en.json"
+        "filename": "insights-chrome.ui.en.json",
+        "fullFilename": "insights-chrome.ui.en.json"
       },
       "project": {
         "name": "hcc-ui",
