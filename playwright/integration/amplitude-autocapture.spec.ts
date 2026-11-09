@@ -17,6 +17,7 @@ import { gunzipSync } from 'zlib';
 
 // Test configuration constants
 const AMPLITUDE_REQUEST_TIMEOUT = 30000; // 30 seconds to wait for initial Amplitude request
+const AMPLITUDE_API_HOSTS = ['api.amplitude.com', 'api2.amplitude.com', 'api.eu.amplitude.com'];
 // EVENT_BATCH_DELAY: Amplitude batches events. After waitForRequest() catches the FIRST request,
 // we need to wait for additional batched requests to arrive. Necessary for slow CI environments.
 const EVENT_BATCH_DELAY = 2000; // 2 seconds to collect all batched events
@@ -101,12 +102,7 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     const amplitudeRequests: { url: string; method: string; body: unknown; headers: Record<string, string> }[] = [];
 
     // Intercept all Amplitude endpoints
-    const amplitudePatterns = [
-      '**/api.amplitude.com/**',
-      '**/api2.amplitude.com/**',
-      '**/api.eu.amplitude.com/**',
-      '**/cdn.amplitude.com/**', // CDN for scripts
-    ];
+    const amplitudePatterns = [...AMPLITUDE_API_HOSTS.map((host) => `**/${host}/**`), '**/cdn.amplitude.com/**']; // CDN for scripts
 
     for (const pattern of amplitudePatterns) {
       await page.route(pattern, async (route) => {
@@ -152,10 +148,9 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     // and wait for the Amplitude request to be sent
     await Promise.all([
       // Wait for Amplitude API request
-      page.waitForRequest(
-        (request) => (request.url().includes('api.amplitude.com') || request.url().includes('api2.amplitude.com')) && request.method() === 'POST',
-        { timeout: AMPLITUDE_REQUEST_TIMEOUT }
-      ),
+      page.waitForRequest((request) => AMPLITUDE_API_HOSTS.some((host) => request.url().includes(host)) && request.method() === 'POST', {
+        timeout: AMPLITUDE_REQUEST_TIMEOUT,
+      }),
       // Navigate to the page
       page.goto('/insights/dashboard'),
     ]);
