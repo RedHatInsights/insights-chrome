@@ -275,11 +275,19 @@
       "phase": "pending"
     },
     "zh_cn": {
-      "phase": "exporting",
+      "phase": "pr-created",
       "toolingCommitShas": [
         "9c068bacf38687e95855ebd75ea315641af35b5f",
         "2aeb8989dbd752d588ce2d42ff2ba3d1e6bd63b8"
-      ]
+      ],
+      "validationErrors": [],
+      "validationWarnings": [],
+      "pullRequestBodyDigest": "5e598661fa4ea6e8bf6aa497f136199692402933dd486f4d39b3e8dcfc37bd07",
+      "pullRequestUrl": "https://github.com/RedHatInsights/insights-chrome/pull/3769",
+      "pullRequestBranch": "i18n/phrase-2b266edc9b838e6b-zh-cn",
+      "pullRequestBatchKey": "2b266edc9b838e6bb89039f3aa67b521283ed88190589c8fb3ad60daa67c6b86",
+      "pullRequestAssigneesPending": true,
+      "toolingCommitSha": "2aeb8989dbd752d588ce2d42ff2ba3d1e6bd63b8"
     }
   },
   "importAsyncRequestId": "1907169987"
