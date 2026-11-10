@@ -1,6 +1,7 @@
 import { expect, test } from '../setup/test-setup';
 import { clearCachedFeatureFlags } from '../helpers/feature-flags';
 import { gunzipSync } from 'zlib';
+import type { Page } from '@playwright/test';
 
 /**
  * Amplitude Autocapture Integration Tests
@@ -22,159 +23,143 @@ const AMPLITUDE_API_HOSTS = ['api.amplitude.com', 'api2.amplitude.com', 'api.eu.
 // for slow CI. networkidle won't work due to background WebSocket/polling activity.
 const NEGATIVE_TEST_WAIT = 3000; // 3 seconds to ensure no requests in slow CI
 
-test.describe('Amplitude Autocapture - Enriched User Properties', () => {
-  test('should send enriched user properties with autocapture events', async ({ page }) => {
-    await clearCachedFeatureFlags(page);
+type AmplitudeRequest = { url: string; method: string; body: unknown; headers: Record<string, string> };
+type AmplitudeIdentifyEvent = { event_type?: string; user_properties?: Record<string, unknown>; [key: string]: unknown };
+type FeatureFlagToggle = { name?: string; enabled?: boolean; impressionData?: boolean; variant?: { name: string; enabled: boolean } };
 
-    // CRITICAL: Re-enable analytics for this test
-    // The global setup disables analytics, but we need it enabled to test Amplitude
-    await page.addInitScript(() => {
-      localStorage.removeItem('chrome:analytics:disable');
-      localStorage.removeItem('chrome:segment:disable');
-    });
-
-    // Intercept the FEO fed-modules config, which contains chrome.analytics settings.
-    let chromeAnalyticsConfigIntercepted = false;
-    await page.route('**/apps/chrome/operator-generated/fed-modules.json**', async (route) => {
-      // The generated endpoint can return an edge 403 to route.fetch() in stage, so provide
-      // the Chrome analytics override directly instead of relying on the live response.
-      chromeAnalyticsConfigIntercepted = true;
-      await route.fulfill({
-        json: {
-          chrome: {
-            analytics: {
-              APIKey: 'test-amplitude-engagement-key-prod',
-              APIKeyDev: 'test-amplitude-engagement-key-dev',
-              autocaptureAPIKey: 'test-amplitude-autocapture-key-prod',
-              autocaptureAPIKeyDev: 'test-amplitude-autocapture-key-dev',
-            },
-          },
-        },
-      });
-    });
-
-    // Intercept Unleash feature flags and enable Amplitude autocapture
-    await page.route('**/api/featureflags/v0**', async (route) => {
-      let toggles: object[] = [];
-      try {
-        const response = await route.fetch();
-        const body = await response.json();
-        toggles = body.toggles || [];
-      } catch {
-        // Feature flags endpoint may not return valid JSON in some environments
-        toggles = [];
-      }
-
-      // Remove existing Amplitude flags and inject both flags as enabled
-      const filtered = toggles.filter(
-        (t: { name?: string }) => t.name !== 'platform.chrome.analytics.amplitude' && t.name !== 'platform.chrome.analytics.amplitude.autocapture'
-      );
-
-      filtered.push(
-        {
-          name: 'platform.chrome.analytics.amplitude',
-          enabled: true,
-          impressionData: false,
-          variant: { name: 'disabled', enabled: false },
-        },
-        {
-          name: 'platform.chrome.analytics.amplitude.autocapture',
-          enabled: true,
-          impressionData: false,
-          variant: { name: 'disabled', enabled: false },
-        }
-      );
-
-      await route.fulfill({
-        json: { toggles: filtered },
-      });
-    });
-
-    // Track Amplitude API requests
-    const amplitudeRequests: { url: string; method: string; body: unknown; headers: Record<string, string> }[] = [];
-
-    // Intercept all Amplitude endpoints
-    const amplitudePatterns = [...AMPLITUDE_API_HOSTS.map((host) => `**/${host}/**`), '**/cdn.amplitude.com/**']; // CDN for scripts
-
-    for (const pattern of amplitudePatterns) {
-      await page.route(pattern, async (route) => {
-        const request = route.request();
-        const headers = request.headers();
-        let body: unknown;
-
-        // Only parse POST/PUT requests
-        if (request.method() === 'POST' || request.method() === 'PUT') {
-          // Try to get binary data first using postDataBuffer()
-          const postDataBuffer = request.postDataBuffer();
-
-          if (postDataBuffer) {
-            try {
-              // Try parsing as JSON first
-              body = JSON.parse(postDataBuffer.toString('utf-8'));
-            } catch {
-              // If JSON parse fails, try decompressing if it's gzipped
-              try {
-                const decompressed = gunzipSync(postDataBuffer);
-                body = JSON.parse(decompressed.toString('utf-8'));
-              } catch (decompError) {
-                // If decompression fails, capture raw buffer prefix for debugging test failures
-                body = postDataBuffer.toString('utf-8', 0, 100);
-              }
-            }
-
-            amplitudeRequests.push({
-              url: request.url(),
-              method: request.method(),
-              body,
-              headers,
-            });
-          }
-        }
-
-        // Continue with the request
-        await route.continue();
-      });
+function findEnrichedIdentifyEvent(requests: AmplitudeRequest[]): AmplitudeIdentifyEvent | undefined {
+  for (const request of requests) {
+    if (typeof request.body === 'string') {
+      continue;
     }
 
-    // Register both waiters before navigation; the shell requests its federated config after
-    // the initial page load, and the Amplitude request follows SDK initialization.
-    const chromeAnalyticsConfigResponse = page.waitForResponse((response) => response.url().includes('/apps/chrome/operator-generated/fed-modules.json'), {
-      timeout: AMPLITUDE_REQUEST_TIMEOUT,
-    });
-    const amplitudeRequest = page.waitForRequest((request) => AMPLITUDE_API_HOSTS.some((host) => request.url().includes(host)) && request.method() === 'POST', {
-      timeout: AMPLITUDE_REQUEST_TIMEOUT,
-    });
-    await Promise.all([chromeAnalyticsConfigResponse, page.goto('/insights/dashboard')]);
-    expect(chromeAnalyticsConfigIntercepted, 'Chrome FEO analytics config should be intercepted and given test keys').toBe(true);
-    await amplitudeRequest;
-
-    // Amplitude may send automatic events before the enriched identify event. Wait for the
-    // payload this test cares about instead of assuming a fixed batching delay is sufficient.
-    const findIdentifyEventWithEnrichedProps = () => {
-      for (const req of amplitudeRequests) {
-        if (typeof req.body === 'string') {
-          continue;
-        }
-
-        const body = req.body as {
-          events?: Array<{ event_type?: string; user_properties?: Record<string, unknown>; [key: string]: unknown }>;
-        };
-
-        for (const event of body?.events ?? []) {
-          if (event.event_type === '$identify') {
-            const userProps = event.user_properties as { $set?: Record<string, unknown> } | undefined;
-            if (userProps?.$set?.internal !== undefined) {
-              return event;
-            }
-          }
+    const body = request.body as { events?: AmplitudeIdentifyEvent[] };
+    for (const event of body?.events ?? []) {
+      if (event.event_type === '$identify') {
+        const userProperties = event.user_properties as { $set?: Record<string, unknown> } | undefined;
+        if (userProperties?.$set?.internal !== undefined) {
+          return event;
         }
       }
-      return undefined;
-    };
+    }
+  }
 
-    let identifyEventWithEnrichedProps: ReturnType<typeof findIdentifyEventWithEnrichedProps> = undefined;
+  return undefined;
+}
+
+async function stubAmplitudeEnvironment(page: Page) {
+  await clearCachedFeatureFlags(page);
+
+  // Global setup disables analytics; re-enable it for this test.
+  await page.addInitScript(() => {
+    localStorage.removeItem('chrome:analytics:disable');
+    localStorage.removeItem('chrome:segment:disable');
+  });
+
+  let chromeAnalyticsConfigIntercepted = false;
+  await page.route('**/apps/chrome/operator-generated/fed-modules.json**', async (route) => {
+    // The generated endpoint can return an edge 403 to route.fetch() in stage, so provide
+    // the Chrome analytics override directly instead of relying on the live response.
+    chromeAnalyticsConfigIntercepted = true;
+    await route.fulfill({
+      json: {
+        chrome: {
+          analytics: {
+            APIKey: 'test-amplitude-engagement-key-prod',
+            APIKeyDev: 'test-amplitude-engagement-key-dev',
+            autocaptureAPIKey: 'test-amplitude-autocapture-key-prod',
+            autocaptureAPIKeyDev: 'test-amplitude-autocapture-key-dev',
+          },
+        },
+      },
+    });
+  });
+
+  await page.route('**/api/featureflags/v0**', async (route) => {
+    let toggles: FeatureFlagToggle[] = [];
+    try {
+      const response = await route.fetch();
+      const body = await response.json();
+      toggles = body.toggles || [];
+    } catch {
+      // Feature flags endpoint may not return valid JSON in some environments.
+      toggles = [];
+    }
+
+    const filtered = toggles.filter(
+      (toggle) => toggle.name !== 'platform.chrome.analytics.amplitude' && toggle.name !== 'platform.chrome.analytics.amplitude.autocapture'
+    );
+    filtered.push(
+      {
+        name: 'platform.chrome.analytics.amplitude',
+        enabled: true,
+        impressionData: false,
+        variant: { name: 'disabled', enabled: false },
+      },
+      {
+        name: 'platform.chrome.analytics.amplitude.autocapture',
+        enabled: true,
+        impressionData: false,
+        variant: { name: 'disabled', enabled: false },
+      }
+    );
+
+    await route.fulfill({ json: { toggles: filtered } });
+  });
+
+  const amplitudeRequests: AmplitudeRequest[] = [];
+  const amplitudePatterns = [...AMPLITUDE_API_HOSTS.map((host) => `**/${host}/**`), '**/cdn.amplitude.com/**'];
+  for (const pattern of amplitudePatterns) {
+    await page.route(pattern, async (route) => {
+      const request = route.request();
+      let body: unknown;
+      if (request.method() === 'POST' || request.method() === 'PUT') {
+        const postDataBuffer = request.postDataBuffer();
+        if (postDataBuffer) {
+          try {
+            body = JSON.parse(postDataBuffer.toString('utf-8'));
+          } catch {
+            try {
+              body = JSON.parse(gunzipSync(postDataBuffer).toString('utf-8'));
+            } catch {
+              body = postDataBuffer.toString('utf-8', 0, 100);
+            }
+          }
+          amplitudeRequests.push({ url: request.url(), method: request.method(), body, headers: request.headers() });
+        }
+      }
+
+      await route.continue();
+    });
+  }
+
+  // Register both waiters before navigation; the shell requests its federated config after
+  // the initial page load, and the Amplitude request follows SDK initialization.
+  const chromeAnalyticsConfigResponse = page.waitForResponse((response) => response.url().includes('/apps/chrome/operator-generated/fed-modules.json'), {
+    timeout: AMPLITUDE_REQUEST_TIMEOUT,
+  });
+  const amplitudeRequest = page.waitForRequest((request) => AMPLITUDE_API_HOSTS.some((host) => request.url().includes(host)) && request.method() === 'POST', {
+    timeout: AMPLITUDE_REQUEST_TIMEOUT,
+  });
+
+  return {
+    amplitudeRequests,
+    chromeAnalyticsConfigWasIntercepted: () => chromeAnalyticsConfigIntercepted,
+    waitForInitialRequests: () => Promise.all([chromeAnalyticsConfigResponse, amplitudeRequest]),
+  };
+}
+
+test.describe('Amplitude Autocapture - Enriched User Properties', () => {
+  test('should send enriched user properties with autocapture events', async ({ page }) => {
+    const amplitudeEnvironment = await stubAmplitudeEnvironment(page);
+    await Promise.all([amplitudeEnvironment.waitForInitialRequests(), page.goto('/insights/dashboard')]);
+    expect(amplitudeEnvironment.chromeAnalyticsConfigWasIntercepted(), 'Chrome FEO analytics config should be intercepted and given test keys').toBe(true);
+
+    let identifyEventWithEnrichedProps: ReturnType<typeof findEnrichedIdentifyEvent> = undefined;
     await expect
-      .poll(() => (identifyEventWithEnrichedProps = findIdentifyEventWithEnrichedProps()), { timeout: AMPLITUDE_REQUEST_TIMEOUT })
+      .poll(() => (identifyEventWithEnrichedProps = findEnrichedIdentifyEvent(amplitudeEnvironment.amplitudeRequests)), {
+        timeout: AMPLITUDE_REQUEST_TIMEOUT,
+      })
       .toBeDefined();
 
     const userProperties = identifyEventWithEnrichedProps?.user_properties;

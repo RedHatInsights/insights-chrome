@@ -11,6 +11,7 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { getUrl } from '../hooks/useBundle';
+import { getAnalyticsUserId } from './getAnalyticsUserId';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
@@ -148,10 +149,9 @@ function useAmplitude() {
     amplitudeSdkInitialized.current = true;
 
     try {
-      // Use the same stable ID Segment identifies for the user. Waiting for Segment's global
-      // ready callback can block autocapture on unrelated integrations.
+      // Waiting for Segment's global ready callback can block autocapture on unrelated integrations.
       amplitude.add(autocapturePlugin());
-      const initPromise = amplitude.init(autocaptureKeyToUse, user.identity.internal?.account_id ?? undefined, {
+      const initPromise = amplitude.init(autocaptureKeyToUse, getAnalyticsUserId(user), {
         defaultTracking: {
           sessions: true,
           pageViews: true,
