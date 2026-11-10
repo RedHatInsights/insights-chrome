@@ -376,6 +376,35 @@ describe('useAmplitude', () => {
     expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', undefined, expect.objectContaining({ identityStorage: 'none' }));
   });
 
+  it('clears the Amplitude user ID before identifying when the account ID becomes undefined', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
+
+    amplitude.setUserId.mockClear();
+    amplitude.identify.mockClear();
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: undefined as unknown as typeof DEFAULT_MOCK_USER.identity.internal,
+      },
+    };
+    rerender(<TestComponent />);
+
+    await waitFor(() => {
+      expect(amplitude.setUserId).toHaveBeenCalledWith(undefined);
+      expect(amplitude.identify).toHaveBeenCalled();
+    });
+    expect(amplitude.setUserId.mock.invocationCallOrder[0]).toBeLessThan(amplitude.identify.mock.invocationCallOrder[0]);
+    expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
   it('does not initialize autocapture in IT-less environments', () => {
     mockITLess = true;
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {

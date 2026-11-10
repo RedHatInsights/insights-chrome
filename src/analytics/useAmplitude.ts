@@ -16,6 +16,7 @@ import { getAnalyticsUserId } from './getAnalyticsUserId';
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
   const amplitudeSdkInitialized = useRef(false);
+  const amplitudeUserId = useRef<string | undefined>(undefined);
   const configWarningLogged = useRef(false);
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
   const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
@@ -29,6 +30,7 @@ function useAmplitude() {
   const { user } = useContext(ChromeAuthContext);
   // Use stable scalar from user object to avoid effect re-runs on every render
   const userAccountNumber = user?.identity?.account_number;
+  const userAccountId = user ? getAnalyticsUserId(user) : undefined;
 
   // Chrome-level analytics config from FEO (fed-mods.json analytics section)
   const chromeAnalytics = chromeModules['chrome']?.analytics;
@@ -153,6 +155,7 @@ function useAmplitude() {
       // Do not wait for Segment's global ready callback; unrelated integrations can block it.
       amplitude.add(autocapturePlugin());
       const analyticsUserId = getAnalyticsUserId(user);
+      amplitudeUserId.current = analyticsUserId;
       const initPromise = amplitude.init(autocaptureKeyToUse, analyticsUserId, {
         ...(analyticsUserId === undefined ? { identityStorage: 'none' as const } : {}),
         defaultTracking: {
@@ -266,8 +269,12 @@ function useAmplitude() {
     if (!amplitudeSdkInitialized.current) {
       return;
     }
+    if (userAccountId !== amplitudeUserId.current) {
+      amplitude.setUserId(userAccountId);
+      amplitudeUserId.current = userAccountId;
+    }
     sendIdentifyEvent();
-  }, [activeModule, isPreview, userAccountNumber, sendIdentifyEvent]);
+  }, [activeModule, isPreview, userAccountNumber, userAccountId, sendIdentifyEvent]);
 }
 
 export default useAmplitude;
