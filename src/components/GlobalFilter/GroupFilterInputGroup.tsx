@@ -78,23 +78,26 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
           headerContent={<div>{intl.formatMessage(messages.filterByTagsPopoverHeader)}</div>}
           bodyContent={
             <div>
-              {intl.formatMessage(messages.filterByTagsPopoverContent1)}{' '}
-              <a
-                href="https://docs.redhat.com/en/documentation/subscription_central/1-latest/html-single/getting_started_with_the_subscriptions_service/index#proc-installing-satellite-inventory-upload-plugin_assembly-about-subscriptionwatch"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {intl.formatMessage(messages.filterByTagsPopoverSatelliteLink)}
-              </a>
-              {intl.formatMessage(messages.filterByTagsPopoverContent2)}{' '}
-              <a
-                href="https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html-single/client_configuration_guide_for_red_hat_lightspeed/index#proc-lightspeed-creating-custom-group-tags-yaml-file_lightspeed-cg-adding-tags"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {intl.formatMessage(messages.filterByTagsPopoverCCGLink)}
-              </a>{' '}
-              {intl.formatMessage(messages.filterByTagsPopoverContent3)}
+              {intl.formatMessage(messages.filterByTagsPopoverContent, {
+                SatelliteLink: (chunks) => (
+                  <a
+                    href="https://docs.redhat.com/en/documentation/subscription_central/1-latest/html-single/getting_started_with_the_subscriptions_service/index#proc-installing-satellite-inventory-upload-plugin_assembly-about-subscriptionwatch"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {chunks}
+                  </a>
+                ),
+                ClientConfigurationGuideLink: (chunks) => (
+                  <a
+                    href="https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html-single/client_configuration_guide_for_red_hat_lightspeed/index#proc-lightspeed-creating-custom-group-tags-yaml-file_lightspeed-cg-adding-tags"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
             </div>
           }
           appendTo={() => document.body}

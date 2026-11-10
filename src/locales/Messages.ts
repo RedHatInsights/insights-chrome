@@ -56,20 +56,18 @@ export default defineMessages({
     description: 'Global runtime error Id',
     defaultMessage: 'Sentry error ID: {errorId}',
   },
-  problemProcessingRequest: {
-    id: 'problemProcessingRequest',
-    description: 'There was a problem processing the request. Try reloading the page. If the problem persists, contact',
-    defaultMessage: 'There was a problem processing the request. Try reloading the page. If the problem persists, contact',
+  problemProcessingRequestWithSupportLink: {
+    id: 'problemProcessingRequestWithSupportLink',
+    description: 'Feedback submission error with an inline link to Red Hat support. Keep the SupportLink tag around the link.',
+    defaultMessage:
+      'There was a problem processing the request. Try reloading the page. If the problem persists, contact <SupportLink>Red Hat support</SupportLink>.',
   },
-  redHatSupport: {
-    id: 'redHatSupport',
-    description: 'Red Hat support',
-    defaultMessage: 'Red Hat support',
-  },
-  checkOur: {
-    id: 'checkOur',
-    description: 'or check our',
-    defaultMessage: 'or check our',
+  problemProcessingRequestWithSupportAndStatusLinks: {
+    id: 'problemProcessingRequestWithSupportAndStatusLinks',
+    description:
+      'Error page instructions with inline links to support and service status. Keep SupportLink and StatusLink tags around their corresponding links.',
+    defaultMessage:
+      'There was a problem processing the request. Try reloading the page. If the problem persists, contact <SupportLink>Red Hat support</SupportLink> or check our <StatusLink>Status page</StatusLink> for known outages.',
   },
   statusPage: {
     id: 'statusPage',
@@ -85,11 +83,6 @@ export default defineMessages({
     id: 'helpPanelTooltip',
     description: 'Help panel tooltip describing available resources',
     defaultMessage: 'Learning resources, API documentation, Support Case Management, Ask Red Hat assistant, and more.',
-  },
-  knownOutages: {
-    id: 'knownOutages',
-    description: 'for known outages.',
-    defaultMessage: 'for known outages.',
   },
   languageNotAvailableTitle: {
     id: 'languageNotAvailableTitle',
@@ -536,42 +529,22 @@ export default defineMessages({
     description: 'Popover Header',
     defaultMessage: 'Tags',
   },
-  filterByTagsPopoverCCGLink: {
-    id: 'filterByTagsPopoverCCGLink',
-    description: 'Client Configuration Guide link',
-    defaultMessage: 'Client Configuration Guide',
-  },
-  filterByTagsPopoverSatelliteLink: {
-    id: 'filterByTagsPopoverSatelliteLink',
-    description: 'Installing the Satellite inventory upload plugin link',
-    defaultMessage: 'imported',
-  },
-  filterByTagsPopoverContent1: {
-    id: 'filterByTagsPopoverContent1',
-    description: 'Popover Help Content',
+  filterByTagsPopoverContent: {
+    id: 'filterByTagsPopoverContent',
+    description: 'Complete help text in the tags popover. Keep SatelliteLink around the imported link and ClientConfigurationGuideLink around the guide link.',
     defaultMessage:
-      'Tagging can be used to classify further and organize your hosts shown within the Insights inventory. If connected to a Satellite, tags from that Satellite can be',
-  },
-  filterByTagsPopoverContent2: {
-    id: 'filterByTagsPopoverContent2',
-    description: 'Popover Help Content',
-    defaultMessage: '. Additionally, you can define your own tags via the Insights-Client configuration. Please see our',
-  },
-  filterByTagsPopoverContent3: {
-    id: 'filterByTagsPopoverContent3',
-    description: 'Popover Help Content',
-    defaultMessage: 'for more details. Please note that Workload tags are automatically added by the Insights service.',
+      'Tagging can be used to classify further and organize your hosts shown within the Insights inventory. If connected to a Satellite, tags from that Satellite can be <SatelliteLink>imported</SatelliteLink>. Additionally, you can define your own tags via the Insights-Client configuration. Please see our <ClientConfigurationGuideLink>Client Configuration Guide</ClientConfigurationGuideLink> for more details. Please note that Workload tags are automatically added by the Insights service.',
   },
   reportABug: {
     id: 'reportABug',
     description: 'Report a bug',
     defaultMessage: 'Report a bug',
   },
-  describeReportBug: {
-    id: 'describeReportBug',
-    description: 'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
+  describeReportBugWithSupportCaseLink: {
+    id: 'describeReportBugWithSupportCaseLink',
+    description: 'Bug report instructions with an inline link to open a support case. Keep SupportCaseLink around the link.',
     defaultMessage:
-      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
+      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, <SupportCaseLink>Open a support case</SupportCaseLink>.',
   },
   describeBugUrgentCases: {
     id: 'describeBugUrgentCases',
@@ -593,22 +566,11 @@ export default defineMessages({
     description: 'Inform the direction of Red Hat',
     defaultMessage: 'Inform the direction of Red Hat',
   },
-  informDirectionDescription: {
-    id: 'informDirectionDescription',
-    description: 'By participating in feedback sessions, usability tests, and interviews with our ',
-    defaultMessage: 'By participating in feedback sessions, usability tests, and interviews with our ',
-  },
-  userResearchTeam: {
-    id: 'userResearchTeam',
-    description: 'User Research Team',
-    defaultMessage: 'User Research Team',
-  },
-  directInfluence: {
-    id: 'directInfluence',
-    description:
-      ', your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
+  informDirectionDescriptionWithResearchTeamLink: {
+    id: 'informDirectionDescriptionWithResearchTeamLink',
+    description: 'Research opportunity description with an inline link to the User Research Team. Keep ResearchTeamLink around the link.',
     defaultMessage:
-      ', your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
+      'By participating in feedback sessions, usability tests, and interviews with our <ResearchTeamLink>User Research Team</ResearchTeamLink>, your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
   },
   bugReported: {
     id: 'bugReported',
