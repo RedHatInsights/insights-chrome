@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 
 // Mock oidc-client-ts before importing component
+const MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE = {};
 jest.mock('oidc-client-ts', () => ({
   UserManager: jest.fn().mockImplementation(() => ({
     getUser: jest.fn(),
@@ -29,6 +30,7 @@ jest.mock('oidc-client-ts', () => ({
     settings: {},
   })),
   WebStorageStateStore: jest.fn(),
+  InMemoryWebStorage: jest.fn().mockImplementation(() => MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE),
 }));
 
 jest.mock('react-oidc-context', () => ({
@@ -66,6 +68,7 @@ jest.mock('./OIDCUserManagerErrorBoundary', () => ({
 }));
 
 import OIDCProvider from './OIDCProvider';
+import { InMemoryWebStorage, UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
 describe('OIDCProvider', () => {
   beforeEach(() => {
