@@ -172,9 +172,10 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
       return undefined;
     };
 
-    await expect.poll(() => Boolean(findIdentifyEventWithEnrichedProps()), { timeout: AMPLITUDE_REQUEST_TIMEOUT }).toBe(true);
-    const identifyEventWithEnrichedProps = findIdentifyEventWithEnrichedProps();
-    expect(identifyEventWithEnrichedProps).toBeDefined();
+    let identifyEventWithEnrichedProps: ReturnType<typeof findIdentifyEventWithEnrichedProps> = undefined;
+    await expect
+      .poll(() => (identifyEventWithEnrichedProps = findIdentifyEventWithEnrichedProps()), { timeout: AMPLITUDE_REQUEST_TIMEOUT })
+      .toBeDefined();
 
     const userProperties = identifyEventWithEnrichedProps?.user_properties;
     expect(userProperties).toBeDefined();
