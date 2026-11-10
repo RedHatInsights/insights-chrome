@@ -149,7 +149,8 @@ function useAmplitude() {
     amplitudeSdkInitialized.current = true;
 
     try {
-      // Waiting for Segment's global ready callback can block autocapture on unrelated integrations.
+      // Keep the account ID aligned with Segment, but let Amplitude manage its own device ID.
+      // Do not wait for Segment's global ready callback; unrelated integrations can block it.
       amplitude.add(autocapturePlugin());
       const initPromise = amplitude.init(autocaptureKeyToUse, getAnalyticsUserId(user), {
         defaultTracking: {
