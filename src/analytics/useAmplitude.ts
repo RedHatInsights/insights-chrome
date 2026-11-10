@@ -2,7 +2,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useContext, useEffect, useRef } from 'react';
 import { useSegment } from './useSegment';
-import { isProd } from '../utils/common';
+import { ITLess, isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { chromeModulesAtom } from '../state/atoms/chromeModuleAtom';
@@ -134,7 +134,7 @@ function useAmplitude() {
   // Initialize the Amplitude SDK once
   // useCallback with sendIdentifyEvent dep ensures we call the latest version
   const initializeAmplitudeAutocapture = useCallback(() => {
-    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready || !user) {
+    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready || !user || ITLess()) {
       return;
     }
 

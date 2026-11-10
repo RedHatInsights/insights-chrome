@@ -42,6 +42,7 @@ let mockChromeModules: Record<string, unknown> = { chrome: { analytics: MOCK_CHR
 let mockActiveModule = 'test-app';
 let mockIsPreview = false;
 let mockUser = DEFAULT_MOCK_USER;
+let mockITLess = false;
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag: string) => {
@@ -51,7 +52,7 @@ jest.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 jest.mock('react-router-dom', () => ({ useNavigate: () => jest.fn() }));
-jest.mock('../utils/common', () => ({ isProd: () => false }));
+jest.mock('../utils/common', () => ({ ITLess: () => mockITLess, isProd: () => false }));
 jest.mock('../state/atoms/activeModuleAtom', () => ({
   activeModuleDefinitionReadAtom: '__ACTIVE_MODULE_ATOM__',
   activeModuleAtom: '__ACTIVE_MODULE_VALUE_ATOM__',
@@ -142,6 +143,7 @@ describe('useAmplitude', () => {
     mockActiveModule = 'test-app';
     mockIsPreview = false;
     mockUser = DEFAULT_MOCK_USER;
+    mockITLess = false;
     // Clear handler registry
     Object.keys(onHandlers).forEach((key) => delete onHandlers[key]);
   });
@@ -351,6 +353,20 @@ describe('useAmplitude', () => {
     await waitFor(() => expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', 'acct-456', expect.any(Object)));
     expect(segmentReadySpy).not.toHaveBeenCalled();
     segmentReadySpy.mockRestore();
+  });
+
+  it('does not initialize autocapture in IT-less environments', () => {
+    mockITLess = true;
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    render(<TestComponent />);
+
+    expect(amplitude.add).not.toHaveBeenCalled();
+    expect(amplitude.init).not.toHaveBeenCalled();
   });
 
   it('initializes both guides and autocapture when both flags are enabled', async () => {
