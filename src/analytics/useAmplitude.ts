@@ -1,6 +1,6 @@
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { useSegment } from './useSegment';
 import { ITLess, isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
@@ -50,6 +50,7 @@ function useAmplitude() {
   const amplitudeSdkInitialized = useRef(false);
   const amplitudeUserId = useRef<string | undefined>(undefined);
   const amplitudeOidcUser = useRef<OidcUserIdentity>();
+  const amplitudeIdentityVersion = useRef(0);
   const configWarningLogged = useRef(false);
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
   const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
@@ -166,6 +167,10 @@ function useAmplitude() {
       console.warn('No user properties to set for Amplitude autocapture');
     }
   }, [user, activeModule, isPreview]);
+  const sendIdentifyEventRef = useRef(sendIdentifyEvent);
+  useLayoutEffect(() => {
+    sendIdentifyEventRef.current = sendIdentifyEvent;
+  }, [sendIdentifyEvent]);
 
   // Initialize the Amplitude SDK once
   // useCallback with sendIdentifyEvent dep ensures we call the latest version
@@ -190,6 +195,7 @@ function useAmplitude() {
       const analyticsUserId = getAnalyticsUserId(user);
       amplitudeUserId.current = analyticsUserId;
       amplitudeOidcUser.current = getOidcUserIdentity(user);
+      const identityVersion = amplitudeIdentityVersion.current;
       const initPromise = amplitude.init(autocaptureKeyToUse, analyticsUserId, {
         ...(analyticsUserId === undefined ? { identityStorage: 'none' as const } : {}),
         defaultTracking: {
@@ -203,7 +209,9 @@ function useAmplitude() {
       // Wait for init() to complete, then send initial identify()
       initPromise?.promise
         ?.then(() => {
-          sendIdentifyEvent();
+          if (identityVersion === amplitudeIdentityVersion.current) {
+            sendIdentifyEventRef.current();
+          }
         })
         .catch((error) => {
           // Handle initialization promise rejection
@@ -304,9 +312,13 @@ function useAmplitude() {
       return;
     }
     const currentOidcUser = user ? getOidcUserIdentity(user) : undefined;
-    if (currentOidcUser && isDifferentOidcUser(amplitudeOidcUser.current, currentOidcUser) && userAccountId === undefined) {
-      amplitude.reset();
-      amplitudeUserId.current = undefined;
+    const oidcUserChanged = currentOidcUser && isDifferentOidcUser(amplitudeOidcUser.current, currentOidcUser);
+    if (oidcUserChanged) {
+      amplitudeIdentityVersion.current += 1;
+      if (userAccountId === undefined) {
+        amplitude.reset();
+        amplitudeUserId.current = undefined;
+      }
     }
     if (currentOidcUser) {
       amplitudeOidcUser.current = currentOidcUser;

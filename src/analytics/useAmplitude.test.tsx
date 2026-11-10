@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { useFlag } from '@unleash/proxy-client-react';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
@@ -436,6 +436,83 @@ describe('useAmplitude', () => {
     expect(amplitude.reset).toHaveBeenCalledTimes(1);
     expect(amplitude.reset.mock.invocationCallOrder[0]).toBeLessThan(amplitude.identify.mock.invocationCallOrder[0]);
     expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not send identify properties from an earlier account when initialization completes', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+    let resolveInit: (() => void) | undefined;
+    (amplitude.init as jest.Mock).mockImplementationOnce(() => ({
+      promise: new Promise<void>((resolve) => {
+        resolveInit = resolve;
+      }),
+    }));
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+
+    amplitude.identify.mockClear();
+    (amplitude.Identify as jest.Mock).mockClear();
+    amplitude.setUserId.mockClear();
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: { ...DEFAULT_MOCK_USER.identity.internal, account_id: 'acct-789' },
+        user: { ...DEFAULT_MOCK_USER.identity.user, username: 'different-user' },
+      },
+    };
+    rerender(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+    const currentIdentify = (amplitude.Identify as jest.Mock).mock.results[0].value;
+    expect(currentIdentify.set).toHaveBeenCalledWith('account_id', 'acct-789');
+    expect(amplitude.setUserId).toHaveBeenCalledWith('acct-789');
+
+    await act(async () => {
+      resolveInit?.();
+      await Promise.resolve();
+    });
+
+    expect(amplitude.identify).toHaveBeenCalledTimes(1);
+    expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses current properties when initialization completes without an account change', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+    let resolveInit: (() => void) | undefined;
+    (amplitude.init as jest.Mock).mockImplementationOnce(() => ({
+      promise: new Promise<void>((resolve) => {
+        resolveInit = resolve;
+      }),
+    }));
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+
+    amplitude.identify.mockClear();
+    (amplitude.Identify as jest.Mock).mockClear();
+    mockActiveModule = 'cost-management';
+    rerender(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+
+    amplitude.identify.mockClear();
+    (amplitude.Identify as jest.Mock).mockClear();
+    await act(async () => {
+      resolveInit?.();
+      await Promise.resolve();
+    });
+
+    expect(amplitude.identify).toHaveBeenCalledTimes(1);
+    const currentIdentify = (amplitude.Identify as jest.Mock).mock.results[0].value;
+    expect(currentIdentify.set).toHaveBeenCalledWith('current_app', 'cost-management');
   });
 
   it('does not initialize autocapture in IT-less environments', () => {
