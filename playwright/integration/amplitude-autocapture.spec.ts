@@ -171,43 +171,34 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     const setProperties = (userProperties as { $set?: Record<string, unknown> })?.$set;
     expect(setProperties).toBeDefined();
 
-    // REQUIRED PROPERTY: internal
-    // This is the primary requirement - must be present and boolean
-    expect(setProperties).toHaveProperty('internal');
-    expect(typeof setProperties?.internal).toBe('boolean');
+    expect(setProperties).toEqual(
+      expect.objectContaining({
+        internal: expect.any(Boolean),
+        isBeta: expect.any(Boolean),
+        org_id: expect.any(String),
+        account_id: expect.any(String),
+        account_number: expect.any(String),
+        current_bundle: 'insights',
+        current_app: expect.any(String),
+      })
+    );
+    expect(setProperties?.org_id).not.toBe('');
+    expect(setProperties?.account_id).not.toBe('');
+    expect(setProperties?.account_number).not.toBe('');
+    expect(setProperties?.current_app).not.toBe('');
+    expect(identifyEventWithEnrichedProps?.user_id).toBe(setProperties?.account_id);
 
-    // STRETCH GOAL PROPERTIES: isBeta, isOrgAdmin, org_id
-    // Verify these if present (stretch goals per requirements)
-    if (setProperties?.isBeta !== undefined) {
-      expect(typeof setProperties.isBeta).toBe('boolean');
+    const entitlementNames = Object.keys(setProperties || {})
+      .filter((key) => key.startsWith('entitlement_') && !key.endsWith('_trial'))
+      .map((key) => key.slice('entitlement_'.length));
+    expect(entitlementNames.length).toBeGreaterThan(0);
+    for (const entitlementName of entitlementNames) {
+      const entitledKey = `entitlement_${entitlementName}`;
+      const trialKey = `${entitledKey}_trial`;
+      expect(setProperties).toHaveProperty(trialKey);
+      expect(typeof setProperties?.[entitledKey]).toBe('boolean');
+      expect(typeof setProperties?.[trialKey]).toBe('boolean');
     }
-    if (setProperties?.isOrgAdmin !== undefined) {
-      expect(typeof setProperties.isOrgAdmin).toBe('boolean');
-    }
-    if (setProperties?.org_id !== undefined) {
-      expect(typeof setProperties.org_id).toMatch(/string|number/);
-    }
-
-    // Additional enriched properties (nice-to-have)
-    const additionalProps = ['account_id', 'account_number', 'organization_name', 'locale', 'email_domain', 'current_bundle', 'current_app'];
-    for (const prop of additionalProps) {
-      if (setProperties?.[prop] !== undefined) {
-        expect(typeof setProperties[prop]).toMatch(/string|number/);
-      }
-    }
-
-    // Verify entitlement properties exist (at least one)
-    const entitlementProps = Object.keys(setProperties || {}).filter((key) => key.startsWith('entitlement_'));
-    expect(entitlementProps.length).toBeGreaterThan(0);
-
-    // Each entitlement property should be boolean
-    entitlementProps.forEach((prop) => {
-      expect(typeof setProperties?.[prop]).toBe('boolean');
-    });
-
-    // Verify we have both entitlement and entitlement_trial properties
-    const entitlementNames = new Set(entitlementProps.map((p) => p.replace('_trial', '').replace('entitlement_', '')));
-    expect(entitlementNames.size).toBeGreaterThan(0);
   });
 
   test('should not send Amplitude requests when feature flag is disabled', async ({ page }) => {
