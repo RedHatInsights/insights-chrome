@@ -317,6 +317,7 @@ describe('useAmplitude', () => {
           fileDownloads: true,
         },
       });
+      expect(initCall[2]).not.toHaveProperty('identityStorage');
 
       // Verify identify was called with enriched user properties
       expect(amplitude.Identify).toHaveBeenCalled();
@@ -353,6 +354,26 @@ describe('useAmplitude', () => {
     await waitFor(() => expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', 'acct-456', expect.any(Object)));
     expect(segmentReadySpy).not.toHaveBeenCalled();
     segmentReadySpy.mockRestore();
+  });
+
+  it('does not restore a persisted Amplitude user ID when the account ID is missing', async () => {
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: undefined as unknown as typeof DEFAULT_MOCK_USER.identity.internal,
+      },
+    };
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    render(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.init).toHaveBeenCalled());
+    expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', undefined, expect.objectContaining({ identityStorage: 'none' }));
   });
 
   it('does not initialize autocapture in IT-less environments', () => {

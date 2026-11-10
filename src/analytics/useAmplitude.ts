@@ -152,7 +152,9 @@ function useAmplitude() {
       // Keep the account ID aligned with Segment, but let Amplitude manage its own device ID.
       // Do not wait for Segment's global ready callback; unrelated integrations can block it.
       amplitude.add(autocapturePlugin());
-      const initPromise = amplitude.init(autocaptureKeyToUse, getAnalyticsUserId(user), {
+      const analyticsUserId = getAnalyticsUserId(user);
+      const initPromise = amplitude.init(autocaptureKeyToUse, analyticsUserId, {
+        ...(analyticsUserId === undefined ? { identityStorage: 'none' as const } : {}),
         defaultTracking: {
           sessions: true,
           pageViews: true,
