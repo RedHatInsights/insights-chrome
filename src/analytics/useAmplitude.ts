@@ -12,11 +12,44 @@ import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { getUrl } from '../hooks/useBundle';
 import { getAnalyticsUserId } from './getAnalyticsUserId';
+import type { ChromeUser } from '@redhat-cloud-services/types';
+
+type OidcUserIdentity = {
+  accountId?: string;
+  organizationId?: string;
+  type?: string;
+  username?: string;
+};
+
+const getOidcUserIdentity = (user: ChromeUser): OidcUserIdentity => ({
+  accountId: getAnalyticsUserId(user),
+  organizationId: user.identity.org_id,
+  type: user.identity.type,
+  username: user.identity.user?.username,
+});
+
+const isDifferentOidcUser = (previous: OidcUserIdentity | undefined, current: OidcUserIdentity) => {
+  if (!previous) {
+    return false;
+  }
+
+  // Use OIDC username, organization, and type when either account ID is missing.
+  if (previous.accountId && current.accountId) {
+    return previous.accountId !== current.accountId;
+  }
+
+  if (!previous.username || !current.username) {
+    return false;
+  }
+
+  return previous.username !== current.username || previous.organizationId !== current.organizationId || previous.type !== current.type;
+};
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
   const amplitudeSdkInitialized = useRef(false);
   const amplitudeUserId = useRef<string | undefined>(undefined);
+  const amplitudeOidcUser = useRef<OidcUserIdentity>();
   const configWarningLogged = useRef(false);
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
   const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
@@ -156,6 +189,7 @@ function useAmplitude() {
       amplitude.add(autocapturePlugin());
       const analyticsUserId = getAnalyticsUserId(user);
       amplitudeUserId.current = analyticsUserId;
+      amplitudeOidcUser.current = getOidcUserIdentity(user);
       const initPromise = amplitude.init(autocaptureKeyToUse, analyticsUserId, {
         ...(analyticsUserId === undefined ? { identityStorage: 'none' as const } : {}),
         defaultTracking: {
@@ -268,6 +302,14 @@ function useAmplitude() {
     // Only send if SDK is already initialized
     if (!amplitudeSdkInitialized.current) {
       return;
+    }
+    const currentOidcUser = user ? getOidcUserIdentity(user) : undefined;
+    if (currentOidcUser && isDifferentOidcUser(amplitudeOidcUser.current, currentOidcUser) && userAccountId === undefined) {
+      amplitude.reset();
+      amplitudeUserId.current = undefined;
+    }
+    if (currentOidcUser) {
+      amplitudeOidcUser.current = currentOidcUser;
     }
     if (userAccountId !== amplitudeUserId.current) {
       amplitude.setUserId(userAccountId);

@@ -23,6 +23,7 @@ const DEFAULT_MOCK_USER = {
       is_internal: false,
       locale: 'en_US',
       email: 'testuser@example.com',
+      username: 'test-user',
       first_name: 'Test',
       last_name: 'User',
     },
@@ -100,6 +101,7 @@ jest.mock('@amplitude/analytics-browser', () => ({
     promise: Promise.resolve(),
   })),
   setUserId: jest.fn(),
+  reset: jest.fn(),
   identify: jest.fn(),
   Identify: jest.fn().mockImplementation(() => ({
     set: jest.fn().mockReturnThis(),
@@ -374,6 +376,7 @@ describe('useAmplitude', () => {
 
     await waitFor(() => expect(amplitude.init).toHaveBeenCalled());
     expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', undefined, expect.objectContaining({ identityStorage: 'none' }));
+    expect(amplitude.reset).not.toHaveBeenCalled();
   });
 
   it('clears the Amplitude user ID before identifying when the account ID becomes undefined', async () => {
@@ -387,6 +390,7 @@ describe('useAmplitude', () => {
     await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
 
     amplitude.setUserId.mockClear();
+    amplitude.reset.mockClear();
     amplitude.identify.mockClear();
     mockUser = {
       ...DEFAULT_MOCK_USER,
@@ -402,6 +406,35 @@ describe('useAmplitude', () => {
       expect(amplitude.identify).toHaveBeenCalled();
     });
     expect(amplitude.setUserId.mock.invocationCallOrder[0]).toBeLessThan(amplitude.identify.mock.invocationCallOrder[0]);
+    expect(amplitude.reset).not.toHaveBeenCalled();
+    expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets the device identity before identifying a new user without an account ID', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
+
+    amplitude.reset.mockClear();
+    amplitude.identify.mockClear();
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: undefined as unknown as typeof DEFAULT_MOCK_USER.identity.internal,
+        user: { ...DEFAULT_MOCK_USER.identity.user, username: 'different-user' },
+      },
+    };
+    rerender(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
+    expect(amplitude.reset).toHaveBeenCalledTimes(1);
+    expect(amplitude.reset.mock.invocationCallOrder[0]).toBeLessThan(amplitude.identify.mock.invocationCallOrder[0]);
     expect(amplitude.init).toHaveBeenCalledTimes(1);
   });
 
