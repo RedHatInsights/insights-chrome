@@ -112,10 +112,13 @@ const FeedbackModal = memo(() => {
             modalTitle={intl.formatMessage(messages.reportABug)}
             modalDescription={
               <Content component="p">
-                {intl.formatMessage(messages.describeReportBug)}{' '}
-                <Content component="a" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" target="_blank">
-                  {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
-                </Content>
+                {intl.formatMessage(messages.describeReportBugWithSupportCaseLink, {
+                  SupportCaseLink: (chunks) => (
+                    <Content component="a" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" target="_blank">
+                      {chunks} <ExternalLinkAltIcon />
+                    </Content>
+                  ),
+                })}
               </Content>
             }
             feedbackType="Bug"
@@ -136,11 +139,13 @@ const FeedbackModal = memo(() => {
             modalTitle={intl.formatMessage(messages.informRedhatDirection)}
             modalDescription={
               <Content component="p">
-                {intl.formatMessage(messages.informDirectionDescription)}&nbsp;
-                <Content component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
-                  {intl.formatMessage(messages.userResearchTeam)}
-                </Content>
-                {intl.formatMessage(messages.directInfluence)}
+                {intl.formatMessage(messages.informDirectionDescriptionWithResearchTeamLink, {
+                  ResearchTeamLink: (chunks) => (
+                    <Content component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
+                      {chunks}
+                    </Content>
+                  ),
+                })}
               </Content>
             }
             feedbackType="[Research Opportunities]"
