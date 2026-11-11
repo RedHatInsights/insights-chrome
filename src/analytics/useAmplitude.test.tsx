@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { useFlag } from '@unleash/proxy-client-react';
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
@@ -23,6 +23,7 @@ const DEFAULT_MOCK_USER = {
       is_internal: false,
       locale: 'en_US',
       email: 'testuser@example.com',
+      username: 'test-user',
       first_name: 'Test',
       last_name: 'User',
     },
@@ -42,6 +43,7 @@ let mockChromeModules: Record<string, unknown> = { chrome: { analytics: MOCK_CHR
 let mockActiveModule = 'test-app';
 let mockIsPreview = false;
 let mockUser = DEFAULT_MOCK_USER;
+let mockITLess = false;
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag: string) => {
@@ -51,7 +53,7 @@ jest.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 jest.mock('react-router-dom', () => ({ useNavigate: () => jest.fn() }));
-jest.mock('../utils/common', () => ({ isProd: () => false }));
+jest.mock('../utils/common', () => ({ ITLess: () => mockITLess, isProd: () => false }));
 jest.mock('../state/atoms/activeModuleAtom', () => ({
   activeModuleDefinitionReadAtom: '__ACTIVE_MODULE_ATOM__',
   activeModuleAtom: '__ACTIVE_MODULE_VALUE_ATOM__',
@@ -99,6 +101,7 @@ jest.mock('@amplitude/analytics-browser', () => ({
     promise: Promise.resolve(),
   })),
   setUserId: jest.fn(),
+  reset: jest.fn(),
   identify: jest.fn(),
   Identify: jest.fn().mockImplementation(() => ({
     set: jest.fn().mockReturnThis(),
@@ -142,6 +145,7 @@ describe('useAmplitude', () => {
     mockActiveModule = 'test-app';
     mockIsPreview = false;
     mockUser = DEFAULT_MOCK_USER;
+    mockITLess = false;
     // Clear handler registry
     Object.keys(onHandlers).forEach((key) => delete onHandlers[key]);
   });
@@ -306,9 +310,8 @@ describe('useAmplitude', () => {
       // Verify init was called with proper config (no identifyOptions - that's not a real parameter)
       const initCall = (amplitude.init as jest.Mock).mock.calls[0];
       expect(initCall[0]).toBe('feo-dev-autocapture-key');
-      expect(initCall[1]).toBe('user-1');
+      expect(initCall[1]).toBe('acct-456');
       expect(initCall[2]).toMatchObject({
-        deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
           pageViews: true,
@@ -316,6 +319,7 @@ describe('useAmplitude', () => {
           fileDownloads: true,
         },
       });
+      expect(initCall[2]).not.toHaveProperty('identityStorage');
 
       // Verify identify was called with enriched user properties
       expect(amplitude.Identify).toHaveBeenCalled();
@@ -337,6 +341,192 @@ describe('useAmplitude', () => {
       return true;
     });
     logSpy.mockRestore();
+  });
+
+  it('initializes autocapture without waiting for Segment integrations to be ready', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+    const segmentReadySpy = jest.spyOn(analyticsMock, 'ready').mockImplementation(() => undefined);
+
+    render(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', 'acct-456', expect.any(Object)));
+    expect(segmentReadySpy).not.toHaveBeenCalled();
+    segmentReadySpy.mockRestore();
+  });
+
+  it('does not restore a persisted Amplitude user ID when the account ID is missing', async () => {
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: undefined as unknown as typeof DEFAULT_MOCK_USER.identity.internal,
+      },
+    };
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    render(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.init).toHaveBeenCalled());
+    expect(amplitude.init).toHaveBeenCalledWith('feo-dev-autocapture-key', undefined, expect.objectContaining({ identityStorage: 'none' }));
+    expect(amplitude.reset).not.toHaveBeenCalled();
+  });
+
+  it('clears the Amplitude user ID before identifying when the account ID becomes undefined', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
+
+    amplitude.setUserId.mockClear();
+    amplitude.reset.mockClear();
+    amplitude.identify.mockClear();
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: undefined as unknown as typeof DEFAULT_MOCK_USER.identity.internal,
+      },
+    };
+    rerender(<TestComponent />);
+
+    await waitFor(() => {
+      expect(amplitude.setUserId).toHaveBeenCalledWith(undefined);
+      expect(amplitude.identify).toHaveBeenCalled();
+    });
+    expect(amplitude.setUserId.mock.invocationCallOrder[0]).toBeLessThan(amplitude.identify.mock.invocationCallOrder[0]);
+    expect(amplitude.reset).not.toHaveBeenCalled();
+    expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets the device identity before identifying a new user without an account ID', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
+
+    amplitude.reset.mockClear();
+    amplitude.identify.mockClear();
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: undefined as unknown as typeof DEFAULT_MOCK_USER.identity.internal,
+        user: { ...DEFAULT_MOCK_USER.identity.user, username: 'different-user' },
+      },
+    };
+    rerender(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalled());
+    expect(amplitude.reset).toHaveBeenCalledTimes(1);
+    expect(amplitude.reset.mock.invocationCallOrder[0]).toBeLessThan(amplitude.identify.mock.invocationCallOrder[0]);
+    expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not send identify properties from an earlier account when initialization completes', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+    let resolveInit: (() => void) | undefined;
+    (amplitude.init as jest.Mock).mockImplementationOnce(() => ({
+      promise: new Promise<void>((resolve) => {
+        resolveInit = resolve;
+      }),
+    }));
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+
+    amplitude.identify.mockClear();
+    (amplitude.Identify as jest.Mock).mockClear();
+    amplitude.setUserId.mockClear();
+    mockUser = {
+      ...DEFAULT_MOCK_USER,
+      identity: {
+        ...DEFAULT_MOCK_USER.identity,
+        internal: { ...DEFAULT_MOCK_USER.identity.internal, account_id: 'acct-789' },
+        user: { ...DEFAULT_MOCK_USER.identity.user, username: 'different-user' },
+      },
+    };
+    rerender(<TestComponent />);
+
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+    const currentIdentify = (amplitude.Identify as jest.Mock).mock.results[0].value;
+    expect(currentIdentify.set).toHaveBeenCalledWith('account_id', 'acct-789');
+    expect(amplitude.setUserId).toHaveBeenCalledWith('acct-789');
+
+    await act(async () => {
+      resolveInit?.();
+      await Promise.resolve();
+    });
+
+    expect(amplitude.identify).toHaveBeenCalledTimes(1);
+    expect(amplitude.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses current properties when initialization completes without an account change', async () => {
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+    let resolveInit: (() => void) | undefined;
+    (amplitude.init as jest.Mock).mockImplementationOnce(() => ({
+      promise: new Promise<void>((resolve) => {
+        resolveInit = resolve;
+      }),
+    }));
+
+    const { rerender } = render(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+
+    amplitude.identify.mockClear();
+    (amplitude.Identify as jest.Mock).mockClear();
+    mockActiveModule = 'cost-management';
+    rerender(<TestComponent />);
+    await waitFor(() => expect(amplitude.identify).toHaveBeenCalledTimes(1));
+
+    amplitude.identify.mockClear();
+    (amplitude.Identify as jest.Mock).mockClear();
+    await act(async () => {
+      resolveInit?.();
+      await Promise.resolve();
+    });
+
+    expect(amplitude.identify).toHaveBeenCalledTimes(1);
+    const currentIdentify = (amplitude.Identify as jest.Mock).mock.results[0].value;
+    expect(currentIdentify.set).toHaveBeenCalledWith('current_app', 'cost-management');
+  });
+
+  it('does not initialize autocapture in IT-less environments', () => {
+    mockITLess = true;
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    render(<TestComponent />);
+
+    expect(amplitude.add).not.toHaveBeenCalled();
+    expect(amplitude.init).not.toHaveBeenCalled();
   });
 
   it('initializes both guides and autocapture when both flags are enabled', async () => {
