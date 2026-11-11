@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
+import { getAnalyticsUserId } from './getAnalyticsUserId';
 import { getUrl } from '../hooks/useBundle';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
@@ -85,7 +86,7 @@ const getIdentityTraits = (
   );
   const email = user.identity.user?.email;
   return {
-    cloud_user_id: user.identity.internal?.account_id,
+    cloud_user_id: getAnalyticsUserId(user),
     adobe_cloud_visitor_id: getAdobeVisitorId(),
     internal: user.identity.user?.is_internal ?? false,
     email_domain: emailDomain(email),
@@ -235,7 +236,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         intercomHash.current = fetchedIntercomHash;
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(
-          user.identity.internal?.account_id,
+          getAnalyticsUserId(user),
           getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
           {
             ...identityOptions,
@@ -266,7 +267,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           intercomHash.current = fetchedIntercomHash;
           // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
           analytics.current.identify(
-            user.identity.internal?.account_id,
+            getAnalyticsUserId(user),
             getIdentityTraits(user, currentLocation.pathname, activeModule, isPreview, latestThemeTelemetryDefaults.current),
             {
               ...identityOptions,
@@ -317,7 +318,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       }
       const currentLocation = latestModuleUpdate.current;
       analytics.current.identify(
-        user.identity.internal?.account_id,
+        getAnalyticsUserId(user),
         getIdentityTraits(user, currentLocation.pathname, currentLocation.activeModule, isPreview, themeTelemetryDefaults),
         {
           context: {
