@@ -274,7 +274,7 @@ spec:
           - use
           - $(params.SOURCE_ARTIFACT)=/var/workdir
           computeResources: {}
-          image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:b60c24ccd6df949b905739b36f4664a5a7571ca0d15436b1798612c485d7970b
+          image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:d7e9f457d819b91d5f4b62effea105d54c6e54bedcc3afb2a7a9fcaaf752076b
           name: use-trusted-artifact
         - name: unit-tests
           computeResources:
