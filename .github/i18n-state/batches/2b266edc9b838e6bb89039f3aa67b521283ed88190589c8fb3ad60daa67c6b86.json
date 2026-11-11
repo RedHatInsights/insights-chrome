@@ -300,7 +300,10 @@
       "phase": "pending"
     },
     "ko": {
-      "phase": "exporting"
+      "phase": "exporting",
+      "toolingCommitShas": [
+        "e7d565d664bbe977cd5db9e294d8c0e77541b876"
+      ]
     },
     "zh_cn": {
       "phase": "pr-created",
