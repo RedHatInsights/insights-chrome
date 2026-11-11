@@ -111,17 +111,16 @@ describe('Header Lightwell mode', () => {
     expect(screen.getByText('Red Hat Hybrid Cloud Console')).toBeTruthy();
   });
 
-  it('should render Lightwell title text instead of AllServicesDropdown in Lightwell mode', () => {
+  it('should render Lightwell logo instead of AllServicesDropdown in Lightwell mode', () => {
     renderHeader(true);
     expect(screen.queryByText('Red Hat Hybrid Cloud Console')).toBeFalsy();
-    expect(screen.getByText('Lightwell')).toBeTruthy();
+    expect(screen.getByAltText('Lightwell')).toBeTruthy();
   });
 
   it('should render Lightwell logo in masthead when in Lightwell mode', () => {
-    const { container } = renderHeader(true);
-    const lightwellLogo = container.querySelector('img[alt="Lightwell Logo"]');
+    renderHeader(true);
+    const lightwellLogo = screen.getByRole('img', { name: 'Lightwell' });
     expect(lightwellLogo).toBeTruthy();
-    expect(lightwellLogo?.getAttribute('src')).toBe('/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
   });
 
   it('should render search toolbar group when not in Lightwell mode', () => {
@@ -143,15 +142,8 @@ describe('Header Lightwell mode', () => {
 
   it('should render masthead logo as a link to /lightwell when in Lightwell mode', () => {
     renderHeader(true);
-    const logoLink = screen.getByRole('link', { name: /logo/i });
+    const logoLink = screen.getByRole('link', { name: 'Lightwell' });
     expect(logoLink).toBeTruthy();
     expect(logoLink.getAttribute('href')).toBe('/lightwell');
-  });
-
-  it('should render Lightwell title as a link to /lightwell when in Lightwell mode', () => {
-    renderHeader(true);
-    const titleLink = screen.getByRole('link', { name: 'Lightwell' });
-    expect(titleLink).toBeTruthy();
-    expect(titleLink.getAttribute('href')).toBe('/lightwell');
   });
 });
