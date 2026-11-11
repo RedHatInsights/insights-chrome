@@ -174,30 +174,63 @@ const createStorageProvider = (orgId?: string, userId?: string) => {
   return prefix ? new LocalStorageProvider(prefix) : new InMemoryStorageProvider();
 };
 
+/**
+ * Records every context-driven toggle refresh, whoever starts it (releaseAtom's Preview toggle,
+ * this module, or a test), so bootstrap can wait for toggles that match the current context.
+ */
+class ScopedUnleashClient extends UnleashClient {
+  private contextRefresh: Promise<unknown> = Promise.resolve();
+
+  override updateToggles(): Promise<void> {
+    const refresh = super.updateToggles();
+    // A failed refresh is reported by the client's error event; waiters only need it settled.
+    this.contextRefresh = refresh.catch(() => undefined);
+    return refresh;
+  }
+
+  /** Resolves once no context refresh is pending, including refreshes started while waiting. */
+  async contextSettled(): Promise<void> {
+    let pending: Promise<unknown> | undefined;
+    while (pending !== this.contextRefresh) {
+      pending = this.contextRefresh;
+      await pending;
+    }
+  }
+}
+
 type ClientRecord = {
   key: string;
-  client: UnleashClient;
+  client: ScopedUnleashClient;
   start?: Promise<void>;
-  contextUpdate?: Promise<void>;
   active: boolean;
   started: boolean;
   stopped: boolean;
 };
+/** The client for the most recently requested identity. */
 let current: ClientRecord | undefined;
+/** The client the React provider is attached to. Only the provider's cleanup stops it. */
+let attached: ClientRecord | undefined;
 const records = new WeakMap<UnleashClient, ClientRecord>();
 
 const PREVIEW_CONTEXT_FIELD = 'platform.chrome.ui.preview';
 
 /** Update Preview on the existing client, as releaseAtom does, so FlagProvider keeps the same instance. */
-function updatePreviewContext(client: UnleashClient, isPreview: boolean): Promise<void> | undefined {
+function updatePreviewContext(client: UnleashClient, isPreview: boolean): void {
   // appName and environment are static; passing them back makes the SDK warn.
   const { appName, environment, ...context } = client.getContext();
   if ((context as Record<string, unknown>)[PREVIEW_CONTEXT_FIELD] === isPreview) {
-    return undefined;
+    return;
   }
-  // The SDK context type does not declare custom top-level fields.
+  // The SDK context type does not declare custom top-level fields. The refresh is tracked by the client.
   const nextContext = { ...context, [PREVIEW_CONTEXT_FIELD]: isPreview };
-  return client.updateContext(nextContext);
+  void client.updateContext(nextContext);
+}
+
+/** Stop a client that is being replaced, unless the provider is still attached to it. */
+function releaseClient(record: ClientRecord | undefined): void {
+  if (record && record !== attached) {
+    stopFeatureFlagsClient(record.client);
+  }
 }
 
 /**
@@ -205,6 +238,10 @@ function updatePreviewContext(client: UnleashClient, isPreview: boolean): Promis
  * but not of the client identity: a Preview change updates the existing client's context, so the
  * React FlagProvider never holds a replaced client. A client stopped by provider cleanup is
  * replaced, matching a fresh provider mount.
+ *
+ * A bootstrap for a new identity never stops the provider's client: if that identity is superseded
+ * before it publishes (A → B → A), the lookup for A reuses the provider's live client instead of
+ * leaving the provider attached to a stopped one. The provider stops its client when it switches.
  */
 export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: boolean): UnleashClient {
   clearLegacyFeatureFlagsCache();
@@ -228,19 +265,18 @@ export function getFeatureFlagsClient(user: ChromeUser | undefined, isPreview: b
       : {}),
   };
   const key = JSON.stringify(identityContext);
-  if (current?.key === key && !current.stopped) {
-    const contextUpdate = updatePreviewContext(current.client, isPreview);
-    if (contextUpdate) {
-      // Bootstrap waits for this; anywhere else a failed refresh is reported by the client's error event.
-      current.contextUpdate = contextUpdate.catch(() => undefined);
+  const reusable = [current, attached].find((record) => record?.key === key && !record.stopped);
+  if (reusable) {
+    if (reusable !== current) {
+      releaseClient(current);
+      current = reusable;
     }
-    return current.client;
+    updatePreviewContext(reusable.client, isPreview);
+    return reusable.client;
   }
-  if (current) {
-    stopFeatureFlagsClient(current.client);
-  }
+  releaseClient(current);
   const context = { [PREVIEW_CONTEXT_FIELD]: isPreview, ...identityContext };
-  const client = new UnleashClient({
+  const client = new ScopedUnleashClient({
     ...config,
     fetch: createFetchFeatureFlags(),
     storageProvider: createStorageProvider(orgId, userId),
@@ -256,12 +292,29 @@ export function isFeatureFlagsClientStarted(client: UnleashClient): boolean {
   return Boolean(records.get(client)?.start);
 }
 
+/**
+ * Mark the client the React provider holds; it stays live until the provider detaches, even if a
+ * bootstrap for another identity requests a new client meanwhile. Returns the detach callback.
+ */
+export function attachFeatureFlagsClient(client: UnleashClient): () => void {
+  const record = records.get(client);
+  if (!record) {
+    return () => undefined;
+  }
+  attached = record;
+  return () => {
+    if (attached === record) {
+      attached = undefined;
+    }
+  };
+}
+
 /** Start once even when bootstrap and the React provider both need the client. */
 export function startFeatureFlagsClient(client: UnleashClient): Promise<void> {
-  if (current?.client !== client) {
+  if (current?.client !== client && attached?.client !== client) {
     return Promise.resolve();
   }
-  const record = current;
+  const record = records.get(client)!;
   record.active = true;
   record.stopped = false;
   record.start ??= client.start().finally(() => {
@@ -291,8 +344,10 @@ export function stopFeatureFlagsClient(client: UnleashClient): void {
 export async function getBootstrapFeatureFlag(user: ChromeUser, isPreview: boolean, flag: string): Promise<boolean> {
   try {
     const client = getFeatureFlagsClient(user, isPreview);
-    // A reused client may still be refetching toggles for a new Preview context.
-    const ready = startFeatureFlagsClient(client).then(() => records.get(client)?.contextUpdate);
+    // A reused client may still be refetching toggles for a new Preview context, including a
+    // refresh releaseAtom started before this lookup; evaluating before it settles reads stale toggles.
+    const record = records.get(client);
+    const ready = startFeatureFlagsClient(client).then(() => record?.client.contextSettled());
     await withTimeout(ready, FEATURE_FLAGS_INITIAL_TIMEOUT_MS, undefined);
     return client.isEnabled(flag);
   } catch {

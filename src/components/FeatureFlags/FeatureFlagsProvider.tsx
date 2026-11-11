@@ -6,7 +6,13 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuth
 import { setServiceDegradedAtom } from '../../state/atoms/degradedStateAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { setFeatureFlagsError, setUnleashClient } from './unleashClient';
-import { getFeatureFlagsClient, isFeatureFlagsClientStarted, startFeatureFlagsClient, stopFeatureFlagsClient } from './featureFlagsClient';
+import {
+  attachFeatureFlagsClient,
+  getFeatureFlagsClient,
+  isFeatureFlagsClientStarted,
+  startFeatureFlagsClient,
+  stopFeatureFlagsClient,
+} from './featureFlagsClient';
 
 const isMetricsError = (error: unknown) => typeof error === 'object' && error !== null && 'type' in error && error.type === 'metrics';
 
@@ -30,6 +36,8 @@ const FeatureFlagsStateBridge = ({ client }: { client: UnleashClient }) => {
       setServiceDegraded({ service: 'featureFlags', degraded: false });
     };
 
+    // Attached before starting, so a bootstrap for another identity cannot stop this client under the provider.
+    const detach = attachFeatureFlagsClient(client);
     client.on('initialized', notifyInitialFlags);
     client.on('error', markDegraded);
     client.on('ready', markHealthy);
@@ -55,6 +63,7 @@ const FeatureFlagsStateBridge = ({ client }: { client: UnleashClient }) => {
       client.off('error', markDegraded);
       client.off('ready', markHealthy);
       client.off('recovered', markHealthy);
+      detach();
       stopFeatureFlagsClient(client);
     };
   }, [client, setServiceDegraded]);

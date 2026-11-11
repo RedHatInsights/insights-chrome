@@ -305,3 +305,51 @@ it('uses the longer refresh timeout and ignores intentional cancellations', asyn
   await expect(fetch('https://test.com/api/featureflags/v0', { signal: controller.signal })).rejects.toMatchObject({ name: 'AbortError' });
   expect(captureException).not.toHaveBeenCalled();
 });
+
+it('waits for a Preview refresh started by releaseAtom before a renewal evaluates the bootstrap flag', async () => {
+  const store = createStore();
+  mockFetch.mockImplementation(async () => jsonResponse([{ ...toggle, enabled: false }]));
+  const client = clientFor();
+  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(false);
+  renderPreviewTree(store);
+  await waitFor(() => expect(getUnleashClient()).toBe(client));
+
+  let respond: (response: Response) => void = () => undefined;
+  mockFetch.mockImplementation(() => new Promise<Response>((resolve) => (respond = resolve)));
+  act(() => store.set(isPreviewAtom, true));
+  // releaseAtom already moved the context; the toggles still describe Preview off.
+  expect(client.getContext()).toMatchObject({ 'platform.chrome.ui.preview': true });
+  const pending = getBootstrapFeatureFlag(user, true, ENTITLEMENTS_FALLBACK_FLAG);
+  await act(async () => {
+    await Promise.resolve();
+  });
+  respond(jsonResponse([{ ...toggle, enabled: true }]));
+  expect(await pending).toBe(true);
+});
+
+it('keeps the provider client live and shared when a superseded identity bootstrap returns to the provider identity', async () => {
+  clientFor();
+  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
+  const store = createStore();
+  const { getByTestId } = renderPreviewTree(store);
+  await waitFor(() => expect(getByTestId('flag')).toHaveTextContent('true'));
+  const providerClient = getUnleashClient();
+
+  const nextUser = {
+    ...user,
+    identity: { ...user.identity, org_id: 'next-org', internal: { org_id: 'next-org', account_id: 'next-user' } },
+  } as ChromeUser;
+  // A → B: B's entitlements never publish, so the provider keeps identity A.
+  clients.push(getFeatureFlagsClient(nextUser, false));
+  await getBootstrapFeatureFlag(nextUser, false, ENTITLEMENTS_FALLBACK_FLAG);
+  // B → A: the bootstrap lookup must use the client the provider is still attached to.
+  expect(await getBootstrapFeatureFlag(user, false, ENTITLEMENTS_FALLBACK_FLAG)).toBe(true);
+  expect(getFeatureFlagsClient(user, false)).toBe(providerClient);
+  expect(isFeatureFlagsClientStarted(providerClient)).toBe(true);
+
+  // The provider's hooks still follow refreshes on that client.
+  mockFetch.mockImplementation(async () => jsonResponse([{ ...toggle, enabled: false }]));
+  act(() => store.set(isPreviewAtom, true));
+  await waitFor(() => expect(getByTestId('flag')).toHaveTextContent('false'));
+  expect(getUnleashClient()).toBe(providerClient);
+});
