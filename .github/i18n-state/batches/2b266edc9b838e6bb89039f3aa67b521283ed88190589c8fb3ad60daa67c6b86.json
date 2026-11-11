@@ -277,10 +277,22 @@
   "warningCount": 0,
   "locales": {
     "fr": {
-      "phase": "exporting",
+      "phase": "pr-created",
       "toolingCommitShas": [
         "d7aa8b857d1b32d43d9b7fc8fe34cf532eadc04a"
-      ]
+      ],
+      "validationErrors": [],
+      "validationWarnings": [
+        "\"accountNumber\": a regular space precedes : ; ! ? or » (or follows «), so the line can break before the punctuation. Use a non-breaking space (U+00A0, or narrow U+202F).",
+        "\"languageNotAvailableBody\": a regular space precedes : ; ! ? or » (or follows «), so the line can break before the punctuation. Use a non-breaking space (U+00A0, or narrow U+202F).",
+        "\"username\": a regular space precedes : ; ! ? or » (or follows «), so the line can break before the punctuation. Use a non-breaking space (U+00A0, or narrow U+202F)."
+      ],
+      "pullRequestBodyDigest": "6abdc173a5d0caaa7c89ff7d704f09299e9001f98e35b42b3af95e56c50ff857",
+      "pullRequestUrl": "https://github.com/RedHatInsights/insights-chrome/pull/3779",
+      "pullRequestBranch": "i18n/phrase-2b266edc9b838e6b-fr",
+      "pullRequestBatchKey": "2b266edc9b838e6bb89039f3aa67b521283ed88190589c8fb3ad60daa67c6b86",
+      "pullRequestAssigneesPending": true,
+      "toolingCommitSha": "d7aa8b857d1b32d43d9b7fc8fe34cf532eadc04a"
     },
     "ja": {
       "phase": "pending"
