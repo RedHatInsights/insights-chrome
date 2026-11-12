@@ -6,6 +6,7 @@ import {
   EntitlementsUserProfile,
   getMinimumViableEntitlements,
   isEntitlementsMap,
+  isInternalEntitled,
   isNonEmptyEntitlementsMap,
   shouldPersistEntitlements,
 } from './getMinimumViableEntitlements';
@@ -62,9 +63,22 @@ function isEntitlementsDegraded(headers: { get?: (key: string) => unknown } | Re
   return String(raw).toLowerCase() === 'true';
 }
 
-/** Only reached after the org ID check in fetchEntitlements, so defaults are always available. */
-function fallbackResult(user: { profile?: EntitlementsUserProfile }, previous?: EntitlementsMap): FetchEntitlementsResult {
-  if (isNonEmptyEntitlementsMap(previous)) {
+function isAuthorizationError(err: unknown): boolean {
+  const status = getHttpStatus(err);
+  return status === 401 || status === 403;
+}
+
+/** The cache is organization-scoped; `internal` is user-specific, so derive it from the current profile. */
+function withCurrentUserInternal(entitlements: EntitlementsMap, user: { profile?: EntitlementsUserProfile }): EntitlementsMap {
+  return { ...entitlements, internal: { is_entitled: isInternalEntitled(user.profile ?? {}), is_trial: false } };
+}
+
+/**
+ * Only reached after the org ID check in fetchEntitlements, so defaults are always available.
+ * An authorization failure is not an outage: never replay an earlier map for it.
+ */
+function fallbackResult(user: { profile?: EntitlementsUserProfile }, previous: EntitlementsMap | undefined, err: unknown): FetchEntitlementsResult {
+  if (!isAuthorizationError(err) && isNonEmptyEntitlementsMap(previous)) {
     return { entitlements: previous, degraded: true, source: 'memory' };
   }
   return { entitlements: getMinimumViableEntitlements(user), degraded: true, source: 'defaults' };
@@ -169,14 +183,14 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
       throw createCanceledError();
     }
     if (fromCache) {
-      return { entitlements: data, degraded: true, source: 'cache' };
+      return { entitlements: withCurrentUserInternal(data, user), degraded: true, source: 'cache' };
     }
     return { entitlements: data, degraded: liveDegraded, source: 'live' };
   } catch (err) {
     if (callerAborted) {
       throw isAbortError(err) ? err : createCanceledError();
     }
-    return fallbackResult(user, options.previous);
+    return fallbackResult(user, options.previous, err);
   } finally {
     clearTimeout(timer);
     controller.signal.removeEventListener('abort', onAbort);

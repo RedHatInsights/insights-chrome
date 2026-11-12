@@ -194,6 +194,23 @@ describe('fetchEntitlements', () => {
     expect(result).toEqual({ entitlements: healthyPaid, degraded: true, source: 'memory' });
   });
 
+  it.each([401, 403])('does not replay the previous in-memory map on HTTP %s', async (status) => {
+    mockedCacheFetch.mockRejectedValue({ response: { status } });
+    const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() }, previous: healthyPaid });
+    expect(result).toEqual({ entitlements: getMinimumViableEntitlements({ profile: orgIdUserProfile }), degraded: true, source: 'defaults' });
+  });
+
+  it("derives the internal entitlement of a cache replay from the current user's profile", async () => {
+    mockedCacheFetch.mockResolvedValue({ data: { ...healthyPaid, internal: { is_entitled: true, is_trial: false } }, fromCache: true });
+    const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() } });
+    expect(result).toEqual({ entitlements: healthyPaid, degraded: true, source: 'cache' });
+
+    const internalUser = { ...orgIdUserProfile, email: 'someone@redhat.com', is_internal: true };
+    mockedCacheFetch.mockResolvedValue({ data: healthyPaid, fromCache: true });
+    const internalResult = await fetchEntitlements(userWith(internalUser), { client: { servicesGet: jest.fn() } });
+    expect(internalResult.entitlements.internal).toEqual({ is_entitled: true, is_trial: false });
+  });
+
   it('does not treat {} as a previous map', async () => {
     mockedCacheFetch.mockRejectedValue({ response: { status: 503 } });
     const result = await fetchEntitlements(userWith(), { client: { servicesGet: jest.fn() }, previous: {} });

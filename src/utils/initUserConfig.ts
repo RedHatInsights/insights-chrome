@@ -50,19 +50,30 @@ export const initChromeUserConfig = async () => {
   return data;
 };
 
-let userConfigPromise: Promise<ChromeUserConfig> | undefined;
+let userConfigRequest: { principal?: string; promise: Promise<ChromeUserConfig> } | undefined;
 
 /**
- * Fetch the user config once per page load. Auth bootstrap needs the preview preference before its
+ * Fetch the user config once per signed-in principal. Auth bootstrap needs the preview preference before its
  * rollout lookup, and useSessionConfig needs the same response afterwards; both share this request,
- * including its rejection.
+ * including its rejection. A different principal starts its own request; no principal reuses the current one.
  */
-export const loadChromeUserConfigOnce = () => {
-  userConfigPromise ??= initChromeUserConfig();
-  return userConfigPromise;
+export const loadChromeUserConfigOnce = (principal?: string): Promise<ChromeUserConfig> => {
+  if (!userConfigRequest || (principal !== undefined && principal !== userConfigRequest.principal)) {
+    userConfigRequest = { principal, promise: initChromeUserConfig() };
+  }
+  const { promise } = userConfigRequest;
+  if (principal !== undefined) {
+    return promise;
+  }
+  // Without a principal, settle with the newest request: one started for a new identity supersedes this one.
+  const followLatest = () => (userConfigRequest?.promise === promise ? undefined : loadChromeUserConfigOnce());
+  return promise.then(
+    (config) => followLatest() ?? config,
+    (error) => followLatest() ?? Promise.reject(error)
+  );
 };
 
 /** Test helper: forget the shared request. */
 export const resetChromeUserConfigOnce = () => {
-  userConfigPromise = undefined;
+  userConfigRequest = undefined;
 };

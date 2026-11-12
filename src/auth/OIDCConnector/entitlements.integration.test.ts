@@ -130,7 +130,7 @@ describe('entitlements with real cacheFetch', () => {
     const result = await fetchEntitlements(user, { enabled: true, client });
     await flushBackground();
     expect(result).toEqual({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' });
-    expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number) });
+    expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number), requestedAt: expect.any(Number) });
   });
 
   it.each(['server error', 'timeout'])('bounds a stalled fallback read after %s', async (kind) => {
@@ -293,7 +293,7 @@ describe('entitlements with real cacheFetch', () => {
     finishWrite();
     await jest.advanceTimersByTimeAsync(0);
     expect(removeItem).toHaveBeenCalledTimes(2);
-    expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number) });
+    expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number), requestedAt: expect.any(Number) });
   });
 
   it('does not touch persisted entitlements or impose options when disabled', async () => {

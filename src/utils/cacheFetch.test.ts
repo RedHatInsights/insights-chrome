@@ -473,6 +473,81 @@ describe('cacheFetch', () => {
       await waitFor(() => expect(shouldPersist).toHaveBeenCalledWith({ sku: false }, null));
     });
 
+    describe('concurrent persistence', () => {
+      const store = new Map<string, unknown>();
+      const originalLocks = Object.getOwnPropertyDescriptor(navigator, 'locks');
+
+      beforeEach(() => {
+        store.clear();
+        // Reads yield a macrotask, so unserialized writers would both read before either writes.
+        mockGetItem.mockImplementation((key: string) => {
+          const value = store.get(key) ?? null;
+          return new Promise((resolve) => setTimeout(() => resolve(value), 0));
+        });
+        mockSetItem.mockImplementation(async (key: string, value: unknown) => {
+          store.set(key, value);
+        });
+        // One queue per lock name, like the Web Locks API shared by all tabs of the origin.
+        const queues = new Map<string, Promise<unknown>>();
+        Object.defineProperty(navigator, 'locks', {
+          configurable: true,
+          value: {
+            request: (name: string, callback: () => Promise<unknown>) => {
+              const run = (queues.get(name) ?? Promise.resolve()).then(() => callback());
+              queues.set(
+                name,
+                run.catch(() => undefined)
+              );
+              return run;
+            },
+          },
+        });
+      });
+
+      afterEach(() => {
+        if (originalLocks) {
+          Object.defineProperty(navigator, 'locks', originalLocks);
+        } else {
+          delete (navigator as { locks?: unknown }).locks;
+        }
+        jest.restoreAllMocks();
+      });
+
+      const richerOnly = (live: { sku: boolean }, cached: { sku: boolean } | null) => live.sku || !cached?.sku;
+
+      it('does not let a degraded write replace a richer one persisted concurrently', async () => {
+        await Promise.all([
+          cacheFetch('race-key', jest.fn().mockResolvedValue({ sku: true }), CACHE_TTL_MS, undefined, { enabled: true, shouldPersist: richerOnly }),
+          cacheFetch('race-key', jest.fn().mockResolvedValue({ sku: false }), CACHE_TTL_MS, undefined, { enabled: true, shouldPersist: richerOnly }),
+        ]);
+        await waitFor(() => expect(mockGetItem).toHaveBeenCalledTimes(2));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        expect(store.get(`v${CACHE_SCHEMA_VERSION}:race-key`)).toMatchObject({ data: { sku: true } });
+      });
+
+      it('does not let a superseded response replace one from a later request', async () => {
+        let now = Date.now();
+        jest.spyOn(Date, 'now').mockImplementation(() => now);
+        let resolveEarlier!: (value: { sku: boolean }) => void;
+        const earlier = cacheFetch('race-key', () => new Promise<{ sku: boolean }>((resolve) => (resolveEarlier = resolve)), CACHE_TTL_MS, undefined, {
+          enabled: true,
+          shouldPersist: () => true,
+        });
+        now += 10;
+        await cacheFetch('race-key', jest.fn().mockResolvedValue({ sku: false }), CACHE_TTL_MS, undefined, { enabled: true, shouldPersist: () => true });
+        await waitFor(() => expect(mockSetItem).toHaveBeenCalledTimes(1));
+
+        resolveEarlier({ sku: true });
+        await earlier;
+        await waitFor(() => expect(mockGetItem).toHaveBeenCalledTimes(2));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        expect(mockSetItem).toHaveBeenCalledTimes(1);
+        expect(store.get(`v${CACHE_SCHEMA_VERSION}:race-key`)).toMatchObject({ data: { sku: false } });
+      });
+    });
+
     it('still returns live data when cache fallback is disabled', async () => {
       const shouldPersist = jest.fn();
       const result = await cacheFetch('test-key', jest.fn().mockResolvedValue({ sku: true }), CACHE_TTL_MS, undefined, {

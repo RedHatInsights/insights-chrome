@@ -296,7 +296,7 @@ describe('OIDCSecured', () => {
       }
       return { entitlements: healthyPaid, degraded: false, source: 'live' };
     });
-    mockUser.profile = { ...mockUser.profile, org_id: '12345' };
+    mockUser.profile = { ...mockUser.profile, org_id: '12345', username: 'user-a' };
     mockAuth.isAuthenticated = true;
     useAuth.mockReturnValue(mockAuth);
 
@@ -547,6 +547,39 @@ describe('OIDCSecured', () => {
       expect(jest.requireMock('./utils').logout).toHaveBeenCalledTimes(1);
     });
 
+    it('cancels a re-authentication still waiting for the rollout decision on logout', async () => {
+      let resolveFlag!: (enabled: boolean) => void;
+      jest
+        .mocked(getBootstrapFeatureFlag)
+        .mockResolvedValueOnce(false)
+        .mockImplementationOnce(() => new Promise((resolve) => (resolveFlag = resolve)));
+      mockedFetchEntitlements.mockResolvedValue({ entitlements: healthyPaid, degraded: false, source: 'live' });
+      const { getByText, rerender } = render(shell());
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1));
+      mockAuth.user = { ...mockUser, access_token: 'renewed' } as User;
+      rerender(shell());
+      await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(2));
+
+      act(() => getByText('logout', { selector: 'button' }).click());
+      await act(async () => resolveFlag(true));
+
+      expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not reuse the previous map for another user in the same organization', async () => {
+      mockUser.profile = { ...mockUser.profile, username: 'user-a' };
+      mockAuth.user = mockUser;
+      mockedFetchEntitlements.mockResolvedValue({ entitlements: healthyPaid, degraded: false, source: 'live' });
+      const { rerender } = render(shell());
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(1));
+
+      mockAuth.user = { ...mockUser, access_token: 'user-b-token', profile: { ...mockUser.profile, username: 'user-b' } } as User;
+      rerender(shell());
+
+      await waitFor(() => expect(mockedFetchEntitlements).toHaveBeenCalledTimes(2));
+      expect(mockedFetchEntitlements.mock.calls[1][1]?.previous).toBeUndefined();
+    });
+
     it('does not pass a signal on the legacy path', async () => {
       jest.mocked(getBootstrapFeatureFlag).mockResolvedValue(false);
       render(shell());
@@ -620,6 +653,28 @@ describe('OIDCSecured', () => {
       await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
       expect(getBootstrapFeatureFlag).toHaveBeenCalledWith(expect.anything(), false, 'platform.chrome.entitlements-fallback');
       expect(chromeStore.get(isPreviewAtom)).toBe(false);
+    });
+
+    it("does not apply an obsolete user's preview preference to the next user", async () => {
+      mockUser.profile = { ...mockUser.profile, username: 'user-a' };
+      mockAuth.user = mockUser;
+      const resolvers: Array<(config: Awaited<ReturnType<typeof loadChromeUserConfigOnce>>) => void> = [];
+      jest.mocked(loadChromeUserConfigOnce).mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(loadChromeUserConfigOnce).toHaveBeenCalledTimes(1));
+
+      mockAuth.user = { ...mockUser, access_token: 'user-b-token', profile: { ...mockUser.profile, username: 'user-b' } } as User;
+      rerender(shell());
+      await waitFor(() => expect(loadChromeUserConfigOnce).toHaveBeenCalledTimes(2));
+      expect(jest.mocked(loadChromeUserConfigOnce).mock.calls[1][0]).toContain('user-b');
+
+      await act(async () => resolvers[0]({ data: { uiPreview: true, uiPreviewSeen: true } }));
+      await act(async () => resolvers[1]({ data: { uiPreview: false, uiPreviewSeen: true } }));
+
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(chromeStore.get(isPreviewAtom)).toBe(false);
+      expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(1);
+      expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[0][1]).toBe(false);
     });
 
     it('does not overwrite a session preview toggle on a later re-authentication', async () => {

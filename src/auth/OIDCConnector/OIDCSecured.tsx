@@ -38,6 +38,13 @@ type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
 
+/** The signed-in principal, or undefined when the profile cannot identify one. */
+function getPrincipalKey(user: User): string | undefined {
+  const { account_id, org_id, type, username } = user.profile;
+  const principal = account_id || username;
+  return org_id && principal ? JSON.stringify([String(org_id), type, account_id ? 'account-id' : 'username', principal]) : undefined;
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: EntitlementsMap): ChromeUser {
   return {
@@ -70,7 +77,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const auth = useAuth();
   const authRef = useRef(auth);
   const previousEntitlementsRef = useRef<EntitlementsMap | undefined>(undefined);
-  const previousEntitlementsOrgRef = useRef<unknown>(undefined);
+  // The previous map belongs to one principal: its `internal` entry is derived from that user's profile.
+  const previousEntitlementsPrincipalRef = useRef<string | undefined>(undefined);
   const entitlementsFallbackEnabledRef = useRef(false);
   const fetchGenerationRef = useRef(0);
   const entitlementsAbortRef = useRef<AbortController | undefined>(undefined);
@@ -84,12 +92,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   const requiredScopes = activeModule?.config?.ssoScopes || [];
-  // Logging out makes the identity obsolete: a pending enabled request must not finish, retry or be reused for it.
-  // Refs only, so the closure captured by the initial auth state below stays correct.
+  // Logging out makes the identity obsolete: pending work must not finish, retry or be reused for it, even
+  // while it still waits for the rollout decision. Refs only, so the closure captured by the initial auth state below stays correct.
   const cancelEntitlementsFetch = () => {
-    if (!entitlementsFallbackEnabledRef.current) {
-      return;
-    }
     fetchGenerationRef.current += 1;
     entitlementsAbortRef.current?.abort();
     previousEntitlementsRef.current = undefined;
@@ -156,9 +161,13 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
 
   // The bootstrap rollout may target `platform.chrome.ui.preview`, which is only known from the user config.
   // Hydrate it once per page load, before the first flag lookup; useSessionConfig reuses the same request.
-  async function hydrateBootstrapPreview() {
+  async function hydrateBootstrapPreview(generation: number, principal: string | undefined) {
     try {
-      const config = await loadChromeUserConfigOnce();
+      const config = await loadChromeUserConfigOnce(principal);
+      // A newer identity owns the hydration: never apply an obsolete user's preference.
+      if (generation !== fetchGenerationRef.current) {
+        return;
+      }
       // Never overwrite a preview toggle made during the session on a later re-authentication.
       if (!previewHydratedRef.current && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
         chromeStore.set(hydratePreviewAtom, config.data.uiPreview);
@@ -166,7 +175,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     } catch {
       // useSessionConfig owns the degraded and gateway error handling; preview stays off.
     }
-    previewHydratedRef.current = true;
+    if (generation === fetchGenerationRef.current) {
+      previewHydratedRef.current = true;
+    }
   }
 
   async function onUserAuthenticated(user: User) {
@@ -177,7 +188,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(chromeStore, authRef);
-    await hydrateBootstrapPreview();
+    const principal = getPrincipalKey(user);
+    await hydrateBootstrapPreview(generation, principal);
     if (generation !== fetchGenerationRef.current) {
       return;
     }
@@ -193,9 +205,9 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
         return;
       }
       entitlementsFallbackEnabledRef.current = true;
-      if (previousEntitlementsOrgRef.current !== user.profile?.org_id) {
+      if (!principal || previousEntitlementsPrincipalRef.current !== principal) {
         previousEntitlementsRef.current = undefined;
-        previousEntitlementsOrgRef.current = user.profile?.org_id;
+        previousEntitlementsPrincipalRef.current = principal;
       }
       try {
         const result = await fetchEntitlements(user, { enabled: true, previous: previousEntitlementsRef.current, signal: entitlementsAbort.signal });
@@ -270,9 +282,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   useEffect(() => {
     const user = auth.user;
     if (auth.isAuthenticated && user) {
-      const { account_id, org_id, type, username } = user.profile;
-      const principal = account_id || username;
-      const identity = org_id && principal ? JSON.stringify([String(org_id), type, account_id ? 'account-id' : 'username', principal]) : undefined;
+      const identity = getPrincipalKey(user);
       if (identity !== undefined && identity === previousIdentityRef.current) invalidatePermissionFailures();
       else resetPermissionCache();
       previousIdentityRef.current = identity;

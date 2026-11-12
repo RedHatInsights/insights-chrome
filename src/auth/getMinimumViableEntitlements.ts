@@ -29,7 +29,7 @@ function isValidAccountNumber(accountNumber: string): boolean {
   return accountNumber !== '' && accountNumber !== '-1';
 }
 
-function isInternalEntitled(profile: EntitlementsUserProfile): boolean {
+export function isInternalEntitled(profile: EntitlementsUserProfile): boolean {
   const accountNumber = asString(profile.account_number);
   const email = asString(profile.email);
   return Boolean(isValidAccountNumber(accountNumber) && profile.is_internal === true && /@redhat\.com$/i.test(email));

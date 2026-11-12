@@ -382,6 +382,22 @@ describe('visible bundle initialization with real visibility evaluation', () => 
         expect(tileTitles()).toEqual(['Working', 'Ansible', 'Newer']);
       });
 
+      it('still marks navigation ready when entitlements degrade again before the recovery evaluation finishes', async () => {
+        store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
+        holdChecks = true;
+        mount();
+        await waitFor(() => expect(heldChecks.length).toBe(2));
+
+        await setEntitlementsDegraded(false);
+        await waitFor(() => expect(heldChecks.length).toBe(4));
+        await setEntitlementsDegraded(true);
+        await releaseHeldChecks(withAnsible(true));
+
+        await waitUntilReady();
+        expect(navIds()).toEqual(['dashboard', 'ansible']);
+        expect(tileTitles()).toEqual(['Working', 'Ansible']);
+      });
+
       it('keeps the recovered visibility when the degraded-era evaluation of the same config finishes later', async () => {
         store.set(degradedStateAtom, { ...store.get(degradedStateAtom), entitlements: true });
         holdChecks = true;

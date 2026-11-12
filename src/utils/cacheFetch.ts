@@ -31,6 +31,8 @@ export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 type CacheEnvelope<T> = {
   cachedAt: number;
   data: T;
+  /** When the live request that produced `data` started; absent on entries written before it was recorded. */
+  requestedAt?: number;
 };
 
 let cache: LocalForage | undefined;
@@ -51,6 +53,15 @@ function getCache(): LocalForage {
 
 function storageKey(key: string): string {
   return `v${CACHE_SCHEMA_VERSION}:${key}`;
+}
+
+/** Serializes persistence of one key across tabs where the Web Locks API exists; runs unlocked elsewhere. */
+async function withPersistLock(sk: string, persist: () => Promise<void>): Promise<void> {
+  const locks = typeof navigator === 'undefined' ? undefined : navigator.locks;
+  if (!locks?.request) {
+    return persist();
+  }
+  await locks.request(`chrome-config-cache:${sk}`, persist);
 }
 
 function isValidEnvelope<T>(value: unknown, payloadGuard?: (data: unknown) => data is T): value is CacheEnvelope<T> {
@@ -237,6 +248,7 @@ export async function cacheFetch<T>(
   const cacheFallbackPolicy = options ? Promise.resolve(options.enabled) : getConfigCacheFallbackPolicy();
   const liveFetch = Promise.resolve().then(fetcher);
   const sk = storageKey(key);
+  const requestedAt = Date.now();
   const generation = generations.get(sk) ?? 0;
   const isCurrent = () => generation === (generations.get(sk) ?? 0);
   try {
@@ -253,7 +265,8 @@ export async function cacheFetch<T>(
       return { data, fromCache: false };
     }
 
-    const envelope: CacheEnvelope<T> = { data, cachedAt: Date.now() };
+    // Only compare-and-write callers (shouldPersist) record and check request order.
+    const envelope: CacheEnvelope<T> = options?.shouldPersist ? { data, cachedAt: Date.now(), requestedAt } : { data, cachedAt: Date.now() };
     // Fire-and-forget: never block the bootstrap-critical path on the IndexedDB
     // write, and swallow storage errors — the fetch succeeded, that's what matters.
     void cacheFallbackPolicy
@@ -264,33 +277,40 @@ export async function cacheFetch<T>(
         if (pendingDeletes.has(sk)) {
           await pendingDeletes.get(sk);
         }
-        if (options?.shouldPersist) {
-          const cached = await getCache()
-            .getItem<unknown>(sk)
-            .catch(() => null);
-          const cachedData = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached.data : null;
-          if (!options.shouldPersist(data, cachedData)) {
+        // Read, compare and write as one step, so another tab cannot persist in between.
+        await withPersistLock(sk, async () => {
+          if (options?.shouldPersist) {
+            const cached = await getCache()
+              .getItem<unknown>(sk)
+              .catch(() => null);
+            const cachedEnvelope = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached : null;
+            // A response to a later request was already persisted: this one is superseded.
+            if ((cachedEnvelope?.requestedAt ?? -Infinity) > requestedAt) {
+              return;
+            }
+            if (!options.shouldPersist(data, cachedEnvelope?.data ?? null)) {
+              return;
+            }
+          }
+          // Keep the check and registration below free of awaits: deleteCacheKey either
+          // bumps the generation first or snapshots this write, never lands in between.
+          if (!isCurrent()) {
             return;
           }
-        }
-        // Keep the check and registration below free of awaits: deleteCacheKey either
-        // bumps the generation first or snapshots this write, never lands in between.
-        if (!isCurrent()) {
-          return;
-        }
-        const write = getCache()
-          .setItem(sk, envelope)
-          .catch((err) => {
-            console.warn(`[chrome] Failed to cache ${key}:`, err);
-          });
-        const writes = pendingWrites.get(sk) ?? new Set<Promise<unknown>>();
-        writes.add(write);
-        pendingWrites.set(sk, writes);
-        await write;
-        writes.delete(write);
-        if (!writes.size) {
-          pendingWrites.delete(sk);
-        }
+          const write = getCache()
+            .setItem(sk, envelope)
+            .catch((err) => {
+              console.warn(`[chrome] Failed to cache ${key}:`, err);
+            });
+          const writes = pendingWrites.get(sk) ?? new Set<Promise<unknown>>();
+          writes.add(write);
+          pendingWrites.set(sk, writes);
+          await write;
+          writes.delete(write);
+          if (!writes.size) {
+            pendingWrites.delete(sk);
+          }
+        });
       })
       .catch((err) => console.warn(`[chrome] Failed to cache ${key}:`, err));
     return { data, fromCache: false };

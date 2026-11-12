@@ -249,14 +249,15 @@ export const useInitVisibleBundles = () => {
       return;
     }
 
-    let cancelled = false;
+    // No cleanup cancellation: a renewed outage must not cancel the only evaluation able to mark a source ready.
+    // The generation refs already drop superseded results, and the config-load cleanup invalidates them on unmount.
     const bundles = sourceBundlesRef.current;
     const tiles = sourceTilesRef.current;
     if (bundles) {
       const generation = ++bundlesGenerationRef.current;
       let bundlesDegraded = false;
       evaluateBundleNavItems(bundles, () => (bundlesDegraded = true)).then((result) => {
-        if (!cancelled && generation === bundlesGenerationRef.current) {
+        if (generation === bundlesGenerationRef.current) {
           setBundles(result);
           // A recovery can supersede the first evaluation of a config, so it must also mark the source ready.
           setBundlesReady(true);
@@ -268,17 +269,13 @@ export const useInitVisibleBundles = () => {
       const generation = ++tilesGenerationRef.current;
       let tilesDegraded = false;
       evaluateServiceTilesVisibility(tiles, () => (tilesDegraded = true)).then((result) => {
-        if (!cancelled && generation === tilesGenerationRef.current) {
+        if (generation === tilesGenerationRef.current) {
           setTiles(result);
           setTilesReady(true);
           setServiceDegraded({ service: 'serviceTiles', degraded: tilesDegraded });
         }
       }, keepCurrentVisibility);
     }
-
-    return () => {
-      cancelled = true;
-    };
   }, [entitlementsDegraded]);
 };
 
