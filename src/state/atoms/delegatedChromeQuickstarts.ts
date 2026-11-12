@@ -3,12 +3,23 @@ import { HelpTopic, QuickStart } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { useAtomValue } from 'jotai';
 import chromeStore from '../chromeStore';
+import { activeModuleAtom } from './activeModuleAtom';
 import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
 
 type PendingCall<T> = {
   run: (api: T) => void;
   abort: () => void;
+  /** Tenant registrations are kept when the load fails and applied if a runtime publishes later. */
+  registration?: boolean;
+  /** Module active when a quickstart registration was made; discarded once the user leaves it. */
+  module?: string;
 };
+
+type QueueOptions = Pick<PendingCall<unknown>, 'registration' | 'module'>;
+
+const noop = () => undefined;
+const REGISTRATION: QueueOptions = { registration: true };
+const quickstartRegistration = (): QueueOptions => ({ registration: true, module: chromeStore.get(activeModuleAtom) });
 
 let liveRuntimeUnavailable = false;
 let replayRegistrationsOnPublish = false;
@@ -27,28 +38,49 @@ const registeredQuickstarts = new Map<string, QuickStart[]>();
  * runtimes fetch those on demand (`setActiveTopic` / `enableTopics`).
  */
 const registeredHelpTopics = new Map<string, { topic: HelpTopic; enabled: boolean }>();
+/**
+ * Names in the help-topic switcher (the runtimes' filtered list), tracked with the same
+ * `enableTopics` append/replace and `disableTopics` semantics, so a replacement can restore it.
+ */
+let filteredHelpTopicNames: string[] = [];
 const pendingQuickstartsCalls: PendingCall<LiveQuickstartsAPI>[] = [];
 const pendingHelpTopicsCalls: PendingCall<ChromeAPI['helpTopics']>[] = [];
+
+/** Settle the call's promise now; keep it queued only if it is a registration. */
+function settleAndKeepRegistration<T>(queue: PendingCall<T>[], item: PendingCall<T>) {
+  item.abort();
+  if (item.registration) {
+    queue.push({ ...item, abort: noop });
+  }
+}
 
 function flushPending<T>(queue: PendingCall<T>[], api: T | null) {
   const pending = queue.splice(0);
   if (!api) {
-    pending.forEach((item) => item.abort());
+    pending.forEach((item) => settleAndKeepRegistration(queue, item));
     return;
   }
-  pending.forEach((item) => item.run(api));
+  pending.forEach((item) => {
+    // One failing call (e.g. a quickstart the runtime's validation rejects) must not drop the rest.
+    try {
+      item.run(api);
+    } catch (error) {
+      console.error('Queued quickstarts call failed', error);
+    }
+  });
 }
 
-function enqueueOrRun<T>(api: T | null, queue: PendingCall<T>[], run: (api: T) => void, abort: () => void) {
+function enqueueOrRun<T>(api: T | null, queue: PendingCall<T>[], run: (api: T) => void, abort: () => void, options: QueueOptions = {}) {
   if (api) {
     run(api);
     return;
   }
+  const item = { run, abort, ...options };
   if (liveRuntimeUnavailable) {
-    abort();
+    settleAndKeepRegistration(queue, item);
     return;
   }
-  queue.push({ run, abort });
+  queue.push(item);
 }
 
 /**
@@ -81,7 +113,9 @@ export function publishLiveChromeQuickstartsApis(api: { quickstartsAPI: LiveQuic
 }
 
 /**
- * Remote load failed or timed out. Drop queued calls so promises do not hang.
+ * Remote load failed or timed out. Settle queued calls so promises do not hang, but
+ * keep tenant registrations: the remote can still load after the timeout, and tenants
+ * stay mounted, so they will not register again.
  * Do not fall back to leftover Chrome here — flag-on isolation stays in place.
  */
 export function dropPendingLiveChromeQuickstartsApis() {
@@ -109,9 +143,14 @@ export function retireLiveChromeQuickstartsApis() {
   chromeStore.set(liveQuickstartsCatalogAtom, null);
 }
 
-/** Runtimes clear their quickstarts on module change; keep the replay registry in step. */
-export function clearRegisteredChromeQuickstarts() {
+/**
+ * Runtimes clear their quickstarts on module change; keep the replay registry in step,
+ * and discard queued registrations made by modules the user has left.
+ */
+export function clearRegisteredChromeQuickstarts(activeModule?: string) {
   registeredQuickstarts.clear();
+  const pending = pendingQuickstartsCalls.splice(0);
+  pendingQuickstartsCalls.push(...pending.filter((item) => !item.registration || item.module === activeModule));
 }
 
 /** Test helper: empty queues and treat the runtime as not-yet-loaded (not failed). */
@@ -120,6 +159,7 @@ export function resetDelegatedChromeQuickstartsState() {
   replayRegistrationsOnPublish = false;
   registeredQuickstarts.clear();
   registeredHelpTopics.clear();
+  filteredHelpTopicNames = [];
   pendingQuickstartsCalls.splice(0).forEach((item) => item.abort());
   pendingHelpTopicsCalls.splice(0).forEach((item) => item.abort());
 }
@@ -142,6 +182,34 @@ function replayRegisteredHelpTopics(api: ChromeAPI['helpTopics']) {
   if (disabled.length > 0) {
     api.addHelpTopics(disabled, false);
   }
+  replayFilteredHelpTopics(api);
+}
+
+/**
+ * Rebuild the replacement's topic switcher: replace with the first topic, then append the rest one
+ * at a time, because the runtimes list topics in the order each call resolves them (fetched topics
+ * first). Runs after the topic replay, so tenant-defined topics resolve without a fetch.
+ */
+function replayFilteredHelpTopics(api: ChromeAPI['helpTopics']) {
+  const [first, ...rest] = filteredHelpTopicNames;
+  if (!first) {
+    return;
+  }
+  rest
+    .reduce<Promise<unknown>>(
+      (previous, name) => previous.then(() => api.enableTopics({ names: [name], append: true })),
+      Promise.resolve(api.enableTopics(first))
+    )
+    // The runtimes log fetch failures themselves.
+    .catch(noop);
+}
+
+function trackFilteredHelpTopics(topics: HelpTopic[] | undefined, append: boolean) {
+  if (!Array.isArray(topics)) {
+    return;
+  }
+  const names = topics.map(({ name }) => name);
+  filteredHelpTopicNames = append ? [...filteredHelpTopicNames, ...names.filter((name) => !filteredHelpTopicNames.includes(name))] : names;
 }
 
 /** Keep the enabled state of tenant-defined topics in step with the live runtime. */
@@ -160,6 +228,11 @@ function enableTopicsNames(args: EnableTopicsArgs): string[] {
     return first.names ?? [];
   }
   return args as string[];
+}
+
+function enableTopicsAppend(args: EnableTopicsArgs): boolean {
+  const [first] = args;
+  return typeof first === 'object' && first !== null && !!first.append;
 }
 
 /**
@@ -182,7 +255,8 @@ export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
         api.set(...args);
         registeredQuickstarts.set(args[0], args[1]);
       },
-      () => undefined
+      noop,
+      quickstartRegistration()
     );
   },
   activateQuickstart: (name: string) => {
@@ -219,7 +293,8 @@ export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
         api.updateQuickStarts?.(key, quickstarts);
         registeredQuickstarts.set(key, quickstarts);
       },
-      () => undefined
+      noop,
+      quickstartRegistration()
     );
   },
   add: (key: string, qs: QuickStart) => {
@@ -227,15 +302,16 @@ export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
     if (api) {
       return addRegisteredQuickstart(api, key, qs);
     }
-    if (liveRuntimeUnavailable) {
-      return false;
-    }
-    pendingQuickstartsCalls.push({
-      run: (live) => {
+    // Queued until a runtime publishes, including after a failed load; the runtime validates it then.
+    enqueueOrRun(
+      null,
+      pendingQuickstartsCalls,
+      (live) => {
         addRegisteredQuickstart(live, key, qs);
       },
-      abort: () => undefined,
-    });
+      noop,
+      quickstartRegistration()
+    );
     return true;
   },
 };
@@ -250,7 +326,8 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
         api.addHelpTopics(...args);
         topics.forEach((topic) => registeredHelpTopics.set(topic.name, { topic, enabled }));
       },
-      () => undefined
+      noop,
+      REGISTRATION
     );
   },
   disableTopics: (...args: Parameters<ChromeAPI['helpTopics']['disableTopics']>) => {
@@ -260,30 +337,36 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
       (api) => {
         api.disableTopics(...args);
         setRegisteredHelpTopicsEnabled(args, false);
+        filteredHelpTopicNames = filteredHelpTopicNames.filter((name) => !args.includes(name));
       },
-      () => undefined
+      noop,
+      REGISTRATION
     );
   },
   enableTopics: (...args: Parameters<ChromeAPI['helpTopics']['enableTopics']>) => {
     const enableOn = (live: ChromeAPI['helpTopics']) => {
       const result = live.enableTopics(...args);
       setRegisteredHelpTopicsEnabled(enableTopicsNames(args), true);
-      return result;
+      return Promise.resolve(result).then((topics) => {
+        trackFilteredHelpTopics(topics, enableTopicsAppend(args));
+        return topics;
+      });
     };
     const api = liveHelpTopicsAPIRef.current;
     if (api) {
       return enableOn(api);
     }
-    if (liveRuntimeUnavailable) {
-      return Promise.resolve([]);
-    }
+    // A registration: after a failed load the promise settles with [] now and the call still applies later.
     return new Promise((resolve, reject) => {
-      pendingHelpTopicsCalls.push({
-        run: (live) => {
+      enqueueOrRun(
+        null,
+        pendingHelpTopicsCalls,
+        (live) => {
           enableOn(live).then(resolve).catch(reject);
         },
-        abort: () => resolve([]),
-      });
+        () => resolve([]),
+        REGISTRATION
+      );
     });
   },
   setActiveTopic: (...args: Parameters<ChromeAPI['helpTopics']['setActiveTopic']>) => {

@@ -350,7 +350,7 @@ const QuickstartsRuntimeMount = ({ children }: { children: ReactNode }) => {
   }, [useRemote]);
 
   useEffect(() => {
-    clearRegisteredChromeQuickstarts();
+    clearRegisteredChromeQuickstarts(activeModule);
   }, [activeModule]);
 
   useEffect(() => {

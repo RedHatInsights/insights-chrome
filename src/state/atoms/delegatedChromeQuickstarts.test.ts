@@ -12,6 +12,7 @@ import {
   retireLiveChromeQuickstartsApis,
 } from './delegatedChromeQuickstarts';
 import chromeStore from '../chromeStore';
+import { activeModuleAtom } from './activeModuleAtom';
 import { liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
 
 const stubQuickstart = { metadata: { name: 'qs-1' } } as QuickStart;
@@ -88,10 +89,11 @@ describe('delegatedChromeQuickstarts', () => {
     expect(liveHelpTopicsAPIRef.current).toBeNull();
   });
 
-  it('no-ops new calls after the remote has failed', async () => {
+  it('settles new calls immediately after the remote has failed', async () => {
     dropPendingLiveChromeQuickstartsApis();
     await expect(delegatedQuickstartsAPI.activateQuickstart('too-late')).resolves.toBeUndefined();
-    expect(delegatedQuickstartsAPI.add('app', stubQuickstart)).toBe(false);
+    // Registrations are kept for a runtime that publishes later; the runtime validates `add` then.
+    expect(delegatedQuickstartsAPI.add('app', stubQuickstart)).toBe(true);
     await expect(delegatedHelpTopicsAPI.enableTopics('topic-a')).resolves.toEqual([]);
   });
 
@@ -328,6 +330,78 @@ describe('delegatedChromeQuickstarts', () => {
         expect(next.helpTopicsAPI.addHelpTopics).not.toHaveBeenCalled();
       });
 
+      describe('filtered help topics (the topic switcher)', () => {
+        const withEnabled = (resolve: (names: string[]) => HelpTopic[]) => {
+          const runtime = runtimeApis();
+          runtime.helpTopicsAPI.enableTopics.mockImplementation(async (...args: Parameters<ChromeAPI['helpTopics']['enableTopics']>) => {
+            const [first] = args;
+            return resolve(typeof first === 'object' ? first.names : (args as string[]));
+          });
+          return runtime;
+        };
+        const byName = (names: string[]) => names.map(topic);
+
+        it('restores the switcher list after enableTopics with replace and append semantics', async () => {
+          publishLiveChromeQuickstartsApis(withEnabled(byName));
+          await attached();
+          await delegatedHelpTopicsAPI.enableTopics('ignored');
+          await delegatedHelpTopicsAPI.enableTopics('topic-1', 'topic-2');
+          await delegatedHelpTopicsAPI.enableTopics({ names: ['topic-2', 'topic-3'], append: true });
+
+          const next = await replace();
+          await act(async () => {});
+
+          // One topic per call keeps the switcher order: the runtimes list fetched topics first.
+          expect(next.helpTopicsAPI.enableTopics.mock.calls).toEqual([
+            ['topic-1'],
+            [{ names: ['topic-2'], append: true }],
+            [{ names: ['topic-3'], append: true }],
+          ]);
+        });
+
+        it('restores the list after tenant topics are replayed, and drops disabled topics', async () => {
+          publishLiveChromeQuickstartsApis(withEnabled(byName));
+          await attached();
+          delegatedHelpTopicsAPI.addHelpTopics([t1, t2]);
+          await delegatedHelpTopicsAPI.enableTopics('topic-1', 'topic-2');
+          delegatedHelpTopicsAPI.disableTopics('topic-1');
+
+          retireLiveChromeQuickstartsApis();
+          const next = runtimeApis();
+          const order: string[] = [];
+          next.helpTopicsAPI.addHelpTopics.mockImplementation(() => order.push('add'));
+          next.helpTopicsAPI.enableTopics.mockImplementation(async () => {
+            order.push('enable');
+            return [];
+          });
+          publishLiveChromeQuickstartsApis(next);
+          await attached();
+
+          expect(order).toEqual(['add', 'add', 'enable']);
+          expect(next.helpTopicsAPI.enableTopics).toHaveBeenCalledWith('topic-2');
+        });
+
+        it('tracks only the topics the runtime found', async () => {
+          publishLiveChromeQuickstartsApis(withEnabled((names) => byName(names.filter((name) => name !== 'missing'))));
+          await attached();
+          await delegatedHelpTopicsAPI.enableTopics('topic-1', 'missing');
+
+          const next = await replace();
+
+          expect(next.helpTopicsAPI.enableTopics).toHaveBeenCalledWith('topic-1');
+        });
+
+        it('does not call enableTopics on the replacement when the switcher is empty', async () => {
+          publishLiveChromeQuickstartsApis(runtimeApis());
+          await attached();
+          delegatedHelpTopicsAPI.addHelpTopics([t1]);
+
+          const next = await replace();
+
+          expect(next.helpTopicsAPI.enableTopics).not.toHaveBeenCalled();
+        });
+      });
+
       it('replays the latest version of a re-added topic', async () => {
         publishLiveChromeQuickstartsApis(runtimeApis());
         await attached();
@@ -339,6 +413,179 @@ describe('delegatedChromeQuickstarts', () => {
 
         expect(next.helpTopicsAPI.addHelpTopics.mock.calls).toEqual([[[updated], true]]);
       });
+    });
+  });
+
+  describe('registrations across a load timeout', () => {
+    const topic = { name: 'tenant-topic', title: 'T', tags: [], content: 't', links: [] } as unknown as HelpTopic;
+    const apis = () => ({
+      quickstartsAPI: {
+        version: 1,
+        set: jest.fn(),
+        activateQuickstart: jest.fn().mockResolvedValue(undefined),
+        toggle: jest.fn(),
+        Catalog: jest.fn(),
+        add: jest.fn(() => true),
+        updateQuickStarts: jest.fn(),
+      },
+      helpTopicsAPI: {
+        addHelpTopics: jest.fn(),
+        disableTopics: jest.fn(),
+        enableTopics: jest.fn().mockResolvedValue([topic]),
+        setActiveTopic: jest.fn().mockResolvedValue(undefined),
+        closeHelpTopic: jest.fn(),
+      },
+    });
+
+    it('settles pending promises on timeout and applies registrations when the remote loads later', async () => {
+      delegatedQuickstartsAPI.set('app', [stubQuickstart]);
+      delegatedHelpTopicsAPI.addHelpTopics([topic], false);
+      const enabled = delegatedHelpTopicsAPI.enableTopics('tenant-topic');
+      const activated = delegatedQuickstartsAPI.activateQuickstart('qs-1');
+      delegatedQuickstartsAPI.toggle('qs-1');
+
+      dropPendingLiveChromeQuickstartsApis();
+      await expect(enabled).resolves.toEqual([]);
+      await expect(activated).resolves.toBeUndefined();
+      // Made while degraded: tenants stay mounted, so these are not repeated either.
+      expect(delegatedQuickstartsAPI.add('app', stubQuickstart)).toBe(true);
+      delegatedHelpTopicsAPI.disableTopics('other-topic');
+
+      const late = apis();
+      publishLiveChromeQuickstartsApis(late);
+      await attached();
+
+      expect(late.quickstartsAPI.set).toHaveBeenCalledWith('app', [stubQuickstart]);
+      expect(late.quickstartsAPI.add).toHaveBeenCalledWith('app', stubQuickstart);
+      expect(late.helpTopicsAPI.addHelpTopics).toHaveBeenCalledWith([topic], false);
+      expect(late.helpTopicsAPI.enableTopics).toHaveBeenCalledWith('tenant-topic');
+      expect(late.helpTopicsAPI.disableTopics).toHaveBeenCalledWith('other-topic');
+      // Transient UI actions are not replayed minutes later.
+      expect(late.quickstartsAPI.activateQuickstart).not.toHaveBeenCalled();
+      expect(late.quickstartsAPI.toggle).not.toHaveBeenCalled();
+    });
+
+    it('records registrations applied after a timeout for later runtime replacements', async () => {
+      delegatedQuickstartsAPI.set('app', [stubQuickstart]);
+      dropPendingLiveChromeQuickstartsApis();
+      publishLiveChromeQuickstartsApis(apis());
+      await attached();
+
+      retireLiveChromeQuickstartsApis();
+      const next = apis();
+      publishLiveChromeQuickstartsApis(next);
+      await attached();
+
+      expect(next.quickstartsAPI.set).toHaveBeenCalledWith('app', [stubQuickstart]);
+    });
+
+    it('keeps applying queued calls when one of them throws', async () => {
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      delegatedQuickstartsAPI.add('app', stubQuickstart);
+      delegatedQuickstartsAPI.set('next', [stubQuickstart]);
+      const late = apis();
+      late.quickstartsAPI.add.mockImplementation(() => {
+        throw new Error('rejected by validation');
+      });
+      publishLiveChromeQuickstartsApis(late);
+      await attached();
+
+      expect(late.quickstartsAPI.set).toHaveBeenCalledWith('next', [stubQuickstart]);
+      expect(errorSpy).toHaveBeenCalledWith('Queued quickstarts call failed', expect.any(Error));
+      errorSpy.mockRestore();
+    });
+
+    it('applies each kept registration once, even after repeated failures', async () => {
+      delegatedQuickstartsAPI.add('app', stubQuickstart);
+      dropPendingLiveChromeQuickstartsApis();
+      dropPendingLiveChromeQuickstartsApis();
+      const late = apis();
+      publishLiveChromeQuickstartsApis(late);
+      await attached();
+      publishLiveChromeQuickstartsApis(late);
+      await attached();
+
+      expect(late.quickstartsAPI.add).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('queued registrations on module change', () => {
+    const qsA = { metadata: { name: 'qs-a' } } as QuickStart;
+    const qsB = { metadata: { name: 'qs-b' } } as QuickStart;
+    const apis = () => ({
+      quickstartsAPI: {
+        version: 1,
+        set: jest.fn(),
+        activateQuickstart: jest.fn().mockResolvedValue(undefined),
+        toggle: jest.fn(),
+        Catalog: jest.fn(),
+        add: jest.fn(() => true),
+        updateQuickStarts: jest.fn(),
+      },
+      helpTopicsAPI: {
+        addHelpTopics: jest.fn(),
+        disableTopics: jest.fn(),
+        enableTopics: jest.fn().mockResolvedValue([]),
+        setActiveTopic: jest.fn().mockResolvedValue(undefined),
+        closeHelpTopic: jest.fn(),
+      },
+    });
+    const topic = { name: 'tenant-topic', title: 'T', tags: [], content: 't', links: [] } as unknown as HelpTopic;
+
+    afterEach(() => {
+      chromeStore.set(activeModuleAtom, undefined);
+    });
+
+    it.each([
+      ['while the remote loads', () => undefined],
+      ['after a load timeout', () => dropPendingLiveChromeQuickstartsApis()],
+    ])('discards quickstart registrations queued by a module the user left (%s)', async (_, fail) => {
+      chromeStore.set(activeModuleAtom, 'first-app');
+      delegatedQuickstartsAPI.set('first', [qsA]);
+      delegatedQuickstartsAPI.add('first', qsA);
+      delegatedQuickstartsAPI.updateQuickStarts?.('first-update', [qsA]);
+      delegatedHelpTopicsAPI.addHelpTopics([topic]);
+      fail();
+
+      chromeStore.set(activeModuleAtom, 'second-app');
+      delegatedQuickstartsAPI.set('second', [qsB]);
+      clearRegisteredChromeQuickstarts('second-app');
+
+      const runtime = apis();
+      publishLiveChromeQuickstartsApis(runtime);
+      await attached();
+
+      expect(runtime.quickstartsAPI.set.mock.calls).toEqual([['second', [qsB]]]);
+      expect(runtime.quickstartsAPI.add).not.toHaveBeenCalled();
+      expect(runtime.quickstartsAPI.updateQuickStarts).not.toHaveBeenCalled();
+      // Help topics are module-independent in both runtimes.
+      expect(runtime.helpTopicsAPI.addHelpTopics).toHaveBeenCalledWith([topic]);
+    });
+
+    it('keeps registrations the new module queued before the module-change cleanup ran', async () => {
+      chromeStore.set(activeModuleAtom, 'second-app');
+      delegatedQuickstartsAPI.set('second', [qsB]);
+      clearRegisteredChromeQuickstarts('second-app');
+
+      const runtime = apis();
+      publishLiveChromeQuickstartsApis(runtime);
+      await attached();
+
+      expect(runtime.quickstartsAPI.set).toHaveBeenCalledWith('second', [qsB]);
+    });
+
+    it('keeps queued non-registration calls on module change', async () => {
+      chromeStore.set(activeModuleAtom, 'first-app');
+      const pending = delegatedQuickstartsAPI.activateQuickstart('qs-a');
+      chromeStore.set(activeModuleAtom, 'second-app');
+      clearRegisteredChromeQuickstarts('second-app');
+
+      const runtime = apis();
+      publishLiveChromeQuickstartsApis(runtime);
+      await attached();
+
+      await pending;
+      expect(runtime.quickstartsAPI.activateQuickstart).toHaveBeenCalledWith('qs-a');
     });
   });
 

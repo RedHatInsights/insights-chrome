@@ -585,6 +585,49 @@ describe('QuickstartsRuntimeMount', () => {
       expect(remote.quickstartsAPI.toggle).not.toHaveBeenCalled();
     });
 
+    it('applies registrations queued before a load timeout once the remote loads late', async () => {
+      const topic = { name: 'tenant-topic', title: 'T', tags: [], content: 't', links: [] } as unknown as HelpTopic;
+      const remote = createApis('remote');
+      mockedUseFlag.mockReturnValue(true);
+      jest.useFakeTimers();
+      const { store } = renderMount();
+      delegatedQuickstartsAPI.set('app', [qsA]);
+      delegatedHelpTopicsAPI.addHelpTopics([topic]);
+      act(() => {
+        jest.advanceTimersByTime(REMOTE_QUICKSTARTS_LOAD_TIMEOUT_MS);
+      });
+      expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+      // Tenants stay mounted and register again only on module change; this one registers while degraded.
+      delegatedQuickstartsAPI.add('app', qsB);
+      jest.useRealTimers();
+
+      await publishRemote(remote);
+
+      expect(store.get(degradedStateAtom).quickstarts).toBe(false);
+      expect(remote.quickstartsAPI.set).toHaveBeenCalledWith('app', [qsA]);
+      expect(remote.quickstartsAPI.add).toHaveBeenCalledWith('app', qsB);
+      expect(remote.helpTopicsAPI.addHelpTopics).toHaveBeenCalledWith([topic]);
+    });
+
+    it('discards registrations queued by an application the user left while the remote loads', async () => {
+      const remote = createApis('remote');
+      mockedUseFlag.mockReturnValue(true);
+      const { store } = renderMount();
+      // Chrome's root Provider uses chromeStore, which the delegates read; keep both in step here.
+      chromeStore.set(activeModuleAtom, 'insights');
+      delegatedQuickstartsAPI.set('insights', [qsA]);
+      act(() => {
+        store.set(activeModuleAtom, 'other-module');
+        chromeStore.set(activeModuleAtom, 'other-module');
+      });
+      delegatedQuickstartsAPI.set('other', [qsB]);
+
+      await publishRemote(remote);
+
+      expect((remote.quickstartsAPI.set as jest.Mock).mock.calls).toEqual([['other', [qsB]]]);
+      chromeStore.set(activeModuleAtom, undefined);
+    });
+
     it('queues instead of dropping calls after switching away from a failed remote', async () => {
       const legacy = createApis('legacy');
       mockedUseFlag.mockReturnValue(true);
