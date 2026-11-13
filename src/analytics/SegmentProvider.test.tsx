@@ -12,6 +12,7 @@ const mockIdentify = jest.fn();
 const mockGroup = jest.fn();
 const mockPage = jest.fn();
 const mockLoad = jest.fn();
+const mockInitialLoad = jest.fn();
 const mockReplacementIdentify = jest.fn();
 const mockReplacementGroup = jest.fn();
 const mockReplacementPage = jest.fn();
@@ -33,7 +34,8 @@ jest.mock('@segment/analytics-next', () => ({
       group: mockGroup,
       page: mockPage,
       instance: { settings: {} },
-      load(this: { instance: { settings: Record<string, unknown> } }, { writeKey }: { writeKey: string }) {
+      load(this: { instance: { settings: Record<string, unknown> } }, { writeKey }: { writeKey: string }, options: Record<string, unknown>) {
+        mockInitialLoad({ writeKey }, options);
         this.instance.settings.writeKey = writeKey;
       },
     })),
@@ -172,6 +174,39 @@ describe('SegmentProvider', () => {
     mockSearch = '';
     mockWaitForRenderedThemeInitialization.mockResolvedValue(undefined);
     localStorage.clear();
+  });
+
+  it('disables the Pendo destination for initial and replacement Segment loads', async () => {
+    const { default: SegmentProvider } = await import('./SegmentProvider');
+
+    const view = render(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    expect(mockInitialLoad).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        integrations: expect.objectContaining({ Pendo: false }),
+      })
+    );
+
+    mockActiveModule = 'acs';
+    view.rerender(
+      <SegmentProvider>
+        <div>test child</div>
+      </SegmentProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockLoad).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          integrations: expect.objectContaining({ Pendo: false }),
+        })
+      );
+    });
   });
 
   it('should include email_domain in group traits', async () => {
