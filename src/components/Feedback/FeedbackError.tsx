@@ -23,10 +23,13 @@ const FeedbackError = ({ onCloseModal }: FeedbackErrorProps) => {
       <Content>
         <Content component={ContentVariants.h1}>{intl.formatMessage(messages.somethingWentWrong)}</Content>
         <Content component="p">
-          {intl.formatMessage(messages.problemProcessingRequest)}{' '}
-          <a target="_blank" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" rel="noreferrer">
-            {intl.formatMessage(messages.redHatSupport)}
-          </a>
+          {intl.formatMessage(messages.problemProcessingRequestWithSupportLink, {
+            SupportLink: (chunks) => (
+              <a target="_blank" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" rel="noreferrer">
+                {chunks}
+              </a>
+            ),
+          })}
         </Content>
       </Content>
       <Button variant="primary" onClick={onCloseModal}>

@@ -9,6 +9,8 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { _testHooks } from '../../utils/chunkLoadErrorUtils';
 
+jest.unmock('react-intl');
+
 // Mock Sentry
 jest.mock('@sentry/react', () => ({
   captureException: jest.fn(() => 'mock-sentry-id'),
@@ -192,6 +194,33 @@ describe('DefaultErrorComponent', () => {
   });
 
   describe('renders error page', () => {
+    it('renders the complete error guidance with support and status links', () => {
+      renderWithProviders(<DefaultErrorComponent error={new Error('test error')} />);
+
+      const supportLink = screen.getByRole('link', { name: 'Red Hat support' });
+      expect(supportLink.closest('p')).toHaveTextContent(
+        'There was a problem processing the request. Try reloading the page. If the problem persists, contact Red Hat support or check our Status page for known outages.'
+      );
+      expect(supportLink).toHaveAttribute('href', 'https://access.redhat.com/support');
+      expect(screen.getByRole('link', { name: 'Status page' })).toHaveAttribute('href', 'https://status.redhat.com/');
+    });
+
+    it('renders translated link tags in the order specified by the message', () => {
+      const translatedMessage = '<StatusLink>Check service status</StatusLink> first; then contact <SupportLink>Red Hat support</SupportLink> if needed.';
+      render(
+        <IntlProvider locale="fr" messages={{ problemProcessingRequestWithSupportAndStatusLinks: translatedMessage }}>
+          <Provider>
+            <DefaultErrorComponent error={new Error('test error')} />
+          </Provider>
+        </IntlProvider>
+      );
+
+      const links = screen.getAllByRole('link').filter((link) => link.getAttribute('href') !== '/');
+      expect(links.map((link) => link.textContent)).toEqual(['Check service status', 'Red Hat support']);
+      expect(links[0]).toHaveAttribute('href', 'https://status.redhat.com/');
+      expect(links[1]).toHaveAttribute('href', 'https://access.redhat.com/support');
+    });
+
     it('renders Something went wrong message', () => {
       renderWithProviders(<DefaultErrorComponent error={new Error('test error')} />);
       expect(screen.getByText('Something went wrong', { exact: false })).toBeInTheDocument();
