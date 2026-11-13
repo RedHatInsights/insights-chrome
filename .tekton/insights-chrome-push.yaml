@@ -23,7 +23,11 @@ spec:
   - name: output-image
     value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/insights-chrome:{{revision}}
   - name: dockerfile
-    value: build-tools/Dockerfile
+    value: Dockerfile.hermetic
+  - name: hermetic
+    value: 'true'
+  - name: prefetch-input
+    value: '{"type": "npm", "path": "."}'
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
@@ -301,13 +305,9 @@ spec:
         value: $(params.image-expires-after)
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
-      - name: ADDITIONAL_SECRET
-        value: build-container-additional-secret
       - name: BUILD_ARGS
         value:
         - $(params.build-args[*])
-        - ENABLE_SENTRY=true
-        - SENTRY_RELEASE={{revision}}
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: BUILDAH_FORMAT
@@ -615,7 +615,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 5Gi
       status: {}
   - name: git-auth
     secret:
