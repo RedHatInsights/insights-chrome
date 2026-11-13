@@ -48,6 +48,7 @@ chromeStore.set(degradedStateAtom, {
   entitlements: false,
   configFromCache: false,
   featureFlags: false,
+  quickstarts: false,
   navigation: false,
   serviceTiles: false,
 });
