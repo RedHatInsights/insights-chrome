@@ -80,7 +80,7 @@ function asciiLowercase(value: string) {
   return String.fromCharCode(...out);
 }
 
-function highlightText(term: string, text: string, category: HighlightCategories) {
+export function highlightText(term: string, text: string, category: HighlightCategories) {
   const key = `${term}-${text}`;
 
   // check cache
@@ -103,7 +103,7 @@ function highlightText(term: string, text: string, category: HighlightCategories
   return markedText;
 }
 
-async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE): Promise<{ hidden: boolean; failed: boolean }> {
+export async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE): Promise<{ hidden: boolean; failed: boolean }> {
   const cacheKey = `${env}-${id}`;
   const cacheHit = SearchPermissionsCache.get(cacheKey);
   if (cacheHit) {
