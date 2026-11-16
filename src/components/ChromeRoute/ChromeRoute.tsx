@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { delegatedHelpTopicsAPI } from '../../state/atoms/delegatedChromeQuickstarts';
 import { gatewayErrorAtom } from '../../state/atoms/gatewayErrorAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { NavItemPermission } from '../../@types/types';
@@ -80,8 +81,10 @@ const ChromeRoute = memo(
             });
           });
       }
-      // Help topic clearing: QuickstartsRuntime ApiPublisher calls setActiveTopic('')
-      // when activeModule (this atom) changes. Do not read HelpTopicContext here.
+      // Close any open help topic on every app mount, including a return to the same app (for example
+      // from All services), where activeModule does not change. Goes through the Chrome delegate:
+      // this route renders outside the runtime's HelpTopicContext.
+      delegatedHelpTopicsAPI.closeHelpTopic();
 
       // reset visibility function
       setIsHidden(null);

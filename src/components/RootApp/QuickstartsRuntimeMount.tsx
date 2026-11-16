@@ -1,5 +1,6 @@
 import React, { Component, ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import * as Sentry from '@sentry/react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { HelpTopicContext, HelpTopicContextDefaults, QuickStartContext, QuickStartContextDefaults } from '@patternfly/quickstarts';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -45,13 +46,25 @@ function failQuickstartsRuntime(
   dropPendingLiveChromeQuickstartsApis();
 }
 
+/** The runtime falls back to a degraded state instead of the module error page, so report it here. */
+function captureQuickstartsRuntimeError(error: unknown, componentStack?: string | null) {
+  Sentry.captureException(error instanceof Error ? error : new Error(`Quickstarts runtime failed: ${String(error)}`), {
+    tags: {
+      'chrome.operation': 'quickstarts_runtime',
+      'chrome.error_surface': 'quickstarts-runtime',
+    },
+    contexts: { react: { componentStack } },
+  });
+}
+
 class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  componentDidCatch(error: unknown) {
+  componentDidCatch(error: unknown, errorInfo?: { componentStack?: string | null }) {
     console.error('Quickstarts runtime failed:', error);
+    captureQuickstartsRuntimeError(error, errorInfo?.componentStack);
     failQuickstartsRuntime();
   }
   render() {
@@ -62,9 +75,15 @@ class QuickstartsRuntimeBoundary extends Component<{ children: ReactNode; fallba
   }
 }
 
-const QuickstartsRemoteError = () => {
+/** Scalprum renders this, with the error, when the remote fails to load or throws while rendering. */
+const QuickstartsRemoteError = ({ error, errorInfo }: { error?: unknown; errorInfo?: { componentStack?: string | null } }) => {
   const setServiceDegraded = useSetAtom(setServiceDegradedAtom);
   const setRemoteActiveQSID = useSetAtom(remoteActiveQuickStartIDAtom);
+  useEffect(() => {
+    if (error != null) {
+      captureQuickstartsRuntimeError(error, errorInfo?.componentStack);
+    }
+  }, [error]);
   useEffect(() => {
     failQuickstartsRuntime(setRemoteActiveQSID, setServiceDegraded);
     return () => {

@@ -14,6 +14,7 @@ import { Provider as JotaiProvider, createStore } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 import { ScalprumComponent } from '@scalprum/react-core';
 import { ChromeAPI } from '@redhat-cloud-services/types';
+import { captureException } from '@sentry/react';
 import QuickstartsRuntimeMount, {
   LEARNING_RESOURCES_QUICKSTARTS_FLAG,
   LEARNING_RESOURCES_QUICKSTARTS_STORAGE_KEY,
@@ -29,6 +30,11 @@ import { quickstartsRuntimeContextAtom } from '../../state/atoms/quickstartsRunt
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
+}));
+
+jest.mock('@sentry/react', () => ({
+  ...jest.requireActual('@sentry/react'),
+  captureException: jest.fn(),
 }));
 
 jest.mock('@scalprum/react-core', () => ({
@@ -54,6 +60,7 @@ jest.mock('./LegacyQuickstartsRuntime', () => ({
 }));
 
 const mockedUseFlag = useFlag as jest.Mock;
+const mockedCaptureException = captureException as jest.Mock;
 const MockedScalprumComponent = ScalprumComponent as jest.Mock;
 
 const chromeAuth = {
@@ -192,6 +199,45 @@ describe('QuickstartsRuntimeMount', () => {
     expect(store.get(degradedStateAtom).quickstarts).toBe(true);
     expect(store.get(remoteActiveQuickStartIDAtom)).toBe('');
     expect(screen.getByText('shell-child')).toBeInTheDocument();
+  });
+
+  it('reports a remote failure passed to the ErrorComponent to Sentry', () => {
+    mockedUseFlag.mockReturnValue(true);
+    mockedCaptureException.mockClear();
+    const error = new Error('remote render failed');
+    // Scalprum clones its ErrorComponent with the caught error and component stack.
+    MockedScalprumComponent.mockImplementation(({ ErrorComponent }: { ErrorComponent: React.ReactElement }) =>
+      React.cloneElement(ErrorComponent, { error, errorInfo: { componentStack: 'at Remote' } } as never)
+    );
+    const { store } = renderMount();
+
+    expect(store.get(degradedStateAtom).quickstarts).toBe(true);
+    expect(mockedCaptureException).toHaveBeenCalledTimes(1);
+    expect(mockedCaptureException).toHaveBeenCalledWith(error, {
+      tags: { 'chrome.operation': 'quickstarts_runtime', 'chrome.error_surface': 'quickstarts-runtime' },
+      contexts: { react: { componentStack: 'at Remote' } },
+    });
+  });
+
+  it('reports a runtime error caught by the local boundary to Sentry and keeps the console mounted', () => {
+    mockedUseFlag.mockReturnValue(true);
+    mockedCaptureException.mockClear();
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const error = new Error('runtime threw');
+    MockedScalprumComponent.mockImplementation(() => {
+      throw error;
+    });
+    renderMount();
+
+    // The class boundary has no hooks, so it marks the runtime degraded in chromeStore.
+    expect(chromeStore.get(degradedStateAtom).quickstarts).toBe(true);
+    expect(mockedCaptureException).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({ tags: expect.objectContaining({ 'chrome.operation': 'quickstarts_runtime' }) })
+    );
+    expect(screen.getByText('shell-child')).toBeInTheDocument();
+    chromeStore.set(degradedStateAtom, { ...chromeStore.get(degradedStateAtom), quickstarts: false });
+    consoleError.mockRestore();
   });
 
   it('portals chrome children into the remote placeholder', () => {

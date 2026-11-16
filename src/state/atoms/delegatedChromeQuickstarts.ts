@@ -1,9 +1,11 @@
 import React from 'react';
-import { HelpTopic, QuickStart } from '@patternfly/quickstarts';
+import { HelpTopic, LoadingBox, QuickStart } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { useAtomValue } from 'jotai';
 import chromeStore from '../chromeStore';
 import { activeModuleAtom } from './activeModuleAtom';
+import { degradedStateAtom } from './degradedStateAtom';
+import QuickstartCatalogUnavailable from '../../components/QuickStart/QuickstartCatalogUnavailable';
 import { LiveQuickstartsAPI, liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
 
 type PendingCall<T> = {
@@ -273,12 +275,17 @@ function enableTopicsAppend(args: EnableTopicsArgs): boolean {
 
 /**
  * Subscribes to the published Catalog, so a catalog mounted before `onApiReady`
- * renders as soon as the runtime arrives. Pinned to `chromeStore` because tenants
- * render this under their own trees and may have their own jotai Provider.
+ * renders as soon as the runtime arrives. Until then it shows a loading state, like the
+ * legacy lazy catalog, or an unavailable state once the runtime has failed. Pinned to
+ * `chromeStore` because tenants render this under their own trees and may have their own jotai Provider.
  */
 const DelegatedQuickStartCatalog = (props: Record<string, unknown>) => {
   const live = useAtomValue(liveQuickstartsCatalogAtom, { store: chromeStore });
-  return live ? React.createElement(live.Catalog, props) : null;
+  const { quickstarts: unavailable } = useAtomValue(degradedStateAtom, { store: chromeStore });
+  if (live) {
+    return React.createElement(live.Catalog, props);
+  }
+  return React.createElement(unavailable ? QuickstartCatalogUnavailable : LoadingBox);
 };
 
 export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {

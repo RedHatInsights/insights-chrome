@@ -3,6 +3,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import { loadBreadcrumbStore } from '../../chrome/breadcrumbStoreBridge';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { delegatedHelpTopicsAPI } from '../../state/atoms/delegatedChromeQuickstarts';
 import ChromeRoute from './ChromeRoute';
 
 jest.mock('@scalprum/react-core', () => ({
@@ -31,9 +32,9 @@ jest.mock('../../chrome/breadcrumbStoreBridge', () => ({
 
 const mockedLoadBreadcrumbStore = loadBreadcrumbStore as jest.MockedFunction<typeof loadBreadcrumbStore>;
 
-const renderRoute = (path = '/insights/advisor/*') => {
+const renderRoute = (path = '/insights/advisor/*', activeModule?: string) => {
   const store = createStore();
-  store.set(activeModuleAtom, undefined);
+  store.set(activeModuleAtom, activeModule);
   return render(
     <JotaiProvider store={store}>
       <ChromeRoute scope="insights" module="./RootApp" path={path} />
@@ -88,5 +89,23 @@ describe('ChromeRoute breadcrumb store', () => {
       );
     });
     expect(screen.getByTestId('remote-module')).toBeInTheDocument();
+  });
+});
+
+describe('ChromeRoute help topics', () => {
+  beforeEach(() => {
+    mockedLoadBreadcrumbStore.mockResolvedValue({ updateState: jest.fn() } as never);
+  });
+
+  it('closes the open help topic when returning to the same app', async () => {
+    const closeHelpTopic = jest.spyOn(delegatedHelpTopicsAPI, 'closeHelpTopic').mockImplementation(() => undefined);
+
+    // e.g. back from All services: the route remounts but activeModule is already this app.
+    await act(async () => {
+      renderRoute('/insights/advisor/*', 'insights');
+    });
+
+    expect(closeHelpTopic).toHaveBeenCalledTimes(1);
+    closeHelpTopic.mockRestore();
   });
 });

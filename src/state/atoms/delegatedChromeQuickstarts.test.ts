@@ -13,6 +13,8 @@ import {
 } from './delegatedChromeQuickstarts';
 import chromeStore from '../chromeStore';
 import { activeModuleAtom } from './activeModuleAtom';
+import { degradedStateAtom, setServiceDegradedAtom } from './degradedStateAtom';
+import { IntlProvider } from 'react-intl';
 import { liveHelpTopicsAPIRef, liveQuickstartsAPIRef, liveQuickstartsCatalogAtom } from './remoteQuickstartsAtom';
 
 const stubQuickstart = { metadata: { name: 'qs-1' } } as QuickStart;
@@ -647,14 +649,37 @@ describe('delegatedChromeQuickstarts', () => {
         parentRenders += 1;
         return React.createElement(delegatedQuickstartsAPI.Catalog as React.ComponentType<{ title: string }>, { title: 'Tenant catalog' });
       };
-      render(React.createElement(Tenant));
-      return { getParentRenders: () => parentRenders };
+      const { container } = render(React.createElement(IntlProvider, { locale: 'en' }, React.createElement(Tenant)));
+      return { container, getParentRenders: () => parentRenders };
     };
+    const isLoading = (container: HTMLElement) => container.querySelector('.pfext-status-box--loading') !== null;
 
-    it('renders nothing before the runtime publishes', () => {
-      renderTenantCatalog();
+    afterEach(() => {
+      chromeStore.set(degradedStateAtom, { ...chromeStore.get(degradedStateAtom), quickstarts: false });
+    });
+
+    it('shows a loading state before the runtime publishes', () => {
+      const { container } = renderTenantCatalog();
       expect(screen.queryByTestId('live-catalog')).not.toBeInTheDocument();
+      expect(isLoading(container)).toBe(true);
       expect(chromeStore.get(liveQuickstartsCatalogAtom)).toBeNull();
+    });
+
+    it('shows an unavailable state once the runtime fails, and the catalog if it loads later', () => {
+      const { container } = renderTenantCatalog();
+      act(() => {
+        chromeStore.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: true });
+        dropPendingLiveChromeQuickstartsApis();
+      });
+      expect(screen.getByTestId('quickstarts-catalog-unavailable')).toBeInTheDocument();
+      expect(isLoading(container)).toBe(false);
+
+      act(() => {
+        publishLiveChromeQuickstartsApis(liveApis());
+        chromeStore.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: false });
+      });
+      expect(screen.getByTestId('live-catalog')).toBeInTheDocument();
+      expect(screen.queryByTestId('quickstarts-catalog-unavailable')).not.toBeInTheDocument();
     });
 
     it('renders an already-mounted catalog when the runtime publishes, without a parent re-render', () => {
