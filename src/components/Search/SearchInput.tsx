@@ -17,7 +17,8 @@ import SearchTitle from './SearchTitle';
 import SearchDescription from './SearchDescription';
 import { useAtomValue } from 'jotai';
 import { asyncLocalOrama } from '../../state/atoms/localSearchAtom';
-import { localQuery } from '../../utils/localSearch';
+import { consoleSearch } from '../../utils/consoleSearch';
+import { isHydraSearchEnabled } from '../../utils/hydraSearch';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { ReleaseEnv } from '@redhat-cloud-services/types/index.js';
 import type { SearchItem } from './SearchTypes';
@@ -38,6 +39,9 @@ const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
   return bodyHeight - menuTopOffset - 4;
 };
 
+/** Remote (Hydra) queries are debounced; the local index is still queried on every keystroke. */
+export const REMOTE_SEARCH_DEBOUNCE_MS = 200;
+
 type SearchInputListener = {
   onStateChange: (isOpen: boolean) => void;
 };
@@ -47,7 +51,13 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [searchValue, setSearchValue] = useState('');
   const [currentFeedbackType, setcurrentFeedbackType] = useState<SearchFeedbackType>();
   const [isFetching, setIsFetching] = useState(false);
-  const [searchItems, setSearchItems] = useState<SearchItem[]>([]);
+  /**
+   * Results of the last successful search and the query that produced them. They stay visible while
+   * newer queries are in flight (or fail) until the next successful response replaces them.
+   * `undefined` means no search has succeeded since the input was last emptied.
+   */
+  const [lastResults, setLastResults] = useState<{ query: string; items: SearchItem[] }>();
+  const searchItems = useMemo(() => lastResults?.items ?? [], [lastResults]);
   const isPreview = useAtomValue(isPreviewAtom);
   const { ready, analytics } = useSegment();
   const blockCloseEvent = useRef(false);
@@ -118,17 +128,18 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
     blockCloseEvent.current = false;
   };
 
-  const onInputClick: SearchInputProps['onClick'] = () => {
-    if (!isOpen && resultCount > 0) {
-      if (!md && isExpanded && searchValue !== '') {
-        setIsOpen(true);
-        onStateChange(true);
-      } else if (md) {
-        setIsOpen(true);
-        onStateChange(true);
-      }
-      // can't use event.stoppropagation because it will block other opened menus from triggering their close event
-      blockCloseEvent.current = true;
+  const onInputClick: SearchInputProps['onClick'] = (event) => {
+    // PF attaches onClick to the whole input group, including the expand/collapse toggle; only react to the text field.
+    if (!toggleRef.current?.contains(event.target as Node)) {
+      return;
+    }
+    // Clicking into the text field must not close the menu. Can't use event.stopPropagation because it
+    // would block other opened menus from triggering their close event.
+    blockCloseEvent.current = true;
+    // Open even without results so the default state (empty input) is reachable.
+    if (!isOpen && (md || (isExpanded && searchValue !== ''))) {
+      setIsOpen(true);
+      onStateChange(true);
     }
   };
 
@@ -178,16 +189,73 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
     };
   }, [isOpen, menuRef]);
 
-  const handleChange: SearchInputProps['onChange'] = async (_e, value) => {
-    setSearchValue(value);
-    setIsFetching(true);
-    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE, 'services');
-    setSearchItems(results ?? []);
-    if (isMounted.current) {
+  const searchController = useRef<AbortController>();
+  // Read the latest values through a ref so runSearch (and its debounced wrapper) stay stable.
+  // Re-creating them would cancel an in-flight search and leave the spinner hanging.
+  const searchContext = useRef({ asyncLocalOramaData, isPreview, ready, analytics, debouncedTrack });
+  searchContext.current = { asyncLocalOramaData, isPreview, ready, analytics, debouncedTrack };
+
+  const runSearch = useCallback(async (value: string) => {
+    const { asyncLocalOramaData, isPreview } = searchContext.current;
+    // Abort the previous request so a slow, stale response can never overwrite newer results.
+    searchController.current?.abort();
+    const controller = new AbortController();
+    searchController.current = controller;
+    try {
+      const { results, source } = await consoleSearch({
+        db: asyncLocalOramaData,
+        term: value,
+        env: isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE,
+        type: 'services',
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted || !isMounted.current) {
+        return;
+      }
+      setLastResults({ query: value, items: results ?? [] });
+      setIsFetching(false);
+      const { ready, analytics, debouncedTrack } = searchContext.current;
+      if (ready && analytics) {
+        debouncedTrack('chrome.search-query', { query: value, source });
+      }
+    } catch (error) {
+      if (controller.signal.aborted || !isMounted.current) {
+        return;
+      }
+      // Keep showing the last successful results; only a successful response replaces them.
+      console.error('[chrome] Search failed:', error);
       setIsFetching(false);
     }
-    if (ready && analytics) {
-      debouncedTrack('chrome.search-query', { query: value });
+  }, []);
+
+  const debouncedRemoteSearch = useMemo(() => debounce(runSearch, REMOTE_SEARCH_DEBOUNCE_MS), [runSearch]);
+
+  const cancelSearch = useCallback(() => {
+    debouncedRemoteSearch.cancel();
+    searchController.current?.abort();
+  }, [debouncedRemoteSearch]);
+
+  useEffect(() => cancelSearch, [cancelSearch]);
+
+  const resetSearch = useCallback(() => {
+    cancelSearch();
+    setIsFetching(false);
+    setLastResults(undefined);
+  }, [cancelSearch]);
+
+  const handleChange: SearchInputProps['onChange'] = (_e, value) => {
+    setSearchValue(value);
+    if (value.trim().length === 0) {
+      // Nothing to search for: show the default state instead of results.
+      resetSearch();
+      return;
+    }
+    setIsFetching(true);
+    if (isHydraSearchEnabled()) {
+      debouncedRemoteSearch(value);
+    } else {
+      debouncedRemoteSearch.cancel();
+      runSearch(value);
     }
   };
 
@@ -195,6 +263,11 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
 
   const onToggleExpand = (_event: React.SyntheticEvent<HTMLButtonElement>, isExpanded: boolean) => {
     setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      // collapsing: nothing left to show
+      closeMenu();
+    }
+    resetSearch();
     setSearchValue('');
   };
 
@@ -212,8 +285,8 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
       value={searchValue}
       onChange={handleChange}
       onClear={(ev) => {
+        resetSearch();
         setSearchValue('');
-        setSearchItems([]);
         ev.stopPropagation();
         setIsOpen(false);
         onStateChange(false);
@@ -235,11 +308,13 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
     />
   );
 
+  const hasQuery = searchValue.trim().length > 0;
+
   let menuFooter;
-  if (searchItems.length > 0 && !isFetching) {
+  if (hasQuery && lastResults && searchItems.length > 0 && !isFetching) {
     menuFooter = (
       <MenuFooter className="pf-v6-u-px-md">
-        <SearchFeedback query={searchValue} results={searchItems} feedbackType={currentFeedbackType} onFeedbackSubmitted={setcurrentFeedbackType} />
+        <SearchFeedback query={lastResults.query} results={searchItems} feedbackType={currentFeedbackType} onFeedbackSubmitted={setcurrentFeedbackType} />
       </MenuFooter>
     );
   }
@@ -247,8 +322,14 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const menu = (
     <Menu ref={menuRef} className="pf-v6-u-pt-sm chr-c-search__menu">
       <MenuContent>
-        <MenuList>
-          {isFetching ? (
+        <MenuList aria-busy={isFetching}>
+          {!hasQuery ? (
+            // TODO(INT-002): replace with the designed default (pre-typing) search panel state.
+            <Bullseye className="pf-v6-u-p-md" data-testid="search-default-state">
+              default state
+            </Bullseye>
+          ) : !lastResults && isFetching ? (
+            // Only the very first query shows a spinner; later queries keep the last results on screen.
             <Bullseye className="pf-v6-u-p-md">
               <Spinner size="xl" />
             </Bullseye>
@@ -286,7 +367,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
               )}
             </>
           )}
-          {searchItems.length === 0 && !isFetching && <EmptySearchState />}
+          {hasQuery && searchItems.length === 0 && (lastResults || !isFetching) && <EmptySearchState />}
         </MenuList>
       </MenuContent>
       {menuFooter}
