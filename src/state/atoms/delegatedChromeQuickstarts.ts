@@ -43,6 +43,13 @@ const registeredHelpTopics = new Map<string, { topic: HelpTopic; enabled: boolea
  * `enableTopics` append/replace and `disableTopics` semantics, so a replacement can restore it.
  */
 let filteredHelpTopicNames: string[] = [];
+/**
+ * Latest enabled state each tenant asked for, per topic name. The runtimes enable a topic when its
+ * `enableTopics` call resolves, which can be after a later `disableTopics`; checked on resolve.
+ */
+const requestedHelpTopicStates = new Map<string, boolean>();
+/** Bumped when an `enableTopics` that replaces the switcher list runs, so an older replay stops. */
+let filteredHelpTopicsReplaceCount = 0;
 const pendingQuickstartsCalls: PendingCall<LiveQuickstartsAPI>[] = [];
 const pendingHelpTopicsCalls: PendingCall<ChromeAPI['helpTopics']>[] = [];
 
@@ -160,6 +167,8 @@ export function resetDelegatedChromeQuickstartsState() {
   registeredQuickstarts.clear();
   registeredHelpTopics.clear();
   filteredHelpTopicNames = [];
+  requestedHelpTopicStates.clear();
+  filteredHelpTopicsReplaceCount = 0;
   pendingQuickstartsCalls.splice(0).forEach((item) => item.abort());
   pendingHelpTopicsCalls.splice(0).forEach((item) => item.abort());
 }
@@ -189,19 +198,46 @@ function replayRegisteredHelpTopics(api: ChromeAPI['helpTopics']) {
  * Rebuild the replacement's topic switcher: replace with the first topic, then append the rest one
  * at a time, because the runtimes list topics in the order each call resolves them (fetched topics
  * first). Runs after the topic replay, so tenant-defined topics resolve without a fetch.
+ * Calls flushed after the replay starts win: a disabled topic is skipped (or disabled again if
+ * already requested), and a replacing `enableTopics` stops the rest of the replay.
  */
 function replayFilteredHelpTopics(api: ChromeAPI['helpTopics']) {
   const [first, ...rest] = filteredHelpTopicNames;
   if (!first) {
     return;
   }
+  const replaceCount = filteredHelpTopicsReplaceCount;
+  const enable = (args: EnableTopicsArgs) => Promise.resolve(api.enableTopics(...args)).then(disableSupersededTopics);
   rest
     .reduce<Promise<unknown>>(
-      (previous, name) => previous.then(() => api.enableTopics({ names: [name], append: true })),
-      Promise.resolve(api.enableTopics(first))
+      (previous, name) =>
+        previous.then(() =>
+          replaceCount === filteredHelpTopicsReplaceCount && filteredHelpTopicNames.includes(name) ? enable([{ names: [name], append: true }]) : undefined
+        ),
+      enable([first])
     )
     // The runtimes log fetch failures themselves.
     .catch(noop);
+}
+
+/**
+ * An `enableTopics` resolves after its fetch; a `disableTopics` made meanwhile has already run and
+ * the runtime has just enabled the topic again. Disable it again and return the topics still enabled.
+ */
+function disableSupersededTopics(topics: HelpTopic[] | undefined) {
+  if (!Array.isArray(topics)) {
+    return topics;
+  }
+  const superseded = topics.filter(({ name }) => requestedHelpTopicStates.get(name) === false).map(({ name }) => name);
+  // The current runtime: it republishes its API on render, and may have been replaced meanwhile.
+  if (superseded.length > 0) {
+    liveHelpTopicsAPIRef.current?.disableTopics(...superseded);
+  }
+  return topics.filter(({ name }) => !superseded.includes(name));
+}
+
+function setRequestedHelpTopicStates(names: string[], enabled: boolean) {
+  names.forEach((name) => requestedHelpTopicStates.set(name, enabled));
 }
 
 function trackFilteredHelpTopics(topics: HelpTopic[] | undefined, append: boolean) {
@@ -318,6 +354,10 @@ export const delegatedQuickstartsAPI: LiveQuickstartsAPI = {
 
 export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
   addHelpTopics: (...args: Parameters<ChromeAPI['helpTopics']['addHelpTopics']>) => {
+    setRequestedHelpTopicStates(
+      args[0].map(({ name }) => name),
+      args[1] ?? true
+    );
     enqueueOrRun(
       liveHelpTopicsAPIRef.current,
       pendingHelpTopicsCalls,
@@ -331,6 +371,7 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
     );
   },
   disableTopics: (...args: Parameters<ChromeAPI['helpTopics']['disableTopics']>) => {
+    setRequestedHelpTopicStates(args, false);
     enqueueOrRun(
       liveHelpTopicsAPIRef.current,
       pendingHelpTopicsCalls,
@@ -344,11 +385,16 @@ export const delegatedHelpTopicsAPI: ChromeAPI['helpTopics'] = {
     );
   },
   enableTopics: (...args: Parameters<ChromeAPI['helpTopics']['enableTopics']>) => {
+    const append = enableTopicsAppend(args);
+    setRequestedHelpTopicStates(enableTopicsNames(args), true);
     const enableOn = (live: ChromeAPI['helpTopics']) => {
+      if (!append) {
+        filteredHelpTopicsReplaceCount += 1;
+      }
       const result = live.enableTopics(...args);
       setRegisteredHelpTopicsEnabled(enableTopicsNames(args), true);
       return Promise.resolve(result).then((topics) => {
-        trackFilteredHelpTopics(topics, enableTopicsAppend(args));
+        trackFilteredHelpTopics(disableSupersededTopics(topics), append);
         return topics;
       });
     };

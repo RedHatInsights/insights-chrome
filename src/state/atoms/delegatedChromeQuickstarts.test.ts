@@ -391,6 +391,37 @@ describe('delegatedChromeQuickstarts', () => {
           expect(next.helpTopicsAPI.enableTopics).toHaveBeenCalledWith('topic-1');
         });
 
+        it('stops the replay when a replacing enableTopics queued during the switch runs', async () => {
+          publishLiveChromeQuickstartsApis(withEnabled(byName));
+          await attached();
+          await delegatedHelpTopicsAPI.enableTopics('topic-1', 'topic-2');
+
+          retireLiveChromeQuickstartsApis();
+          void delegatedHelpTopicsAPI.enableTopics('topic-3');
+          const next = withEnabled(byName);
+          publishLiveChromeQuickstartsApis(next);
+          await attached();
+          await act(async () => {});
+
+          expect(next.helpTopicsAPI.enableTopics.mock.calls).toEqual([['topic-1'], ['topic-3']]);
+        });
+
+        it('disables a replayed topic again when a disable queued during the switch ran first', async () => {
+          publishLiveChromeQuickstartsApis(withEnabled(byName));
+          await attached();
+          await delegatedHelpTopicsAPI.enableTopics('topic-1');
+
+          retireLiveChromeQuickstartsApis();
+          delegatedHelpTopicsAPI.disableTopics('topic-1');
+          const next = withEnabled(byName);
+          publishLiveChromeQuickstartsApis(next);
+          await attached();
+          await act(async () => {});
+
+          // The replay's enableTopics resolves after the queued disable, so it is disabled once more.
+          expect(next.helpTopicsAPI.disableTopics.mock.calls).toEqual([['topic-1'], ['topic-1']]);
+        });
+
         it('does not call enableTopics on the replacement when the switcher is empty', async () => {
           publishLiveChromeQuickstartsApis(runtimeApis());
           await attached();

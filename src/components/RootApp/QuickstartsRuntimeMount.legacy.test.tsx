@@ -135,4 +135,48 @@ describe('QuickstartsRuntimeMount with the real legacy runtime', () => {
 
     await waitFor(() => expect(switcher()).toBe('tenant-b'));
   });
+
+  it('applies a disable queued during the switch after the switcher replay', async () => {
+    const { rerenderMount } = renderMount();
+    await settle();
+    delegatedHelpTopicsAPI.addHelpTopics([topic('tenant-a'), topic('tenant-b')]);
+    await settle();
+    await act(() => delegatedHelpTopicsAPI.enableTopics('tenant-a', 'tenant-b'));
+
+    mockedUseFlag.mockReturnValue(true);
+    rerenderMount();
+    await act(async () => {
+      MockedScalprumComponent.mock.calls[MockedScalprumComponent.mock.calls.length - 1][0].onApiReady(remoteApis());
+    });
+    mockedUseFlag.mockReturnValue(false);
+    rerenderMount();
+    // The legacy runtime has published but is not attached yet, so this queues behind the replay.
+    delegatedHelpTopicsAPI.disableTopics('tenant-b');
+    await settle();
+    await settle();
+
+    expect(switcher()).toBe('tenant-a');
+  });
+
+  it('keeps a topic disabled when the disable was queued after its fetching enable', async () => {
+    renderMount();
+    // Both queue: the runtime publishes in this render but attaches in a microtask.
+    const enabled = delegatedHelpTopicsAPI.enableTopics('api-topic');
+    delegatedHelpTopicsAPI.disableTopics('api-topic');
+    await act(() => enabled);
+    await settle();
+
+    expect(switcher()).toBe('');
+  });
+
+  it('keeps a topic disabled when the live runtime is still fetching it', async () => {
+    renderMount();
+    await settle();
+    const enabled = delegatedHelpTopicsAPI.enableTopics('api-topic');
+    act(() => delegatedHelpTopicsAPI.disableTopics('api-topic'));
+    await act(() => enabled);
+    await settle();
+
+    expect(switcher()).toBe('');
+  });
 });
