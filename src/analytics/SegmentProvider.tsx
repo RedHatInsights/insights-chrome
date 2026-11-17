@@ -185,6 +185,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }
   };
 
+  // TODO: Fully remove the remaining Pendo integration code as tech debt; keep it disabled in both load paths until then.
   if (!analytics.current) {
     analytics.current = new AnalyticsBrowser();
   }
@@ -218,7 +219,11 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       if (selectedWriteKey.current !== newKey) {
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
-          { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
+          {
+            initialPageview: false,
+            disableClientPersistence: true,
+            integrations: { All: !isITLessEnv && !disableIntegrations, Pendo: false },
+          }
         );
         selectedWriteKey.current = newKey;
         resetIntegrations(analytics.current);
@@ -351,6 +356,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         disableClientPersistence: true,
         integrations: {
           All: !disableIntegrations,
+          Pendo: false,
           'Segment.io': {
             apiHost: document.location.host + '/connections/api/v1',
           },

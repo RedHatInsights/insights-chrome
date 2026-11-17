@@ -19,27 +19,68 @@ const downloadPDF = async (url: string, filename = 'report.pdf') => {
   hiddenLink.remove();
 };
 
-const pollStatus = async (statusID: string) => {
-  return new Promise<{ status: string; filepath: string }>((resolve, reject) => {
-    const interval = setInterval(async () => {
+const POLL_INTERVAL = 2000;
+// A 404 can be transient: the collection may not be registered yet on the pod
+// serving the status request (Kafka sync lag across pods). Retry a bounded
+// number of times before giving up.
+const MAX_NOT_FOUND_RETRIES = 5;
+// Cap each status request so a hung connection aborts and reaches the catch
+// block instead of leaving the poll loop pending forever (the next poll is only
+// armed after the previous request settles).
+const STATUS_REQUEST_TIMEOUT = 10_000;
+
+type PdfFailureBody = { error?: { description?: string } };
+
+export type PdfStatus = { status: string; filepath: string };
+
+export const pollStatus = async (statusID: string): Promise<PdfStatus> => {
+  return new Promise<PdfStatus>((resolve, reject) => {
+    let notFoundRetries = 0;
+
+    const poll = async () => {
       try {
         const {
           data: { status: data },
-        } = await axios.get<{ status: { status: string; filepath: string } }>(`/api/crc-pdf-generator/v2/status/${statusID}`);
+        } = await axios.get<{ status: PdfStatus }>(`/api/crc-pdf-generator/v2/status/${statusID}`, {
+          timeout: STATUS_REQUEST_TIMEOUT,
+        });
         if (data.status === 'Generated') {
-          clearInterval(interval);
-          resolve(data);
+          return resolve(data);
         }
 
         if (data.status.includes('Failed')) {
-          clearInterval(interval);
-          reject(new Error(data.status));
+          return reject(new Error(`${data.status} (statusID: ${statusID})`));
         }
+
+        // re-arm only after the previous request resolves to avoid overlapping requests
+        setTimeout(poll, POLL_INTERVAL);
       } catch (error) {
-        clearInterval(interval);
+        if (axios.isAxiosError(error)) {
+          const code = error.response?.status;
+
+          // Transient 404 while the collection propagates — retry up to the cap.
+          if (code === 404 && notFoundRetries < MAX_NOT_FOUND_RETRIES) {
+            notFoundRetries += 1;
+            setTimeout(poll, POLL_INTERVAL);
+            return;
+          }
+
+          if (code === 404) {
+            return reject(new Error(`No PDF found for ${statusID}`));
+          }
+
+          // Backend returns HTTP 500 when generation fails; surface the reason
+          if (code === 500) {
+            const description = (error.response?.data as PdfFailureBody | undefined)?.error?.description;
+            return reject(new Error(`${description ?? 'PDF generation failed'} (statusID: ${statusID}, HTTP 500)`));
+          }
+        }
+
         reject(error);
       }
-    }, 10000);
+    };
+
+    setTimeout(poll, POLL_INTERVAL);
   });
 };
 
