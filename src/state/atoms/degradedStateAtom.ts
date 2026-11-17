@@ -5,6 +5,7 @@ export type ServiceHealthStatus = {
   entitlements: boolean;
   configFromCache: boolean;
   featureFlags: boolean;
+  quickstarts: boolean;
   // Optional for consumers constructing health snapshots against older Chrome versions.
   navigation?: boolean;
   serviceTiles?: boolean;
@@ -15,6 +16,7 @@ const initialState: ServiceHealthStatus = {
   entitlements: false,
   configFromCache: false,
   featureFlags: false,
+  quickstarts: false,
   navigation: false,
   serviceTiles: false,
 };
