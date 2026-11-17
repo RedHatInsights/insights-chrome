@@ -28,3 +28,7 @@ You can invoke `pendo.enableDebugging()` from the web console to see the informa
 ### Pendo API
 
 Applications are free to use the [Pendo API](https://developers.pendo.io/docs) in order to have more complex interactions with Pendo.
+
+## Amplitude Autocapture Identity
+
+Amplitude autocapture uses `identity.internal.account_id` as its user ID, matching the ID passed to Segment's `identify()` calls. It does not wait for Segment's global `ready()` callback or copy Segment's `anonymousId()` into Amplitude's device ID. Without an explicit device ID, Amplitude uses its stored ID, a URL-provided ID, or generates one. This is intentional so unrelated Segment integrations cannot block autocapture initialization.
