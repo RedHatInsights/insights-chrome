@@ -14,15 +14,23 @@ export type ChromeUserConfig = {
  * Initialize the chrome visibility functions independently of the user config fetch.
  * The user personalization API (`/api/chrome-service/v1/user`) must be optional, so the
  * visibility functions have to be available as soon as auth is ready — even if the config
- * fetch fails. `isPreview` defaults to `false`; the real value is applied later via
- * `updateVisibilityFunctionsBeta()` (triggered by `isPreviewAtom`) once the config loads.
+ * fetch fails. `isPreview` is the current preview value: auth bootstrap may already have hydrated
+ * it, and later changes are applied via `updateVisibilityFunctionsBeta()` (triggered by `isPreviewAtom`).
  */
-export const initVisibilityFunctions = ({ getUser, getToken }: { getUser: () => Promise<ChromeUser>; getToken: () => Promise<string> }) => {
+export const initVisibilityFunctions = ({
+  getUser,
+  getToken,
+  isPreview = false,
+}: {
+  getUser: () => Promise<ChromeUser>;
+  getToken: () => Promise<string>;
+  isPreview?: boolean;
+}) => {
   initializeVisibilityFunctions({
     getUser,
     getToken,
     getUserPermissions: createGetUserPermissions(getUser, getToken),
-    isPreview: false,
+    isPreview,
   });
 };
 
@@ -40,4 +48,32 @@ export const initChromeUserConfig = async () => {
   });
 
   return data;
+};
+
+let userConfigRequest: { principal?: string; promise: Promise<ChromeUserConfig> } | undefined;
+
+/**
+ * Fetch the user config once per signed-in principal. Auth bootstrap needs the preview preference before its
+ * rollout lookup, and useSessionConfig needs the same response afterwards; both share this request,
+ * including its rejection. A different principal starts its own request; no principal reuses the current one.
+ */
+export const loadChromeUserConfigOnce = (principal?: string): Promise<ChromeUserConfig> => {
+  if (!userConfigRequest || (principal !== undefined && principal !== userConfigRequest.principal)) {
+    userConfigRequest = { principal, promise: initChromeUserConfig() };
+  }
+  const { promise } = userConfigRequest;
+  if (principal !== undefined) {
+    return promise;
+  }
+  // Without a principal, settle with the newest request: one started for a new identity supersedes this one.
+  const followLatest = () => (userConfigRequest?.promise === promise ? undefined : loadChromeUserConfigOnce());
+  return promise.then(
+    (config) => followLatest() ?? config,
+    (error) => followLatest() ?? Promise.reject(error)
+  );
+};
+
+/** Test helper: forget the shared request. */
+export const resetChromeUserConfigOnce = () => {
+  userConfigRequest = undefined;
 };

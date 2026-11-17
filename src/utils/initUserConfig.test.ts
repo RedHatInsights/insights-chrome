@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { initChromeUserConfig, initVisibilityFunctions } from './initUserConfig';
+import { initChromeUserConfig, initVisibilityFunctions, loadChromeUserConfigOnce, resetChromeUserConfigOnce } from './initUserConfig';
 import { initializeVisibilityFunctions } from './VisibilitySingleton';
 import createGetUserPermissions from '../auth/createGetUserPermissions';
 
@@ -93,6 +93,57 @@ describe('initUserConfig', () => {
       // Simulate a silent renew updating the current token.
       token = 'new-token';
       await expect(args.getToken()).resolves.toBe('new-token');
+    });
+  });
+
+  describe('initVisibilityFunctions preview', () => {
+    it('initializes with the preview value already hydrated by auth bootstrap', () => {
+      initVisibilityFunctions({ getUser, getToken: () => Promise.resolve('test-token'), isPreview: true });
+      expect(mockedInitVisibility.mock.calls[0][0].isPreview).toBe(true);
+    });
+  });
+
+  describe('loadChromeUserConfigOnce', () => {
+    beforeEach(() => {
+      resetChromeUserConfigOnce();
+    });
+
+    it('shares one request between auth bootstrap and the session config', async () => {
+      const config = { data: { uiPreview: true, uiPreviewSeen: true } };
+      mockedGet.mockResolvedValueOnce({ data: config });
+
+      const first = loadChromeUserConfigOnce();
+      const second = loadChromeUserConfigOnce();
+
+      await expect(first).resolves.toEqual(config);
+      await expect(second).resolves.toEqual(config);
+      expect(mockedGet).toHaveBeenCalledTimes(1);
+    });
+
+    it('starts a new request for another principal and settles principal-less callers with it', async () => {
+      const configA = { data: { uiPreview: true, uiPreviewSeen: true } };
+      const configB = { data: { uiPreview: false, uiPreviewSeen: true } };
+      let resolveA!: (value: { data: typeof configA }) => void;
+      mockedGet.mockReturnValueOnce(new Promise((resolve) => (resolveA = resolve))).mockResolvedValueOnce({ data: configB });
+
+      const forA = loadChromeUserConfigOnce('user-a');
+      const session = loadChromeUserConfigOnce();
+      const forB = loadChromeUserConfigOnce('user-b');
+      resolveA({ data: configA });
+
+      await expect(forA).resolves.toEqual(configA);
+      await expect(forB).resolves.toEqual(configB);
+      await expect(session).resolves.toEqual(configB);
+      await expect(loadChromeUserConfigOnce('user-b')).resolves.toEqual(configB);
+      expect(mockedGet).toHaveBeenCalledTimes(2);
+    });
+
+    it('shares a rejection instead of silently retrying in the same page load', async () => {
+      mockedGet.mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+
+      await expect(loadChromeUserConfigOnce()).rejects.toThrow('timeout');
+      await expect(loadChromeUserConfigOnce()).rejects.toThrow('timeout');
+      expect(mockedGet).toHaveBeenCalledTimes(1);
     });
   });
 });
