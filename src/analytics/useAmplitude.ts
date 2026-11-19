@@ -57,6 +57,7 @@ function useAmplitude() {
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
   const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
   const { analytics, ready } = useSegment();
+  const analyticsRef = useRef(analytics);
   const navigate = useNavigate();
   const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
@@ -67,6 +68,10 @@ function useAmplitude() {
   // Use stable scalar from user object to avoid effect re-runs on every render
   const userAccountNumber = user?.identity?.account_number;
   const userAccountId = user ? getAnalyticsUserId(user) : undefined;
+
+  useLayoutEffect(() => {
+    analyticsRef.current = analytics;
+  }, [analytics]);
 
   // Chrome-level analytics config from FEO (fed-mods.json analytics section)
   const chromeAnalytics = chromeModules['chrome']?.analytics;
@@ -267,7 +272,7 @@ function useAmplitude() {
           integrations: [
             {
               track: (event: { event_type: string; event_properties: Record<string, unknown> }) => {
-                analytics?.track(event.event_type, event.event_properties);
+                analyticsRef.current?.track(event.event_type, event.event_properties);
               },
             },
           ],

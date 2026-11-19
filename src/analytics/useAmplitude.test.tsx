@@ -94,7 +94,7 @@ jest.mock('jotai', () => ({
     return undefined;
   }),
 }));
-jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock, ready: true }) }));
+jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: mockAnalyticsInstance, ready: true }) }));
 jest.mock('@amplitude/analytics-browser', () => ({
   add: jest.fn(),
   init: jest.fn(() => ({
@@ -127,6 +127,7 @@ const analyticsMock = {
   },
   off: jest.fn(),
 };
+let mockAnalyticsInstance: typeof analyticsMock = analyticsMock;
 
 import useAmplitude from './useAmplitude';
 
@@ -147,6 +148,7 @@ describe('useAmplitude', () => {
     mockIsPreview = false;
     mockUser = DEFAULT_MOCK_USER;
     mockITLess = false;
+    mockAnalyticsInstance = analyticsMock;
     // Clear handler registry
     Object.keys(onHandlers).forEach((key) => delete onHandlers[key]);
   });
@@ -249,6 +251,41 @@ describe('useAmplitude', () => {
     await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
     expect(analyticsMock.ready).not.toHaveBeenCalled();
     expect(analyticsMock.user).not.toHaveBeenCalled();
+  });
+
+  it('uses the latest Segment instance when forwarding engagement events', async () => {
+    window.engagement = {
+      boot: jest.fn(),
+      shutdown: jest.fn(),
+      forwardEvent: jest.fn(),
+      setRouter: jest.fn(),
+    } as unknown as typeof window.engagement;
+
+    const { rerender } = render(<TestComponent />);
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    if (script.onload) {
+      script.onload(new Event('load'));
+    }
+    await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
+
+    const replacementAnalytics = {
+      ...analyticsMock,
+      track: jest.fn(),
+      on: jest.fn(),
+      off: jest.fn(),
+    };
+    mockAnalyticsInstance = replacementAnalytics;
+    rerender(<TestComponent />);
+
+    const bootOptions = (window.engagement?.boot as jest.Mock).mock.calls[0][0] as {
+      integrations: Array<{
+        track: (event: { event_type: string; event_properties: Record<string, unknown> }) => void;
+      }>;
+    };
+    const event = { event_type: 'guide_test', event_properties: { source: 'test' } };
+    bootOptions.integrations[0].track(event);
+
+    expect(replacementAnalytics.track).toHaveBeenCalledWith(event.event_type, event.event_properties);
   });
 
   it('detaches handlers on unmount', async () => {
