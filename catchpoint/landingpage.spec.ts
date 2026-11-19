@@ -21,5 +21,6 @@ await page.locator("//input[@name='password']").fill(password);
 await page.getByRole('button', { name: 'Log in' }).click();
 
 await page.waitForLoadState('load', { timeout: 20000 });
-// bumped timeout to 30s because 15s wasn't enough in some cases
-await expect(page.getByRole('button', { name: 'Add widgets' })).toBeVisible({ timeout: 45 * 1000 });
+// The widget panel can be restored open, so its toggle may have either accessible name.
+const widgetPanelToggle = page.getByRole('button', { name: /^(Add widgets|Close widget panel)$/i });
+await expect(widgetPanelToggle).toBeVisible({ timeout: 45 * 1000 });
