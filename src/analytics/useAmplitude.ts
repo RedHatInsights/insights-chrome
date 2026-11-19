@@ -58,6 +58,7 @@ function useAmplitude() {
   const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
   const { analytics, ready } = useSegment();
   const analyticsRef = useRef(analytics);
+  const handlerAnalyticsRef = useRef<typeof analytics | null>(null);
   const navigate = useNavigate();
   const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
@@ -109,13 +110,13 @@ function useAmplitude() {
   }, [chromeModules, chromeAnalytics]);
 
   const detachAnalyticsHandlers = function () {
-    if (typeof analytics?.off === 'function') {
-      if (forwardHandlerRef.current) {
-        analytics.off('track', forwardHandlerRef.current);
-        analytics.off('page', forwardHandlerRef.current);
-        forwardHandlerRef.current = null;
-      }
+    const handlerAnalytics = handlerAnalyticsRef.current;
+    if (typeof handlerAnalytics?.off === 'function' && forwardHandlerRef.current) {
+      handlerAnalytics.off('track', forwardHandlerRef.current);
+      handlerAnalytics.off('page', forwardHandlerRef.current);
     }
+    forwardHandlerRef.current = null;
+    handlerAnalyticsRef.current = null;
   };
 
   // Build and send enriched user properties via identify()
@@ -239,13 +240,15 @@ function useAmplitude() {
 
     const setupEngagementHandlers = () => {
       detachAnalyticsHandlers();
-      if (typeof analytics?.on === 'function') {
+      const handlerAnalytics = analyticsRef.current;
+      if (typeof handlerAnalytics?.on === 'function') {
         const forwardHandler = (event: string, properties: Record<string, unknown>) => {
           window.engagement?.forwardEvent({ event_type: event, event_properties: properties });
         };
         forwardHandlerRef.current = forwardHandler;
-        analytics.on('track', forwardHandler);
-        analytics.on('page', forwardHandler);
+        handlerAnalyticsRef.current = handlerAnalytics;
+        handlerAnalytics.on('track', forwardHandler);
+        handlerAnalytics.on('page', forwardHandler);
       }
       engagement.setRouter((newUrl: string) => {
         navigate(newUrl);
