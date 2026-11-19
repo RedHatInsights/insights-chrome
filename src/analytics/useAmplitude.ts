@@ -47,6 +47,8 @@ const isDifferentOidcUser = (previous: OidcUserIdentity | undefined, current: Oi
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
+  const engagementBootedUserId = useRef<string>();
+  const engagementBootInProgress = useRef(false);
   const amplitudeSdkInitialized = useRef(false);
   const amplitudeUserId = useRef<string | undefined>(undefined);
   const amplitudeOidcUser = useRef<OidcUserIdentity>();
@@ -224,42 +226,64 @@ function useAmplitude() {
     }
   }, [enableAmplitudeAutocapture, ready, autocaptureKeyToUse, user, sendIdentifyEvent]);
 
-  const initializeAmplitude = function () {
-    return analytics
-      ?.ready(() => {
-        return analytics.user().then((user) => {
-          // Note: by default amplitude will not allow calling boot multiple times unless you call shutdown first (logs warning to the console)
-          // However calling shutdown will cause any open guides/surveys to flicker
-          window.engagement?.boot({
-            user: {
-              user_id: user.id(),
-              device_id: user.anonymousId(),
-              user_properties: {},
-            },
-            integrations: [
-              {
-                track: (event: { event_type: string; event_properties: Record<string, unknown> }) => {
-                  analytics.track(event.event_type, event.event_properties);
-                },
+  const initializeAmplitude = useCallback(() => {
+    const engagement = window.engagement;
+    if (!enableAmplitude || !ready || !engagement?.boot || !userAccountId || engagementBootInProgress.current) {
+      return;
+    }
+
+    const setupEngagementHandlers = () => {
+      detachAnalyticsHandlers();
+      if (typeof analytics?.on === 'function') {
+        const forwardHandler = (event: string, properties: Record<string, unknown>) => {
+          window.engagement?.forwardEvent({ event_type: event, event_properties: properties });
+        };
+        forwardHandlerRef.current = forwardHandler;
+        analytics.on('track', forwardHandler);
+        analytics.on('page', forwardHandler);
+      }
+      engagement.setRouter((newUrl: string) => {
+        navigate(newUrl);
+      });
+    };
+
+    // Segment's ready() waits for every destination plugin. A slow or stuck
+    // destination must not keep the Engagement SDK from booting. ChromeAuthContext
+    // supplies the same account ID Segment identifies, so boot does not need to
+    // wait for Segment to resolve its user or device ID.
+    if (engagementBootedUserId.current === userAccountId) {
+      setupEngagementHandlers();
+      return;
+    }
+
+    engagementBootInProgress.current = true;
+    Promise.resolve()
+      .then(() =>
+        engagement.boot({
+          user: {
+            user_id: userAccountId,
+            user_properties: {},
+          },
+          integrations: [
+            {
+              track: (event: { event_type: string; event_properties: Record<string, unknown> }) => {
+                analytics?.track(event.event_type, event.event_properties);
               },
-            ],
-          });
-          detachAnalyticsHandlers();
-          const forwardHandler = (event: string, properties: Record<string, unknown>) => {
-            window.engagement?.forwardEvent({ event_type: event, event_properties: properties });
-          };
-          forwardHandlerRef.current = forwardHandler;
-          analytics.on('track', forwardHandler);
-          analytics.on('page', forwardHandler);
-          window.engagement?.setRouter((newUrl: string) => {
-            navigate(newUrl);
-          });
-        });
+            },
+          ],
+        })
+      )
+      .then(() => {
+        engagementBootedUserId.current = userAccountId;
+        setupEngagementHandlers();
       })
       .catch((error) => {
         console.error('Error initializing Amplitude', error);
+      })
+      .finally(() => {
+        engagementBootInProgress.current = false;
       });
-  };
+  }, [enableAmplitude, ready, analytics, navigate, userAccountId]);
 
   const addAmplitudeScript = function () {
     if (!enableAmplitude || !ready) {
@@ -298,7 +322,7 @@ function useAmplitude() {
     return () => {
       detachAnalyticsHandlers();
     };
-  }, [enableAmplitude, ready, navigate, analytics, keyToUse]);
+  }, [enableAmplitude, ready, navigate, analytics, keyToUse, userAccountId, initializeAmplitude]);
 
   // Initialize Amplitude autocapture SDK once
   useEffect(() => {
