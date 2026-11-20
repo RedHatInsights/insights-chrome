@@ -26,7 +26,11 @@ spec:
   - name: image-expires-after
     value: 5d
   - name: dockerfile
-    value: Dockerfile
+    value: build-tools/Dockerfile.hermetic
+  - name: hermetic
+    value: 'true'
+  - name: prefetch-input
+    value: '{"type": "npm", "path": "."}'
   - name: path-context
     value: .
   pipelineSpec:
@@ -168,66 +172,6 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: parse-build-deploy-script
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      runAfter:
-      - clone-repository
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: 68679589479b71b175f2d269aaaf01f42a074d12
-        - name: pathInRepo
-          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
-    - name: create-frontend-dockerfile
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      - name: component
-        value: $(tasks.parse-build-deploy-script.results.component)
-      - name: image
-        value: $(tasks.parse-build-deploy-script.results.image)
-      - name: node-build-version
-        value: $(tasks.parse-build-deploy-script.results.node-build-version)
-      - name: quay-expire-time
-        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-      - name: npm-build-script
-        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
-      - name: yarn-build-script
-        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-      - name: route-path
-        value: $(tasks.parse-build-deploy-script.results.route-path)
-      - name: beta-route-path
-        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-      - name: preview-route-path
-        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-      - name: ci-root
-        value: $(tasks.parse-build-deploy-script.results.ci-root)
-      - name: server-name
-        value: $(tasks.parse-build-deploy-script.results.server-name)
-      - name: dist-folder
-        value: $(tasks.parse-build-deploy-script.results.dist-folder)
-      runAfter:
-      - parse-build-deploy-script
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: 68679589479b71b175f2d269aaaf01f42a074d12
-        - name: pathInRepo
-          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: clone-repository-oci-ta
       params:
       - name: url
@@ -325,7 +269,6 @@ spec:
         value: $(params.buildah-format)
       runAfter:
       - prefetch-dependencies
-      - create-frontend-dockerfile
       taskRef:
         params:
         - name: name
@@ -627,7 +570,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 5Gi
       status: {}
   - name: git-auth
     secret:
