@@ -63,10 +63,6 @@
     "defaultMessage": "Changes are coming to cloud.redhat.com on July 29.",
     "description": "Changes are coming to cloud.redhat.com on July 29."
   },
-  "checkOur": {
-    "defaultMessage": "or check our",
-    "description": "or check our"
-  },
   "close": {
     "defaultMessage": "Close",
     "description": "Close"
@@ -151,13 +147,9 @@
     "defaultMessage": "Describe the bug you encountered. For urgent issues, open a support case instead.",
     "description": "Describe the bug you encountered. For urgent issues, open a support case instead."
   },
-  "describeReportBug": {
-    "defaultMessage": "Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow,",
-    "description": "Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, "
-  },
-  "directInfluence": {
-    "defaultMessage": ", your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.",
-    "description": ", your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email."
+  "describeReportBugWithSupportCaseLink": {
+    "defaultMessage": "Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, <SupportCaseLink>Open a support case</SupportCaseLink>.",
+    "description": "Bug report instructions with an inline link to open a support case. Keep SupportCaseLink around the link."
   },
   "email": {
     "defaultMessage": "Email",
@@ -179,29 +171,13 @@
     "defaultMessage": "Filter by tags",
     "description": "Placeholder to indicate "
   },
-  "filterByTagsPopoverCCGLink": {
-    "defaultMessage": "Client Configuration Guide",
-    "description": "Client Configuration Guide link"
-  },
-  "filterByTagsPopoverContent1": {
-    "defaultMessage": "Tagging can be used to classify further and organize your hosts shown within the Insights inventory. If connected to a Satellite, tags from that Satellite can be",
-    "description": "Popover Help Content"
-  },
-  "filterByTagsPopoverContent2": {
-    "defaultMessage": ". Additionally, you can define your own tags via the Insights-Client configuration. Please see our",
-    "description": "Popover Help Content"
-  },
-  "filterByTagsPopoverContent3": {
-    "defaultMessage": "for more details. Please note that Workload tags are automatically added by the Insights service.",
-    "description": "Popover Help Content"
+  "filterByTagsPopoverContent": {
+    "defaultMessage": "Tagging can be used to classify further and organize your hosts shown within the Insights inventory. If connected to a Satellite, tags from that Satellite can be <SatelliteLink>imported</SatelliteLink>. Additionally, you can define your own tags via the Insights-Client configuration. Please see our <ClientConfigurationGuideLink>Client Configuration Guide</ClientConfigurationGuideLink> for more details. Please note that Workload tags are automatically added by the Insights service.",
+    "description": "Complete help text in the tags popover. Keep SatelliteLink around the imported link and ClientConfigurationGuideLink around the guide link."
   },
   "filterByTagsPopoverHeader": {
     "defaultMessage": "Tags",
     "description": "Popover Header"
-  },
-  "filterByTagsPopoverSatelliteLink": {
-    "defaultMessage": "imported",
-    "description": "Installing the Satellite inventory upload plugin link"
   },
   "filterResults": {
     "defaultMessage": "Filter results",
@@ -263,9 +239,9 @@
     "defaultMessage": "What has your console experience been like so far?",
     "description": "What has your console experience been like so far?"
   },
-  "informDirectionDescription": {
-    "defaultMessage": "By participating in feedback sessions, usability tests, and interviews with our",
-    "description": "By participating in feedback sessions, usability tests, and interviews with our "
+  "informDirectionDescriptionWithResearchTeamLink": {
+    "defaultMessage": "By participating in feedback sessions, usability tests, and interviews with our <ResearchTeamLink>User Research Team</ResearchTeamLink>, your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.",
+    "description": "Research opportunity description with an inline link to the User Research Team. Keep ResearchTeamLink around the link."
   },
   "informRedhatDirection": {
     "defaultMessage": "Inform the direction of Red Hat",
@@ -286,10 +262,6 @@
   "joinMailingList": {
     "defaultMessage": "Join mailing list",
     "description": "Join mailing list"
-  },
-  "knownOutages": {
-    "defaultMessage": "for known outages.",
-    "description": "for known outages."
   },
   "languageDontAskAgain": {
     "defaultMessage": "Don't ask again",
@@ -403,17 +375,17 @@
     "defaultMessage": "Personal account",
     "description": "Personal account"
   },
-  "problemProcessingRequest": {
-    "defaultMessage": "There was a problem processing the request. Try reloading the page. If the problem persists, contact",
-    "description": "There was a problem processing the request. Try reloading the page. If the problem persists, contact"
+  "problemProcessingRequestWithSupportAndStatusLinks": {
+    "defaultMessage": "There was a problem processing the request. Try reloading the page. If the problem persists, contact <SupportLink>Red Hat support</SupportLink> or check our <StatusLink>Status page</StatusLink> for known outages.",
+    "description": "Error page instructions with inline links to support and service status. Keep SupportLink and StatusLink tags around their corresponding links."
+  },
+  "problemProcessingRequestWithSupportLink": {
+    "defaultMessage": "There was a problem processing the request. Try reloading the page. If the problem persists, contact <SupportLink>Red Hat support</SupportLink>.",
+    "description": "Feedback submission error with an inline link to Red Hat support. Keep the SupportLink tag around the link."
   },
   "quickStarts": {
     "defaultMessage": "Quick starts",
     "description": "Quick starts"
-  },
-  "redHatSupport": {
-    "defaultMessage": "Red Hat support",
-    "description": "Red Hat support"
   },
   "reportABug": {
     "defaultMessage": "Report a bug",
@@ -562,10 +534,6 @@
   "userPreferences": {
     "defaultMessage": "User Preferences",
     "description": "User Preferences"
-  },
-  "userResearchTeam": {
-    "defaultMessage": "User Research Team",
-    "description": "User Research Team"
   },
   "username": {
     "defaultMessage": "Username:",

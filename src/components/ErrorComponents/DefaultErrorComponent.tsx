@@ -105,15 +105,18 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
       >
         <EmptyStateBody>
           <p className="chr-c-error-component__text">
-            {intl.formatMessage(messages.problemProcessingRequest)}{' '}
-            <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
-              {intl.formatMessage(messages.redHatSupport)}
-            </a>{' '}
-            {intl.formatMessage(messages.checkOur)}{' '}
-            <a href="https://status.redhat.com/" target="_blank" rel="noreferrer">
-              {intl.formatMessage(messages.statusPage)}
-            </a>{' '}
-            {intl.formatMessage(messages.knownOutages)}
+            {intl.formatMessage(messages.problemProcessingRequestWithSupportAndStatusLinks, {
+              SupportLink: (chunks) => (
+                <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
+                  {chunks}
+                </a>
+              ),
+              StatusLink: (chunks) => (
+                <a href="https://status.redhat.com/" target="_blank" rel="noreferrer">
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
           <Flex alignContent={{ default: 'alignContentCenter' }} direction={{ default: 'column' }}>
             <FlexItem>
