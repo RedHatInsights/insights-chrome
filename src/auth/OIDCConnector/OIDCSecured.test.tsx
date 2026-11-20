@@ -36,6 +36,7 @@ jest.mock('react-oidc-context', () => ({
 jest.mock('./utils', () => ({
   login: jest.fn(),
   logout: jest.requireActual('./utils').logout,
+  getBaseScopes: jest.fn(() => ['openid', 'api.console', 'api.ask_red_hat']),
 }));
 
 jest.mock('../../utils/common', () => ({
@@ -347,6 +348,89 @@ describe('OIDCSecured', () => {
       rendered.rerender(tree());
       await expect(read('token')).resolves.toEqual([]);
       expect(permissionRequest).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('falls back to login when signinSilent resolves null/undefined (no SSO session)', async () => {
+    const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    hasAuthParams.mockReturnValue(false);
+
+    // signinSilent resolves undefined when there is no SSO session (no throw)
+    const signinSilent = jest.fn().mockResolvedValue(undefined);
+    mockAuth.isAuthenticated = false;
+    mockAuth.isLoading = false;
+    mockAuth.activeNavigator = undefined;
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(signinSilent).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat'), silentRequestTimeoutInSeconds: 2 })
+      );
+      // Null/undefined resolution must trigger login redirect
+      expect(mockLogin).toHaveBeenCalled();
+    });
+  });
+
+  it('does not redirect when signinSilent returns a valid user', async () => {
+    const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    hasAuthParams.mockReturnValue(false);
+
+    const signinSilent = jest.fn().mockResolvedValue({ access_token: 'tok', profile: {} });
+    mockAuth.isAuthenticated = false;
+    mockAuth.isLoading = false;
+    mockAuth.activeNavigator = undefined;
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(signinSilent).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat'), silentRequestTimeoutInSeconds: 2 })
+      );
+    });
+
+    // Valid user returned → no login redirect
+    expect(mockLogin).not.toHaveBeenCalled();
+  });
+
+  it('falls back to login redirect when signinSilent fails on unauthenticated load', async () => {
+    const { useAuth, hasAuthParams } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    hasAuthParams.mockReturnValue(false);
+
+    const signinSilent = jest.fn().mockRejectedValue(new Error('No SSO session'));
+    mockAuth.isAuthenticated = false;
+    mockAuth.isLoading = false;
+    mockAuth.activeNavigator = undefined;
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.example.test/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(signinSilent).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: expect.stringContaining('openid api.console api.ask_red_hat'), silentRequestTimeoutInSeconds: 2 })
+      );
+      // signinSilent failed → falls back to login redirect
+      expect(mockLogin).toHaveBeenCalled();
     });
   });
 });

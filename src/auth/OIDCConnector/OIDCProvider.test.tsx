@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 
 // Mock oidc-client-ts before importing component
+const MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE = {};
 jest.mock('oidc-client-ts', () => ({
   UserManager: jest.fn().mockImplementation(() => ({
     getUser: jest.fn(),
@@ -29,6 +30,7 @@ jest.mock('oidc-client-ts', () => ({
     settings: {},
   })),
   WebStorageStateStore: jest.fn(),
+  InMemoryWebStorage: jest.fn().mockImplementation(() => MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE),
 }));
 
 jest.mock('react-oidc-context', () => ({
@@ -66,6 +68,7 @@ jest.mock('./OIDCUserManagerErrorBoundary', () => ({
 }));
 
 import OIDCProvider from './OIDCProvider';
+import { InMemoryWebStorage, UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
 describe('OIDCProvider', () => {
   beforeEach(() => {
@@ -229,5 +232,86 @@ describe('OIDCProvider', () => {
       expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
     });
     expect(screen.getByText('App Content')).toBeInTheDocument();
+  });
+
+  it('should use InMemoryWebStorage instead of localStorage for token storage', async () => {
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
+    mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
+    mockLoadFedModules.mockResolvedValue({
+      data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
+    });
+
+    render(
+      <OIDCProvider>
+        <div>Content</div>
+      </OIDCProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+
+    // Verify InMemoryWebStorage was instantiated
+    expect(InMemoryWebStorage).toHaveBeenCalled();
+
+    // Verify WebStorageStateStore was called with the in-memory store
+    expect(WebStorageStateStore).toHaveBeenCalledWith({ store: MOCK_IN_MEMORY_WEB_STORAGE_INSTANCE });
+
+    // Verify UserManager was configured correctly
+    const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
+    expect(userManagerConfig).not.toHaveProperty('disablePKCE');
+  });
+
+  it('should enable PKCE by not setting disablePKCE', async () => {
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
+    mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
+    mockLoadFedModules.mockResolvedValue({
+      data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
+    });
+
+    render(
+      <OIDCProvider>
+        <div>Content</div>
+      </OIDCProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+
+    const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
+    // PKCE should be enabled (disablePKCE must not be true)
+    expect(userManagerConfig.disablePKCE).not.toBe(true);
+  });
+
+  it('should set base scopes on UserManager so automaticSilentRenew uses them', async () => {
+    const mockSSOConfig = { ssoUrl: 'https://sso.example.test/auth' };
+    mockLoadSSOConfig.mockResolvedValue(mockSSOConfig);
+    mockResolveSSOUrl.mockReturnValue('https://sso.example.test/auth/');
+    mockLoadFedModules.mockResolvedValue({
+      data: { $schema: 'schema', app: { manifestLocation: '/apps/app/fed-mods.json' } },
+    });
+
+    render(
+      <OIDCProvider>
+        <div>Content</div>
+      </OIDCProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('oidc-secured')).toBeInTheDocument();
+    });
+
+    const userManagerConfig = (UserManager as jest.Mock).mock.calls[0][0];
+    // Must include base scopes so implicit signinSilent calls (automaticSilentRenew,
+    // forceRefresh, BroadcastChannel refresh) don't downgrade to "openid" only
+    expect(userManagerConfig.scope).toBe('openid api.console api.ask_red_hat api.graphql');
+    // silentRequestTimeoutInSeconds must NOT be set on the shared UserManager.
+    // A short timeout here would affect ALL silent requests including
+    // automaticSilentRenew — if the token endpoint takes longer than 2s,
+    // renewal fails.  The cold-load timeout is applied per-call in OIDCSecured.
+    expect(userManagerConfig).not.toHaveProperty('silentRequestTimeoutInSeconds');
   });
 });
