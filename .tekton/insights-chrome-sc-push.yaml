@@ -282,7 +282,7 @@ spec:
             limits:
               cpu: "2"
               memory: "4Gi"
-          image: registry.access.redhat.com/ubi10/nodejs-24:latest@sha256:9d0c097fcb792e9f95dbef720bdfd4bd1e47b882bc9bb2439fbd8eddb7f7b18f
+          image: registry.access.redhat.com/ubi10/nodejs-24:latest@sha256:4678d7a58d8cd4aee921fb66e894e525853dd26c6ddab43d51a04ae5698b139a
           script: |
             #!/bin/bash
             set -ex
