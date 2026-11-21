@@ -41,7 +41,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test -- --coverage
-      - uses: codecov/codecov-action@v6
+      - uses: codecov/codecov-action@v7
         with:
           files: ./coverage/clover.xml
   # lint
