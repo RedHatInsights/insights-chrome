@@ -709,6 +709,38 @@ describe('OIDCSecured', () => {
       expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(true);
       expect(chromeStore.get(isPreviewAtom)).toBe(true);
     });
+
+    it("resets the previous user's preview for the next user's rollout lookup when that user's config fails", async () => {
+      mockUser.profile = { ...mockUser.profile, username: 'user-a' };
+      mockAuth.user = mockUser;
+      jest.mocked(loadChromeUserConfigOnce).mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(chromeStore.get(isPreviewAtom)).toBe(true);
+
+      jest.mocked(loadChromeUserConfigOnce).mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+      mockAuth.user = { ...mockUser, access_token: 'user-b-token', profile: { ...mockUser.profile, username: 'user-b' } } as User;
+      rerender(shell());
+
+      await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(2));
+      expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(false);
+      expect(chromeStore.get(isPreviewAtom)).toBe(false);
+    });
+
+    it('keeps a session preview toggle when the config fails on a same-user re-authentication', async () => {
+      jest.mocked(loadChromeUserConfigOnce).mockResolvedValueOnce({ data: { uiPreview: false, uiPreviewSeen: true } });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+
+      chromeStore.set(hydratePreviewAtom, true);
+      jest.mocked(loadChromeUserConfigOnce).mockRejectedValueOnce(Object.assign(new Error('timeout of 5000ms exceeded'), { code: 'ECONNABORTED' }));
+      mockAuth.user = { ...mockUser, access_token: 'renewed' } as User;
+      rerender(shell());
+
+      await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(2));
+      expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(true);
+      expect(chromeStore.get(isPreviewAtom)).toBe(true);
+    });
   });
 
   describe('in-session entitlements recovery', () => {

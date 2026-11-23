@@ -1,6 +1,12 @@
 /** Bound so a hung `/api/entitlements/v1/services` call cannot block Chrome bootstrap. Matches `initChromeUserConfig`. */
 export const ENTITLEMENTS_TIMEOUT_MS = 5000;
 
+/**
+ * Bounds the flag-off request, which otherwise has no timeout. Looser than the fallback path so a healthy
+ * response is never cut off; a timeout returns the same empty map as any other legacy request error.
+ */
+export const LEGACY_ENTITLEMENTS_TIMEOUT_MS = 10000;
+
 /** IndexedDB key inside `chrome-config-cache` (version prefix is added by cacheFetch). */
 export const ENTITLEMENTS_CACHE_KEY = 'entitlements-services';
 

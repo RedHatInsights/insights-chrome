@@ -1,6 +1,12 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import entitlementsApi from './entitlementsApi';
-import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_STORAGE_TIMEOUT_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
+import {
+  ENTITLEMENTS_CACHE_TTL_MS,
+  ENTITLEMENTS_STORAGE_TIMEOUT_MS,
+  ENTITLEMENTS_TIMEOUT_MS,
+  LEGACY_ENTITLEMENTS_TIMEOUT_MS,
+  getEntitlementsCacheKey,
+} from './entitlementsConstants';
 import {
   EntitlementsMap,
   EntitlementsUserProfile,
@@ -28,7 +34,7 @@ export type EntitlementsClient = {
 };
 
 export type FetchEntitlementsOptions = {
-  /** Default off: retain the pre-fallback request and error handling exactly. */
+  /** Default off: retain the pre-fallback request and error handling, with only a hard timeout added. */
   enabled?: boolean;
   previous?: EntitlementsMap;
   client?: EntitlementsClient;
@@ -124,7 +130,9 @@ export async function fetchEntitlements(user: { profile?: EntitlementsUserProfil
   const client = options.client ?? defaultClient;
   if (options.enabled !== true) {
     try {
-      const response = await client.servicesGet({});
+      // A misread rollout flag can land here during an outage: never let a hung request block bootstrap.
+      // Keeps the legacy HTTP cache; retries, last-known-good and synthesized defaults stay behind the flag.
+      const response = await client.servicesGet({ options: { timeout: LEGACY_ENTITLEMENTS_TIMEOUT_MS } });
       return { entitlements: response.data as EntitlementsMap, degraded: false, source: 'live' };
     } catch {
       return { entitlements: {}, degraded: false, source: 'empty' };

@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { cacheFetch } from '../utils/cacheFetch';
 import { DEGRADED_HEADERS, failureA, healthyPaid, healthyUnsubscribed, orgIdUserProfile } from './entitlementsContract.fixture';
-import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
+import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_TIMEOUT_MS, LEGACY_ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from './entitlementsConstants';
 import { EntitlementsClient, FetchEntitlementsOptions, clearEntitlementsCache, fetchEntitlements as fetchEntitlementsRequest } from './fetchEntitlements';
 import { EntitlementsMap, getMinimumViableEntitlements, isEntitlementsMap } from './getMinimumViableEntitlements';
 
@@ -361,10 +361,11 @@ describe('clearEntitlementsCache', () => {
 describe('fetchEntitlements with the feature disabled', () => {
   beforeEach(() => mockedCacheFetch.mockClear());
 
-  it('uses the original request options and ignores degraded headers and previous data', async () => {
+  it('keeps the legacy HTTP cache, bounds the request, and ignores degraded headers and previous data', async () => {
     const client = clientWith(axiosResponse(healthyUnsubscribed, DEGRADED_HEADERS));
     const result = await fetchEntitlementsRequest(userWith(), { client, previous: healthyPaid });
-    expect(client.servicesGet).toHaveBeenCalledWith({});
+    // Only a timeout is added: no `cache: false`, no abort signal.
+    expect(client.servicesGet).toHaveBeenCalledWith({ options: { timeout: LEGACY_ENTITLEMENTS_TIMEOUT_MS } });
     expect(result).toEqual({ entitlements: healthyUnsubscribed, degraded: false, source: 'live' });
     expect(mockedCacheFetch).not.toHaveBeenCalled();
   });
@@ -377,28 +378,12 @@ describe('fetchEntitlements with the feature disabled', () => {
     expect(mockedCacheFetch).not.toHaveBeenCalled();
   });
 
-  it('does not impose a new timeout on a hung legacy request', async () => {
-    jest.useFakeTimers();
-    try {
-      let resolve!: (value: { data: EntitlementsMap }) => void;
-      const client = {
-        servicesGet: jest.fn(
-          () =>
-            new Promise<{ data: EntitlementsMap }>((done) => {
-              resolve = done;
-            })
-        ),
-      };
-      const settled = jest.fn();
-      const pending = fetchEntitlementsRequest(userWith(), { client }).then(settled);
-      await jest.advanceTimersByTimeAsync(ENTITLEMENTS_TIMEOUT_MS * 2);
-      expect(settled).not.toHaveBeenCalled();
-      expect(jest.getTimerCount()).toBe(0);
-      resolve({ data: healthyPaid });
-      await pending;
-      expect(settled).toHaveBeenCalledWith({ entitlements: healthyPaid, degraded: false, source: 'live' });
-    } finally {
-      jest.useRealTimers();
-    }
+  it('returns the original empty map without retry when the bounded legacy request times out', async () => {
+    expect(LEGACY_ENTITLEMENTS_TIMEOUT_MS).toBeGreaterThan(ENTITLEMENTS_TIMEOUT_MS);
+    const client = clientWith(Object.assign(new Error(`timeout of ${LEGACY_ENTITLEMENTS_TIMEOUT_MS}ms exceeded`), { code: 'ECONNABORTED' }));
+    const result = await fetchEntitlementsRequest(userWith(), { client, previous: healthyPaid });
+    expect(result).toEqual({ entitlements: {}, degraded: false, source: 'empty' });
+    expect(client.servicesGet).toHaveBeenCalledTimes(1);
+    expect(mockedCacheFetch).not.toHaveBeenCalled();
   });
 });

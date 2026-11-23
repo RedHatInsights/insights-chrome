@@ -162,6 +162,10 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
 
   // The bootstrap rollout may target `platform.chrome.ui.preview`, which is only known from the user config.
   // Hydrate it once per principal, before that principal's first flag lookup; useSessionConfig reuses the same request.
+  function isPreviewHydratedFor(principal: string | undefined) {
+    return previewHydratedForRef.current !== undefined && previewHydratedForRef.current.principal === principal;
+  }
+
   async function hydrateBootstrapPreview(generation: number, principal: string | undefined) {
     try {
       const config = await loadChromeUserConfigOnce(principal);
@@ -170,12 +174,15 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
         return;
       }
       // Never overwrite a preview toggle made during the session on a later re-authentication of the same principal.
-      const hydratedForPrincipal = previewHydratedForRef.current !== undefined && previewHydratedForRef.current.principal === principal;
-      if (!hydratedForPrincipal && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
+      if (!isPreviewHydratedFor(principal) && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
         chromeStore.set(hydratePreviewAtom, config.data.uiPreview);
       }
     } catch {
-      // useSessionConfig owns the degraded and gateway error handling; preview stays off.
+      // useSessionConfig owns the degraded and gateway error handling. A new principal must not inherit the
+      // previous user's preview for its rollout lookup; a same-principal renewal keeps a session toggle.
+      if (generation === fetchGenerationRef.current && !isPreviewHydratedFor(principal) && chromeStore.get(isPreviewAtom)) {
+        chromeStore.set(hydratePreviewAtom, false);
+      }
     }
     if (generation === fetchGenerationRef.current) {
       previewHydratedForRef.current = { principal };

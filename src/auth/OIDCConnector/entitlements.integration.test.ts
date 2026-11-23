@@ -2,7 +2,13 @@ import localforage from 'localforage';
 import { AuthContextProps } from 'react-oidc-context';
 import { logout } from './utils';
 import { EntitlementsClient, clearEntitlementsCache, fetchEntitlements } from '../fetchEntitlements';
-import { ENTITLEMENTS_CACHE_TTL_MS, ENTITLEMENTS_STORAGE_TIMEOUT_MS, ENTITLEMENTS_TIMEOUT_MS, getEntitlementsCacheKey } from '../entitlementsConstants';
+import {
+  ENTITLEMENTS_CACHE_TTL_MS,
+  ENTITLEMENTS_STORAGE_TIMEOUT_MS,
+  ENTITLEMENTS_TIMEOUT_MS,
+  LEGACY_ENTITLEMENTS_TIMEOUT_MS,
+  getEntitlementsCacheKey,
+} from '../entitlementsConstants';
 import { DEGRADED_HEADERS, failureA, healthyPaid, healthyUnsubscribed, orgIdUserProfile } from '../entitlementsContract.fixture';
 
 jest.mock('localforage', () => ({ createInstance: jest.fn(), INDEXEDDB: 'idb', WEBSQL: 'sql', LOCALSTORAGE: 'local' }));
@@ -64,7 +70,7 @@ describe('entitlements with real cacheFetch', () => {
     await flushBackground();
     servicesGet.mockClear();
     await fetchEntitlements(user, { client });
-    expect(servicesGet).toHaveBeenCalledWith({});
+    expect(servicesGet).toHaveBeenCalledWith({ options: { timeout: LEGACY_ENTITLEMENTS_TIMEOUT_MS } });
   });
 
   it.each(['expired', 'malformed'])('does not replay an %s entry or persist synthesized defaults', async (kind) => {
@@ -296,10 +302,10 @@ describe('entitlements with real cacheFetch', () => {
     expect(entries.get(key)).toEqual({ data: healthyUnsubscribed, cachedAt: expect.any(Number), requestedAt: expect.any(Number) });
   });
 
-  it('does not touch persisted entitlements or impose options when disabled', async () => {
+  it('does not touch persisted entitlements or impose options beyond the timeout when disabled', async () => {
     entries.set(key, { data: healthyPaid, cachedAt: Date.now() });
     expect((await fetchEntitlements(user, { client, previous: healthyPaid })).entitlements).toEqual({});
-    expect(servicesGet).toHaveBeenCalledWith({});
+    expect(servicesGet).toHaveBeenCalledWith({ options: { timeout: LEGACY_ENTITLEMENTS_TIMEOUT_MS } });
     expect(servicesGet).toHaveBeenCalledTimes(1);
     expect(getItem).not.toHaveBeenCalled();
     expect(setItem).not.toHaveBeenCalled();
