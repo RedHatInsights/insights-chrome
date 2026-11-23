@@ -546,6 +546,18 @@ describe('cacheFetch', () => {
         expect(mockSetItem).toHaveBeenCalledTimes(1);
         expect(store.get(`v${CACHE_SCHEMA_VERSION}:race-key`)).toMatchObject({ data: { sku: false } });
       });
+
+      it('releases the lock without writing when the read under it stalls', async () => {
+        mockGetItem.mockImplementationOnce(() => new Promise(() => {}));
+        const options = { enabled: true, shouldPersist: () => true, cacheReadTimeoutMs: 20 };
+        await cacheFetch('race-key', jest.fn().mockResolvedValue({ sku: true }), CACHE_TTL_MS, undefined, options);
+        await cacheFetch('race-key', jest.fn().mockResolvedValue({ sku: false }), CACHE_TTL_MS, undefined, options);
+
+        await waitFor(() => expect(mockSetItem).toHaveBeenCalledTimes(1));
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        expect(mockSetItem).toHaveBeenCalledTimes(1);
+        expect(store.get(`v${CACHE_SCHEMA_VERSION}:race-key`)).toMatchObject({ data: { sku: false } });
+      });
     });
 
     it('still returns live data when cache fallback is disabled', async () => {

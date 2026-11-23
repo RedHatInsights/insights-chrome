@@ -691,6 +691,24 @@ describe('OIDCSecured', () => {
       expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(false);
       expect(chromeStore.get(isPreviewAtom)).toBe(false);
     });
+
+    it("applies the next user's preview preference after the first user's bootstrap completed", async () => {
+      mockUser.profile = { ...mockUser.profile, username: 'user-a' };
+      mockAuth.user = mockUser;
+      jest.mocked(loadChromeUserConfigOnce).mockResolvedValueOnce({ data: { uiPreview: false, uiPreviewSeen: true } });
+      const { getByTestId, rerender } = render(shell());
+      await waitFor(() => expect(getByTestId('entitlements')).toBeInTheDocument());
+      expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[0][1]).toBe(false);
+
+      jest.mocked(loadChromeUserConfigOnce).mockResolvedValueOnce({ data: { uiPreview: true, uiPreviewSeen: true } });
+      mockAuth.user = { ...mockUser, access_token: 'user-b-token', profile: { ...mockUser.profile, username: 'user-b' } } as User;
+      rerender(shell());
+
+      await waitFor(() => expect(getBootstrapFeatureFlag).toHaveBeenCalledTimes(2));
+      expect(jest.mocked(loadChromeUserConfigOnce).mock.calls[1][0]).toContain('user-b');
+      expect(jest.mocked(getBootstrapFeatureFlag).mock.calls[1][1]).toBe(true);
+      expect(chromeStore.get(isPreviewAtom)).toBe(true);
+    });
   });
 
   describe('in-session entitlements recovery', () => {

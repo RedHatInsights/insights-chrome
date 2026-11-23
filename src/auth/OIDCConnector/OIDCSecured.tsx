@@ -82,7 +82,8 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const entitlementsFallbackEnabledRef = useRef(false);
   const fetchGenerationRef = useRef(0);
   const entitlementsAbortRef = useRef<AbortController | undefined>(undefined);
-  const previewHydratedRef = useRef(false);
+  // Preview is hydrated once per principal: a renewal keeps a session toggle, another user on the same page gets their own preference.
+  const previewHydratedForRef = useRef<{ principal: string | undefined } | undefined>(undefined);
   const chromeUserRef = useRef<ChromeUser | undefined>(undefined);
   const entitlementsDegradedReportedRef = useRef(false);
   const previousIdentityRef = useRef<string | undefined>(undefined);
@@ -160,7 +161,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   };
 
   // The bootstrap rollout may target `platform.chrome.ui.preview`, which is only known from the user config.
-  // Hydrate it once per page load, before the first flag lookup; useSessionConfig reuses the same request.
+  // Hydrate it once per principal, before that principal's first flag lookup; useSessionConfig reuses the same request.
   async function hydrateBootstrapPreview(generation: number, principal: string | undefined) {
     try {
       const config = await loadChromeUserConfigOnce(principal);
@@ -168,15 +169,16 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
       if (generation !== fetchGenerationRef.current) {
         return;
       }
-      // Never overwrite a preview toggle made during the session on a later re-authentication.
-      if (!previewHydratedRef.current && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
+      // Never overwrite a preview toggle made during the session on a later re-authentication of the same principal.
+      const hydratedForPrincipal = previewHydratedForRef.current !== undefined && previewHydratedForRef.current.principal === principal;
+      if (!hydratedForPrincipal && chromeStore.get(isPreviewAtom) !== config.data.uiPreview) {
         chromeStore.set(hydratePreviewAtom, config.data.uiPreview);
       }
     } catch {
       // useSessionConfig owns the degraded and gateway error handling; preview stays off.
     }
     if (generation === fetchGenerationRef.current) {
-      previewHydratedRef.current = true;
+      previewHydratedForRef.current = { principal };
     }
   }
 

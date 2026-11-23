@@ -30,7 +30,7 @@ When enabled, `GET /api/entitlements/v1/services` has a five-second live-request
 
 Enabled requests bypass the legacy Axios interceptor's URL-only HTTP cache so it cannot replay a response for a different organization. Disabled requests retain the original HTTP caching behavior.
 
-A successful live response is returned without waiting for persistence. In the background, Chrome waits for any pending scoped cleanup, reads and validates the same-org cache, and persists valid healthy 200 responses, including ones with fewer entitled SKUs, so revocations take effect. A 200 with `X-Entitlements-Degraded: true` is used immediately but persisted only when its count of entitled known SKUs is at least the valid cached count; equal counts qualify, and a missing, expired, or invalid cache counts as zero. Persistence is best-effort and never delays readiness.
+A successful live response is returned without waiting for persistence. In the background, Chrome waits for any pending scoped cleanup, reads and validates the same-org cache, and persists valid healthy 200 responses, including ones with fewer entitled SKUs, so revocations take effect. A 200 with `X-Entitlements-Degraded: true` is used immediately but persisted only when its count of entitled known SKUs is at least the valid cached count; equal counts qualify, and a missing, expired, or invalid cache counts as zero. The read, compare and write run under a per-key Web Lock shared by all tabs; the read is bounded (1 second for entitlements), and a read that times out releases the lock without writing. Persistence is best-effort and never delays readiness.
 
 The unfiltered request always returns every configured bundle, with unpaid SKUs set to `is_entitled: false`. An empty `{}` body is therefore treated as invalid (a synthetic 502): it is retried once, then follows the normal fallback order and is never persisted. Organizations with no paid SKUs receive a populated map and stay healthy.
 
@@ -46,7 +46,7 @@ Each degraded episode is reported to Sentry once, as a `warning` titled `Entitle
 
 ### Bootstrap time budget
 
-The user config, the flag lookup, and the entitlement request run in sequence. The rollout may target `platform.chrome.ui.preview`, which only the user config (`/api/chrome-service/v1/user`) provides, so it is fetched first and hydrates preview before the lookup. `useSessionConfig` reuses the same request, so it is still made once per page load. With the flag on, a cold start where every backend stalls waits at most about 16 seconds before Chrome is ready:
+The user config, the flag lookup, and the entitlement request run in sequence. The rollout may target `platform.chrome.ui.preview`, which only the user config (`/api/chrome-service/v1/user`) provides, so it is fetched first and hydrates preview before the lookup. Preview is hydrated once per signed-in user: a token renewal keeps a preview toggle made during the session, and a different user on the same page gets their own preference. `useSessionConfig` reuses the same request, so it is still made once per page load. With the flag on, a cold start where every backend stalls waits at most about 16 seconds before Chrome is ready:
 
 | Step                                      | Upper bound |
 | ----------------------------------------- | ----------- |

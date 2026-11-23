@@ -16,7 +16,10 @@ export type CacheFetchOptions<T = unknown> = {
    * A function is evaluated when the request fails, so the caller can tell a timeout from its own abort.
    */
   fallbackOnAbort?: boolean | (() => boolean);
-  /** Opt-in bound for fallback reads. Persistence reads always run in the background. */
+  /**
+   * Opt-in bound for fallback reads. Also bounds the compare read under the persistence lock
+   * (default PERSIST_READ_TIMEOUT_MS), which runs in the background either way.
+   */
   cacheReadTimeoutMs?: number;
 };
 
@@ -24,6 +27,10 @@ export type CacheFetchOptions<T = unknown> = {
 export const CACHE_SCHEMA_VERSION = 1;
 
 export const CONFIG_CACHE_FALLBACK_FLAG = 'platform.chrome.config-cache-fallback';
+
+/** Bound on the compare read held under the cross-tab persistence lock when the caller sets no cacheReadTimeoutMs. */
+export const PERSIST_READ_TIMEOUT_MS = 1000;
+const READ_TIMED_OUT = Symbol('read-timed-out');
 
 /** Discard last-known-good entries older than this (7 days). */
 export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -280,9 +287,14 @@ export async function cacheFetch<T>(
         // Read, compare and write as one step, so another tab cannot persist in between.
         await withPersistLock(sk, async () => {
           if (options?.shouldPersist) {
-            const cached = await getCache()
-              .getItem<unknown>(sk)
+            const read = Promise.resolve()
+              .then(() => getCache().getItem<unknown>(sk))
               .catch(() => null);
+            // A stalled storage read must not hold the lock and block every other tab's write for this key.
+            const cached = await withTimeout<unknown>(read, options.cacheReadTimeoutMs ?? PERSIST_READ_TIMEOUT_MS, READ_TIMED_OUT);
+            if (cached === READ_TIMED_OUT) {
+              return;
+            }
             const cachedEnvelope = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached : null;
             // A response to a later request was already persisted: this one is superseded.
             if ((cachedEnvelope?.requestedAt ?? -Infinity) > requestedAt) {
