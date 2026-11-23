@@ -10,6 +10,11 @@ import { ChromeAPI } from '@redhat-cloud-services/types';
 import { NavItem, Navigation } from '../../@types/types';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 
+jest.mock('./QuickstartsRuntimeMount', () => ({
+  __esModule: true,
+  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('../Footer/Footer', () => () => null);
 
 let mockScalprumProviderProps: ScalprumProviderConfigurableProps<{ chrome: ChromeAPI }> | undefined;
@@ -22,6 +27,7 @@ jest.mock('@scalprum/react-core', () => {
       mockScalprumProviderProps = props;
       return actual.ScalprumProvider(props);
     },
+    ScalprumComponent: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
   };
 });
 
@@ -235,19 +241,6 @@ describe('ScalprumRoot', () => {
   const initialProps = {
     cookieElement: null,
     setCookieElement: () => undefined,
-    helpTopicsAPI: {
-      addHelpTopics: jest.fn(),
-      disableTopics: jest.fn(),
-      enableTopics: jest.fn(),
-    },
-    quickstartsAPI: {
-      version: 1,
-      set: jest.fn(),
-      toggle: jest.fn(),
-
-      Catalog: () => <div></div>,
-      activateQuickstart: jest.fn(),
-    },
   };
 
   beforeAll(() => {
