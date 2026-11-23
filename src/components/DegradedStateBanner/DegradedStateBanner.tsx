@@ -22,7 +22,7 @@ const DegradedStateBanner = () => {
     entitlements: messages.degradedServiceEntitlements,
     configFromCache: messages.degradedServiceConfigFromCache,
     featureFlags: messages.degradedServiceFeatureFlags,
-    quickstarts: messages.degradedServiceQuickstarts,
+    quickstarts: messages.quickStarts,
     navigation: messages.degradedServiceNavigation,
   };
 

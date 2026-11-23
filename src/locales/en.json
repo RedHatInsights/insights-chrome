@@ -31,7 +31,6 @@
   "degradedServiceEntitlements": "Entitlements",
   "degradedServiceFeatureFlags": "Feature Flags",
   "degradedServiceNavigation": "Navigation",
-  "degradedServiceQuickstarts": "Quick starts",
   "degradedServiceUserPersonalization": "User Preferences",
   "degradedStateBannerPrefix": "Core functionality is available, but some services are degraded:",
   "degradedStateBannerSuffix": "Try again later.",
