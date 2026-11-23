@@ -1,28 +1,35 @@
 import React from 'react';
-import QuickStartCatalog from '../QuickStart/QuickStartCatalog';
+import { ScalprumComponent } from '@scalprum/react-core';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { getUrl } from '../../hooks/useBundle';
-import { useAtom } from 'jotai';
-import { quickstartsDisabledAtom } from '../../state/atoms/quickstartsAtom';
+import LoadingFallback from '../../utils/loading-fallback';
+import { useLearningResourcesQuickstarts } from '../RootApp/useLearningResourcesQuickstarts';
+import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
+import QuickstartCatalogUnavailable from '../QuickStart/QuickstartCatalogUnavailable';
 
 const QuickstartCatalogRoute = () => {
   const intl = useIntl();
   const bundle = getUrl('bundle');
-  const disabled = useAtom(quickstartsDisabledAtom);
-
-  if (disabled) {
-    return (
-      <div>
-        <h2>{intl.formatMessage(messages.unableToLoadQuickstartsContent)}</h2>
-      </div>
-    );
-  }
+  const useRemote = useLearningResourcesQuickstarts();
+  const title = intl.formatMessage(messages.quickStarts);
+  const hint = intl.formatMessage(messages.learnHowTo);
 
   return (
     <div>
       <h2>{intl.formatMessage(messages.thereWillBeACatalgPage, { bundle })}</h2>
-      <QuickStartCatalog />
+      {useRemote ? (
+        <ScalprumComponent
+          scope="learningResources"
+          module="./QuickStartCatalog"
+          fallback={LoadingFallback}
+          ErrorComponent={<QuickstartCatalogUnavailable />}
+          title={title}
+          hint={hint}
+        />
+      ) : (
+        <LazyQuickStartCatalog title={title} hint={hint} />
+      )}
     </div>
   );
 };
