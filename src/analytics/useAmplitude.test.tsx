@@ -94,7 +94,7 @@ jest.mock('jotai', () => ({
     return undefined;
   }),
 }));
-jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock, ready: true }) }));
+jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: mockAnalyticsInstance, ready: true }) }));
 jest.mock('@amplitude/analytics-browser', () => ({
   add: jest.fn(),
   init: jest.fn(() => ({
@@ -113,12 +113,13 @@ jest.mock('@amplitude/plugin-autocapture-browser', () => ({
 
 const onHandlers: Record<string, Array<(...args: unknown[]) => void>> = {};
 const analyticsMock = {
-  ready: (cb: () => void) => cb(),
-  user: () =>
+  ready: jest.fn((cb: () => void) => Promise.resolve(cb())),
+  user: jest.fn(() =>
     Promise.resolve({
       id: () => 'user-1',
       anonymousId: () => 'anon-1',
-    }),
+    })
+  ),
   track: jest.fn(),
   on: (event: string, handler: (...args: unknown[]) => void) => {
     onHandlers[event] = onHandlers[event] || [];
@@ -126,6 +127,7 @@ const analyticsMock = {
   },
   off: jest.fn(),
 };
+let mockAnalyticsInstance: typeof analyticsMock = analyticsMock;
 
 import useAmplitude from './useAmplitude';
 
@@ -146,6 +148,7 @@ describe('useAmplitude', () => {
     mockIsPreview = false;
     mockUser = DEFAULT_MOCK_USER;
     mockITLess = false;
+    mockAnalyticsInstance = analyticsMock;
     // Clear handler registry
     Object.keys(onHandlers).forEach((key) => delete onHandlers[key]);
   });
@@ -171,9 +174,11 @@ describe('useAmplitude', () => {
 
     await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
     const arg = (window.engagement.boot as jest.Mock).mock.calls[0][0];
-    expect(arg).toHaveProperty('user.user_id', 'user-1');
-    expect(arg).toHaveProperty('user.device_id', 'anon-1');
+    expect(arg).toHaveProperty('user.user_id', 'acct-456');
+    expect(arg.user).not.toHaveProperty('device_id');
     expect(Array.isArray(arg.integrations)).toBe(true);
+    expect(analyticsMock.ready).not.toHaveBeenCalled();
+    expect(analyticsMock.user).not.toHaveBeenCalled();
 
     expect(onHandlers['track']?.length).toBeGreaterThan(0);
     expect(onHandlers['page']?.length).toBeGreaterThan(0);
@@ -227,16 +232,15 @@ describe('useAmplitude', () => {
     errorSpy.mockRestore();
   });
 
-  it('handles analytics.user rejection without calling boot', async () => {
+  it('boots guides and surveys even when Segment destinations never become ready', async () => {
     window.engagement = {
       boot: jest.fn(),
       shutdown: jest.fn(),
       forwardEvent: jest.fn(),
       setRouter: jest.fn(),
     } as unknown as typeof window.engagement;
-    const originalUser = analyticsMock.user;
-    analyticsMock.user = () => Promise.reject(new Error('user failed'));
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    analyticsMock.ready.mockImplementation(() => new Promise(() => {}));
+    analyticsMock.user.mockImplementation(() => new Promise(() => {}));
 
     render(<TestComponent />);
     const script = document.getElementById('amplitude-script') as HTMLScriptElement;
@@ -244,11 +248,95 @@ describe('useAmplitude', () => {
       script.onload(new Event('load'));
     }
 
-    await waitFor(() => expect(errorSpy).toHaveBeenCalled());
-    expect(window.engagement?.boot).not.toHaveBeenCalled();
+    await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
+    expect(analyticsMock.ready).not.toHaveBeenCalled();
+    expect(analyticsMock.user).not.toHaveBeenCalled();
+  });
 
-    analyticsMock.user = originalUser;
-    errorSpy.mockRestore();
+  it('uses the latest Segment instance when forwarding engagement events', async () => {
+    window.engagement = {
+      boot: jest.fn(),
+      shutdown: jest.fn(),
+      forwardEvent: jest.fn(),
+      setRouter: jest.fn(),
+    } as unknown as typeof window.engagement;
+
+    const { rerender } = render(<TestComponent />);
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    if (script.onload) {
+      script.onload(new Event('load'));
+    }
+    await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
+
+    const replacementAnalytics = {
+      ...analyticsMock,
+      track: jest.fn(),
+      on: jest.fn(),
+      off: jest.fn(),
+    };
+    mockAnalyticsInstance = replacementAnalytics;
+    rerender(<TestComponent />);
+
+    const bootOptions = (window.engagement?.boot as jest.Mock).mock.calls[0][0] as {
+      integrations: Array<{
+        track: (event: { event_type: string; event_properties: Record<string, unknown> }) => void;
+      }>;
+    };
+    const event = { event_type: 'guide_test', event_properties: { source: 'test' } };
+    bootOptions.integrations[0].track(event);
+
+    expect(replacementAnalytics.track).toHaveBeenCalledWith(event.event_type, event.event_properties);
+  });
+
+  it('registers and cleans up handlers on the current Segment instance when boot resolves', async () => {
+    let resolveBoot: (() => void) | undefined;
+    const firstAnalytics = {
+      ...analyticsMock,
+      track: jest.fn(),
+      on: jest.fn(),
+      off: jest.fn(),
+    };
+    const replacementAnalytics = {
+      ...analyticsMock,
+      track: jest.fn(),
+      on: jest.fn(),
+      off: jest.fn(),
+    };
+    mockAnalyticsInstance = firstAnalytics;
+    window.engagement = {
+      boot: jest.fn(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveBoot = resolve;
+          })
+      ),
+      shutdown: jest.fn(),
+      forwardEvent: jest.fn(),
+      setRouter: jest.fn(),
+    } as unknown as typeof window.engagement;
+
+    const { rerender, unmount } = render(<TestComponent />);
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    if (script.onload) {
+      script.onload(new Event('load'));
+    }
+    await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalledTimes(1));
+
+    mockAnalyticsInstance = replacementAnalytics;
+    rerender(<TestComponent />);
+    await act(async () => {
+      resolveBoot?.();
+    });
+
+    await waitFor(() => expect(replacementAnalytics.on).toHaveBeenCalledTimes(2));
+    expect(firstAnalytics.on).not.toHaveBeenCalled();
+
+    unmount();
+
+    expect(replacementAnalytics.off).toHaveBeenNthCalledWith(1, 'track', expect.any(Function));
+    expect(replacementAnalytics.off).toHaveBeenNthCalledWith(2, 'page', expect.any(Function));
+    expect(replacementAnalytics.off.mock.calls[0][1]).toBe(replacementAnalytics.off.mock.calls[1][1]);
+    expect(firstAnalytics.off).not.toHaveBeenCalled();
   });
 
   it('detaches handlers on unmount', async () => {
