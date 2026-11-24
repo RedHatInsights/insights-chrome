@@ -326,7 +326,9 @@
       "toolingCommitSha": "98ac78851dbb0f6928883b438a24107ce08f282f",
       "pullRequestAssignees": [
         "petrsimon"
-      ]
+      ],
+      "pullRequestFinalized": true,
+      "pullRequestMerged": true
     },
     "ko": {
       "phase": "pr-created",
