@@ -329,7 +329,9 @@
       "toolingCommitSha": "e7d565d664bbe977cd5db9e294d8c0e77541b876",
       "pullRequestAssignees": [
         "petrsimon"
-      ]
+      ],
+      "pullRequestFinalized": true,
+      "pullRequestMerged": true
     },
     "zh_cn": {
       "phase": "pr-created",
@@ -346,7 +348,9 @@
       "toolingCommitSha": "2aeb8989dbd752d588ce2d42ff2ba3d1e6bd63b8",
       "pullRequestAssignees": [
         "petrsimon"
-      ]
+      ],
+      "pullRequestFinalized": true,
+      "pullRequestMerged": true
     }
   },
   "importAsyncRequestId": "1907169987"
