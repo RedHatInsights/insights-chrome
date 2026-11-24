@@ -323,8 +323,10 @@
       "pullRequestUrl": "https://github.com/RedHatInsights/insights-chrome/pull/3802",
       "pullRequestBranch": "i18n/phrase-2b266edc9b838e6b-ja",
       "pullRequestBatchKey": "2b266edc9b838e6bb89039f3aa67b521283ed88190589c8fb3ad60daa67c6b86",
-      "pullRequestAssigneesPending": true,
-      "toolingCommitSha": "98ac78851dbb0f6928883b438a24107ce08f282f"
+      "toolingCommitSha": "98ac78851dbb0f6928883b438a24107ce08f282f",
+      "pullRequestAssignees": [
+        "petrsimon"
+      ]
     },
     "ko": {
       "phase": "pr-created",
