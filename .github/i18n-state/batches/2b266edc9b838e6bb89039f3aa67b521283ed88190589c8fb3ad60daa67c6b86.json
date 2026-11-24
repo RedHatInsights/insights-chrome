@@ -297,7 +297,7 @@
       ]
     },
     "ja": {
-      "phase": "exporting",
+      "phase": "pr-created",
       "toolingCommitShas": [
         "5d28a1d637d27016e0e8ec49f6fac39f9a73901c",
         "f59033f47a3e31d3a7ea730b424294f73ae3e4cd",
@@ -316,7 +316,15 @@
         "63c1eea266e3bed0cff4fecc5cb92979b6177388",
         "b9771bb7284ee4dc2b8892661addc50ec3868266",
         "98ac78851dbb0f6928883b438a24107ce08f282f"
-      ]
+      ],
+      "validationErrors": [],
+      "validationWarnings": [],
+      "pullRequestBodyDigest": "e7359bb4edf9459f2ed2f8cf3d3f25fc8b3db11d453fe170eb343714da102172",
+      "pullRequestUrl": "https://github.com/RedHatInsights/insights-chrome/pull/3802",
+      "pullRequestBranch": "i18n/phrase-2b266edc9b838e6b-ja",
+      "pullRequestBatchKey": "2b266edc9b838e6bb89039f3aa67b521283ed88190589c8fb3ad60daa67c6b86",
+      "pullRequestAssigneesPending": true,
+      "toolingCommitSha": "98ac78851dbb0f6928883b438a24107ce08f282f"
     },
     "ko": {
       "phase": "pr-created",
