@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "key": "2b266edc9b838e6bb89039f3aa67b521283ed88190589c8fb3ad60daa67c6b86",
-  "phase": "ready",
+  "phase": "completed",
   "repository": "RedHatInsights/insights-chrome",
   "baseRef": "master",
   "sourceCommit": "b0e858ed184bfa1b1eb27a71e4d3cacd08494911",
@@ -294,7 +294,9 @@
       "toolingCommitSha": "d7aa8b857d1b32d43d9b7fc8fe34cf532eadc04a",
       "pullRequestAssignees": [
         "petrsimon"
-      ]
+      ],
+      "pullRequestFinalized": true,
+      "pullRequestMerged": true
     },
     "ja": {
       "phase": "pr-created",
