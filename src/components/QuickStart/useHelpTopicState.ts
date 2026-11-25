@@ -1,6 +1,6 @@
 import { HelpTopic } from '@patternfly/quickstarts';
 import axios from 'axios';
-import { Reducer, useReducer } from 'react';
+import { Reducer, useReducer, useRef } from 'react';
 
 export type AddHelpTopic = (topics: HelpTopic[], enabled?: boolean) => void;
 export type DisableTopics = (...topicsNames: string[]) => void;
@@ -57,6 +57,12 @@ const useHelpTopicState = (initialState: Partial<HelpTopicsState> = { activeTopi
     activeTopics: initialState.activeTopics || {},
     helpTopics: initialState.helpTopics || {},
   });
+  /**
+   * Topics added so far, updated synchronously. `enableTopics` reads this instead of render
+   * state, so it sees topics added earlier in the same tick (as the learning-resources store does),
+   * e.g. when Chrome replays `addHelpTopics` and then `enableTopics` into this runtime.
+   */
+  const knownTopics = useRef<HelpTopicsState['helpTopics']>(state.helpTopics);
 
   function batchToggleTopic(names: string[], active: boolean) {
     dispatch({ type: 'setActiveTopics', activeTopics: names, active });
@@ -67,6 +73,7 @@ const useHelpTopicState = (initialState: Partial<HelpTopicsState> = { activeTopi
    * New topics
    */
   const addHelpTopics: AddHelpTopic = (topics: HelpTopic[], enabled = true) => {
+    knownTopics.current = topics.reduce((acc, topic) => ({ ...acc, [topic.name]: topic }), knownTopics.current);
     dispatch({ type: 'setHelpTopics', helpTopics: topics });
     batchToggleTopic(
       topics.map(({ name }) => name),
@@ -112,7 +119,7 @@ const useHelpTopicState = (initialState: Partial<HelpTopicsState> = { activeTopi
     const newTopics: string[] = [];
     const existingTopics: string[] = [];
     topicsNames.forEach((name) => {
-      if (typeof state.helpTopics[name] === 'undefined') {
+      if (typeof knownTopics.current[name] === 'undefined') {
         newTopics.push(name);
       } else {
         existingTopics.push(name);
@@ -122,7 +129,7 @@ const useHelpTopicState = (initialState: Partial<HelpTopicsState> = { activeTopi
     if (newTopics.length > 0) {
       tasks.push(fetchHelpTopics({ enabled: true, names: newTopics }));
     }
-    const existingContent: HelpTopic[] = Object.entries(state.helpTopics).reduce<HelpTopic[]>(
+    const existingContent: HelpTopic[] = Object.entries(knownTopics.current).reduce<HelpTopic[]>(
       (acc, [name, topic]) => [...acc, ...(topicsNames.includes(name) ? [topic] : [])],
       []
     );

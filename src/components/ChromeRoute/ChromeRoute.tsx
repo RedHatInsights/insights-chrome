@@ -1,12 +1,12 @@
 import { ScalprumComponent } from '@scalprum/react-core';
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import classNames from 'classnames';
-import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { delegatedHelpTopicsAPI } from '../../state/atoms/delegatedChromeQuickstarts';
 import { gatewayErrorAtom } from '../../state/atoms/gatewayErrorAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { NavItemPermission } from '../../@types/types';
@@ -30,7 +30,6 @@ const ChromeRoute = memo(
   ({ scope, module, scopeClass, path, props, permissions }: ChromeRouteProps) => {
     const isPreview = useAtomValue(isPreviewAtom);
     const setGlobalFilterHidden = useSetAtom(globalFilterHiddenAtom);
-    const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const gatewayError = useAtomValue(gatewayErrorAtom);
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
     const currentActiveModule = useAtomValue(activeModuleAtom);
@@ -72,13 +71,20 @@ const ChromeRoute = memo(
             store.updateState('CLEAR');
             store.updateState('SET_APP_MOUNT_PATHNAME', mountPath);
           })
-          .catch(() => {});
+          .catch((error) => {
+            // Non-critical UI. Breadcrumbs.tsx already falls back to chrome-native
+            // crumbs when this store is missing; keep the tenant module up.
+            console.error('Failed to load federated breadcrumb store; skipping CLEAR and SET_APP_MOUNT_PATHNAME', {
+              scope,
+              mountPath,
+              error,
+            });
+          });
       }
-      /**
-       * TODO: Discuss default close feature of topics
-       * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.
-       */
-      setActiveHelpTopicByName?.('');
+      // Close any open help topic on every app mount, including a return to the same app (for example
+      // from All services), where activeModule does not change. Goes through the Chrome delegate:
+      // this route renders outside the runtime's HelpTopicContext.
+      delegatedHelpTopicsAPI.closeHelpTopic();
 
       // reset visibility function
       setIsHidden(null);
