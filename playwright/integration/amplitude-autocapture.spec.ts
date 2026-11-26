@@ -1,6 +1,6 @@
 import { expect, test } from '../setup/test-setup';
 import { clearCachedFeatureFlags } from '../helpers/feature-flags';
-import { getAppIdentifyEvent } from '../helpers/amplitude-identify';
+import { type AmplitudeEvent, requireAppIdentifyEvent } from '../helpers/amplitude-identify';
 import { gunzipSync } from 'zlib';
 import type { Page } from '@playwright/test';
 
@@ -123,20 +123,13 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
     const { requestBodies, chromeAnalyticsConfigWasIntercepted } = await stubAmplitudeEnvironment(page);
     await page.goto('/insights/dashboard', { waitUntil: 'domcontentloaded' });
 
-    let appIdentify!: ReturnType<typeof getAppIdentifyEvent>;
+    let appIdentify!: AmplitudeEvent;
     await expect(() => {
-      appIdentify = getAppIdentifyEvent(requestBodies);
+      appIdentify = requireAppIdentifyEvent(requestBodies);
     }).toPass({ timeout: IDENTIFY_TIMEOUT });
     expect(chromeAnalyticsConfigWasIntercepted(), 'Chrome FEO analytics config should be intercepted and given test keys').toBe(true);
 
-    const userProperties = appIdentify.user_properties;
-    expect(userProperties).toBeDefined();
-
-    // Amplitude Identify API uses operation-based user_properties structure:
-    // { $set: {...}, $setOnce: {...}, $unset: {...}, $add: {...}, etc. }
-    // Our enriched properties are in the $set object
-    const setProperties = userProperties?.$set;
-    expect(setProperties).toBeDefined();
+    const setProperties = appIdentify.user_properties?.$set;
 
     expect(setProperties).toEqual(
       expect.objectContaining({
@@ -146,13 +139,12 @@ test.describe('Amplitude Autocapture - Enriched User Properties', () => {
         account_id: expect.any(String),
         account_number: expect.any(String),
         current_bundle: 'insights',
-        current_app: expect.any(String),
+        current_app: 'dashboard',
       })
     );
     expect(setProperties?.org_id).not.toBe('');
     expect(setProperties?.account_id).not.toBe('');
     expect(setProperties?.account_number).not.toBe('');
-    expect(setProperties?.current_app).not.toBe('');
     expect(appIdentify.user_id).toBe(setProperties?.account_id);
 
     const entitlementNames = Object.keys(setProperties || {})

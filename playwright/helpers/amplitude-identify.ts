@@ -1,11 +1,11 @@
-type AmplitudeEvent = {
+export type AmplitudeEvent = {
   event_type?: string;
   user_id?: unknown;
   user_properties?: { $set?: Record<string, unknown> };
 };
 
-/** Read a snapshot of the captured batches. Only app activation is a wait condition, not payload correctness. */
-export function getAppIdentifyEvent(requestBodies: readonly unknown[]): AmplitudeEvent {
+/** In a `toPass` wait, return the first identify with any app so a wrong app fails the caller's assertion. */
+export function requireAppIdentifyEvent(requestBodies: readonly unknown[]): AmplitudeEvent {
   let identifyCount = 0;
   for (const body of requestBodies) {
     const events = (body as { events?: AmplitudeEvent[] } | null)?.events;
