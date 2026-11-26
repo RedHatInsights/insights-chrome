@@ -16,9 +16,9 @@ const matchCache: {
   description: {},
 };
 
-const resultCache: {
-  [term: string]: SearchResultItem[];
-} = {};
+// Locale rebuilds must not reuse result objects from an earlier index.
+const resultCaches = new WeakMap<Orama<typeof entrySchema>, Record<string, SearchResultItem[]>>();
+export const invalidateLocalQueryCache = (db: Orama<typeof entrySchema>) => resultCaches.delete(db);
 
 // merge overlapping marks into smaller sets
 // example: start: 1, end: 5, start: 3, end: 7 => start: 1, end: 7
@@ -129,6 +129,11 @@ export const localQuery = async (
   mode: SearchDataType | string = 'services'
 ): Promise<SearchResultItem[]> => {
   try {
+    let resultCache = resultCaches.get(db);
+    if (!resultCache) {
+      resultCache = {};
+      resultCaches.set(db, resultCache);
+    }
     const cacheKey = `${env}-${term}-${mode}`;
     let results: SearchResultItem[] | undefined = resultCache[cacheKey];
     if (results) {

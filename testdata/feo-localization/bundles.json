@@ -1,0 +1,77 @@
+[
+  {
+    "id": "iam",
+    "title": "Identity \u0026 Access Management",
+    "description": "Manage users, groups and roles",
+    "navItems": [
+      {
+        "href": "/iam/user-access/users",
+        "title": "Users",
+        "id": "users",
+        "position": 100,
+        "bundleSegmentRef": "user-access",
+        "frontendRef": "rbac",
+        "i18nKey": "nav.rbac.iam.user-access.users"
+      },
+      {
+        "expandable": true,
+        "title": "User Access",
+        "id": "access",
+        "routes": [
+          {
+            "href": "/iam/user-access/groups",
+            "title": "Groups",
+            "id": "groups",
+            "bundleSegmentRef": "user-access",
+            "frontendRef": "rbac",
+            "i18nKey": "nav.rbac.iam.user-access.access.routes.groups"
+          },
+          {
+            "href": "/iam/user-access/roles",
+            "title": "Roles",
+            "id": "roles",
+            "product": "Red Hat Access",
+            "bundleSegmentRef": "user-access",
+            "frontendRef": "rbac",
+            "i18nKey": "nav.rbac.iam.user-access.access.routes.roles"
+          }
+        ],
+        "position": 100,
+        "bundleSegmentRef": "user-access",
+        "frontendRef": "rbac",
+        "i18nKey": "nav.rbac.iam.user-access.access"
+      },
+      {
+        "title": "Settings",
+        "groupId": "settings",
+        "id": "settings",
+        "navItems": [
+          {
+            "href": "/iam/user-access/preferences",
+            "title": "Preferences",
+            "id": "preferences",
+            "bundleSegmentRef": "user-access",
+            "frontendRef": "rbac",
+            "i18nKey": "nav.rbac.iam.user-access.settings.navItems.preferences"
+          }
+        ],
+        "position": 100,
+        "bundleSegmentRef": "user-access",
+        "frontendRef": "rbac",
+        "i18nKey": "nav.rbac.iam.user-access.settings"
+      },
+      {
+        "href": "/iam/user-access/workspaces",
+        "title": "Workspaces",
+        "id": "workspaces",
+        "segmentRef": {
+          "frontendName": "rbac",
+          "segmentId": "shared-access"
+        },
+        "bundleSegmentRef": "user-access",
+        "frontendRef": "rbac",
+        "i18nKey": "navseg.rbac.shared-access.workspaces"
+      }
+    ]
+  }
+]

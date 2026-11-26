@@ -141,6 +141,14 @@ describe('create chrome', () => {
     expect(chrome).toEqual(expect.any(Object));
   });
 
+  // Tenant apps call these from effects and callbacks, outside a React render.
+  it('serves getBundleData and updateDocumentTitle outside a React render', () => {
+    const chrome = createChromeContext(chromeContextOptionsMock);
+    expect(chrome.getBundleData()).toEqual({ bundleId: 'landing', bundleTitle: 'Home' });
+    chrome.updateDocumentTitle('Roles');
+    expect(document.title).toBe('Roles | Home');
+  });
+
   it('should postpone getUserPermissions resolve, after chrome cache is initialized', async () => {
     const promiseSpy = jest.fn();
     expect.assertions(1);

@@ -1,6 +1,8 @@
 import { atom } from 'jotai';
 import { NavItem, Navigation } from '../../@types/types.d';
 import { highlightItems, levelArray } from '../../utils/common';
+import { feoMessagesAtom } from './feoLocaleAtom';
+import { localizeBundles } from '../../utils/feoLocalization';
 
 export type InternalNavigation = {
   [key: string]: Navigation;
@@ -18,6 +20,14 @@ function isNavigation(nav?: Navigation | NavItem[]): nav is Navigation {
 }
 
 export const navigationAtom = atom<InternalNavigation>({});
+export const localizedNavigationAtom = atom((get): InternalNavigation => {
+  const navigation = get(navigationAtom);
+  const messages = get(feoMessagesAtom);
+  if (!Object.keys(messages).length) return navigation;
+  return Object.fromEntries(
+    Object.entries(navigation).map(([segment, schema]) => [segment, localizeBundles([{ ...schema, id: schema.id ?? segment }], messages)[0]])
+  );
+});
 export const setNavigationSegmentAtom = atom(null, (_get, set, { segment, schema, pathname, shouldMerge }: SetSegmentPayload) => {
   set(navigationAtom, (prev) => {
     const mergedSchema = shouldMerge || !prev[segment] ? schema : prev[segment];

@@ -47,6 +47,9 @@ export type AnyNavItemPermission = { [K in keyof VisibilityFunctions]: NavItemPe
  * TODO: Move to the component once it is migrated to TS
  */
 export type NavItem = {
+  i18nKey?: string;
+  product?: string;
+  routes?: NavItem[];
   id?: string;
   filterable?: boolean;
   isExternal?: boolean;

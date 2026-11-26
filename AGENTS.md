@@ -24,6 +24,7 @@ Existing documentation for deeper reference:
 | File                                                             | Topic                                                   |
 | ---------------------------------------------------------------- | ------------------------------------------------------- |
 | [docs/api.md](docs/api.md)                                       | Chrome JavaScript API specification                     |
+| [docs/feo-localization.md](docs/feo-localization.md)             | FEO locale overlays, bilingual search, and fallback     |
 | [docs/navigation.md](docs/navigation.md)                         | Navigation configuration system                         |
 | [docs/auth.md](docs/auth.md)                                     | Authentication architecture                             |
 | [docs/analytics.md](docs/analytics.md)                           | Analytics integration                                   |

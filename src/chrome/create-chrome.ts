@@ -11,7 +11,7 @@ import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } 
 import chromeHistory from '../utils/chromeHistory';
 import { searchAPI } from '../utils/searchAPI';
 import { FlagTagsFilter } from '../@types/types';
-import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
+import { bundleMapping, getBundleData, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
 import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
@@ -20,6 +20,7 @@ import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
 import requestPdf from '../pdf/requestPdf';
 import chromeStore from '../state/chromeStore';
 import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
+import { feoMessagesAtom } from '../state/atoms/feoLocaleAtom';
 import { usePendoFeedback } from '../components/Feedback';
 import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
 import { isDebuggerEnabledAtom } from '../state/atoms/debuggerModalatom';
@@ -149,8 +150,11 @@ export const createChromeContext = ({
     }
   };
 
+  // Tenants call this from effects and callbacks, so read the store, not a hook.
+  const updateLocalizedDocumentTitle = (title?: string, noSuffix?: boolean) => updateDocumentTitle(title, noSuffix, chromeStore.get(feoMessagesAtom));
+
   const identifyApp = (_data: any, appTitle?: string, noSuffix?: boolean) => {
-    updateDocumentTitle(appTitle, noSuffix);
+    updateLocalizedDocumentTitle(appTitle, noSuffix);
     return Promise.resolve();
   };
 
@@ -186,7 +190,7 @@ export const createChromeContext = ({
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
     getBundle: () => getUrl('bundle'),
-    getBundleData: useBundle,
+    getBundleData: () => getBundleData(chromeStore.get(feoMessagesAtom)),
     getApp: () => getUrl('app'),
     getEnvironment: () => getEnv(),
     getEnvironmentDetails: () => {
@@ -220,7 +224,7 @@ export const createChromeContext = ({
     isPenTest: () => Boolean(Cookies.get('x-rh-insights-pentest')),
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
-    updateDocumentTitle,
+    updateDocumentTitle: updateLocalizedDocumentTitle,
     visibilityFunctions,
     on,
     experimentalApi: true,
@@ -255,7 +259,7 @@ export const createChromeContext = ({
       );
       return {
         on,
-        updateDocumentTitle,
+        updateDocumentTitle: updateLocalizedDocumentTitle,
         identifyApp,
       };
     },

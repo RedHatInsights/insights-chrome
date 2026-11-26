@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Orama, create, insert } from '@orama/orama';
+import { Orama, components, create, getByID, insert } from '@orama/orama';
 import type { SearchDataType, SearchEntry } from '@redhat-cloud-services/types';
 
 import { getChromeStaticPathname } from '../../utils/common';
@@ -8,6 +8,9 @@ import { NavItemPermission } from '../../@types/types';
 import { bundleMapping, getUrl } from '../../hooks/useBundle';
 import { cacheFetch } from '../../utils/cacheFetch';
 import { CONFIG_SOURCES, reportConfigSource } from '../../utils/configCacheStatus';
+import { feoMessagesAtom } from './feoLocaleAtom';
+import { localizeSearchEntry } from '../../utils/feoLocalization';
+import { createSearchTokenizer } from '../../utils/searchTokenizer';
 
 type IndexEntry = {
   icon?: string;
@@ -108,7 +111,7 @@ export const getBundleTitle = (pathname: string): string => {
 
 const asyncSearchIndexAtom = atom(async () => {
   const staticPath = getChromeStaticPathname('search');
-  const searchIndex: SearchEntry[] = [];
+  const searchIndex: (SearchEntry & { feoGenerated?: boolean })[] = [];
   const idSet = new Set<string>();
   const searchRequests: [Promise<AxiosResponse<IndexEntry[]>>, Promise<GeneratedSearchIndexResponse[]>] = [
     axios.get<IndexEntry[]>(`${staticPath}/search-index.json`),
@@ -135,6 +138,7 @@ const asyncSearchIndexAtom = atom(async () => {
       SearchPermissions.set(entry.id, []);
       const bundleTitle = isInternalPath ? getBundleTitle(entry.href) : externalUrl?.hostname || 'External';
       searchIndex.push({
+        feoGenerated: true,
         title: entry.title,
         uri: entry.href,
         pathname: entry.href,
@@ -185,16 +189,22 @@ export const entrySchema = {
   isExternal: 'boolean',
 } as const;
 
-export function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
+// Translated entries share the index with English ones; see searchTokenizer.
+export function createSearchDb() {
+  return create({ schema: entrySchema, components: { tokenizer: createSearchTokenizer() } });
+}
+
+export function validateSearchEntry(entry: SearchEntry) {
+  if (typeof entry.id !== 'string' || typeof entry.pathname !== 'string') throw new Error('Search entry requires string id and pathname');
   const isInternalPath = entry.pathname.startsWith('/');
   const externalUrl = isInternalPath ? undefined : parseHttpUrl(entry.pathname);
   if (!isInternalPath && !externalUrl) {
     // Skip non-http(s) URLs for security
     console.warn('Skipping non-http(s) search entry', entry.id);
-    return Promise.resolve(entry.id);
+    return undefined;
   }
   const isExternal = Boolean(externalUrl);
-  return insert(db, {
+  const document = {
     id: entry.id,
     title: entry.title,
     description: entry.description,
@@ -204,27 +214,44 @@ export function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
     pathname: entry.pathname,
     type: entry.type,
     isExternal,
-  });
+  };
+  const invalidField = components.validateSchema(document, entrySchema);
+  if (invalidField) throw new Error(`Invalid search entry field: ${invalidField}`);
+  return document;
 }
 
-const db: { current: Orama<typeof entrySchema> | undefined } = { current: undefined };
-export function getDB() {
-  if (!db.current) {
-    db.current = create({
-      schema: entrySchema,
-    });
-  }
-
-  return db.current;
+export function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
+  const document = validateSearchEntry(entry);
+  return document ? insert(db, document) : Promise.resolve(entry.id);
 }
+
+// This per-store registry is deliberately non-reactive. Remote inserts mutate
+// the live index; only future locale builds replay the retained entries.
+const registeredSearchEntriesAtom = atom(() => new Map<string, SearchEntry>());
+export const insertSearchEntryAtom = atom(null, async (get, _set, entry: SearchEntry) => {
+  const snapshot = { ...entry, altTitle: entry.altTitle?.slice() };
+  const document = validateSearchEntry(snapshot);
+  if (!document) return undefined;
+  const entries = get(registeredSearchEntriesAtom);
+  if (!entries.has(snapshot.id)) entries.set(snapshot.id, snapshot);
+  const db = await get(asyncLocalOrama);
+  if (!getByID(db, snapshot.id)) await insert(db, document);
+  return db;
+});
 
 export const asyncLocalOrama = atom(async (get) => {
-  const db = getDB();
-
-  const insertCommands = (await get(asyncSearchIndexAtom)).map(async (entry) => {
-    return insertEntry(db, entry);
-  });
-
-  await Promise.all(insertCommands);
+  const messages = get(feoMessagesAtom);
+  const registered = get(registeredSearchEntriesAtom);
+  // Each locale gets its own DB: in-flight builds cannot mutate the current one.
+  const db = createSearchDb();
+  const entries = await get(asyncSearchIndexAtom);
+  const baseIds = new Set(entries.map(({ id }) => id));
+  await Promise.all([
+    ...entries.map((entry) => {
+      if (!entry.feoGenerated) return insertEntry(db, entry);
+      return insertEntry(db, localizeSearchEntry(entry, entry.pathname.startsWith('/') ? getUrl('bundle', entry.pathname) : undefined, messages));
+    }),
+    ...[...registered.values()].filter(({ id }) => !baseIds.has(id)).map((entry) => insertEntry(db, entry)),
+  ]);
   return db;
 });

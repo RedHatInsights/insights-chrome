@@ -1,0 +1,17 @@
+[
+  {
+    "id": "en",
+    "name": "English",
+    "default": true
+  },
+  {
+    "id": "fr",
+    "name": "Français",
+    "file": "messages.fr.json"
+  },
+  {
+    "id": "ja",
+    "name": "日本語",
+    "file": "messages.ja.json"
+  }
+]
