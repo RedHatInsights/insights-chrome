@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { useAtomValue, useSetAtom, useStore } from 'jotai';
-import { initChromeUserConfig, initVisibilityFunctions } from '../utils/initUserConfig';
+import { initVisibilityFunctions, loadChromeUserConfigOnce } from '../utils/initUserConfig';
 import { hydratePreviewAtom, isPreviewAtom } from '../state/atoms/releaseAtom';
 import { userConfigAtom } from '../state/atoms/userConfigAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
@@ -33,12 +33,15 @@ const useSessionConfig = () => {
     // renders even when the personalization API is down. `getToken` is the live token getter from
     // ChromeAuthContext, so the visibility functions always read the current token (even after a
     // silent renew) rather than a frozen snapshot.
+    // Auth bootstrap may already have hydrated preview from the shared config request, in which case the
+    // hydrate below is skipped, so initialize with the current value rather than a hard-coded `false`.
     if (!visibilityFunctionsExist()) {
-      initVisibilityFunctions({ getUser, getToken });
+      initVisibilityFunctions({ getUser, getToken, isPreview: store.get(isPreviewAtom) });
     }
 
     try {
-      const config = await initChromeUserConfig();
+      // Shared with auth bootstrap, which fetched it before the entitlements rollout lookup.
+      const config = await loadChromeUserConfigOnce();
       setUserConfig(config);
       // Hydrate preview from the server value, only on an actual change to avoid a redundant render
       // flip. Hydration never POSTs, so this cannot re-persist the value we just read back.

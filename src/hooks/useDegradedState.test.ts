@@ -21,6 +21,7 @@ describe('useDegradedState', () => {
       entitlements: false,
       configFromCache: false,
       featureFlags: false,
+      quickstarts: false,
     });
     mockedUseFlag.mockReturnValue(false);
   });
@@ -39,6 +40,7 @@ describe('useDegradedState', () => {
       entitlements: false,
       configFromCache: false,
       featureFlags: false,
+      quickstarts: false,
     });
     expect(result.current.isAnyServiceDegraded).toBe(false);
     expect(result.current.isBannerEnabled).toBe(false);
@@ -86,6 +88,15 @@ describe('useDegradedState', () => {
     const { result } = renderHook(() => useDegradedState(), { wrapper });
 
     expect(result.current.serviceHealth.featureFlags).toBe(true);
+    expect(result.current.isAnyServiceDegraded).toBe(true);
+  });
+
+  it('should detect degraded quickstarts service', () => {
+    store.set(setServiceDegradedAtom, { service: 'quickstarts', degraded: true });
+
+    const { result } = renderHook(() => useDegradedState(), { wrapper });
+
+    expect(result.current.serviceHealth.quickstarts).toBe(true);
     expect(result.current.isAnyServiceDegraded).toBe(true);
   });
 

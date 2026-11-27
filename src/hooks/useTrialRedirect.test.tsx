@@ -4,6 +4,7 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../auth/ChromeAuthCon
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { renderHook, screen } from '@testing-library/react';
 import useTrialRedirect from './useTrialRedirect';
+import { getMinimumViableEntitlements } from '../auth/getMinimumViableEntitlements';
 
 const PathnameSpy = () => {
   const { pathname } = useLocation();
@@ -78,6 +79,13 @@ const cases: { entitlements: ChromeUser['entitlements']; expected: string; initi
     },
     expected: '/ansible/ansible-dashboard/trial/success',
     initialEntries: ['/ansible/ansible-dashboard/trial/success'],
+  },
+  {
+    entitlements: getMinimumViableEntitlements({
+      profile: { org_id: '123', account_number: '1', email: 'user@example.com', is_internal: false },
+    }),
+    expected: '/ansible/ansible-dashboard/trial',
+    initialEntries: ['/ansible/ansible-dashboard/foo/bar'],
   },
 ];
 

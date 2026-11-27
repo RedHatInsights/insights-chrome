@@ -27,6 +27,15 @@ export const ChromeIntlProvider = ({ children }: React.PropsWithChildren) => {
   const [catalog, setCatalog] = useState<Record<string, string> | null>(englishCatalog);
 
   useEffect(() => {
+    // Preload library catalogs without mislabeling Chrome's English fallback.
+    document.documentElement.dataset.consoleLanguage = language;
+  }, [language]);
+
+  useEffect(() => {
+    document.documentElement.lang = catalog ? loadedLocale : 'en';
+  }, [catalog, loadedLocale]);
+
+  useEffect(() => {
     if (language === 'en') {
       setLoadedLocale('en');
       setCatalog(englishCatalog);
