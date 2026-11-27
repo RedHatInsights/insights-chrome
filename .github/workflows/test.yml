@@ -19,7 +19,7 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
       # npm ci always reinstalls node_modules from scratch, so only cache the Cypress binary download
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: cypress-cache
         with:
           path: |
@@ -73,7 +73,7 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
       # npm ci always reinstalls node_modules from scratch, so only cache the Cypress binary download
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: cypress-cache
         with:
           path: |
