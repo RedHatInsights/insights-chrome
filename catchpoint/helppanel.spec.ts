@@ -21,8 +21,16 @@ await page.locator("//input[@name='password']").fill(password);
 await page.getByRole('button', { name: 'Log in' }).click();
 
 await page.waitForLoadState('load', { timeout: 20000 });
-await expect(page.getByRole('button', { name: 'Add widgets' })).toBeVisible({ timeout: 45 * 1000 });
+// The widget panel can be restored open, so its toggle may have either accessible name.
+const widgetPanelToggle = page.getByRole('button', { name: /^(Add widgets|Close widget panel)$/i });
+await expect(widgetPanelToggle).toBeVisible({ timeout: 45 * 1000 });
 
-await page.getByRole('button', { name: 'Toggle help panel' }).click();
-await expect(page.locator('.learningResources [role="tabpanel"]')).toBeVisible({ timeout: 45 * 1000 });
-await expect(page.getByText('Loading...')).not.toBeVisible();
+const helpPanelToggle = page.getByRole('button', { name: 'Toggle help panel' });
+await expect(helpPanelToggle).toBeVisible({ timeout: 45 * 1000 });
+if ((await helpPanelToggle.getAttribute('aria-expanded')) !== 'true') {
+  await helpPanelToggle.click();
+}
+await expect(helpPanelToggle).toHaveAttribute('aria-expanded', 'true', { timeout: 10 * 1000 });
+const helpPanel = page.locator('.learningResources');
+await expect(helpPanel).toBeVisible({ timeout: 45 * 1000 });
+await expect(helpPanel.getByText('Loading...')).not.toBeVisible();
