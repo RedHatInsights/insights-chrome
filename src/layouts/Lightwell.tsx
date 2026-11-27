@@ -132,7 +132,7 @@ const Lightwell = ({ Footer }: LightwellProps) => {
         sidebar={null}
         onPageResize={null}
         masthead={withHorizontalSubnav(
-          <Masthead className="chr-c-masthead" display={{ default: 'inline' }}>
+          <Masthead className="chr-c-masthead chr-c-masthead--lightwell" display={{ default: 'inline' }}>
             <Header
               breadcrumbsProps={{ hideNav: true }}
               toolbarConfig={{

@@ -8,6 +8,17 @@ import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 import { _resetDarkModeStore, getDarkModeStore } from '../../state/stores/darkModeStore';
 import LightwellServicesLink from './LightwellServicesLink';
 
+// Mock the logo asset module (rather than the raw `.svg` imports it wraps)
+// with distinct values per theme so tests can assert the correct asset is
+// selected. Every `.svg` import is routed to the same stub by the
+// `moduleNameMapper` regex in jest.config.js, so mocking the raw paths
+// directly would collide; `../Header/logoAssets` is a plain module and mocks
+// cleanly.
+jest.mock('../Header/logoAssets', () => ({
+  lightwellLogoLight: 'lightwell-logo-light.svg',
+  lightwellLogoDark: 'lightwell-logo-dark.svg',
+}));
+
 // Mock the bridge to delegate to the real globalThis-anchored store.
 jest.mock('../../chrome/darkModeStoreBridge', () => {
   const { getDarkModeStore: getStore } = jest.requireActual('../../state/stores/darkModeStore');
@@ -48,9 +59,9 @@ describe('LightwellServicesLink', () => {
     _resetDarkModeStore();
   });
 
-  it('should render the Lightwell label', () => {
+  it('should render the Lightwell logo', () => {
     renderWithProviders();
-    expect(screen.getByText('Lightwell')).toBeInTheDocument();
+    expect(screen.getByAltText('Lightwell')).toBeInTheDocument();
   });
 
   it('should render a link to /lightwell', () => {
@@ -65,30 +76,27 @@ describe('LightwellServicesLink', () => {
     expect(link).toHaveAttribute('data-ouia-component-id', 'AllServices-Dropdown-Lightwell');
   });
 
-  it('should render the light Lightwell icon by default', () => {
-    const { container } = renderWithProviders();
-    const icon = container.querySelector('img[src*="lightwell-logomark"]');
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
-    expect(icon).toHaveAttribute('width', '22');
+  it('should render the Lightwell logo at 22px height', () => {
+    renderWithProviders();
+    const icon = screen.getByRole('img', { name: 'Lightwell' });
     expect(icon).toHaveAttribute('height', '22');
   });
 
-  it('should switch Lightwell icon when the dark mode store updates', () => {
-    const { container } = renderWithProviders();
-    expect(container.querySelector('img')).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
+  it('should keep rendering the Lightwell logo when the dark mode store updates', () => {
+    renderWithProviders();
+    expect(screen.getByRole('img', { name: 'Lightwell' })).toHaveAttribute('src', 'lightwell-logo-light.svg');
 
     act(() => {
       getDarkModeStore().updateState('SET_DARK');
     });
 
-    expect(container.querySelector('img')).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-dark.svg');
+    expect(screen.getByRole('img', { name: 'Lightwell' })).toHaveAttribute('src', 'lightwell-logo-dark.svg');
 
     act(() => {
       getDarkModeStore().updateState('SET_LIGHT');
     });
 
-    expect(container.querySelector('img')).toHaveAttribute('src', '/apps/frontend-assets/partners-icons/lightwell-logomark-light.svg');
+    expect(screen.getByRole('img', { name: 'Lightwell' })).toHaveAttribute('src', 'lightwell-logo-light.svg');
   });
 
   it('should make the entire content clickable as a single link', () => {
