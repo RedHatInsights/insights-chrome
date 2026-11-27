@@ -8,6 +8,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
 const proxy = require('@redhat-cloud-services/frontend-components-config-utilities/proxy');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 const imageNullLoader = require('./image-null-loader');
 
 // call default generator then pair different variations of uri with each base
@@ -80,6 +81,20 @@ const nonKonfluxDevServerConfiguration = () => {
     proxyVerbose: true,
     isChrome: true,
     frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
+    customProxy: [
+      /**
+       * POC (docs/hydraSearch.md): serve Hydra search same-origin in dev. The browser is usually not on
+       * the corp proxy, so a direct call to access.stage.redhat.com hits the Akamai "Preprod Lockdown"
+       * page, which answers the CORS preflight with a 403. Route it through squid like the rest of stage.
+       */
+      {
+        context: ['/hydra/rest/search/'],
+        target: 'https://access.stage.redhat.com',
+        secure: true,
+        changeOrigin: true,
+        agent: new HttpsProxyAgent(process.env.HYDRA_PROXY_URL || 'http://squid.corp.redhat.com:3128'),
+      },
+    ],
     routes: {
       ...(process.env.CHROME_SERVICE && {
         // web sockets
