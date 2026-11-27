@@ -1,0 +1,22 @@
+{
+  "bundle.iam.title": "Gestion des identités et des accès",
+  "module.rbac.defaultDocumentTitle": "Accès utilisateur",
+  "nav.rbac.iam.user-access.access.routes.groups.title": "Groupes",
+  "nav.rbac.iam.user-access.access.routes.roles.product": "Accès Red Hat",
+  "nav.rbac.iam.user-access.access.routes.roles.title": "Rôles",
+  "nav.rbac.iam.user-access.access.title": "Accès utilisateur",
+  "nav.rbac.iam.user-access.settings.navItems.preferences.title": "Préférences",
+  "nav.rbac.iam.user-access.users.title": "Utilisateurs",
+  "navseg.rbac.shared-access.workspaces.title": "Espaces de travail",
+  "search.rbac-stage-users.alt_title.accounts": "Comptes",
+  "search.rbac-stage-users.alt_title.people": "Personnes",
+  "search.rbac-stage-users.description": "Gérer les utilisateurs de votre compte",
+  "search.rbac-stage-users.title": "Utilisateurs",
+  "serviceCategory.security.group.access.title": "Accès",
+  "serviceCategory.security.title": "Sécurité",
+  "tile.rbac.security.access.user-access.description": "Gérer qui peut faire quoi",
+  "tile.rbac.security.access.user-access.title": "Accès utilisateur",
+  "widget.rbac.landing.rbacwidget.default.headerLink.title": "Voir les accès",
+  "widget.rbac.landing.rbacwidget.default.title": "Mon accès utilisateur",
+  "widgetLayout.rbac.rbacLanding.displayName": "Vue d'ensemble des accès"
+}

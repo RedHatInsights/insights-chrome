@@ -1,8 +1,15 @@
 import axios from 'axios';
 import localforage from 'localforage';
-import { create, search } from '@orama/orama';
+import { Orama, create, getByID, search } from '@orama/orama';
+import { createStore } from 'jotai';
+import { waitFor } from '@testing-library/react';
+import { feoLocalizationEnabledAtom, feoMessagesAtom } from './feoLocaleAtom';
+import { languageAtom } from './languageAtom';
+import { localQuery } from '../../utils/localSearch';
+import messages from '../../../testdata/feo-localization/messages.fr.json';
+import locales from '../../../testdata/feo-localization/locales.json';
 import { faker } from '@faker-js/faker';
-import { entrySchema, getDB, insertEntry, loadGeneratedSearchIndex } from './localSearchAtom';
+import { asyncLocalOrama, entrySchema, insertEntry, insertSearchEntryAtom, loadGeneratedSearchIndex } from './localSearchAtom';
 import { CACHE_SCHEMA_VERSION } from '../../utils/cacheFetch';
 import { CONFIG_SOURCES, resetConfigCacheStatus } from '../../utils/configCacheStatus';
 
@@ -21,11 +28,6 @@ jest.mock('../../components/FeatureFlags/unleashClient', () => ({
   getUnleashClient: jest.fn(() => ({ isReady: () => true, isEnabled: () => true })),
   unleashClientExists: jest.fn(() => true),
 }));
-
-/**
- * getDB() returns a module-level singleton — the same DB instance is shared across
- * all tests in this file. Documents inserted in one test remain visible in later tests.
- */
 
 beforeEach(() => {
   mockSetItem.mockReset().mockResolvedValue(undefined);
@@ -62,6 +64,144 @@ describe('loadGeneratedSearchIndex', () => {
   });
 });
 
+describe('localized search index', () => {
+  const english = [
+    {
+      id: 'rbac-stage-users',
+      href: '/iam/user-access/users',
+      title: 'Users',
+      description: 'Manage users in your account',
+      alt_title: ['People', 'Accounts', 'a | b'],
+    },
+  ];
+  beforeEach(() => {
+    jest.mocked(axios.get).mockImplementation(async (url) => {
+      if (String(url).endsWith('locales.json')) return { data: locales };
+      if (String(url).endsWith('messages.fr.json')) return { data: messages };
+      if (String(url).endsWith('search-index-generated.json')) return { data: english };
+      return { data: [] };
+    });
+  });
+
+  it('keeps the exact English document terms and rebuilds bilingual search only for a catalog change', async () => {
+    const store = createStore();
+    store.set(feoLocalizationEnabledAtom, true);
+    const unsubscribe = store.sub(feoMessagesAtom, () => {});
+    const englishDB = await store.get(asyncLocalOrama);
+    expect(getByID(englishDB, english[0].id)?.altTitle).toEqual(english[0].alt_title);
+    await localQuery(englishDB, 'Users');
+    store.set(languageAtom, 'fr');
+    await waitFor(() => expect(store.get(feoMessagesAtom)).toEqual(messages));
+    const frenchDB = await store.get(asyncLocalOrama);
+    expect(frenchDB).not.toBe(englishDB);
+    for (const term of ['Users', 'Utilisateurs', 'People', 'Personnes', 'Comptes', 'Manage', 'Gérer', 'a | b']) {
+      const result = (await localQuery(frenchDB, term)).find(({ id }) => id === english[0].id)!;
+      expect(result.pathname).toBe(english[0].href);
+      expect(result.title.replace(/<\/?mark>/g, '')).toBe('Utilisateurs');
+      expect(result.description.replace(/<\/?mark>/g, '')).toBe('Gérer les utilisateurs de votre compte');
+    }
+    store.set(languageAtom, 'en');
+    await waitFor(() => expect(store.get(feoMessagesAtom)).toEqual({}));
+    const restored = await store.get(asyncLocalOrama);
+    expect(getByID(restored, english[0].id)?.altTitle).toEqual(english[0].alt_title);
+    for (const term of ['Users', 'People', 'Accounts']) {
+      expect((await localQuery(restored, term))[0].title.replace(/<\/?mark>/g, '')).toBe('Users');
+    }
+    unsubscribe();
+  });
+
+  it('retains remote inserts made during the initial asset load and isolates stores', async () => {
+    let release!: (response: { data: typeof english }) => void;
+    jest.mocked(axios.get).mockImplementation(async (url) =>
+      String(url).endsWith('search-index-generated.json')
+        ? new Promise((resolve) => {
+            release = resolve;
+          })
+        : { data: [] }
+    );
+    const store = createStore();
+    const building = store.get(asyncLocalOrama);
+    const inserted = store.set(insertSearchEntryAtom, {
+      id: 'early-remote',
+      title: 'Early remote',
+      description: 'Registered during asset loading',
+      pathname: '/early',
+      uri: '/early',
+      bundleTitle: 'Remote',
+      type: 'services',
+    });
+    await waitFor(() => expect(release).toBeDefined());
+    release({ data: english });
+    await inserted;
+    expect(store.get(asyncLocalOrama)).toBe(building);
+    expect(getByID(await building, 'early-remote')?.title).toBe('Early remote');
+    jest.mocked(axios.get).mockResolvedValue({ data: [] });
+    expect(getByID(await createStore().get(asyncLocalOrama), 'early-remote')).toBeUndefined();
+  });
+
+  it.each([true, false])('snapshots caller-owned entries and aliases before insertion/replay (mutate while pending: %s)', async (mutateWhilePending) => {
+    const store = createStore();
+    store.set(feoLocalizationEnabledAtom, true);
+    const unsubscribe = store.sub(feoMessagesAtom, () => {});
+    const entry = {
+      id: 'remote-a',
+      title: 'Remote A',
+      description: 'Remote description',
+      pathname: '/remote/a',
+      uri: '/remote/a',
+      bundleTitle: 'Remote',
+      altTitle: ['Alias A'],
+      type: 'services' as const,
+    };
+    const insertA = store.set(insertSearchEntryAtom, entry);
+    if (!mutateWhilePending) await insertA;
+    Object.assign(entry, { id: 'remote-b', title: 'Remote B', pathname: '/remote/b', uri: '/remote/b' });
+    entry.altTitle[0] = 'Alias B';
+    await insertA;
+    await store.set(insertSearchEntryAtom, entry);
+    entry.title = 'Later caller mutation';
+    entry.altTitle.push('Later alias');
+    // Duplicate IDs retain the first accepted record, not the caller's edits.
+    await store.set(insertSearchEntryAtom, entry);
+    const assertRecords = (db: Orama<typeof entrySchema>) => {
+      expect(getByID(db, 'remote-a')).toMatchObject({ title: 'Remote A', pathname: '/remote/a', altTitle: ['Alias A'] });
+      expect(getByID(db, 'remote-b')).toMatchObject({ title: 'Remote B', pathname: '/remote/b', altTitle: ['Alias B'] });
+    };
+    assertRecords(await store.get(asyncLocalOrama));
+    store.set(languageAtom, 'fr');
+    await waitFor(() => expect(store.get(feoMessagesAtom)).toEqual(messages));
+    assertRecords(await store.get(asyncLocalOrama));
+    unsubscribe();
+  });
+
+  it('inserts remote entries without rebuilding or suspending and retains them through locale changes', async () => {
+    const store = createStore();
+    store.set(feoLocalizationEnabledAtom, true);
+    const unsubscribe = store.sub(feoMessagesAtom, () => {});
+    const initialPromise = store.get(asyncLocalOrama);
+    const initialDB = await initialPromise;
+    for (let i = 0; i < 3; i++) {
+      await store.set(insertSearchEntryAtom, {
+        id: `remote-${i}`,
+        title: `Remote ${i}`,
+        description: 'Remote description',
+        pathname: `/remote/${i}`,
+        uri: `/remote/${i}`,
+        bundleTitle: 'Remote',
+        type: 'services',
+      });
+      expect(store.get(asyncLocalOrama)).toBe(initialPromise);
+      expect(getByID(initialDB, `remote-${i}`)?.title).toBe(`Remote ${i}`);
+    }
+    store.set(languageAtom, 'fr');
+    await waitFor(() => expect(store.get(feoMessagesAtom)).toEqual(messages));
+    const localized = await store.get(asyncLocalOrama);
+    expect(localized).not.toBe(initialDB);
+    for (let i = 0; i < 3; i++) expect(getByID(localized, `remote-${i}`)?.title).toBe(`Remote ${i}`);
+    unsubscribe();
+  });
+});
+
 describe('entrySchema', () => {
   it('defines the expected fields', () => {
     expect(entrySchema).toMatchObject({
@@ -73,19 +213,6 @@ describe('entrySchema', () => {
       pathname: 'string',
       type: 'string',
     });
-  });
-});
-
-describe('getDB()', () => {
-  it('returns an Orama database instance', () => {
-    const db = getDB();
-    expect(db).toBeDefined();
-  });
-
-  it('is a singleton (same reference on second call)', () => {
-    const db1 = getDB();
-    const db2 = getDB();
-    expect(db1).toBe(db2);
   });
 });
 

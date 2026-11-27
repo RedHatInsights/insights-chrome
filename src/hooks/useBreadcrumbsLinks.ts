@@ -8,12 +8,12 @@ import { findNavLeafPath } from '../utils/common';
 import { extractNavItemGroups, isNavItems } from '../utils/fetchNavigationFiles';
 import { useAtomValue } from 'jotai';
 import { moduleRoutesAtom } from '../state/atoms/chromeModuleAtom';
-import { navigationAtom } from '../state/atoms/navigationAtom';
+import { localizedNavigationAtom } from '../state/atoms/navigationAtom';
 
 const useBreadcrumbsLinks = () => {
   const { bundleId, bundleTitle } = useBundle();
   const routes = useAtomValue(moduleRoutesAtom);
-  const navigation = useAtomValue(navigationAtom);
+  const navigation = useAtomValue(localizedNavigationAtom);
   const { pathname } = useLocation();
   const [segments, setSegments] = useState<Required<NavItem, 'href'>[]>([]);
   const wildCardRoutes = useMemo(() => routes.map((item) => ({ ...item, path: `${item.path}/*` })), [routes]);
@@ -55,7 +55,7 @@ const useBreadcrumbsLinks = () => {
       }
     }
     setSegments(segments);
-  }, [pathname, navigation]);
+  }, [pathname, navigation, bundleId, bundleTitle]);
   return segments;
 };
 

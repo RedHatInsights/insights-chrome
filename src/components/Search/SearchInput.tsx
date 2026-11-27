@@ -69,7 +69,6 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
 
   const debouncedTrack = useCallback(analytics ? debounce(analytics.track, 1000) : () => null, [analytics]);
 
-  const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -158,14 +157,12 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   };
 
   useEffect(() => {
-    isMounted.current = true;
     // make sure the menu does not overflow the screen and creates extra space bellow the main content
     window.addEventListener('resize', handleWindowResize);
     // calculate initial max height
     handleWindowResize();
     return () => {
       window.removeEventListener('resize', handleWindowResize);
-      isMounted.current = false;
     };
   }, [isOpen, menuRef, resultCount]);
 
@@ -178,14 +175,27 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
     };
   }, [isOpen, menuRef]);
 
-  const handleChange: SearchInputProps['onChange'] = async (_e, value) => {
-    setSearchValue(value);
-    setIsFetching(true);
-    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE, 'services');
-    setSearchItems(results ?? []);
-    if (isMounted.current) {
+  useEffect(() => {
+    let cancelled = false;
+    if (!searchValue) {
+      setSearchItems([]);
       setIsFetching(false);
+      return;
     }
+    setIsFetching(true);
+    localQuery(asyncLocalOramaData, searchValue, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE, 'services').then((results) => {
+      if (!cancelled) {
+        setSearchItems(results);
+        setIsFetching(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [asyncLocalOramaData, searchValue, isPreview]);
+
+  const handleChange: SearchInputProps['onChange'] = (_e, value) => {
+    setSearchValue(value);
     if (ready && analytics) {
       debouncedTrack('chrome.search-query', { query: value });
     }

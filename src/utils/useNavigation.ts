@@ -4,8 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from './common';
 import { NavItem, Navigation } from '../@types/types';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
-import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
-import { useVisibleBundles, useVisibleBundlesError } from '../state/atoms/visibleBundlesAtom';
+import { localizedNavigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
+import { useVisibleBundlesError, visibleBundlesAtom } from '../state/atoms/visibleBundlesAtom';
 import { remoteActiveQuickStartIDAtom } from '../state/atoms/remoteQuickstartsAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
@@ -38,14 +38,14 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 };
 
 const useNavigation = () => {
-  const visibleBundles = useVisibleBundles();
+  const visibleBundles = useAtomValue(visibleBundlesAtom);
   const bundlesError = useVisibleBundlesError();
   const clearGatewayError = useSetAtom(clearGatewayErrorAtom);
   const location = useLocation();
   const navigate = useNavigate();
   const { pathname } = location;
   const currentNamespace = pathname.split('/')[1];
-  const navigation = useAtomValue(navigationAtom);
+  const navigation = useAtomValue(localizedNavigationAtom);
   const schema = navigation[currentNamespace];
   const setNavigationSegment = useSetAtom(setNavigationSegmentAtom);
   const [noNav, setNoNav] = useState(false);

@@ -1,3 +1,7 @@
+import { useAtomValue } from 'jotai';
+import { feoMessagesAtom } from '../state/atoms/feoLocaleAtom';
+import { FeoMessages, localizeBundleTitle } from '../utils/feoLocalization';
+
 export const isAnsible = (sections: string[]) => (sections.includes('ansible') && sections.includes('insights') ? 1 : 0);
 
 export function getUrl(type?: string, pathname = window.location.pathname) {
@@ -30,9 +34,19 @@ export const bundleMapping: {
   support: 'Support',
 };
 
-const useBundle = () => {
+/**
+ * Bundle id and title for the current URL, localized with the given FEO
+ * messages (English without them). Plain function, not a hook: it backs
+ * chrome.getBundleData() and chrome.updateDocumentTitle(), which tenant apps
+ * call from effects and callbacks outside a render.
+ */
+export function getBundleData(messages: FeoMessages = {}) {
   const bundleId = getUrl('bundle');
-  return { bundleId, bundleTitle: bundleMapping[bundleId] || bundleId };
-};
+  const bundleTitle = localizeBundleTitle(bundleMapping[bundleId] || bundleId, bundleId, messages);
+  return { bundleId, bundleTitle };
+}
+
+// Component variant: re-renders when the locale messages change.
+const useBundle = () => getBundleData(useAtomValue(feoMessagesAtom));
 
 export default useBundle;

@@ -32,6 +32,7 @@ import { navigationAtom } from '../state/atoms/navigationAtom';
 
 const mockVisibleBundles = jest.fn().mockReturnValue([]);
 jest.mock('../state/atoms/visibleBundlesAtom', () => ({
+  visibleBundlesAtom: jest.requireActual('jotai').atom(() => mockVisibleBundles()),
   useVisibleBundles: () => mockVisibleBundles(),
   useVisibleBundlesError: () => false,
 }));

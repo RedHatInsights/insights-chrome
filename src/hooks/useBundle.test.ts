@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import useBundle, { bundleMapping, getUrl, isAnsible } from './useBundle';
+import useBundle, { bundleMapping, getBundleData, getUrl, isAnsible } from './useBundle';
 
 describe('useBundle', () => {
   describe('isAnsible', () => {
@@ -127,6 +127,24 @@ describe('useBundle', () => {
       const { result } = renderHook(() => useBundle());
       expect(result.current.bundleId).toBe('unknown-bundle');
       expect(result.current.bundleTitle).toBe('unknown-bundle');
+      jsdomReset();
+    });
+  });
+
+  describe('getBundleData (chrome.getBundleData API)', () => {
+    // Tenants call chrome.getBundleData() from effects and callbacks, outside
+    // a component render, so it must not use React hooks.
+    it('works when called outside a React render', () => {
+      expect(() => getBundleData()).not.toThrow();
+      expect(getBundleData()).toEqual({ bundleId: 'landing', bundleTitle: 'Home' });
+    });
+
+    it('localizes the bundle title from the given messages', () => {
+      jsdomReconfigure({ url: 'https://localhost/iam/user-access' });
+      expect(getBundleData({ 'bundle.iam.title': 'Gestion des identités et des accès' })).toEqual({
+        bundleId: 'iam',
+        bundleTitle: 'Gestion des identités et des accès',
+      });
       jsdomReset();
     });
   });

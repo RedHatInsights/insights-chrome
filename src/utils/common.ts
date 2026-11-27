@@ -3,7 +3,8 @@ import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
 import { Required } from 'utility-types';
 import { setupCache } from 'axios-cache-interceptor';
-import useBundle, { getUrl } from '../hooks/useBundle';
+import { getBundleData, getUrl } from '../hooks/useBundle';
+import type { FeoMessages } from './feoLocalization';
 import { cacheFetch } from './cacheFetch';
 import { CONFIG_SOURCES, reportConfigSource } from './configCacheStatus';
 import * as Sentry from '@sentry/react';
@@ -215,8 +216,8 @@ export function ITLessCognito() {
   return getEnv() === 'ephem';
 }
 
-export function updateDocumentTitle(title?: string, noSuffix = false) {
-  const titleSuffix = `| ${useBundle().bundleTitle}`;
+export function updateDocumentTitle(title?: string, noSuffix = false, messages: FeoMessages = {}) {
+  const titleSuffix = `| ${getBundleData(messages).bundleTitle}`;
   if (typeof title === 'undefined') {
     return;
   }

@@ -1,4 +1,4 @@
-import { findNavLeafPath, getErrorMessage, isExpandableNav, isFedModulesConfig, sanitizeFedModules } from './common';
+import { findNavLeafPath, getErrorMessage, isExpandableNav, isFedModulesConfig, sanitizeFedModules, updateDocumentTitle } from './common';
 import { NavItem } from '../@types/types';
 
 const mockCaptureException = jest.fn();
@@ -344,5 +344,19 @@ describe('sanitizeFedModules', () => {
   it('returns an empty map for a legitimately empty config without throwing', () => {
     expect(sanitizeFedModules({}, 'Test')).toEqual({});
     expect(sanitizeFedModules({ $schema: 'x' }, 'Test')).toEqual({ $schema: 'x' });
+  });
+});
+
+describe('updateDocumentTitle', () => {
+  // chrome.updateDocumentTitle is called by tenant apps from effects and
+  // callbacks, outside a component render, so it must not use React hooks.
+  it('sets the title with the bundle suffix when called outside a React render', () => {
+    expect(() => updateDocumentTitle('Roles')).not.toThrow();
+    expect(document.title).toBe('Roles | Home');
+  });
+
+  it('omits the suffix when asked', () => {
+    updateDocumentTitle('All Services', true);
+    expect(document.title).toBe('All Services');
   });
 });

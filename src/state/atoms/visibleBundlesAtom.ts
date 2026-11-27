@@ -12,7 +12,20 @@ import { cacheFetch } from '../../utils/cacheFetch';
 import { CONFIG_SOURCES, reportConfigSource } from '../../utils/configCacheStatus';
 import { degradedStateAtom, setServiceDegradedAtom } from './degradedStateAtom';
 
+import { feoLocalizationEnabledAtom, feoMessagesAtom } from './feoLocaleAtom';
+import { localizeBundles, localizeServiceTiles } from '../../utils/feoLocalization';
+
 export const visibleBundlesAtom = atom<BundleNavigation[]>([]);
+export const localizedVisibleBundlesAtom = atom((get) => {
+  const bundles = get(visibleBundlesAtom);
+  const messages = get(feoMessagesAtom);
+  return localizeBundles(bundles, messages);
+});
+export const localizedServiceTilesAtom = atom((get) => {
+  const tiles = get(visibleServiceTilesAtom);
+  const messages = get(feoMessagesAtom);
+  return localizeServiceTiles(tiles, messages);
+});
 export const visibleBundlesReadyAtom = atom(false);
 export const visibleBundlesErrorAtom = atom(false);
 export const visibleServiceTilesAtom = atom<AllServicesSection[]>([]);
@@ -159,6 +172,10 @@ const keepCurrentVisibility = (error: unknown) => {
 export const useInitVisibleBundles = () => {
   const feoGenerated = useFeoConfig();
   const { flagsReady, flagsError } = useFlagsStatus();
+  const setLocalizationEnabled = useSetAtom(feoLocalizationEnabledAtom);
+  useEffect(() => {
+    setLocalizationEnabled(feoGenerated);
+  }, [feoGenerated, setLocalizationEnabled]);
   const setBundles = useSetAtom(visibleBundlesAtom);
   const setBundlesReady = useSetAtom(visibleBundlesReadyAtom);
   const setBundlesError = useSetAtom(visibleBundlesErrorAtom);
@@ -279,8 +296,11 @@ export const useInitVisibleBundles = () => {
   }, [entitlementsDegraded]);
 };
 
+/** Localized presentation data; routing, IDs, and visibility stay unchanged.
+ * Use visibleBundlesAtom directly when English source configuration is needed.
+ */
 export const useVisibleBundles = () => {
-  return useAtomValue(visibleBundlesAtom);
+  return useAtomValue(localizedVisibleBundlesAtom);
 };
 
 export const useVisibleBundlesReady = () => {
@@ -292,7 +312,7 @@ export const useVisibleBundlesError = () => {
 };
 
 export const useVisibleServiceTiles = () => {
-  const tiles = useAtomValue(visibleServiceTilesAtom);
+  const tiles = useAtomValue(localizedServiceTilesAtom);
   const ready = useAtomValue(visibleServiceTilesReadyAtom);
   const error = useAtomValue(visibleServiceTilesErrorAtom);
   return { tiles, ready, error };

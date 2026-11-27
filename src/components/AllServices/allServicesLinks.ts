@@ -1,6 +1,10 @@
 import { FavorableIcons } from '../FavoriteServices/ServiceIcon';
 
 export type AllServicesLink = {
+  id?: string;
+  frontendRef?: string;
+  section?: string;
+  group?: string;
   href: string;
   icon?: FavorableIcons;
   title: string;
@@ -10,6 +14,7 @@ export type AllServicesLink = {
   prod?: boolean;
 };
 export type AllServicesGroup = {
+  id?: string;
   isGroup: true;
   title: string;
   links: AllServicesLink[];

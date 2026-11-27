@@ -2,7 +2,7 @@ import { create } from '@orama/orama';
 import type { Orama } from '@orama/orama';
 import { faker } from '@faker-js/faker';
 import { ReleaseEnv, SearchDataType } from '@redhat-cloud-services/types/index.js';
-import { SearchPermissions, entrySchema, insertEntry } from '../state/atoms/localSearchAtom';
+import { SearchPermissions, createSearchDb, entrySchema, insertEntry } from '../state/atoms/localSearchAtom';
 import { localQuery } from './localSearch';
 
 jest.mock('./isNavItemVisible', () => ({
@@ -214,5 +214,57 @@ describe('localQuery()', () => {
 
     const results = await localQuery(db, term, ReleaseEnv.STABLE, serviceType);
     expect(results.length).toBe(10);
+  });
+});
+
+describe('localQuery() with translated entries', () => {
+  // The index holds translated titles next to English ones, so the tokenizer
+  // must keep CJK text and fold accents (RHCLOUD-52084 acceptance criteria).
+  let db: Orama<typeof entrySchema>;
+  const entry = (id: string, title: string, altTitle: string[] = []) => ({
+    id,
+    title,
+    altTitle,
+    uri: `https://console.redhat.com/iam/${id}`,
+    pathname: `/iam/${id}`,
+    description: '',
+    bundleTitle: 'Identity & Access Management',
+    type: 'services' as SearchDataType,
+  });
+  const ids = async (term: string) => (await localQuery(db, term, ReleaseEnv.STABLE, 'services')).map(({ id }) => id);
+
+  beforeEach(async () => {
+    SearchPermissions.clear();
+    db = createSearchDb();
+    for (const [id, title, altTitle] of [
+      ['roles', '角色', ['Roles']],
+      ['workspaces', '工作区', ['Workspaces']],
+      ['groups-ja', 'グループ', []],
+      ['users-ko', '사용자', []],
+      ['roles-fr', 'Rôles', []],
+      ['overview-fr', 'Vue d’ensemble', []],
+    ] as const) {
+      SearchPermissions.set(id, []);
+      await insertEntry(db, entry(id, title, [...altTitle]));
+    }
+  });
+
+  it.each([
+    ['角色', 'roles'],
+    ['工作区', 'workspaces'],
+    ['グループ', 'groups-ja'],
+    ['사용자', 'users-ko'],
+  ])('finds %s by its translated title', async (term, id) => {
+    expect(await ids(term)).toContain(id);
+  });
+
+  it('finds accented titles with or without the accent', async () => {
+    expect(await ids('rôles')).toContain('roles-fr');
+    expect(await ids('roles')).toContain('roles-fr');
+    expect(await ids('ensemble')).toContain('overview-fr');
+  });
+
+  it('still finds entries by their English alias', async () => {
+    expect(await ids('workspaces')).toContain('workspaces');
   });
 });
