@@ -1,13 +1,36 @@
 import localforage from 'localforage';
+import { withTimeout } from './withTimeout';
 import { FEATURE_FLAGS_INITIAL_TIMEOUT_MS, getFeatureFlagsError, getUnleashClient, unleashClientExists } from '../components/FeatureFlags/unleashClient';
 
 export type CacheFetchResult<T> = { data: T; fromCache: boolean };
-export type CacheFetchOptions = { enabled: boolean };
+export type CacheFetchOptions<T = unknown> = {
+  enabled: boolean;
+  /**
+   * When set, a successful live payload is only written if this returns true.
+   * `cached` is null when nothing valid and unexpired is stored.
+   */
+  shouldPersist?: (data: T, cached: T | null) => boolean;
+  /**
+   * When true, aborted/canceled live requests may replay last-known-good.
+   * Default false: abort means the caller gave up, so do not serve cache.
+   * A function is evaluated when the request fails, so the caller can tell a timeout from its own abort.
+   */
+  fallbackOnAbort?: boolean | (() => boolean);
+  /**
+   * Opt-in bound for fallback reads. Also bounds the compare read under the persistence lock
+   * (default PERSIST_READ_TIMEOUT_MS), which runs in the background either way.
+   */
+  cacheReadTimeoutMs?: number;
+};
 
 /** Bump when cached payload shapes change incompatibly. */
 export const CACHE_SCHEMA_VERSION = 1;
 
 export const CONFIG_CACHE_FALLBACK_FLAG = 'platform.chrome.config-cache-fallback';
+
+/** Bound on the compare read held under the cross-tab persistence lock when the caller sets no cacheReadTimeoutMs. */
+export const PERSIST_READ_TIMEOUT_MS = 1000;
+const READ_TIMED_OUT = Symbol('read-timed-out');
 
 /** Discard last-known-good entries older than this (7 days). */
 export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -15,9 +38,14 @@ export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 type CacheEnvelope<T> = {
   cachedAt: number;
   data: T;
+  /** When the live request that produced `data` started; absent on entries written before it was recorded. */
+  requestedAt?: number;
 };
 
 let cache: LocalForage | undefined;
+const generations = new Map<string, number>();
+const pendingWrites = new Map<string, Set<Promise<unknown>>>();
+const pendingDeletes = new Map<string, Promise<void>>();
 
 function getCache(): LocalForage {
   if (!cache) {
@@ -32,6 +60,15 @@ function getCache(): LocalForage {
 
 function storageKey(key: string): string {
   return `v${CACHE_SCHEMA_VERSION}:${key}`;
+}
+
+/** Serializes persistence of one key across tabs where the Web Locks API exists; runs unlocked elsewhere. */
+async function withPersistLock(sk: string, persist: () => Promise<void>): Promise<void> {
+  const locks = typeof navigator === 'undefined' ? undefined : navigator.locks;
+  if (!locks?.request) {
+    return persist();
+  }
+  await locks.request(`chrome-config-cache:${sk}`, persist);
 }
 
 function isValidEnvelope<T>(value: unknown, payloadGuard?: (data: unknown) => data is T): value is CacheEnvelope<T> {
@@ -74,12 +111,17 @@ function purgeStaleVersions(store: LocalForage): void {
  * Cache is used only for origin failures (5xx) and network errors.
  * Client errors (4xx) propagate immediately — stale SSO config for 401 is worse than failure.
  */
-function shouldUseCacheFallback(err: unknown): boolean {
-  if (typeof err === 'object' && err !== null) {
-    const error = err as { code?: unknown; name?: unknown };
-    if (error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError') {
-      return false;
-    }
+export function isAbortError(err: unknown): boolean {
+  if (typeof err !== 'object' || err === null) {
+    return false;
+  }
+  const error = err as { code?: unknown; name?: unknown };
+  return error.code === 'ERR_CANCELED' || error.name === 'AbortError' || error.name === 'CanceledError';
+}
+
+function shouldUseCacheFallback(err: unknown, fallbackOnAbort = false): boolean {
+  if (isAbortError(err)) {
+    return fallbackOnAbort;
   }
 
   // Axios errors have a response property
@@ -92,6 +134,32 @@ function shouldUseCacheFallback(err: unknown): boolean {
   }
   // Network errors (no response) qualify for fallback
   return true;
+}
+
+/**
+ * Best-effort delete of one versioned cache key (logout, tenant switch).
+ * Storage errors are swallowed — failing to clear must not block logout.
+ */
+export async function deleteCacheKey(key: string): Promise<void> {
+  const sk = storageKey(key);
+  generations.set(sk, (generations.get(sk) ?? 0) + 1);
+  const writes = [...(pendingWrites.get(sk) ?? [])];
+  const remove = () =>
+    Promise.resolve()
+      .then(() => getCache().removeItem(sk))
+      .catch(() => undefined);
+  // Delete immediately, then again after any already-started writes. New writes
+  // wait for this barrier; older fetches cannot persist after invalidation.
+  const deletion = Promise.all([pendingDeletes.get(sk), remove(), ...writes]).then(async () => {
+    if (writes.length) {
+      await remove();
+    }
+  });
+  pendingDeletes.set(sk, deletion);
+  await deletion;
+  if (pendingDeletes.get(sk) === deletion) {
+    pendingDeletes.delete(sk);
+  }
 }
 
 /**
@@ -174,17 +242,22 @@ const getConfigCacheFallbackPolicy = (): Promise<boolean> => {
  *                       still returned (the origin is authoritative) but is NOT cached. A cached read that fails the
  *                       guard is discarded so the caller falls through to rethrowing the original error.
  * @param options - Cache policy. Disabled mode calls fetcher directly and never initializes or accesses storage.
+ *                  `shouldPersist` skips writing a live body that must not replace a richer last-known-good.
+ *                  `fallbackOnAbort` lets aborted requests use cache (entitlements bootstrap only).
  */
 export async function cacheFetch<T>(
   key: string,
   fetcher: () => Promise<T>,
   ttlMs: number = CACHE_TTL_MS,
   payloadGuard?: (data: unknown) => data is T,
-  options?: CacheFetchOptions
+  options?: CacheFetchOptions<T>
 ): Promise<CacheFetchResult<T>> {
   const cacheFallbackPolicy = options ? Promise.resolve(options.enabled) : getConfigCacheFallbackPolicy();
   const liveFetch = Promise.resolve().then(fetcher);
   const sk = storageKey(key);
+  const requestedAt = Date.now();
+  const generation = generations.get(sk) ?? 0;
+  const isCurrent = () => generation === (generations.get(sk) ?? 0);
   try {
     const data = await liveFetch;
 
@@ -199,35 +272,77 @@ export async function cacheFetch<T>(
       return { data, fromCache: false };
     }
 
-    const envelope: CacheEnvelope<T> = { data, cachedAt: Date.now() };
+    // Only compare-and-write callers (shouldPersist) record and check request order.
+    const envelope: CacheEnvelope<T> = options?.shouldPersist ? { data, cachedAt: Date.now(), requestedAt } : { data, cachedAt: Date.now() };
     // Fire-and-forget: never block the bootstrap-critical path on the IndexedDB
     // write, and swallow storage errors — the fetch succeeded, that's what matters.
-    void cacheFallbackPolicy.then((enabled) => {
-      if (!enabled) {
-        return;
-      }
-      void getCache()
-        .setItem(sk, envelope)
-        .catch((err) => {
-          console.warn(`[chrome] Failed to cache ${key}:`, err);
+    void cacheFallbackPolicy
+      .then(async (enabled) => {
+        if (!enabled || !isCurrent()) {
+          return;
+        }
+        if (pendingDeletes.has(sk)) {
+          await pendingDeletes.get(sk);
+        }
+        // Read, compare and write as one step, so another tab cannot persist in between.
+        await withPersistLock(sk, async () => {
+          if (options?.shouldPersist) {
+            const read = Promise.resolve()
+              .then(() => getCache().getItem<unknown>(sk))
+              .catch(() => null);
+            // A stalled storage read must not hold the lock and block every other tab's write for this key.
+            const cached = await withTimeout<unknown>(read, options.cacheReadTimeoutMs ?? PERSIST_READ_TIMEOUT_MS, READ_TIMED_OUT);
+            if (cached === READ_TIMED_OUT) {
+              return;
+            }
+            const cachedEnvelope = isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs ? cached : null;
+            // A response to a later request was already persisted: this one is superseded.
+            if ((cachedEnvelope?.requestedAt ?? -Infinity) > requestedAt) {
+              return;
+            }
+            if (!options.shouldPersist(data, cachedEnvelope?.data ?? null)) {
+              return;
+            }
+          }
+          // Keep the check and registration below free of awaits: deleteCacheKey either
+          // bumps the generation first or snapshots this write, never lands in between.
+          if (!isCurrent()) {
+            return;
+          }
+          const write = getCache()
+            .setItem(sk, envelope)
+            .catch((err) => {
+              console.warn(`[chrome] Failed to cache ${key}:`, err);
+            });
+          const writes = pendingWrites.get(sk) ?? new Set<Promise<unknown>>();
+          writes.add(write);
+          pendingWrites.set(sk, writes);
+          await write;
+          writes.delete(write);
+          if (!writes.size) {
+            pendingWrites.delete(sk);
+          }
         });
-    });
+      })
+      .catch((err) => console.warn(`[chrome] Failed to cache ${key}:`, err));
     return { data, fromCache: false };
   } catch (err) {
     // Reject client errors and canceled requests immediately; only origin/network failures need flag readiness.
-    if (!shouldUseCacheFallback(err)) {
+    const fallbackOnAbort = typeof options?.fallbackOnAbort === 'function' ? options.fallbackOnAbort() : options?.fallbackOnAbort === true;
+    if (!shouldUseCacheFallback(err, fallbackOnAbort)) {
       throw err;
     }
 
     const cacheFallbackEnabled = await cacheFallbackPolicy;
-    if (!cacheFallbackEnabled) {
+    if (!cacheFallbackEnabled || !isCurrent() || pendingDeletes.has(sk)) {
       throw err;
     }
 
-    const cached = await getCache()
-      .getItem<unknown>(sk)
+    const read = Promise.resolve()
+      .then(() => getCache().getItem<unknown>(sk))
       .catch(() => null);
-    if (isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs) {
+    const cached = options?.cacheReadTimeoutMs === undefined ? await read : await withTimeout(read, options.cacheReadTimeoutMs, null);
+    if (isCurrent() && !pendingDeletes.has(sk) && isValidEnvelope<T>(cached, payloadGuard) && Date.now() - cached.cachedAt <= ttlMs) {
       return { data: cached.data, fromCache: true };
     }
     throw err;
