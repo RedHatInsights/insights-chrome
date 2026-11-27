@@ -4,7 +4,7 @@
   "description": "Chroming for Insights",
   "engines": {
     "node": ">=20.20.2",
-    "npm": ">=10.9.8"
+    "npm": ">=10.9.10"
   },
   "main": "index.js",
   "scripts": {
